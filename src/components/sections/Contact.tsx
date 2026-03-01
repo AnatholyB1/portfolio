@@ -49,11 +49,12 @@ export default function Contact() {
     <section id="contact" className="py-20 px-4 bg-black/30">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4 bg-linear-to-r from-cyan-500 to-green-500 bg-clip-text text-transparent">
-          Get In Touch
+          Let&apos;s Build Something Great
         </h2>
         <div className="w-20 h-1 bg-linear-to-r from-cyan-500 to-green-500 mx-auto mb-8 rounded-full" />
         <p className="text-center text-gray-400 mb-12 max-w-lg mx-auto">
-          Have a project in mind or want to collaborate? Feel free to reach out!
+          Ready to bring your project to life? Whether you need a <strong className="text-white">custom web application</strong>, 
+          <strong className="text-white">AI integration</strong>, or <strong className="text-white">scalable backend system</strong> — I&apos;m here to help.
         </p>
         
         <div className="grid md:grid-cols-2 gap-12">

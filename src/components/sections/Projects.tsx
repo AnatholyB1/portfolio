@@ -19,10 +19,13 @@ export default function Projects() {
     <section id="projects" className="py-20 px-4 bg-[#000a14]">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4 text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">
-          Project Archive
+          Featured Projects & Case Studies
         </h2>
-        <p className="text-center text-cyan-600 font-mono text-sm mb-8">
-          // ACCESSING CLASSIFIED FILES...
+        <p className="text-center text-cyan-600 font-mono text-sm mb-2">
+          // REAL SOLUTIONS DELIVERED TO CLIENTS
+        </p>
+        <p className="text-center text-gray-400 text-sm mb-8 max-w-2xl mx-auto">
+          From AI-powered applications to enterprise CRM systems — explore how I&apos;ve helped businesses achieve their goals
         </p>
         
         <StarkDisplay />

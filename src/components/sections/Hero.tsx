@@ -11,13 +11,13 @@ export default function Hero() {
       
       <div className="relative z-10 text-center px-4">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-          Hi, I&apos;m BRICON Anatholy
+          Full Stack Developer & AI Engineer
         </h1>
         <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-          Full Stack Developer, AI Enthusiast & Creative Coder 
+          I build <strong>scalable web applications</strong>, <strong>AI-powered systems</strong>, and <strong>custom APIs</strong> that drive business growth
         </p>
         <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto">
-          I build immersive digital experiences with modern web technologies and 3D graphics. Welcome to my portfolio!
+          From intelligent automation to production-ready platforms — I turn complex ideas into powerful digital solutions. <span className="text-indigo-400">Available for freelance projects.</span>
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -25,13 +25,13 @@ export default function Hero() {
             href="#projects"
             className="px-8 py-3 bg-linear-to-r from-indigo-600 to-purple-600 rounded-full text-white font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
           >
-            View My Work
+            View My Projects
           </a>
           <a
             href="#contact"
             className="px-8 py-3 border border-gray-600 rounded-full text-white font-medium hover:bg-white/10 transition-all duration-300"
           >
-            Contact Me
+            Hire Me
           </a>
         </div>
       </div>

@@ -26,38 +26,35 @@ export default function About() {
     <section id="about" className="py-20 px-4 bg-black/30">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4 bg-linear-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent">
-          About Me
+          Why Work With Me
         </h2>
         <div className="w-20 h-1 bg-linear-to-r from-indigo-500 to-cyan-500 mx-auto mb-12 rounded-full" />
         
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <p className="text-gray-300 text-lg leading-relaxed">
-              I&apos;m a backend-oriented developer passionate about building scalable systems
-               and intelligent digital solutions. With a 
-               strong foundation in modern web architectures, APIs, 
-               and cloud-based infrastructures, I design and develop 
-               robust back-end systems that power seamless user experiences.
+              <strong className="text-white">I deliver results.</strong> As a backend-oriented full stack developer, I specialize in building 
+              <strong className="text-indigo-400">scalable systems</strong> and <strong className="text-indigo-400">intelligent digital solutions</strong> that 
+              help businesses automate processes, increase efficiency, and grow revenue.
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
-               My journey in tech started with curiosity and evolved into 
-               a deep focus on engineering reliable, high-performance applications
-               . Today, I specialize in backend development, AI integration, 
-               and system architecture — building secure APIs, microservices, 
-               and data-driven platforms that transform complex ideas into production-ready solutions.
+              <strong className="text-white">My expertise:</strong> Custom API development, microservices architecture, 
+              AI-powered automation, and cloud infrastructure. I transform complex requirements into 
+              <strong className="text-cyan-400">production-ready solutions</strong> — on time and built to scale.
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Beyond backend and AI, I also work on advanced 3D web integrations,
-              creating immersive and interactive experiences using modern WebGL technologies.
+              <strong className="text-white">Beyond code:</strong> I create immersive 3D web experiences using Three.js and WebGL, 
+              adding a layer of innovation that sets your product apart from competitors.
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
-              I&apos;m also the co-founder of <a href="https://selenium-studio.com" target="_blank" rel="noopener noreferrer" className="text-cyan-500 hover:underline">Selenium Studio</a>
-              , where we design and develop innovative digital 
-              products at the intersection of engineering, creativity, and performance.
+              As co-founder of <a href="https://selenium-studio.com" target="_blank" rel="noopener noreferrer" className="text-cyan-500 hover:underline font-semibold">Selenium Studio</a>, 
+              I lead the development of innovative digital products for clients worldwide. 
+              <strong className="text-white">Your project could be next.</strong>
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
-              When I&apos;m not architecting systems or experimenting with AI models, I explore emerging technologies, 
-              contribute to innovative projects, and push the boundaries of interactive web experiences.
+              <span className="text-green-400">✓</span> Available for freelance projects &nbsp;
+              <span className="text-green-400">✓</span> Remote collaboration &nbsp;
+              <span className="text-green-400">✓</span> Based in Tours, France
             </p>
           </div>
           
