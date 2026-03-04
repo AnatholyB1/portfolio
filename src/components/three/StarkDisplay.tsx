@@ -21,7 +21,7 @@ const projects: Project[] = [
     tech: ['Next.js', 'Node.js', 'TensorFlow', 'Computer Vision', 'PostgreSQL'],
     github: '',
     live: '',
-    icon: '🏋️‍♂️',ou
+    icon: '🏋️‍♂️',
   },
   {
     title: 'Dance Studio CRM Platform',
