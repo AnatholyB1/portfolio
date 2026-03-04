@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 
 const navLinks = [
-  { href: '#home', label: 'Home' },
-  { href: '#about', label: 'About' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#home', label: 'Home' },
+  { href: '/#about', label: 'About' },
+  { href: '/services', label: 'Services' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/#contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
@@ -28,7 +29,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <a href="#home" className="text-2xl font-bold bg-linear-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+        <a href="/" className="text-2xl font-bold bg-linear-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
           Portfolio
         </a>
         

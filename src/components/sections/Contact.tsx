@@ -67,7 +67,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-white font-medium">Email</h3>
-                <p className="text-gray-400">anatholyb@gmail.com</p>
+                <p className="text-gray-400">business@contact-selenium-studio.com</p>
               </div>
             </div>
             
