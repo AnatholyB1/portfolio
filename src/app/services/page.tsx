@@ -2,6 +2,8 @@
 
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import PartnersBanner from '@/components/sections/PartnersBanner';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Icons components
 const CheckIcon = () => (
@@ -20,6 +22,9 @@ const ArrowIcon = () => (
 // SECTION 1: HERO
 // ============================================
 function ServicesHero() {
+  const { t } = useLanguage();
+  const ts = t.services.hero;
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
       {/* Background gradient */}
@@ -27,22 +32,20 @@ function ServicesHero() {
       
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         <span className="inline-block px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-400 text-sm font-medium mb-6">
-          Création de sites web pour PME
+          {ts.badge}
         </span>
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-linear-to-r from-white via-indigo-200 to-emerald-200 bg-clip-text text-transparent leading-tight">
-          Donnez à votre entreprise l&apos;image qu&apos;elle mérite
+          {ts.title}
         </h1>
         
-        <p className="text-xl md:text-2xl text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
-          Sites web modernes, performants et maintenus dans le temps pour les PME locales qui veulent 
-          <strong className="text-white"> gagner en crédibilité</strong> et 
-          <strong className="text-emerald-400"> générer plus de contacts</strong>.
-        </p>
+        <p
+          className="text-xl md:text-2xl text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: ts.subtitle }}
+        />
         
         <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
-          Une solution clé en main, sans jargon technique. Vous vous concentrez sur votre métier, 
-          nous nous occupons de votre présence digitale.
+          {ts.description}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -50,13 +53,13 @@ function ServicesHero() {
             href="/#contact"
             className="px-8 py-4 bg-linear-to-r from-emerald-600 to-indigo-600 rounded-full text-white font-semibold text-lg hover:from-emerald-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-500/25"
           >
-            Demander un audit gratuit
+            {ts.cta_audit}
           </a>
           <a
             href="#offres"
             className="px-8 py-4 border border-gray-600 rounded-full text-white font-medium hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2"
           >
-            Découvrir nos offres
+            {ts.cta_offers}
             <ArrowIcon />
           </a>
         </div>
@@ -69,44 +72,24 @@ function ServicesHero() {
 // SECTION 2: LE PROBLEME
 // ============================================
 function ProblemSection() {
-  const problems = [
-    {
-      icon: "🚫",
-      title: "Pas de site internet",
-      description: "Vos clients potentiels ne vous trouvent pas en ligne. Ils se tournent vers vos concurrents qui, eux, sont visibles."
-    },
-    {
-      icon: "📱",
-      title: "Site obsolète ou non adapté mobile",
-      description: "Un site vieillissant ou difficile à lire sur smartphone renvoie une image peu professionnelle de votre entreprise."
-    },
-    {
-      icon: "📉",
-      title: "Zéro contact via internet",
-      description: "Votre site existe mais ne génère aucune demande. Il ne travaille pas pour vous, il dort."
-    },
-    {
-      icon: "❌",
-      title: "Perte de crédibilité",
-      description: "En 2026, une entreprise sans présence digitale moderne perd la confiance de ses prospects avant même le premier contact."
-    }
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.problem;
 
   return (
     <section className="py-20 px-4 bg-black/40">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Votre entreprise mérite mieux
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-red-500 to-orange-500 mx-auto mb-6 rounded-full" />
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Chaque jour sans présence digitale efficace, c&apos;est des opportunités qui s&apos;évaporent
+            {ts.subtitle}
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
-          {problems.map((problem, index) => (
+          {ts.items.map((problem, index) => (
             <div 
               key={index}
               className="p-6 bg-gray-900/50 border border-gray-800 rounded-2xl hover:border-red-500/30 transition-all duration-300"
@@ -124,7 +107,7 @@ function ProblemSection() {
         
         <div className="mt-12 text-center">
           <p className="text-lg text-gray-300">
-            <strong className="text-emerald-400">La bonne nouvelle ?</strong> Ces problèmes ont une solution simple et accessible.
+            <strong className="text-emerald-400">{ts.good_news}</strong>
           </p>
         </div>
       </div>
@@ -136,14 +119,8 @@ function ProblemSection() {
 // SECTION 3: NOTRE SOLUTION
 // ============================================
 function SolutionSection() {
-  const benefits = [
-    "Sites modernes et professionnels",
-    "Optimisés pour générer des contacts",
-    "Rapides et performants",
-    "Adaptés à tous les écrans",
-    "Référencement local inclus",
-    "Accompagnement personnalisé"
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.solution;
 
   return (
     <section className="py-20 px-4">
@@ -151,24 +128,22 @@ function SolutionSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <span className="inline-block px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-400 text-sm font-medium mb-4">
-              Notre approche
+              {ts.badge}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-linear-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">
-              Spécialiste de la présence digitale pour PME locales
+              {ts.title}
             </h2>
-            <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-              Nous créons des sites web sur mesure qui transforment vos visiteurs en clients. 
-              Pas de solutions génériques : chaque projet est pensé pour 
-              <strong className="text-white"> votre activité</strong> et 
-              <strong className="text-white"> votre marché local</strong>.
-            </p>
-            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-              Notre mission : vous offrir une <strong className="text-emerald-400">vitrine digitale professionnelle</strong> qui 
-              travaille pour vous 24h/24, génère des contacts qualifiés et renforce votre crédibilité.
-            </p>
+            <p
+              className="text-lg text-gray-300 mb-6 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: ts.p1 }}
+            />
+            <p
+              className="text-lg text-gray-300 mb-8 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: ts.p2 }}
+            />
             
             <div className="grid sm:grid-cols-2 gap-3">
-              {benefits.map((benefit, index) => (
+              {ts.benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <CheckIcon />
                   <span className="text-gray-300">{benefit}</span>
@@ -185,8 +160,8 @@ function SolutionSection() {
                     <span className="text-2xl">🎯</span>
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">Orienté résultats</h3>
-                    <p className="text-gray-400 text-sm">Chaque élément est pensé pour convertir</p>
+                    <h3 className="text-white font-semibold">{ts.card1_title}</h3>
+                    <p className="text-gray-400 text-sm">{ts.card1_desc}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -194,8 +169,8 @@ function SolutionSection() {
                     <span className="text-2xl">🤝</span>
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">Partenaire long terme</h3>
-                    <p className="text-gray-400 text-sm">Un accompagnement qui ne s&apos;arrête pas à la mise en ligne</p>
+                    <h3 className="text-white font-semibold">{ts.card2_title}</h3>
+                    <p className="text-gray-400 text-sm">{ts.card2_desc}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -203,8 +178,8 @@ function SolutionSection() {
                     <span className="text-2xl">💎</span>
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">Qualité premium</h3>
-                    <p className="text-gray-400 text-sm">Technologies modernes, design soigné</p>
+                    <h3 className="text-white font-semibold">{ts.card3_title}</h3>
+                    <p className="text-gray-400 text-sm">{ts.card3_desc}</p>
                   </div>
                 </div>
               </div>
@@ -220,58 +195,13 @@ function SolutionSection() {
 // SECTION 4: NOS OFFRES
 // ============================================
 function OffersSection() {
-  const offers = [
-    {
-      name: "Landing Page Professionnelle",
-      tagline: "L'essentiel pour être visible",
-      price: "1 200 – 1 800 €",
-      description: "Une présence en ligne claire et professionnelle pour démarrer",
-      features: [
-        "Design moderne et personnalisé",
-        "Adapté mobile et tablette",
-        "Présentation claire de vos services",
-        "Formulaire de contact",
-        "Intégration Google Maps",
-        "SEO local de base",
-        "Mise en ligne incluse"
-      ],
-      popular: false,
-      gradient: "from-blue-500 to-cyan-500"
-    },
-    {
-      name: "Rebranding + Site Premium",
-      tagline: "Transformez votre image",
-      price: "2 500 – 4 000 €",
-      description: "Modernisez complètement votre image et renforcez votre crédibilité",
-      features: [
-        "Audit de votre image actuelle",
-        "Modernisation de votre logo",
-        "Nouvelle palette de couleurs",
-        "Typographies professionnelles",
-        "Mini charte graphique",
-        "Nouveau site cohérent avec votre identité",
-        "Formation utilisation basique"
-      ],
-      popular: true,
-      gradient: "from-emerald-500 to-indigo-500"
-    },
-    {
-      name: "Projet Sur Mesure",
-      tagline: "Vos besoins spécifiques",
-      price: "Sur devis",
-      description: "Pour les projets qui nécessitent des fonctionnalités avancées",
-      features: [
-        "Site multi-pages complet",
-        "Boutique en ligne (e-commerce)",
-        "Système de réservation",
-        "Fonctionnalités spécifiques",
-        "Refonte complète de site",
-        "Intégrations personnalisées",
-        "Accompagnement dédié"
-      ],
-      popular: false,
-      gradient: "from-purple-500 to-pink-500"
-    }
+  const { t } = useLanguage();
+  const ts = t.services.offers;
+
+  const gradients = [
+    'from-blue-500 to-cyan-500',
+    'from-emerald-500 to-indigo-500',
+    'from-purple-500 to-pink-500',
   ];
 
   return (
@@ -279,68 +209,71 @@ function OffersSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-linear-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">
-            Nos offres
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-emerald-500 to-indigo-500 mx-auto mb-6 rounded-full" />
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Des solutions adaptées à chaque étape de votre croissance
+            {ts.subtitle}
           </p>
         </div>
         
         <div className="grid lg:grid-cols-3 gap-8">
-          {offers.map((offer, index) => (
-            <div 
-              key={index}
-              className={`relative bg-gray-900/50 border rounded-3xl p-8 transition-all duration-300 hover:transform hover:scale-[1.02] ${
-                offer.popular 
-                  ? 'border-emerald-500/50 shadow-lg shadow-emerald-500/10' 
-                  : 'border-gray-800 hover:border-gray-700'
-              }`}
-            >
-              {offer.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full">
-                    Le plus populaire
-                  </span>
-                </div>
-              )}
-              
-              <div className="mb-6">
-                <h3 className={`text-2xl font-bold mb-2 bg-linear-to-r ${offer.gradient} bg-clip-text text-transparent`}>
-                  {offer.name}
-                </h3>
-                <p className="text-gray-400 text-sm mb-4">{offer.tagline}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-sm text-gray-500">À partir de</span>
-                </div>
-                <div className="text-3xl font-bold text-white">
-                  {offer.price}
-                </div>
-              </div>
-              
-              <p className="text-gray-400 mb-6">{offer.description}</p>
-              
-              <ul className="space-y-3 mb-8">
-                {offer.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <CheckIcon />
-                    <span className="text-gray-300 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <a
-                href="/#contact"
-                className={`block w-full py-3 text-center font-medium rounded-xl transition-all duration-300 ${
-                  offer.popular
-                    ? 'bg-linear-to-r from-emerald-600 to-indigo-600 text-white hover:from-emerald-700 hover:to-indigo-700'
-                    : 'bg-gray-800 text-white hover:bg-gray-700'
+          {ts.items.map((offer, index) => {
+            const popular = index === 1;
+            return (
+              <div 
+                key={index}
+                className={`relative bg-gray-900/50 border rounded-3xl p-8 transition-all duration-300 hover:transform hover:scale-[1.02] ${
+                  popular 
+                    ? 'border-emerald-500/50 shadow-lg shadow-emerald-500/10' 
+                    : 'border-gray-800 hover:border-gray-700'
                 }`}
               >
-                Demander un devis
-              </a>
-            </div>
-          ))}
+                {popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span className="px-4 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full">
+                      {ts.popular}
+                    </span>
+                  </div>
+                )}
+                
+                <div className="mb-6">
+                  <h3 className={`text-2xl font-bold mb-2 bg-linear-to-r ${gradients[index]} bg-clip-text text-transparent`}>
+                    {offer.name}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">{offer.tagline}</p>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm text-gray-500">{ts.from}</span>
+                  </div>
+                  <div className="text-3xl font-bold text-white">
+                    {offer.price}
+                  </div>
+                </div>
+                
+                <p className="text-gray-400 mb-6">{offer.description}</p>
+                
+                <ul className="space-y-3 mb-8">
+                  {offer.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <CheckIcon />
+                      <span className="text-gray-300 text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <a
+                  href="/#contact"
+                  className={`block w-full py-3 text-center font-medium rounded-xl transition-all duration-300 ${
+                    popular
+                      ? 'bg-linear-to-r from-emerald-600 to-indigo-600 text-white hover:from-emerald-700 hover:to-indigo-700'
+                      : 'bg-gray-800 text-white hover:bg-gray-700'
+                  }`}
+                >
+                  {ts.cta}
+                </a>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -351,71 +284,27 @@ function OffersSection() {
 // SECTION 5: MAINTENANCE & HÉBERGEMENT
 // ============================================
 function MaintenanceSection() {
-  const packs = [
-    {
-      name: "Essentiel",
-      price: "49",
-      description: "L'indispensable pour un site sécurisé et fonctionnel",
-      features: [
-        "Hébergement haute performance",
-        "Nom de domaine inclus",
-        "Certificat SSL (https)",
-        "Sauvegardes automatiques",
-        "Monitoring 24/7",
-        "Mises à jour techniques",
-        "Support par email"
-      ],
-      gradient: "from-gray-400 to-gray-600"
-    },
-    {
-      name: "Business",
-      price: "79",
-      description: "Pour les entreprises qui évoluent",
-      features: [
-        "Tout du pack Essentiel",
-        "1h de modification par mois",
-        "Optimisation des performances",
-        "Rapport mensuel simplifié",
-        "Temps de réponse prioritaire"
-      ],
-      popular: true,
-      gradient: "from-emerald-400 to-cyan-400"
-    },
-    {
-      name: "Premium",
-      price: "129",
-      priceNote: "+",
-      description: "Tranquillité totale et croissance continue",
-      features: [
-        "Tout du pack Business",
-        "2h de modifications par mois",
-        "Sécurité renforcée",
-        "Optimisation SEO continue",
-        "Assistance prioritaire",
-        "Conseils stratégiques mensuels"
-      ],
-      gradient: "from-purple-400 to-pink-400"
-    }
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.maintenance;
 
   return (
     <section className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-400 text-sm font-medium mb-4">
-            Tranquillité d&apos;esprit digitale
+            {ts.badge}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Maintenance & Hébergement
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-indigo-500 to-purple-500 mx-auto mb-6 rounded-full" />
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Votre site reste performant, sécurisé et à jour. Vous n&apos;avez rien à gérer.
+            {ts.subtitle}
           </p>
         </div>
         
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
-          {packs.map((pack, index) => (
+          {ts.packs.map((pack, index) => (
             <div 
               key={index}
               className={`relative bg-gray-900/50 border rounded-3xl p-8 transition-all duration-300 hover:transform hover:scale-[1.02] ${
@@ -427,18 +316,18 @@ function MaintenanceSection() {
               {pack.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="px-4 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full">
-                    Recommandé
+                    {ts.recommended}
                   </span>
                 </div>
               )}
               
               <div className="mb-6">
-                <h3 className={`text-xl font-bold mb-2 bg-linear-to-r ${pack.gradient} bg-clip-text text-transparent`}>
+                <h3 className="text-xl font-bold mb-2 text-white">
                   Pack {pack.name}
                 </h3>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-bold text-white">{pack.price}€</span>
-                  <span className="text-gray-400">/mois</span>
+                  <span className="text-gray-400">{ts.per_month}</span>
                   {pack.priceNote && <span className="text-gray-400">{pack.priceNote}</span>}
                 </div>
                 <p className="text-gray-400 text-sm">{pack.description}</p>
@@ -456,22 +345,21 @@ function MaintenanceSection() {
           ))}
         </div>
         
-        {/* Avantages supplémentaires */}
+        {/* Additional benefits */}
         <div className="bg-linear-to-r from-emerald-500/10 to-indigo-500/10 border border-gray-800 rounded-2xl p-6">
           <div className="flex flex-wrap justify-center gap-6 text-center">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-400 font-semibold">-10%</span>
-              <span className="text-gray-300">si paiement annuel</span>
+              <span className="text-emerald-400 font-semibold">{ts.annual_discount}</span>
             </div>
             <div className="w-px h-6 bg-gray-700 hidden sm:block" />
             <div className="flex items-center gap-2">
               <CheckIcon />
-              <span className="text-gray-300">Sans engagement</span>
+              <span className="text-gray-300">{ts.no_commitment}</span>
             </div>
             <div className="w-px h-6 bg-gray-700 hidden sm:block" />
             <div className="flex items-center gap-2">
               <CheckIcon />
-              <span className="text-gray-300">Évolutif selon vos besoins</span>
+              <span className="text-gray-300">{ts.scalable}</span>
             </div>
           </div>
         </div>
@@ -484,32 +372,24 @@ function MaintenanceSection() {
 // SECTION 6: OPTIONS COMPLÉMENTAIRES
 // ============================================
 function UpsellSection() {
-  const options = [
-    { name: "Création de contenu", description: "Rédaction professionnelle de vos textes", icon: "✍️" },
-    { name: "SEO avancé", description: "Optimisation poussée pour Google", icon: "📈" },
-    { name: "Campagnes Google Ads", description: "Publicité ciblée pour plus de visibilité", icon: "🎯" },
-    { name: "Intégration CRM", description: "Connectez votre site à vos outils", icon: "🔗" },
-    { name: "Blog intégré", description: "Partagez votre expertise", icon: "📝" },
-    { name: "Site multilingue", description: "Touchez une audience internationale", icon: "🌍" },
-    { name: "Heures supplémentaires", description: "Modifications additionnelles à la demande", icon: "⏱️" },
-    { name: "Formation personnalisée", description: "Apprenez à gérer votre site", icon: "🎓" }
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.upsell;
 
   return (
     <section className="py-20 px-4 bg-black/40">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Options disponibles
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-purple-500 to-pink-500 mx-auto mb-6 rounded-full" />
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Personnalisez votre projet selon vos besoins spécifiques
+            {ts.subtitle}
           </p>
         </div>
         
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {options.map((option, index) => (
+          {ts.options.map((option, index) => (
             <div 
               key={index}
               className="bg-gray-900/50 border border-gray-800 rounded-xl p-5 hover:border-purple-500/30 transition-all duration-300 group"
@@ -531,54 +411,24 @@ function UpsellSection() {
 // SECTION 7: MÉTHODOLOGIE
 // ============================================
 function MethodologySection() {
-  const steps = [
-    {
-      number: "01",
-      title: "Audit gratuit",
-      description: "Nous analysons votre situation actuelle et vos objectifs lors d'un appel de 30 minutes."
-    },
-    {
-      number: "02",
-      title: "Proposition claire",
-      description: "Vous recevez un devis détaillé, sans surprise, avec un planning précis."
-    },
-    {
-      number: "03",
-      title: "Maquette",
-      description: "Nous créons une maquette visuelle de votre site pour validation avant développement."
-    },
-    {
-      number: "04",
-      title: "Développement",
-      description: "Nous construisons votre site avec les dernières technologies pour performance et sécurité."
-    },
-    {
-      number: "05",
-      title: "Mise en ligne",
-      description: "Votre site est publié et configuré sur votre nom de domaine."
-    },
-    {
-      number: "06",
-      title: "Suivi 30 jours",
-      description: "Nous restons disponibles pour ajustements et vous accompagnons dans la prise en main."
-    }
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.methodology;
 
   return (
     <section className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-linear-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-            Comment ça se passe ?
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-cyan-500 to-emerald-500 mx-auto mb-6 rounded-full" />
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Un processus simple et transparent, de la première discussion à la mise en ligne
+            {ts.subtitle}
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {steps.map((step, index) => (
+          {ts.steps.map((step, index) => (
             <div 
               key={index}
               className="relative bg-gray-900/30 border border-gray-800 rounded-2xl p-6 hover:border-cyan-500/30 transition-all duration-300"
@@ -602,41 +452,21 @@ function MethodologySection() {
 // SECTION 8: RASSURANCE
 // ============================================
 function ReassuranceSection() {
-  const points = [
-    {
-      icon: "👤",
-      title: "Interlocuteur unique",
-      description: "Un seul contact du début à la fin. Pas de transfert entre services, pas de répétition de vos besoins."
-    },
-    {
-      icon: "🔑",
-      title: "Solution clé en main",
-      description: "Nous gérons tout : design, développement, hébergement, mise en ligne. Vous n'avez rien à faire."
-    },
-    {
-      icon: "🤝",
-      title: "Accompagnement personnalisé",
-      description: "Chaque projet est unique. Nous prenons le temps de comprendre votre activité et vos objectifs."
-    },
-    {
-      icon: "🚀",
-      title: "Vision long terme",
-      description: "Nous ne sommes pas juste un prestataire, mais un partenaire qui accompagne votre croissance digitale."
-    }
-  ];
+  const { t } = useLanguage();
+  const ts = t.services.reassurance;
 
   return (
     <section className="py-20 px-4 bg-black/40">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Pourquoi nous faire confiance ?
+            {ts.title}
           </h2>
           <div className="w-20 h-1 bg-linear-to-r from-emerald-500 to-cyan-500 mx-auto mb-6 rounded-full" />
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
-          {points.map((point, index) => (
+          {ts.points.map((point, index) => (
             <div 
               key={index}
               className="flex gap-5 p-6 bg-gray-900/30 border border-gray-800 rounded-2xl hover:border-emerald-500/30 transition-all duration-300"
@@ -660,6 +490,9 @@ function ReassuranceSection() {
 // SECTION 9: CTA FINAL
 // ============================================
 function FinalCTA() {
+  const { t } = useLanguage();
+  const ts = t.services.cta_final;
+
   return (
     <section id="contact-audit" className="py-24 px-4">
       <div className="max-w-4xl mx-auto">
@@ -670,31 +503,31 @@ function FinalCTA() {
           
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-linear-to-r from-emerald-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">
-              Prêt à transformer votre présence digitale ?
+              {ts.title}
             </h2>
             
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Réservez un <strong className="text-white">audit gratuit de 30 minutes</strong>. 
-              Nous analyserons ensemble votre situation et définirons la meilleure stratégie pour votre entreprise.
-            </p>
+            <p
+              className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: ts.description }}
+            />
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <a
                 href="/#contact"
                 className="px-8 py-4 bg-linear-to-r from-emerald-600 to-indigo-600 rounded-full text-white font-semibold text-lg hover:from-emerald-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-500/25"
               >
-                Réserver mon audit gratuit
+                {ts.cta}
               </a>
               <a
                 href="mailto:business@contact-selenium-studio.com"
                 className="px-8 py-4 border border-gray-600 rounded-full text-white font-medium hover:bg-white/10 transition-all duration-300"
               >
-                Envoyer un email
+                {ts.email}
               </a>
             </div>
             
             <p className="text-gray-500 text-sm">
-              Sans engagement • 100% gratuit • Réponse sous 24h
+              {ts.note}
             </p>
           </div>
         </div>
@@ -719,6 +552,7 @@ export default function ServicesPage() {
         <UpsellSection />
         <MethodologySection />
         <ReassuranceSection />
+        <PartnersBanner />
         <FinalCTA />
       </main>
       <Footer />

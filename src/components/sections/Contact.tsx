@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 if (!process.env.NEXT_PUBLIC_FORM_URL){
     console.warn('NEXT_PUBLIC_FORM_URL environment variable is not set. Contact form will not work.');
@@ -10,6 +11,7 @@ const FORM_URL = process.env.NEXT_PUBLIC_FORM_URL || 'https://example.com/api/co
 
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -49,13 +51,13 @@ export default function Contact() {
     <section id="contact" className="py-20 px-4 bg-black/30">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4 bg-linear-to-r from-cyan-500 to-green-500 bg-clip-text text-transparent">
-          Let&apos;s Build Something Great
+          {t.contact.title}
         </h2>
         <div className="w-20 h-1 bg-linear-to-r from-cyan-500 to-green-500 mx-auto mb-8 rounded-full" />
-        <p className="text-center text-gray-400 mb-12 max-w-lg mx-auto">
-          Ready to bring your project to life? Whether you need a <strong className="text-white">custom web application</strong>, 
-          <strong className="text-white">AI integration</strong>, or <strong className="text-white">scalable backend system</strong> — I&apos;m here to help.
-        </p>
+        <p
+          className="text-center text-gray-400 mb-12 max-w-lg mx-auto"
+          dangerouslySetInnerHTML={{ __html: t.contact.description }}
+        />
         
         <div className="grid md:grid-cols-2 gap-12">
           <div className="space-y-8">
@@ -66,7 +68,7 @@ export default function Contact() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-white font-medium">Email</h3>
+                <h3 className="text-white font-medium">{t.contact.email_label}</h3>
                 <p className="text-gray-400">business@contact-selenium-studio.com</p>
               </div>
             </div>
@@ -79,8 +81,8 @@ export default function Contact() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-white font-medium">Location</h3>
-                <p className="text-gray-400">Tours, France</p>
+                <h3 className="text-white font-medium">{t.contact.location_label}</h3>
+                <p className="text-gray-400">{t.contact.location_value}</p>
               </div>
             </div>
             
@@ -102,7 +104,7 @@ export default function Contact() {
             <div>
               <input
                 type="text"
-                placeholder="Your Name"
+                placeholder={t.contact.name_placeholder}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
@@ -112,7 +114,7 @@ export default function Contact() {
             <div>
               <input
                 type="email"
-                placeholder="Your Email"
+                placeholder={t.contact.email_placeholder}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -121,7 +123,7 @@ export default function Contact() {
             </div>
             <div>
               <textarea
-                placeholder="Your Message"
+                placeholder={t.contact.message_placeholder}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 required
@@ -134,13 +136,13 @@ export default function Contact() {
               disabled={isSubmitting}
               className="w-full py-3 bg-linear-to-r from-cyan-600 to-green-600 text-white font-medium rounded-lg hover:from-cyan-700 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+              {isSubmitting ? t.contact.submitting : t.contact.submit}
             </button>
             {submitStatus === 'success' && (
-              <p className="text-green-400 text-center">Message sent successfully!</p>
+              <p className="text-green-400 text-center">{t.contact.success}</p>
             )}
             {submitStatus === 'error' && (
-              <p className="text-red-400 text-center">Failed to send message. Please try again.</p>
+              <p className="text-red-400 text-center">{t.contact.error}</p>
             )}
           </form>
         </div>

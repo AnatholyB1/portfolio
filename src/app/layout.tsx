@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -72,7 +73,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased bg-linear-to-br from-gray-900 via-black to-gray-900 text-white min-h-screen`}
       >
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
