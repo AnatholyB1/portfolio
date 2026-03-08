@@ -326,7 +326,7 @@ function MaintenanceSection() {
                   Pack {pack.name}
                 </h3>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-bold text-white">{pack.price}€</span>
+                  <span className="text-4xl font-bold text-white">{ts.currency_symbol}{pack.price}</span>
                   <span className="text-gray-400">{ts.per_month}</span>
                   {pack.priceNote && <span className="text-gray-400">{pack.priceNote}</span>}
                 </div>
