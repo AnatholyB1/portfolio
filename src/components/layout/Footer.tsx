@@ -14,6 +14,14 @@ export default function Footer() {
         <p className="text-gray-500 text-sm mt-2">
           {t.footer.built_with}
         </p>
+        <div className="mt-3">
+          <a
+            href="/mentions-legales"
+            className="text-gray-600 hover:text-indigo-400 text-xs transition-colors underline underline-offset-2"
+          >
+            {t.footer.legal_notice}
+          </a>
+        </div>
       </div>
     </footer>
   );

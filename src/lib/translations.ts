@@ -76,6 +76,7 @@ export interface Translations {
   footer: {
     rights: string;
     built_with: string;
+    legal_notice: string;
   };
   services: {
     hero: {
@@ -249,6 +250,7 @@ const fr: Translations = {
   footer: {
     rights: 'Tous droits réservés.',
     built_with: 'Construit avec Next.js, Three.js & Tailwind CSS',
+    legal_notice: 'Mentions légales',
   },
   services: {
     hero: {
@@ -552,6 +554,7 @@ const en: Translations = {
   footer: {
     rights: 'All rights reserved.',
     built_with: 'Built with Next.js, Three.js & Tailwind CSS',
+    legal_notice: 'Legal Notice',
   },
   services: {
     hero: {
@@ -855,6 +858,7 @@ const th: Translations = {
   footer: {
     rights: 'สงวนลิขสิทธิ์ทั้งหมด',
     built_with: 'สร้างด้วย Next.js, Three.js & Tailwind CSS',
+    legal_notice: 'ข้อกฎหมาย',
   },
   services: {
     hero: {
