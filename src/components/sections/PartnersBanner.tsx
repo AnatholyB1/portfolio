@@ -29,11 +29,18 @@ const PARTNERS = [
     color: '#f59e0b',
   },
   {
+    id: 'ghjulianu',
+    name: 'Ghjulianu Codani',
+    url: 'https://www.ghjulianu-codani.com',
+    shape: 'triangle' as const,
+    color: '#e11d48',
+  },
+  {
     id: 'folies',
     name: 'Les Folies Temps Danse',
-    url: null,
-    shape: 'triangle' as const,
-    color: '#ec4899',
+    url: 'https://lesfoliestempsdanse.com',
+    shape: 'hexagon' as const,
+    color: '#d946ef',
   },
   {
     id: 'ajmg',
@@ -176,6 +183,7 @@ export default function PartnersBanner() {
     selenium: tp.selenium_role,
     gecko: tp.gecko_role,
     victor: tp.victor_role,
+    ghjulianu: tp.ghjulianu_role,
     folies: tp.folies_role,
     ajmg: tp.ajmg_role,
   };

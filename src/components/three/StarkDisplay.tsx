@@ -44,6 +44,30 @@ const PROJECTS = [
     accent: '#fde68a',
     shape: 'octahedron' as const,
   },
+  {
+    id: 3,
+    title: 'Ghjulianu Codani',
+    url: 'ghjulianu-codani.com',
+    live: 'https://www.ghjulianu-codani.com',
+    tech: ['Next.js', 'Tailwind CSS', 'SEO', 'Responsive'],
+    icon: '🎵',
+    primary: '#e11d48',
+    secondary: '#be123c',
+    accent: '#fda4af',
+    shape: 'triangle' as const,
+  },
+  {
+    id: 4,
+    title: 'Les Folies Temps Danse',
+    url: 'lesfoliestempsdanse.com',
+    live: 'https://lesfoliestempsdanse.com',
+    tech: ['Next.js', 'Tailwind CSS', 'Animations', 'Responsive'],
+    icon: '💃',
+    primary: '#d946ef',
+    secondary: '#a21caf',
+    accent: '#f0abfc',
+    shape: 'hexagon' as const,
+  },
 ] as const;
 
 type Project = typeof PROJECTS[number];
@@ -123,6 +147,36 @@ function ShapeDecoration({ shape, primary }: { shape: Project['shape']; primary:
           }}
         />
       )}
+      {/* Triangle */}
+      {shape === 'triangle' && (
+        <div
+          className="animate-spin"
+          style={{
+            width: '24px',
+            height: '24px',
+            background: primary,
+            clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+            boxShadow: `0 0 14px ${primary}aa, 0 0 28px ${primary}44`,
+            animationDuration: '5s',
+            animationTimingFunction: 'linear',
+          }}
+        />
+      )}
+      {/* Hexagon */}
+      {shape === 'hexagon' && (
+        <div
+          className="animate-spin"
+          style={{
+            width: '26px',
+            height: '26px',
+            background: primary,
+            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+            boxShadow: `0 0 14px ${primary}aa, 0 0 28px ${primary}44`,
+            animationDuration: '5.5s',
+            animationTimingFunction: 'linear',
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -193,16 +247,16 @@ function IframePreview({ src, url, primary, accent }: { src: string; url: string
 
 function HtmlCard({ project }: { project: Project }) {
   const { t } = useLanguage();
-  const subtitles = [t.projects.selenium_subtitle, t.projects.gecko_subtitle, t.projects.victor_subtitle];
-  const descriptions = [t.projects.selenium_desc, t.projects.gecko_desc, t.projects.victor_desc];
+  const subtitles = [t.projects.selenium_subtitle, t.projects.gecko_subtitle, t.projects.victor_subtitle, t.projects.ghjulianu_subtitle, t.projects.folies_subtitle];
+  const descriptions = [t.projects.selenium_desc, t.projects.gecko_desc, t.projects.victor_desc, t.projects.ghjulianu_desc, t.projects.folies_desc];
   const subtitle = subtitles[project.id];
   const description = descriptions[project.id];
   const [flipped, setFlipped] = useState(false);
 
   return (
     <div
-      className="relative flex-1"
-      style={{ perspective: '1400px', maxWidth: '400px', minWidth: '280px' }}
+      className="relative w-full md:flex-1"
+      style={{ perspective: '1400px', maxWidth: '400px' }}
     >
       {/* Floating shape above */}
       <div className="absolute left-1/2 -translate-x-1/2 z-10 pointer-events-none" style={{ top: '-48px' }}>
@@ -372,8 +426,10 @@ function HtmlCard({ project }: { project: Project }) {
 
 export default function StarkDisplay() {
   const { t } = useLanguage();
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <div className="relative w-full" style={{ minHeight: '680px' }}>
+    <div className="relative w-full">
 
       {/* CSS ambient background */}
       <div
@@ -393,15 +449,63 @@ export default function StarkDisplay() {
         />
       </div>
 
-      {/* HTML cards overlay */}
-      <div className="relative z-10 flex items-center justify-center gap-5 px-6" style={{ paddingTop: '80px', paddingBottom: '48px' }}>
+      {/* ── MOBILE: single-card carousel ── */}
+      <div className="md:hidden relative z-10 flex flex-col items-center px-4" style={{ paddingTop: '72px', paddingBottom: '40px' }}>
+        {/* Card */}
+        <div className="w-full" style={{ maxWidth: '400px' }}>
+          <HtmlCard key={PROJECTS[activeIndex].id} project={PROJECTS[activeIndex]} />
+        </div>
+
+        {/* Navigation */}
+        <div className="flex items-center gap-3 mt-8">
+          <button
+            onClick={() => setActiveIndex((i) => Math.max(0, i - 1))}
+            disabled={activeIndex === 0}
+            title="Previous project"
+            className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/30 disabled:opacity-20 transition-all"
+          >
+            &#8592;
+          </button>
+
+          {PROJECTS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              title={`Project ${i + 1}`}
+              className="w-2 h-2 rounded-full transition-all duration-300"
+              style={{
+                background: i === activeIndex ? PROJECTS[activeIndex].primary : '#ffffff22',
+                transform: i === activeIndex ? 'scale(1.4)' : 'scale(1)',
+                boxShadow: i === activeIndex ? `0 0 8px ${PROJECTS[activeIndex].primary}` : 'none',
+              }}
+            />
+          ))}
+
+          <button
+            onClick={() => setActiveIndex((i) => Math.min(PROJECTS.length - 1, i + 1))}
+            disabled={activeIndex === PROJECTS.length - 1}
+            title="Next project"
+            className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/30 disabled:opacity-20 transition-all"
+          >
+            &#8594;
+          </button>
+        </div>
+
+        {/* Counter */}
+        <p className="mt-2 text-[10px] font-mono tracking-widest text-white/20">
+          {activeIndex + 1} / {PROJECTS.length}
+        </p>
+      </div>
+
+      {/* ── DESKTOP: all cards in a row ── */}
+      <div className="hidden md:flex relative z-10 items-center justify-center gap-5 px-6" style={{ paddingTop: '80px', paddingBottom: '48px' }}>
         {PROJECTS.map((p) => (
           <HtmlCard key={p.id} project={p} />
         ))}
       </div>
 
-      {/* HUD */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-5 py-2 bg-black/40 border border-white/10 rounded-full backdrop-blur-sm pointer-events-none">
+      {/* HUD (desktop only) */}
+      <div className="hidden md:flex absolute bottom-5 left-1/2 -translate-x-1/2 z-20 items-center gap-3 px-5 py-2 bg-black/40 border border-white/10 rounded-full backdrop-blur-sm pointer-events-none">
         <span className="text-white/40 text-xs font-mono tracking-wider">{t.projects.hud_flip}</span>
         <span className="text-white/20 text-xs">•</span>
         <span className="text-white/40 text-xs font-mono tracking-wider">{t.projects.hud_interact}</span>

@@ -42,6 +42,10 @@ export interface Translations {
     gecko_desc: string;
     victor_subtitle: string;
     victor_desc: string;
+    ghjulianu_subtitle: string;
+    ghjulianu_desc: string;
+    folies_subtitle: string;
+    folies_desc: string;
     // card UI
     click_to_explore: string;
     flip_back_hint: string;
@@ -159,6 +163,7 @@ export interface Translations {
       selenium_role: string;
       gecko_role: string;
       victor_role: string;
+      ghjulianu_role: string;
       folies_role: string;
       ajmg_role: string;
     };
@@ -209,6 +214,10 @@ const fr: Translations = {
     gecko_desc: 'Site complet pour un restaurant avec menus, photos d\'ambiance, intégration Google Maps, informations de réservation et SEO local pour augmenter la fréquentation.',
     victor_subtitle: 'Portfolio Créatif',
     victor_desc: 'Portfolio soigné pour un professionnel créatif avec animations fluides, système de design raffiné et mise en valeur convaincante des compétences et réalisations.',
+    ghjulianu_subtitle: 'Site Artiste',
+    ghjulianu_desc: 'Site vitrine élégant pour l\'artiste corse Ghjulianu Codani, mettant en avant son univers musical et artistique avec un design immersif et une expérience utilisateur moderne.',
+    folies_subtitle: 'Site Compagnie de Danse',
+    folies_desc: 'Site complet pour la compagnie de danse Les Folies Temps Danse, présentant le répertoire, les actualités, les cours et les événements dans un design dynamique et animé.',
     click_to_explore: 'CLIQUER POUR EXPLORER →',
     flip_back_hint: '← CLIQUER POUR RETOURNER',
     hud_flip: 'CLIQUER POUR RETOURNER',
@@ -456,6 +465,7 @@ const fr: Translations = {
       selenium_role: 'Agence Digitale',
       gecko_role: 'Restaurant',
       victor_role: 'Portfolio Créatif',
+      ghjulianu_role: 'Artiste Corse',
       folies_role: 'Troupe de Danse',
       ajmg_role: 'Service de Conseil',
     },
@@ -506,6 +516,10 @@ const en: Translations = {
     gecko_desc: 'Full restaurant website with menu showcase, atmosphere photos, Google Maps integration, reservation info, and local SEO boosting foot traffic.',
     victor_subtitle: 'Creative Portfolio',
     victor_desc: 'Polished portfolio for a creative professional featuring fluid animations, a refined design system and compelling showcase of skills and work.',
+    ghjulianu_subtitle: 'Artist Website',
+    ghjulianu_desc: 'Elegant showcase website for Corsican artist Ghjulianu Codani, highlighting his musical and artistic world with an immersive design and modern user experience.',
+    folies_subtitle: 'Dance Company Website',
+    folies_desc: 'Full website for dance company Les Folies Temps Danse, presenting repertoire, news, classes and events in a dynamic and animated design.',
     click_to_explore: 'CLICK TO EXPLORE →',
     flip_back_hint: '← CLICK ANYWHERE TO FLIP BACK',
     hud_flip: 'CLICK CARD TO FLIP',
@@ -753,6 +767,7 @@ const en: Translations = {
       selenium_role: 'Digital Agency',
       gecko_role: 'Restaurant',
       victor_role: 'Creative Portfolio',
+      ghjulianu_role: 'Corsican Artist',
       folies_role: 'Dance Company',
       ajmg_role: 'Consulting Service',
     },
@@ -803,6 +818,10 @@ const th: Translations = {
     gecko_desc: 'เว็บไซต์ร้านอาหารครบครัน พร้อมเมนู ภาพบรรยากาศ การรวม Google Maps ข้อมูลการจอง และ SEO ท้องถิ่นเพื่อเพิ่มลูกค้า',
     victor_subtitle: 'พอร์ตโฟลิโอสร้างสรรค์',
     victor_desc: 'พอร์ตโฟลิโอสำหรับนักสร้างสรรค์มืออาชีพ พร้อมแอนิเมชันลื่นไหล ระบบดีไซน์ที่ประณีต และการนำเสนอทักษะและผลงานที่น่าสนใจ',
+    ghjulianu_subtitle: 'เว็บไซต์ศิลปิน',
+    ghjulianu_desc: 'เว็บไซต์โชว์เคสสำหรับศิลปิน Ghjulianu Codani แสดงถึงโลกดนตรีและศิลปะของเขาด้วยดีไซน์ที่น่าประทับใจและประสบการณ์ผู้ใช้ที่ทันสมัย',
+    folies_subtitle: 'เว็บไซต์คณะนาฏศิลป์',
+    folies_desc: 'เว็บไซต์ครบครันสำหรับคณะนาฏศิลป์ Les Folies Temps Danse นำเสนอผลงาน ข่าวสาร ชั้นเรียน และกิจกรรมในดีไซน์ที่ dynamic และมีชีวิตชีวา',
     click_to_explore: 'คลิกเพื่อสำรวจ →',
     flip_back_hint: '← คลิกเพื่อกลับ',
     hud_flip: 'คลิกการ์ดเพื่อพลิก',
@@ -1047,6 +1066,7 @@ const th: Translations = {
       gecko_role: 'ร้านอาหาร',
       victor_role: 'พอร์ตโฟลิโอสร้างสรรค์',
       folies_role: 'คณะนาฏศิลป์',
+      ghjulianu_role: 'ศิลปินคอร์ซิกา',
       ajmg_role: 'บริการที่ปรึกษา',
     },
   },
