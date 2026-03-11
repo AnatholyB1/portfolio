@@ -128,6 +128,7 @@ export interface Translations {
       annual_discount: string;
       no_commitment: string;
       scalable: string;
+      currency_symbol: string;
       packs: {
         name: string;
         price: string;
@@ -374,6 +375,7 @@ const fr: Translations = {
       annual_discount: '-10% si paiement annuel',
       no_commitment: 'Sans engagement',
       scalable: 'Évolutif selon vos besoins',
+      currency_symbol: '€',
       packs: [
         {
           name: 'Essentiel',
@@ -623,7 +625,7 @@ const en: Translations = {
         {
           name: 'Professional Landing Page',
           tagline: 'The essentials to be visible',
-          price: '1,200 – 1,800 €',
+          price: '$1,300 – $2,000',
           description: 'A clear and professional online presence to get started',
           features: [
             'Modern and custom design',
@@ -638,7 +640,7 @@ const en: Translations = {
         {
           name: 'Rebranding + Premium Site',
           tagline: 'Transform your image',
-          price: '2,500 – 4,000 €',
+          price: '$2,750 – $4,400',
           description: 'Completely modernise your image and strengthen your credibility',
           features: [
             'Audit of your current image',
@@ -676,10 +678,11 @@ const en: Translations = {
       annual_discount: '-10% for annual payment',
       no_commitment: 'No commitment',
       scalable: 'Adaptable to your needs',
+      currency_symbol: '$',
       packs: [
         {
           name: 'Essential',
-          price: '49',
+          price: '55',
           description: 'The essentials for a secure and functional site',
           features: [
             'High-performance hosting',
@@ -693,7 +696,7 @@ const en: Translations = {
         },
         {
           name: 'Business',
-          price: '79',
+          price: '87',
           description: 'For businesses on the move',
           popular: true,
           features: [
@@ -706,7 +709,7 @@ const en: Translations = {
         },
         {
           name: 'Premium',
-          price: '129',
+          price: '140',
           priceNote: '+',
           description: 'Total peace of mind and continuous growth',
           features: [
@@ -921,7 +924,7 @@ const th: Translations = {
         {
           name: 'Landing Page มืออาชีพ',
           tagline: 'สิ่งจำเป็นสำหรับการมองเห็น',
-          price: '1,200 – 1,800 €',
+          price: '45,000 – 70,000 ฿',
           description: 'การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพสำหรับการเริ่มต้น',
           features: [
             'ดีไซน์ทันสมัยและกำหนดเอง',
@@ -936,7 +939,7 @@ const th: Translations = {
         {
           name: 'Rebranding + เว็บไซต์พรีเมียม',
           tagline: 'เปลี่ยนภาพลักษณ์ของคุณ',
-          price: '2,500 – 4,000 €',
+          price: '100,000 – 155,000 ฿',
           description: 'ปรับปรุงภาพลักษณ์ทั้งหมดและเสริมความน่าเชื่อถือ',
           features: [
             'ตรวจสอบภาพลักษณ์ปัจจุบัน',
@@ -974,10 +977,11 @@ const th: Translations = {
       annual_discount: '-10% สำหรับการชำระรายปี',
       no_commitment: 'ไม่มีสัญญาผูกมัด',
       scalable: 'ปรับได้ตามความต้องการ',
+      currency_symbol: '฿',
       packs: [
         {
           name: 'Essential',
-          price: '49',
+          price: '1,900',
           description: 'สิ่งจำเป็นสำหรับเว็บไซต์ที่ปลอดภัยและใช้งานได้',
           features: [
             'โฮสติ้งประสิทธิภาพสูง',
@@ -991,7 +995,7 @@ const th: Translations = {
         },
         {
           name: 'Business',
-          price: '79',
+          price: '3,100',
           description: 'สำหรับธุรกิจที่กำลังเติบโต',
           popular: true,
           features: [
@@ -1004,7 +1008,7 @@ const th: Translations = {
         },
         {
           name: 'Premium',
-          price: '129',
+          price: '4,990',
           priceNote: '+',
           description: 'ความสงบใจทั้งหมดและการเติบโตต่อเนื่อง',
           features: [
