@@ -202,6 +202,7 @@ function OffersSection() {
     'from-blue-500 to-cyan-500',
     'from-emerald-500 to-indigo-500',
     'from-purple-500 to-pink-500',
+    'from-orange-500 to-rose-500',
   ];
 
   return (
@@ -217,7 +218,7 @@ function OffersSection() {
           </p>
         </div>
         
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8">
           {ts.items.map((offer, index) => {
             const popular = index === 1;
             return (
@@ -281,7 +282,57 @@ function OffersSection() {
 }
 
 // ============================================
-// SECTION 5: MAINTENANCE & HÉBERGEMENT
+// SECTION 5: PHONE AGENT EXPLAINER
+// ============================================
+function PhoneAgentSection() {
+  const { t } = useLanguage()
+  const ts = t.services.phoneAgent
+
+  return (
+    <section className="py-20 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <span className="inline-block px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-400 text-sm font-medium mb-4">
+            {ts.badge}
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            {ts.title}
+          </h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto mb-6 rounded-full" />
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">{ts.subtitle}</p>
+        </div>
+
+        <div className="grid md:grid-cols-4 gap-6 mb-12">
+          {ts.steps.map((step: { icon: string; label: string; description: string }, i: number) => (
+            <div key={i} className="relative">
+              {i < ts.steps.length - 1 && (
+                <div className="hidden md:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-indigo-500/30 to-transparent z-0" />
+              )}
+              <div className="relative z-10 bg-gray-900/50 border border-gray-800 rounded-2xl p-6 text-center hover:border-indigo-500/30 transition-all duration-300">
+                <span className="text-4xl mb-4 block">{step.icon}</span>
+                <h3 className="text-white font-semibold mb-2">{step.label}</h3>
+                <p className="text-gray-400 text-sm">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <a
+            href="/demo"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full text-white font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-500/25"
+          >
+            {ts.cta_label}
+            <ArrowIcon />
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================
+// SECTION 6: MAINTENANCE & HÉBERGEMENT
 // ============================================
 function MaintenanceSection() {
   const { t } = useLanguage();
@@ -548,6 +599,7 @@ export default function ServicesPage() {
         <ProblemSection />
         <SolutionSection />
         <OffersSection />
+        <PhoneAgentSection />
         <MaintenanceSection />
         <UpsellSection />
         <MethodologySection />

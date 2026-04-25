@@ -78,6 +78,14 @@ export interface Translations {
     built_with: string;
     legal_notice: string;
   };
+  phoneAgent: {
+    badge: string;
+    title: string;
+    poweredBy: string;
+    benefits: string[];
+    cta_demo: string;
+    cta_services: string;
+  };
   services: {
     hero: {
       badge: string;
@@ -159,6 +167,13 @@ export interface Translations {
       cta: string;
       email: string;
       note: string;
+    };
+    phoneAgent: {
+      badge: string;
+      title: string;
+      subtitle: string;
+      steps: { icon: string; label: string; description: string }[];
+      cta_label: string;
     };
     partners: {
       title: string;
@@ -251,6 +266,18 @@ const fr: Translations = {
     rights: 'Tous droits réservés.',
     built_with: 'Construit avec Next.js, Three.js & Tailwind CSS',
     legal_notice: 'Mentions légales',
+  },
+  phoneAgent: {
+    badge: 'Nouveau',
+    title: 'Agent Vocal IA — Votre standard téléphonique automatisé',
+    poweredBy: 'Powered by VAPI · Claude · ElevenLabs · Twilio',
+    benefits: [
+      'Disponible 24h/24 et 7j/7 sans décrocher',
+      'Prend les commandes et RDV directement dans votre CRM',
+      'Connecté à vos outils métier via protocole MCP',
+    ],
+    cta_demo: 'Voir la démo live',
+    cta_services: 'En savoir plus',
   },
   services: {
     hero: {
@@ -366,6 +393,19 @@ const fr: Translations = {
             'Accompagnement dédié',
           ],
         },
+        {
+          name: 'Agent Vocal IA',
+          tagline: "Votre téléphone, automatisé par l'IA",
+          price: 'À partir de 990 €',
+          description: 'Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.',
+          features: [
+            'Setup VAPI + numéro Twilio',
+            'Voix ElevenLabs ultra-naturelle',
+            'Connexion CRM via protocole MCP',
+            '1 scénario métier sur mesure',
+            '1 mois de support inclus',
+          ],
+        },
       ],
     },
     maintenance: {
@@ -464,6 +504,18 @@ const fr: Translations = {
       email: 'Envoyer un email',
       note: 'Sans engagement • 100% gratuit • Réponse sous 24h',
     },
+    phoneAgent: {
+      badge: 'Nouveau',
+      title: "Comment fonctionne l'agent vocal IA ?",
+      subtitle: 'Une solution clé en main connectée à vos outils en quelques heures.',
+      steps: [
+        { icon: '📞', label: 'Le client appelle', description: 'Un numéro Twilio dédié à votre business.' },
+        { icon: '🧠', label: "L'IA comprend", description: 'Claude Sonnet analyse la demande en français naturel.' },
+        { icon: '🗄️', label: 'Le CRM est mis à jour', description: "Via le protocole MCP, la commande ou le RDV s'enregistre." },
+        { icon: '🔔', label: 'Vous êtes notifié', description: 'Votre dashboard se met à jour en temps réel.' },
+      ],
+      cta_label: 'Tester la démo live',
+    },
     partners: {
       title: 'Ils nous font confiance',
       selenium_role: 'Agence Digitale',
@@ -555,6 +607,18 @@ const en: Translations = {
     rights: 'All rights reserved.',
     built_with: 'Built with Next.js, Three.js & Tailwind CSS',
     legal_notice: 'Legal Notice',
+  },
+  phoneAgent: {
+    badge: 'New',
+    title: 'AI Voice Agent — Your phone line, automated',
+    poweredBy: 'Powered by VAPI · Claude · ElevenLabs · Twilio',
+    benefits: [
+      'Available 24/7 without picking up the phone',
+      'Takes orders and appointments directly into your CRM',
+      'Connected to your business tools via MCP protocol',
+    ],
+    cta_demo: 'See live demo',
+    cta_services: 'Learn more',
   },
   services: {
     hero: {
@@ -670,6 +734,19 @@ const en: Translations = {
             'Dedicated support',
           ],
         },
+        {
+          name: 'AI Voice Agent',
+          tagline: 'Your phone line, automated by AI',
+          price: 'From €990',
+          description: 'An intelligent phone agent that answers, qualifies and records — 24/7.',
+          features: [
+            'VAPI + Twilio number setup',
+            'Ultra-natural ElevenLabs voice',
+            'CRM connection via MCP protocol',
+            '1 custom business scenario',
+            '1 month of support included',
+          ],
+        },
       ],
     },
     maintenance: {
@@ -768,6 +845,18 @@ const en: Translations = {
       email: 'Send an email',
       note: 'No commitment • 100% free • Reply within 24h',
     },
+    phoneAgent: {
+      badge: 'New',
+      title: 'How does the AI voice agent work?',
+      subtitle: 'A turnkey solution connected to your tools in a few hours.',
+      steps: [
+        { icon: '📞', label: 'Customer calls', description: 'A dedicated Twilio number for your business.' },
+        { icon: '🧠', label: 'AI understands', description: 'Claude Sonnet processes the request in natural language.' },
+        { icon: '🗄️', label: 'CRM is updated', description: 'Via MCP protocol, the order or appointment is recorded.' },
+        { icon: '🔔', label: 'You are notified', description: 'Your dashboard updates in real time.' },
+      ],
+      cta_label: 'Try the live demo',
+    },
     partners: {
       title: 'They trust us',
       selenium_role: 'Digital Agency',
@@ -859,6 +948,18 @@ const th: Translations = {
     rights: 'สงวนลิขสิทธิ์ทั้งหมด',
     built_with: 'สร้างด้วย Next.js, Three.js & Tailwind CSS',
     legal_notice: 'ข้อกฎหมาย',
+  },
+  phoneAgent: {
+    badge: 'ใหม่',
+    title: 'AI Voice Agent — ระบบโทรศัพท์อัตโนมัติ',
+    poweredBy: 'ขับเคลื่อนโดย VAPI · Claude · ElevenLabs · Twilio',
+    benefits: [
+      'พร้อมให้บริการ 24/7 โดยไม่ต้องรับสาย',
+      'รับคำสั่งซื้อและนัดหมายลงใน CRM ของคุณ',
+      'เชื่อมต่อกับเครื่องมือธุรกิจผ่านโปรโตคอล MCP',
+    ],
+    cta_demo: 'ดูเดโมสด',
+    cta_services: 'เรียนรู้เพิ่มเติม',
   },
   services: {
     hero: {
@@ -970,6 +1071,19 @@ const th: Translations = {
             'การสนับสนุนเฉพาะบุคคล',
           ],
         },
+        {
+          name: 'AI Voice Agent',
+          tagline: 'สายโทรศัพท์ของคุณ ขับเคลื่อนโดย AI',
+          price: 'เริ่มต้นที่ 990 €',
+          description: 'ตัวแทนโทรศัพท์อัจฉริยะที่ตอบ คัดกรอง และบันทึก — ตลอด 24 ชั่วโมง',
+          features: [
+            'ตั้งค่า VAPI + หมายเลข Twilio',
+            'เสียง ElevenLabs แบบธรรมชาติ',
+            'เชื่อมต่อ CRM ผ่านโปรโตคอล MCP',
+            '1 สถานการณ์ธุรกิจที่กำหนดเอง',
+            'รองรับ 1 เดือน',
+          ],
+        },
       ],
     },
     maintenance: {
@@ -1067,6 +1181,18 @@ const th: Translations = {
       cta: 'จองการตรวจสอบฟรีของฉัน',
       email: 'ส่งอีเมล',
       note: 'ไม่มีสัญญาผูกมัด • ฟรี 100% • ตอบกลับภายใน 24 ชั่วโมง',
+    },
+    phoneAgent: {
+      badge: 'ใหม่',
+      title: 'AI Voice Agent ทำงานอย่างไร?',
+      subtitle: 'โซลูชันสำเร็จรูปที่เชื่อมต่อกับเครื่องมือของคุณในไม่กี่ชั่วโมง',
+      steps: [
+        { icon: '📞', label: 'ลูกค้าโทรเข้า', description: 'หมายเลข Twilio เฉพาะสำหรับธุรกิจของคุณ' },
+        { icon: '🧠', label: 'AI เข้าใจ', description: 'Claude Sonnet วิเคราะห์คำขอด้วยภาษาธรรมชาติ' },
+        { icon: '🗄️', label: 'CRM อัปเดต', description: 'ผ่านโปรโตคอล MCP คำสั่งซื้อหรือการนัดหมายถูกบันทึก' },
+        { icon: '🔔', label: 'คุณได้รับการแจ้งเตือน', description: 'แดชบอร์ดของคุณอัปเดตแบบเรียลไทม์' },
+      ],
+      cta_label: 'ลองดูเดโมสด',
     },
     partners: {
       title: 'พวกเขาไว้วางใจเรา',
