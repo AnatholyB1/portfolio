@@ -18,7 +18,17 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { customer_name, items, pickup_time } = body
+  const { customer_name, pickup_time } = body
+  let items = body.items
+
+  // VAPI envoie items comme string JSON quand le type est "string"
+  if (typeof items === 'string') {
+    try {
+      items = JSON.parse(items)
+    } catch {
+      return NextResponse.json({ error: 'items must be a valid JSON array' }, { status: 400 })
+    }
+  }
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: 'items array required' }, { status: 400 })
