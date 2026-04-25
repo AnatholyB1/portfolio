@@ -9,6 +9,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'product_id query param required' }, { status: 400 })
   }
 
+  return handler(product_id)
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json()
+  const product_id = body.product_id
+
+  if (!product_id) {
+    return NextResponse.json({ error: 'product_id required' }, { status: 400 })
+  }
+
+  return handler(product_id)
+}
+
+async function handler(product_id: string) {
+
   const supabase = createServerClient()
   const { data, error } = await supabase
     .from('products')
