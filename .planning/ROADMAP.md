@@ -27,7 +27,13 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
   3. A custom cursor dot + ring with mix-blend-mode:difference tracks the mouse on all pages
   4. Elements tagged with data-reveal appear on scroll via IntersectionObserver with configurable delay
   5. A cinema intro overlay plays exactly once on first load and is skipped on return visits (localStorage flag set)
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 01-01-PLAN.md — CSS design tokens + Tailwind v4 @theme inline integration
+- [ ] 01-02-PLAN.md — Font loading (Bricolage Grotesque, Manrope, JetBrains Mono)
+- [ ] 01-03-PLAN.md — Custom cursor component (dot + ring, mix-blend-mode:difference)
+- [ ] 01-04-PLAN.md — Scroll-reveal hook (useReveals) and [data-reveal] CSS
+- [ ] 01-05-PLAN.md — Cinema intro component (1700ms auto-dismiss, localStorage)
 **UI hint**: yes
 
 ### Phase 2: Landing Page Rebuild
@@ -72,7 +78,7 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Design System Foundation | 0/TBD | Not started | - |
+| 1. Design System Foundation | 0/5 | Not started | - |
 | 2. Landing Page Rebuild | 0/TBD | Not started | - |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
