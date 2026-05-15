@@ -31,7 +31,7 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
 Plans:
 - [ ] 01-01-PLAN.md — CSS design tokens + Tailwind v4 @theme inline integration
 - [ ] 01-02-PLAN.md — Font loading (Bricolage Grotesque, Manrope, JetBrains Mono)
-- [ ] 01-03-PLAN.md — Custom cursor component (dot + ring, mix-blend-mode:difference)
+- [x] 01-03-PLAN.md — Custom cursor component (dot + ring, mix-blend-mode:difference)
 - [ ] 01-04-PLAN.md — Scroll-reveal hook (useReveals) and [data-reveal] CSS
 - [ ] 01-05-PLAN.md — Cinema intro component (1700ms auto-dismiss, localStorage)
 **UI hint**: yes
@@ -78,7 +78,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Design System Foundation | 0/5 | Not started | - |
+| 1. Design System Foundation | 3/5 | In progress | - |
 | 2. Landing Page Rebuild | 0/TBD | Not started | - |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |

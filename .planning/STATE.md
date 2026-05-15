@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 1 of 4 (Design System Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-05-15 — Phase 1 context gathered (discuss-phase complete)
+Plan: 3 of 5 in current phase
+Status: In progress — Plans 01-03 complete, Plans 04-05 remaining
+Last activity: 2026-05-15 — Plan 01-03 complete (CustomCursor component, cursor CSS, dynamic import)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: —
+- Total plans completed: 3
+- Average duration: ~5 min
+- Total execution time: ~15 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| Phase 1 | 3 | ~15 min | ~5 min |
 
 **Recent Trend:**
-- Last 5 plans: —
-- Trend: —
+- Last 5 plans: 01-01 (~5 min), 01-02 (~5 min), 01-03 (~4 min)
+- Trend: Consistent ~5 min per plan
 
 *Updated after each plan completion*
 
@@ -46,6 +46,8 @@ Recent decisions affecting current work:
 - Keep LanguageContext — fr/en/th already handled, new keys slot in
 - CSS vars for design tokens — matches globals.css approach from mockup
 - Dynamic import for 3D canvas — Three.js not SSR-safe
+- CustomCursor uses dynamic ssr:false — browser-only APIs (window.matchMedia, addEventListener) require this pattern
+- Dot tracks instantly, ring lerps at 0.18 — visual lag creates branded cursor feel
 
 ### Pending Todos
 
@@ -65,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-15
-Stopped at: Phase 1 context gathered — ready to plan Phase 1
-Resume file: .planning/phases/01-design-system-foundation/01-CONTEXT.md
+Stopped at: Completed 01-03-PLAN.md (CustomCursor component)
+Resume file: .planning/phases/01-design-system-foundation/01-04-PLAN.md
