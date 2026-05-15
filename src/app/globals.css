@@ -59,3 +59,40 @@ body {
 
 /* ─── Selection ───────────────────────────────────── */
 ::selection { background: var(--acid); color: #000; }
+
+/* ─── Custom Cursor ───────────────────────────────── */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  z-index: 9998;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #fff;
+  background: transparent;
+  margin-top: -16px;
+  margin-left: -16px;
+  transition: width .2s, height .2s, margin .2s;
+}
+
+.cursor-dot.hover  { width: 3px;  height: 3px;  margin-top: 2.5px; margin-left: 2.5px; }
+.cursor-ring.hover { width: 56px; height: 56px; margin-top: -24px; margin-left: -24px; }
+
+@media (max-width: 900px) {
+  .cursor-dot,
+  .cursor-ring { display: none; }
+}
