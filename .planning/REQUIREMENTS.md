@@ -11,7 +11,7 @@
 - [ ] **DS-02**: Google Fonts loaded: Bricolage Grotesque (variable), Manrope, JetBrains Mono
 - [ ] **DS-03**: Custom cursor (dot + ring, mix-blend-mode:difference) implemented globally
 - [ ] **DS-04**: Scroll-reveal system (IntersectionObserver, data-reveal / data-reveal-delay) available globally
-- [ ] **DS-05**: Cinema intro animation plays on first load, skipped on return visits (localStorage)
+- [x] **DS-05**: Cinema intro animation plays on first load, skipped on return visits (localStorage)
 
 ### Landing Page
 
@@ -69,7 +69,7 @@
 | DS-02 | Phase 1 | Pending |
 | DS-03 | Phase 1 | Pending |
 | DS-04 | Phase 1 | Pending |
-| DS-05 | Phase 1 | Pending |
+| DS-05 | Phase 1 | Complete |
 | LAND-01 | Phase 2 | Pending |
 | LAND-02 | Phase 2 | Pending |
 | LAND-03 | Phase 2 | Pending |

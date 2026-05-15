@@ -10,7 +10,7 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
 
 ## Phases
 
-- [ ] **Phase 1: Design System Foundation** — CSS vars, fonts, cursor, scroll-reveal, cinema intro wired globally
+- [x] **Phase 1: Design System Foundation** — CSS vars, fonts, cursor, scroll-reveal, cinema intro wired globally
 - [ ] **Phase 2: Landing Page Rebuild** — Full page.tsx rebuild with all hero, editorial, and contact sections
 - [ ] **Phase 3: Services Page Rebuild** — Full services/page.tsx with all 9 sections and i18n
 - [ ] **Phase 4: Rethemes + QA** — /mentions-legales and /demo retheme, i18n wiring, integration QA
@@ -29,11 +29,11 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
   5. A cinema intro overlay plays exactly once on first load and is skipped on return visits (localStorage flag set)
 **Plans**: 5 plans
 Plans:
-- [ ] 01-01-PLAN.md — CSS design tokens + Tailwind v4 @theme inline integration
-- [ ] 01-02-PLAN.md — Font loading (Bricolage Grotesque, Manrope, JetBrains Mono)
+- [x] 01-01-PLAN.md — CSS design tokens + Tailwind v4 @theme inline integration
+- [x] 01-02-PLAN.md — Font loading (Bricolage Grotesque, Manrope, JetBrains Mono)
 - [x] 01-03-PLAN.md — Custom cursor component (dot + ring, mix-blend-mode:difference)
 - [x] 01-04-PLAN.md — Scroll-reveal hook (useReveals) and [data-reveal] CSS
-- [ ] 01-05-PLAN.md — Cinema intro component (1700ms auto-dismiss, localStorage)
+- [x] 01-05-PLAN.md — Cinema intro component (1700ms auto-dismiss, localStorage)
 **UI hint**: yes
 
 ### Phase 2: Landing Page Rebuild
@@ -78,7 +78,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Design System Foundation | 4/5 | In progress | - |
+| 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
 | 2. Landing Page Rebuild | 0/TBD | Not started | - |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
