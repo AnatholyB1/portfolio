@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
-import dynamic from "next/dynamic";
-
-const CustomCursor = dynamic(() => import("@/components/ui/CustomCursor"), { ssr: false });
+import ClientProviders from "@/components/ui/ClientProviders";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -92,7 +90,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
         </LanguageProvider>
-        <CustomCursor />
+        <ClientProviders />
       </body>
     </html>
   );
