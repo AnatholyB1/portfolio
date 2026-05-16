@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: — Visual Redesign (Selenium Phase 02)
 status: active
-stopped_at: Completed 02-01-PLAN.md (i18n landing namespace + projects data)
-last_updated: "2026-05-16T21:15:00Z"
+stopped_at: Completed 02-05-PLAN.md (Navbar+Footer rebuild, page.tsx assembly, agency metadata)
+last_updated: "2026-05-16T22:30:00Z"
 last_activity: 2026-05-16
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 11
-  completed_plans: 6
-  percent: 55
+  completed_plans: 9
+  percent: 82
 ---
 
 # Project State
@@ -26,31 +26,31 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 2 of 4 (Landing Page Rebuild)
-Plan: 1 of 6 in current phase — 02-01 complete
-Status: Active — Wave 1 foundation complete, proceeding to 02-02
+Plan: 5 of 6 in current phase — 02-05 complete
+Status: Active — Wave 3 complete. All 7 sections assembled. npm run build exits 0. Advance to 02-06.
 Last activity: 2026-05-16
 
-Progress: [██████░░░░] 55%
+Progress: [████████░░] 82%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
+- Total plans completed: 9
 - Average duration: ~5 min
-- Total execution time: ~25 min
+- Total execution time: ~40 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | Phase 1 | 5 | ~27 min | ~5 min |
-| Phase 2 | 1 | ~6 min | ~6 min |
+| Phase 2 | 4 | ~20 min | ~5 min |
 
 **Recent Trend:**
 
-- Last 6 plans: 01-01 (~5 min), 01-02 (~5 min), 01-03 (~4 min), 01-04 (~4 min), 01-05 (~8 min), 02-01 (~6 min)
-- Trend: Consistent ~5-8 min per plan
+- Last 9 plans: 01-01 (~5 min), 01-02 (~5 min), 01-03 (~4 min), 01-04 (~4 min), 01-05 (~8 min), 02-01 (~6 min), 02-03 (~5 min), 02-04 (~3 min), 02-05 (~3 min)
+- Trend: Consistent ~3-8 min per plan
 
 *Updated after each plan completion*
 
@@ -71,6 +71,8 @@ Recent decisions affecting current work:
 - transition-delay via JS (el.style.transitionDelay) not CSS attr() — attr() for non-content properties lacks universal browser support
 - useReveals not mounted in layout.tsx — called from root page component in Phase 2
 - ClientProviders.tsx as 'use client' boundary: dynamic()+ssr:false is forbidden in Next.js Server Components (Turbopack). All browser-only dynamic imports routed through ClientProviders.
+- metadata export in layout.tsx only — Next.js App Router forbids export const metadata in Client Components (page.tsx is 'use client')
+- Absolute hrefs (/#manifeste, /#work, /#contact) in Navbar and Footer — relative hrefs (#manifeste) fail when navigating from /services
 
 ### Pending Todos
 
@@ -78,7 +80,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- Design mockup files are in `C:/Users/Anatholy/Downloads/portfolio/` — 6 JSX files need conversion from standalone React+Babel to Next.js TSX before Phase 2/3 execution
 - /demo/feuillette must NOT be touched — enforce as hard constraint in Phase 4 QA
 
 ## Deferred Items
@@ -87,6 +88,6 @@ None — all Phase 1 deferred items resolved.
 
 ## Session Continuity
 
-Last session: 2026-05-16T21:15:00Z
-Stopped at: Completed 02-01-PLAN.md (i18n landing namespace + projects data)
-Resume file: None — advance to 02-02
+Last session: 2026-05-16T22:30:00Z
+Stopped at: Completed 02-05-PLAN.md (Navbar+Footer rebuild, page.tsx assembly, agency metadata)
+Resume file: None — advance to 02-06

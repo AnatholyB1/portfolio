@@ -48,10 +48,10 @@ Plans:
 **Plans**: 6 plans
 Plans:
 - [x] 02-01-PLAN.md — i18n landing namespace extension + projects data file
-- [ ] 02-02-PLAN.md — Install gsap + delete 8 freelance-era component files
-- [ ] 02-03-PLAN.md — HeroSection (Canvas icosphere + title + stat grid) + Manifeste + Realisations
-- [ ] 02-04-PLAN.md — PhoneAgent (scroll-driven sticky + SVG particle) + Partners ticker + ContactSection
-- [ ] 02-05-PLAN.md — Navbar rebuild + Footer rebuild + page.tsx rewrite + SEO metadata
+- [x] 02-02-PLAN.md — Install gsap + delete 8 freelance-era component files
+- [x] 02-03-PLAN.md — HeroSection (Canvas icosphere + title + stat grid) + Manifeste + Realisations
+- [x] 02-04-PLAN.md — PhoneAgent (scroll-driven sticky + SVG particle) + Partners ticker + ContactSection
+- [x] 02-05-PLAN.md — Navbar rebuild + Footer rebuild + page.tsx rewrite + SEO metadata
 - [ ] 02-06-PLAN.md — Landing CSS in globals.css + human verification checkpoint
 **UI hint**: yes
 
@@ -86,6 +86,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
-| 2. Landing Page Rebuild | 1/6 | In Progress | - |
+| 2. Landing Page Rebuild | 5/6 | In Progress | - |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
