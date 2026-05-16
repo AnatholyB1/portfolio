@@ -23,19 +23,12 @@ export default function Partners() {
       </div>
 
       <div className="partners-track-wrap">
-        {/* Left/right fade masks */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to right, var(--bg) 0%, transparent 8%, transparent 92%, var(--bg) 100%)',
-          pointerEvents: 'none', zIndex: 2,
-        }} />
         <div
           className="partners-track"
-          style={{ animation: 'partnersTicker 32s linear infinite' }}
+          style={{ animation: 'partnersTicker 38s linear infinite' }}
         >
           {items.map((item, i) => (
-            <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, margin: '0 32px', flexShrink: 0 }}>
-              {/* Colored glyph dot — replaces 3D CSS shape from PartnersBanner */}
+            <div key={i} className="part">
               <span
                 className="pglyph"
                 style={{ background: item.color, boxShadow: `0 0 16px ${item.color}` }}
@@ -44,7 +37,7 @@ export default function Partners() {
                 <div className="pname">{item.name}</div>
                 <div className="prole">{item.role}</div>
               </div>
-              <span className="part-sep" style={{ marginLeft: 32, color: 'var(--line)' }}>·</span>
+              <span className="part-sep">·</span>
             </div>
           ))}
         </div>

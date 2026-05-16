@@ -24,6 +24,9 @@ export default function ContactSection() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('sending');
+    const fullMessage = formData.projectType
+      ? `[${formData.projectType}]\n\n${formData.message}`
+      : formData.message;
     try {
       const response = await fetch(FORM_URL, {
         method: 'POST',
@@ -31,8 +34,7 @@ export default function ContactSection() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          projectType: formData.projectType,
-          message: formData.message,
+          message: fullMessage,
         }),
       });
       setStatus(response.ok ? 'sent' : 'error');

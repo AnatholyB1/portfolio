@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 // ─── PhoneFlow SVG ────────────────────────────────────────────────
@@ -98,77 +98,59 @@ export default function PhoneAgent() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
 
-  useEffect(() => {
-    // Dynamic import required — never import gsap at module level in Next.js (SSR breaks)
-    let trigger: any;
-    (async () => {
-      const { default: gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
-
-      trigger = ScrollTrigger.create({
-        trigger: sectionRef.current,
-        pin: true,
-        start: 'top top',
-        end: '+=250vh',
-        scrub: true,
-        onUpdate: (self) => {
-          // Map scroll progress 0→1 across the section to step index 0→(steps.length-1)
-          const idx = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
-          setActiveStep(idx);
-        },
-      });
-    })();
-
-    return () => {
-      trigger?.kill();
-    };
+  const onScroll = useCallback(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const total = rect.height - vh;
+    if (total <= 0) return;
+    const p = Math.max(0, Math.min(1, -rect.top / total));
+    const idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
+    setActiveStep(idx);
   }, [steps.length]);
 
+  useEffect(() => {
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [onScroll]);
+
   return (
-    // Outer section is 250vh tall — creates scroll travel for the pinned inner panel
-    <section
-      className="phone-section border-t"
-      id="phone"
-      ref={sectionRef}
-      style={{ minHeight: '250vh' }}
-    >
-      {/* Sticky inner panel — GSAP ScrollTrigger handles the pin; CSS sticky is a fallback */}
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
-        <div className="wrap" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div className="sec-head" data-reveal>
-            <div className="sec-num">{pa.num}</div>
-            <h2 className="sec-title">
-              {pa.title_l1}<br />{pa.title_l2} <em className="it">{pa.title_l3_it}</em>
-            </h2>
-            <p className="sec-intro">{pa.sub}</p>
-          </div>
+    <section className="phone-section border-t" id="phone" ref={sectionRef}>
+      <div className="wrap">
+        <div className="sec-head" data-reveal>
+          <div className="sec-num">{pa.num}</div>
+          <h2 className="sec-title">
+            {pa.title_l1}<br />{pa.title_l2} <em className="it">{pa.title_l3_it}</em>
+          </h2>
+          <p className="sec-intro">{pa.sub}</p>
+        </div>
 
-          <div className="phone-grid">
-            <div data-reveal>
-              <span className="phone-badge">
-                <span className="live" />{pa.badge}
-              </span>
-              <ul className="phone-features">
-                {pa.features.map((f, i) => (
-                  <li key={i}><span className="check">→</span>{f}</li>
-                ))}
-              </ul>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <a href="#contact" className="btn btn-primary">
-                  {pa.cta_demo} <span className="ar">→</span>
-                </a>
-                <a href="/services#phone-agent" className="btn btn-ghost">{pa.cta_more}</a>
-              </div>
+        <div className="phone-grid">
+          <div data-reveal>
+            <span className="phone-badge">
+              <span className="live" />{pa.badge}
+            </span>
+            <ul className="phone-features">
+              {pa.features.map((f, i) => (
+                <li key={i}><span className="check">→</span>{f}</li>
+              ))}
+            </ul>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <a href="#contact" className="btn btn-primary">
+                {pa.cta_demo} <span className="ar">→</span>
+              </a>
+              <a href="/services#phone-agent" className="btn btn-ghost">{pa.cta_more}</a>
             </div>
-
-            <PhoneFlow
-              steps={steps}
-              active={activeStep}
-              label={pa.flow_label}
-              rec={pa.flow_rec}
-            />
           </div>
+
+          <PhoneFlow
+            steps={steps}
+            active={activeStep}
+            label={pa.flow_label}
+            rec={pa.flow_rec}
+          />
         </div>
       </div>
     </section>

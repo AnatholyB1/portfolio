@@ -15,7 +15,7 @@ export function useReveals(deps: unknown[] = []) {
         entries.forEach((e) => {
           if (e.isIntersecting) {
             const delay = (e.target as HTMLElement).dataset.revealDelay;
-            if (delay) (e.target as HTMLElement).style.transitionDelay = delay;
+            if (delay) (e.target as HTMLElement).style.transitionDelay = `${Number(delay) * 0.15}s`;
             e.target.classList.add('in');
             io.unobserve(e.target);
           }
@@ -26,7 +26,7 @@ export function useReveals(deps: unknown[] = []) {
 
     const observed = new WeakSet<Element>();
     const sweep = () => {
-      document.querySelectorAll('[data-reveal]').forEach((el) => {
+      document.querySelectorAll('[data-reveal], .split').forEach((el) => {
         if (!observed.has(el)) {
           observed.add(el);
           io.observe(el);
