@@ -1,28 +1,41 @@
 'use client';
-
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Footer() {
   const { t } = useLanguage();
+  const f = t.landing.footer;
 
   return (
-    <footer className="py-8 px-4 border-t border-gray-800">
-      <div className="max-w-6xl mx-auto text-center">
-        <p className="text-gray-400">
-          © {new Date().getFullYear()} BRICON Anatholy. {t.footer.rights}
-        </p>
-        <p className="text-gray-500 text-sm mt-2">
-          {t.footer.built_with}
-        </p>
-        <div className="mt-3">
-          <a
-            href="/mentions-legales"
-            className="text-gray-600 hover:text-indigo-400 text-xs transition-colors underline underline-offset-2"
-          >
-            {t.footer.legal_notice}
-          </a>
+    <>
+      {/* Wordmark block — links to /services */}
+      <a href="/services" className="wordmark wordmark-link">
+        <div className="wrap">
+          <div className="wordmark-row">
+            <span>BRICON ANATHOLY</span>
+            <span className="it">·</span>
+            <span>services</span>
+            <span className="it">·</span>
+            <span>2026</span>
+          </div>
         </div>
-      </div>
-    </footer>
+      </a>
+
+      <footer>
+        <div className="wrap foot">
+          <div className="foot-brand">
+            <span className="glyph" />
+            BRICON ANATHOLY
+          </div>
+          <span className="label">{f.built}</span>
+          <div className="foot-links">
+            <a href="/#manifeste">Manifeste</a>
+            <a href="/#work">Work</a>
+            <a href="/services">Services</a>
+            <a href="/#contact">Contact</a>
+            <a href="/mentions-legales">{f.legal}</a>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
