@@ -188,7 +188,7 @@ body {
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Layout Utilities ────────────────────────────── */
-.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 .border-t { border-top: 1px solid var(--line); }
 .mono { font-family: var(--font-jetbrains), monospace; }
 .it { font-style: italic; }
@@ -205,21 +205,21 @@ body {
 .nav-links a { font-family: var(--font-bricolage), serif; font-size: 13px; color: var(--ink-dim); text-decoration: none; transition: color 0.2s; letter-spacing: 0.02em; }
 .nav-links a:hover { color: var(--ink); }
 .lang-switch { display: flex; gap: 4px; margin-left: 8px; }
-.lang-switch button { font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.1em; background: none; border: 1px solid var(--line); color: var(--ink-faint); padding: 3px 7px; cursor: pointer; transition: all 0.2s; }
+.lang-switch button { font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.1em; background: none; border: 1px solid var(--line); color: var(--ink-faint); padding: 3px 7px; cursor: pointer; transition: all 0.2s; border-radius: 3px; }
 .lang-switch button.active { color: var(--acid); border-color: var(--acid); }
 
 /* ─── Hero ────────────────────────────────────────── */
 .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; padding-top: 80px; background: var(--bg); overflow: hidden; }
-.hero-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.3; pointer-events: none; }
+.hero-grid { position: absolute; inset: 0; z-index: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.3; pointer-events: none; }
 .hero-top { display: flex; align-items: center; gap: 16px; padding: 32px 0 24px; }
-.pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border: 1px solid var(--line); font-size: 10px; letter-spacing: 0.12em; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border: 1px solid var(--line); font-size: 10px; letter-spacing: 0.12em; border-radius: 4px; }
 .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--acid); animation: pulse 2s infinite; }
 .hero-stage { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; flex: 1; padding: 20px 0; }
 .hero-title { font-family: var(--font-bricolage), serif; font-size: clamp(42px, 6vw, 88px); line-height: 1.02; letter-spacing: -0.03em; color: var(--ink); margin: 0 0 24px; font-optical-sizing: auto; }
 .hero-title .line { display: block; overflow: hidden; }
 .hero-sub { font-family: var(--font-manrope), sans-serif; font-size: 16px; line-height: 1.65; color: var(--ink-dim); max-width: 500px; margin: 0 0 32px; }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; font-family: var(--font-bricolage), serif; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; font-family: var(--font-bricolage), serif; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; border-radius: 6px; }
 .btn-primary { background: var(--acid); color: var(--bg); font-weight: 600; }
 .btn-primary:hover { opacity: 0.88; }
 .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
@@ -235,7 +235,7 @@ body {
 .it-desc { font-family: var(--font-manrope), sans-serif; font-size: 11px; color: var(--ink-faint); }
 
 /* ─── Section Shell ───────────────────────────────── */
-.sec { padding: 96px 0; }
+.sec { padding: 96px 0; background: var(--bg); position: relative; z-index: 1; }
 .sec-head { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 24px 40px; margin-bottom: 64px; }
 .sec-num { font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--ink-faint); margin-top: 6px; }
 .sec-title { font-family: var(--font-bricolage), serif; font-size: clamp(32px, 4vw, 56px); line-height: 1.08; letter-spacing: -0.025em; color: var(--ink); margin: 0; grid-column: 2; }
@@ -254,7 +254,7 @@ body {
 .work-name { font-family: var(--font-bricolage), serif; font-size: 22px; letter-spacing: -0.01em; color: var(--ink); }
 .work-desc { font-family: var(--font-manrope), sans-serif; font-size: 13px; color: var(--ink-dim); line-height: 1.6; }
 .work-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tg { font-family: var(--font-jetbrains), monospace; font-size: 9px; letter-spacing: 0.12em; padding: 3px 7px; border: 1px solid var(--line); color: var(--ink-faint); }
+.tg { font-family: var(--font-jetbrains), monospace; font-size: 9px; letter-spacing: 0.12em; padding: 3px 7px; border: 1px solid var(--line); color: var(--ink-faint); border-radius: 3px; }
 .work-go { color: var(--acid); font-size: 18px; }
 .work-bridge { display: flex; align-items: center; justify-content: space-between; padding: 40px; border: 1px solid var(--line); text-decoration: none; color: inherit; transition: border-color 0.2s; }
 .work-bridge:hover { border-color: var(--acid); }
@@ -266,7 +266,7 @@ body {
 /* ─── Phone Agent ─────────────────────────────────── */
 .phone-section { padding: 0; }
 .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; padding: 48px 0; }
-.phone-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--acid); border: 1px solid var(--acid); padding: 4px 10px; margin-bottom: 24px; }
+.phone-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--acid); border: 1px solid var(--acid); padding: 4px 10px; margin-bottom: 24px; border-radius: 4px; }
 .live { width: 6px; height: 6px; border-radius: 50%; background: var(--acid); animation: pulse 1.5s infinite; }
 .phone-features { list-style: none; margin: 0 0 32px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .phone-features li { font-family: var(--font-manrope), sans-serif; font-size: 15px; color: var(--ink-dim); display: flex; gap: 12px; align-items: baseline; }
@@ -298,14 +298,14 @@ body {
 .form { display: flex; flex-direction: column; gap: 20px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--ink-faint); text-transform: uppercase; }
-.field input, .field select, .field textarea { background: transparent; border: 1px solid var(--line); color: var(--ink); padding: 12px 14px; font-family: var(--font-manrope), sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
+.field input, .field select, .field textarea { background: transparent; border: 1px solid var(--line); color: var(--ink); padding: 12px 14px; font-family: var(--font-manrope), sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%; box-sizing: border-box; border-radius: 4px; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--acid); }
 .field select option { background: var(--bg); }
 .field textarea { min-height: 120px; resize: vertical; }
 .form-foot { display: flex; justify-content: space-between; align-items: center; }
 .ok { font-family: var(--font-jetbrains), monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-faint); }
 .ok.success { color: var(--acid); }
-.submit { background: var(--acid); color: var(--bg); border: none; padding: 12px 28px; font-family: var(--font-bricolage), serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+.submit { background: var(--acid); color: var(--bg); border: none; padding: 12px 28px; font-family: var(--font-bricolage), serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; border-radius: 6px; }
 .submit:disabled { opacity: 0.5; cursor: default; }
 
 /* ─── Footer ──────────────────────────────────────── */
