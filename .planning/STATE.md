@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: — Visual Redesign (Selenium Phase 02)
 status: active
-stopped_at: Completed 02-05-PLAN.md (Navbar+Footer rebuild, page.tsx assembly, agency metadata)
-last_updated: "2026-05-16T22:30:00Z"
+stopped_at: 02-06 Task 1 complete — landing CSS added to globals.css; awaiting human-verify checkpoint
+last_updated: "2026-05-16T22:45:00Z"
 last_activity: 2026-05-16
 progress:
   total_phases: 4
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 2 of 4 (Landing Page Rebuild)
-Plan: 5 of 6 in current phase — 02-05 complete
-Status: Active — Wave 3 complete. All 7 sections assembled. npm run build exits 0. Advance to 02-06.
+Plan: 6 of 6 in current phase — 02-06 Task 1 complete, awaiting human checkpoint
+Status: Active — Wave 4 in progress. Landing CSS added to globals.css. npm run build exits 0. Awaiting human visual verification.
 Last activity: 2026-05-16
 
 Progress: [████████░░] 82%
@@ -88,6 +88,6 @@ None — all Phase 1 deferred items resolved.
 
 ## Session Continuity
 
-Last session: 2026-05-16T22:30:00Z
-Stopped at: Completed 02-05-PLAN.md (Navbar+Footer rebuild, page.tsx assembly, agency metadata)
-Resume file: None — advance to 02-06
+Last session: 2026-05-16T22:45:00Z
+Stopped at: 02-06 Task 1 committed (c323025) — landing CSS in globals.css, build passes
+Resume file: None — awaiting human-verify checkpoint approval, then finalize 02-06-SUMMARY.md
