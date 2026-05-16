@@ -11,7 +11,7 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
 ## Phases
 
 - [x] **Phase 1: Design System Foundation** — CSS vars, fonts, cursor, scroll-reveal, cinema intro wired globally
-- [ ] **Phase 2: Landing Page Rebuild** — Full page.tsx rebuild with all hero, editorial, and contact sections
+- [x] **Phase 2: Landing Page Rebuild** — Full page.tsx rebuild with all hero, editorial, and contact sections
 - [ ] **Phase 3: Services Page Rebuild** — Full services/page.tsx with all 9 sections and i18n
 - [ ] **Phase 4: Rethemes + QA** — /mentions-legales and /demo retheme, i18n wiring, integration QA
 
@@ -52,7 +52,7 @@ Plans:
 - [x] 02-03-PLAN.md — HeroSection (Canvas icosphere + title + stat grid) + Manifeste + Realisations
 - [x] 02-04-PLAN.md — PhoneAgent (scroll-driven sticky + SVG particle) + Partners ticker + ContactSection
 - [x] 02-05-PLAN.md — Navbar rebuild + Footer rebuild + page.tsx rewrite + SEO metadata
-- [ ] 02-06-PLAN.md — Landing CSS in globals.css + human verification checkpoint
+- [x] 02-06-PLAN.md — Landing CSS in globals.css + human verification checkpoint
 **UI hint**: yes
 
 ### Phase 3: Services Page Rebuild
@@ -86,6 +86,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
-| 2. Landing Page Rebuild | 5/6 | In Progress | - |
+| 2. Landing Page Rebuild | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
