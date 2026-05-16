@@ -45,7 +45,14 @@ Plans:
   2. Manifeste, Réalisations (4 project cards), Phone Agent (pinned scroll with SVG particle flow), Partners ticker, Contact form (4 fields), and Footer are all visible and functional in sequence
   3. No personal bio, no skills bars, no "Hire me" CTA, and no StarkDisplay Iron Man component appear anywhere on the page
   4. SEO metadata reflects agency positioning — no freelance or hire-developer keywords in page title or meta description
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 02-01-PLAN.md — i18n landing namespace extension + projects data file
+- [ ] 02-02-PLAN.md — Install gsap + delete 8 freelance-era component files
+- [ ] 02-03-PLAN.md — HeroSection (Canvas icosphere + title + stat grid) + Manifeste + Realisations
+- [ ] 02-04-PLAN.md — PhoneAgent (scroll-driven sticky + SVG particle) + Partners ticker + ContactSection
+- [ ] 02-05-PLAN.md — Navbar rebuild + Footer rebuild + page.tsx rewrite + SEO metadata
+- [ ] 02-06-PLAN.md — Landing CSS in globals.css + human verification checkpoint
 **UI hint**: yes
 
 ### Phase 3: Services Page Rebuild
@@ -79,6 +86,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
-| 2. Landing Page Rebuild | 0/TBD | Not started | - |
+| 2. Landing Page Rebuild | 0/6 | Planned | - |
 | 3. Services Page Rebuild | 0/TBD | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
