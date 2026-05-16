@@ -692,7 +692,7 @@ const fr: Translations = {
       sub: "On répond sous 24h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes et ce qui aurait du sens.",
       info: [
         { k: 'Email', v: 'business@contact-selenium-studio.com' },
-        { k: 'Téléphone', v: '+33 (0)6 — sur demande' },
+        { k: 'Téléphone', v: '+33 (0)6 07 18 41 33' },
         { k: 'Adresse', v: 'Tours, France · à distance partout' },
         { k: 'Disponibilité', v: 'Nouveaux projets dès juin 2026' },
       ],
@@ -1142,7 +1142,7 @@ const en: Translations = {
       sub: 'Reply within 24 business hours. First call free, no strings, to understand where you stand and what would make sense.',
       info: [
         { k: 'Email', v: 'business@contact-selenium-studio.com' },
-        { k: 'Phone', v: '+33 (0)6 — on request' },
+        { k: 'Phone', v: '+33 (0)6 07 18 41 33' },
         { k: 'Address', v: 'Tours, France · remote everywhere' },
         { k: 'Availability', v: 'New projects from June 2026' },
       ],
@@ -1588,7 +1588,7 @@ const th: Translations = {
       sub: 'ตอบใน 24 ชม ทำการ ปรึกษาครั้งแรกฟรี ไม่มีพันธะ เพื่อเข้าใจว่าคุณอยู่ตรงไหนและอะไรเหมาะกับคุณ',
       info: [
         { k: 'อีเมล', v: 'business@contact-selenium-studio.com' },
-        { k: 'โทรศัพท์', v: '+33 (0)6 — ตามที่ขอ' },
+        { k: 'โทรศัพท์', v: '+33 (0)6 07 18 41 33' },
         { k: 'ที่อยู่', v: 'ตูร์ ฝรั่งเศส · รีโมททุกที่' },
         { k: 'ความพร้อม', v: 'โปรเจกต์ใหม่ตั้งแต่ มิ.ย. 2026' },
       ],
