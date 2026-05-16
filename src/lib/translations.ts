@@ -7,6 +7,8 @@ export interface Translations {
     services: string;
     projects: string;
     contact: string;
+    manifeste: string;
+    work: string;
   };
   hero: {
     title: string;
@@ -185,6 +187,86 @@ export interface Translations {
       ajmg_role: string;
     };
   };
+  landing: {
+    hero: {
+      pill: string;
+      title_l1: string;
+      title_l2: string;
+      title_l2_it: string;
+      title_l3: string;
+      sub: string;
+      cta_primary: string;
+      cta_secondary: string;
+      stat_1_n: string; stat_1_l: string; stat_1_d: string;
+      stat_2_n: string; stat_2_l: string; stat_2_d: string;
+      stat_3_n: string; stat_3_l: string; stat_3_d: string;
+      stat_4_n: string; stat_4_l: string; stat_4_d: string;
+      canvas_l: string;
+      canvas_r: string;
+    };
+    manifeste: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      p1: string;
+      p2: string;
+      quote: string;
+      p3: string;
+      p4: string;
+    };
+    work: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      items: { name: string; desc: string; tags: string[]; year: string }[];
+    };
+    phone: {
+      num: string;
+      badge: string;
+      title_l1: string;
+      title_l2: string;
+      title_l3_it: string;
+      sub: string;
+      features: string[];
+      cta_demo: string;
+      cta_more: string;
+      flow_label: string;
+      flow_rec: string;
+      flow_steps: { t: string; k: string; v: string }[];
+    };
+    partners: {
+      title: string;
+      items: { name: string; role: string; color: string }[];
+    };
+    contact: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      sub: string;
+      info: { k: string; v: string }[];
+      form: {
+        name_l: string;
+        name_p: string;
+        email_l: string;
+        email_p: string;
+        type_l: string;
+        type_o: string[];
+        msg_l: string;
+        msg_p: string;
+        submit: string;
+        submitting: string;
+        success: string;
+        note: string;
+      };
+    };
+    footer: {
+      built: string;
+      legal: string;
+      rights: string;
+    };
+  };
 }
 
 const fr: Translations = {
@@ -194,6 +276,8 @@ const fr: Translations = {
     services: 'Services',
     projects: 'Projets',
     contact: 'Contact',
+    manifeste: 'Manifeste',
+    work: 'Réalisations',
   },
   hero: {
     title: 'Développeur Full Stack & Ingénieur IA',
@@ -526,6 +610,113 @@ const fr: Translations = {
       ajmg_role: 'Service de Conseil',
     },
   },
+  landing: {
+    hero: {
+      pill: 'AGENCE · TOURS, FR · DISPONIBLE EN MAI 2026',
+      title_l1: 'Des outils',
+      title_l2: 'qui ',
+      title_l2_it: 'travaillent',
+      title_l3: 'pour vos clients.',
+      sub: "On conçoit des sites, des outils de gestion et des agents IA pour les commerces, restaurants et services. Pas du sur-mesure inutile : ce qui vous fait gagner du temps, des appels et des ventes.",
+      cta_primary: 'Voir nos offres',
+      cta_secondary: 'Discutons de votre projet',
+      stat_1_n: '06', stat_1_l: 'Partenaires actifs', stat_1_d: 'Restaurants, écoles, indépendants',
+      stat_2_n: '24h', stat_2_l: 'Première réponse', stat_2_d: 'Audit téléphonique offert',
+      stat_3_n: '100%', stat_3_l: 'Code possédé', stat_3_d: 'Vous gardez tout, dès le jour 1',
+      stat_4_n: '1.5x', stat_4_l: 'Ratio appels traités', stat_4_d: 'Avec un phone agent en place',
+      canvas_l: 'MODEL · BA-01 · ATELIER',
+      canvas_r: 'ROTATION · 0.4 RPM',
+    },
+    manifeste: {
+      num: '01 / 05',
+      title_l1: 'Sites, outils,',
+      title_l2_it: 'agents.',
+      intro: "Trois choses qu'on fait — pour une seule chose qu'on vise.",
+      p1: "Vous êtes patron de pizzeria, gérante de salon, dirigeant d'école de danse. Vous voulez un outil qui marche, pas un projet tech.",
+      p2: "On vient avec une seule promesse : on construit ce que vos clients vont vraiment utiliser. Le reste, on l'enlève.",
+      quote: "« Un site beau, c'est bien. Un site qui rapporte, c'est mieux. »",
+      p3: "Aujourd'hui, on construit surtout des agents IA — phone agents qui répondent à vos clients, assistants qui prennent les commandes, automatisations qui font le boulot pendant que vous vivez.",
+      p4: "Demain, on construira ce dont vous aurez besoin. Le métier reste le même : faire des outils utiles.",
+    },
+    work: {
+      num: '02 / 05',
+      title_l1: 'Quelques',
+      title_l2_it: 'réalisations.',
+      intro: 'Six partenaires, six métiers différents, une même méthode : on règle un vrai problème métier.',
+      items: [
+        { name: 'Feuillette', desc: 'Phone agent pour boulangerie — prise de commande automatique, intégration CRM, suivi temps réel.', tags: ['IA', 'VOIX', 'CRM'], year: '2025' },
+        { name: 'Gecko Cabane', desc: 'Site vitrine + réservation pour restaurant. Charte sur-mesure, hébergement managé.', tags: ['SITE', 'RESA'], year: '2024' },
+        { name: 'Les Folies Temps Danse', desc: "Plateforme inscription école de danse — outils de gestion intégrés.", tags: ['WEB', 'GESTION'], year: '2024' },
+        { name: 'Ghjulianu Codani', desc: 'Portfolio professionnel — design éditorial, intégration soignée.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
+      ],
+    },
+    phone: {
+      num: '03 / 05',
+      badge: 'LIVE · PHONE AGENT',
+      title_l1: 'Vos clients',
+      title_l2: 'appellent,',
+      title_l3_it: 'on répond.',
+      sub: "Un agent vocal IA, branché à votre CRM ou votre cahier de commandes. Il répond, comprend, confirme — pendant que vous travaillez.",
+      features: [
+        'Réponse instantanée 24/7, même quand vous êtes en service',
+        'Prise de commande complète avec confirmation SMS',
+        'Branché à votre outil (CRM, agenda, gestion stocks)',
+        'Voix française naturelle, ton choisi par vous',
+      ],
+      cta_demo: 'Écouter une démo',
+      cta_more: 'Comment ça marche',
+      flow_label: 'FLUX TEMPS RÉEL',
+      flow_rec: 'REC · 02:14',
+      flow_steps: [
+        { t: '02:14', k: 'Appel reçu', v: '+33 6 12 — Mme Dubois' },
+        { t: '02:14', k: 'VAPI ↔ Claude', v: 'Comprend la commande' },
+        { t: '02:15', k: 'MCP → CRM', v: "Crée l'ordre #2418" },
+        { t: '02:15', k: 'Confirmation', v: 'SMS envoyé · ✓' },
+      ],
+    },
+    partners: {
+      title: 'ILS NOUS FONT CONFIANCE — DEPUIS 2023',
+      items: [
+        { name: 'Selenium Studio', role: 'STUDIO ASSOCIÉ', color: '#C4F542' },
+        { name: 'Gecko Cabane', role: 'RESTAURANT', color: '#E07856' },
+        { name: 'Victor Verissimo', role: 'ARTIST PORTFOLIO', color: '#9A9690' },
+        { name: 'Ghjulianu Codani', role: 'PROFESSIONAL', color: '#C4F542' },
+        { name: 'Les Folies Temps Danse', role: 'ÉCOLE DE DANSE', color: '#E07856' },
+        { name: 'AJMG·EXP', role: 'EXPERTISE', color: '#9A9690' },
+      ],
+    },
+    contact: {
+      num: '05 / 05',
+      title_l1: 'Un projet ?',
+      title_l2_it: 'Parlons-en.',
+      sub: "On répond sous 24h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes et ce qui aurait du sens.",
+      info: [
+        { k: 'Email', v: 'business@contact-selenium-studio.com' },
+        { k: 'Téléphone', v: '+33 (0)6 — sur demande' },
+        { k: 'Adresse', v: 'Tours, France · à distance partout' },
+        { k: 'Disponibilité', v: 'Nouveaux projets dès juin 2026' },
+      ],
+      form: {
+        name_l: 'Vous êtes',
+        name_p: 'Prénom + Nom',
+        email_l: 'Email',
+        email_p: 'vous@société.fr',
+        type_l: 'Type de projet',
+        type_o: ['Site vitrine', 'Outil de gestion', 'Agent IA / Phone agent', 'Refonte / migration', 'Autre — à discuter'],
+        msg_l: 'Le projet en 2-3 lignes',
+        msg_p: 'Décrivez ce qui vous bloque ou ce que vous voulez construire…',
+        submit: 'Envoyer',
+        submitting: 'Envoi…',
+        success: 'Reçu — réponse sous 24h.',
+        note: "On ne stocke rien d'autre que ce mail.",
+      },
+    },
+    footer: {
+      built: 'Conçu et codé à Tours.',
+      legal: 'Mentions légales',
+      rights: 'Tous droits réservés.',
+    },
+  },
 };
 
 const en: Translations = {
@@ -535,6 +726,8 @@ const en: Translations = {
     services: 'Services',
     projects: 'Projects',
     contact: 'Contact',
+    manifeste: 'Manifesto',
+    work: 'Work',
   },
   hero: {
     title: 'Full Stack Developer & AI Engineer',
@@ -867,6 +1060,113 @@ const en: Translations = {
       ajmg_role: 'Consulting Service',
     },
   },
+  landing: {
+    hero: {
+      pill: 'AGENCY · TOURS, FR · AVAILABLE FROM MAY 2026',
+      title_l1: 'Tools',
+      title_l2: 'that ',
+      title_l2_it: 'work',
+      title_l3: 'for your customers.',
+      sub: 'We design websites, internal tools and AI agents for restaurants, shops and local services. No useless custom work — just what saves you time, calls and sales.',
+      cta_primary: 'See our offers',
+      cta_secondary: "Let's discuss your project",
+      stat_1_n: '06', stat_1_l: 'Active partners', stat_1_d: 'Restaurants, schools, makers',
+      stat_2_n: '24h', stat_2_l: 'First reply', stat_2_d: 'Free phone audit',
+      stat_3_n: '100%', stat_3_l: 'You own the code', stat_3_d: 'From day one',
+      stat_4_n: '1.5x', stat_4_l: 'Calls handled ratio', stat_4_d: 'With a phone agent live',
+      canvas_l: 'MODEL · BA-01 · STUDIO',
+      canvas_r: 'ROTATION · 0.4 RPM',
+    },
+    manifeste: {
+      num: '01 / 05',
+      title_l1: 'Sites, tools,',
+      title_l2_it: 'agents.',
+      intro: 'Three things we make — for a single thing we aim at.',
+      p1: 'You run a pizzeria, a salon, a dance school. You want a tool that works, not a tech project.',
+      p2: 'One promise: we build what your customers will actually use. The rest is removed.',
+      quote: '\u201cA beautiful site is fine. A site that earns is better.\u201d',
+      p3: "Today, we mostly build AI agents — phone agents that answer your customers, assistants that take orders, automations that work while you live.",
+      p4: "Tomorrow, we'll build what you'll need. The craft stays the same: useful tools.",
+    },
+    work: {
+      num: '02 / 05',
+      title_l1: 'Selected',
+      title_l2_it: 'work.',
+      intro: 'Six partners, six trades, one method: solve a real business problem.',
+      items: [
+        { name: 'Feuillette', desc: 'Phone agent for a bakery — automatic order taking, CRM integration, real-time tracking.', tags: ['AI', 'VOICE', 'CRM'], year: '2025' },
+        { name: 'Gecko Cabane', desc: 'Restaurant site + booking. Custom design, managed hosting.', tags: ['SITE', 'BOOKING'], year: '2024' },
+        { name: 'Les Folies Temps Danse', desc: 'Dance school enrolment platform — integrated management tools.', tags: ['WEB', 'TOOLS'], year: '2024' },
+        { name: 'Ghjulianu Codani', desc: 'Professional portfolio — editorial design, careful build.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
+      ],
+    },
+    phone: {
+      num: '03 / 05',
+      badge: 'LIVE · PHONE AGENT',
+      title_l1: 'Your customers',
+      title_l2: 'call,',
+      title_l3_it: 'we answer.',
+      sub: 'An AI voice agent, wired into your CRM or order book. It answers, understands, confirms — while you work.',
+      features: [
+        'Instant 24/7 reply, even mid-service',
+        'Full order capture with SMS confirmation',
+        'Wired into your tool (CRM, calendar, stock)',
+        'Natural French voice, tone of your choice',
+      ],
+      cta_demo: 'Hear a demo',
+      cta_more: 'How it works',
+      flow_label: 'REAL-TIME FLOW',
+      flow_rec: 'REC · 02:14',
+      flow_steps: [
+        { t: '02:14', k: 'Call received', v: '+33 6 12 — Mrs Dubois' },
+        { t: '02:14', k: 'VAPI ↔ Claude', v: 'Understands the order' },
+        { t: '02:15', k: 'MCP → CRM', v: 'Creates order #2418' },
+        { t: '02:15', k: 'Confirmation', v: 'SMS sent · \u2713' },
+      ],
+    },
+    partners: {
+      title: 'TRUSTED BY — SINCE 2023',
+      items: [
+        { name: 'Selenium Studio', role: 'PARTNER STUDIO', color: '#C4F542' },
+        { name: 'Gecko Cabane', role: 'RESTAURANT', color: '#E07856' },
+        { name: 'Victor Verissimo', role: 'ARTIST PORTFOLIO', color: '#9A9690' },
+        { name: 'Ghjulianu Codani', role: 'PROFESSIONAL', color: '#C4F542' },
+        { name: 'Les Folies Temps Danse', role: 'DANCE SCHOOL', color: '#E07856' },
+        { name: 'AJMG·EXP', role: 'EXPERTISE', color: '#9A9690' },
+      ],
+    },
+    contact: {
+      num: '05 / 05',
+      title_l1: 'Got a project?',
+      title_l2_it: "Let's talk.",
+      sub: 'Reply within 24 business hours. First call free, no strings, to understand where you stand and what would make sense.',
+      info: [
+        { k: 'Email', v: 'business@contact-selenium-studio.com' },
+        { k: 'Phone', v: '+33 (0)6 — on request' },
+        { k: 'Address', v: 'Tours, France · remote everywhere' },
+        { k: 'Availability', v: 'New projects from June 2026' },
+      ],
+      form: {
+        name_l: 'You are',
+        name_p: 'First + last name',
+        email_l: 'Email',
+        email_p: 'you@company.com',
+        type_l: 'Project type',
+        type_o: ['Marketing site', 'Internal tool', 'AI / Phone agent', 'Rebuild / migration', 'Other — let\'s talk'],
+        msg_l: 'Project in 2-3 lines',
+        msg_p: "Describe what's blocking you or what you want to build\u2026",
+        submit: 'Send',
+        submitting: 'Sending\u2026',
+        success: 'Received — reply within 24h.',
+        note: 'We store nothing but this email.',
+      },
+    },
+    footer: {
+      built: 'Designed and coded in Tours.',
+      legal: 'Legal notice',
+      rights: 'All rights reserved.',
+    },
+  },
 };
 
 const th: Translations = {
@@ -876,6 +1176,8 @@ const th: Translations = {
     services: 'บริการ',
     projects: 'โปรเจกต์',
     contact: 'ติดต่อ',
+    manifeste: 'แถลงการณ์',
+    work: 'ผลงาน',
   },
   hero: {
     title: 'นักพัฒนา Full Stack & วิศวกร AI',
@@ -1202,6 +1504,113 @@ const th: Translations = {
       folies_role: 'คณะนาฏศิลป์',
       ghjulianu_role: 'ศิลปินคอร์ซิกา',
       ajmg_role: 'บริการที่ปรึกษา',
+    },
+  },
+  landing: {
+    hero: {
+      pill: 'เอเจนซี่ · ตูร์ ฝรั่งเศส · พร้อมตั้งแต่พ.ค. 2026',
+      title_l1: 'เครื่องมือ',
+      title_l2: 'ที่ ',
+      title_l2_it: 'ทำงาน',
+      title_l3: 'เพื่อลูกค้าของคุณ',
+      sub: 'เราออกแบบเว็บไซต์ เครื่องมือจัดการ และ AI agents สำหรับร้านอาหาร ร้านค้า และบริการท้องถิ่น ไม่มีของฟุ่มเฟือย — มีแต่สิ่งที่ช่วยประหยัดเวลา รับสายและเพิ่มยอดขาย',
+      cta_primary: 'ดูบริการ',
+      cta_secondary: 'คุยเรื่องโปรเจกต์',
+      stat_1_n: '06', stat_1_l: 'พาร์ทเนอร์ปัจจุบัน', stat_1_d: 'ร้านอาหาร โรงเรียน อิสระ',
+      stat_2_n: '24ชม', stat_2_l: 'ตอบกลับแรก', stat_2_d: 'ปรึกษาฟรี',
+      stat_3_n: '100%', stat_3_l: 'เป็นเจ้าของโค้ด', stat_3_d: 'ตั้งแต่วันแรก',
+      stat_4_n: '1.5x', stat_4_l: 'อัตรารับสาย', stat_4_d: 'เมื่อมี phone agent',
+      canvas_l: 'โมเดล · BA-01',
+      canvas_r: 'หมุน · 0.4 RPM',
+    },
+    manifeste: {
+      num: '01 / 05',
+      title_l1: 'เว็บไซต์ เครื่องมือ',
+      title_l2_it: 'AI agents',
+      intro: 'สามอย่างที่เราทำ — เพื่อเป้าหมายเดียว',
+      p1: 'คุณเป็นเจ้าของพิซเซเรีย ผู้จัดการร้านเสริมสวย ผู้บริหารโรงเรียนสอนเต้น คุณต้องการเครื่องมือที่ใช้ได้จริง',
+      p2: 'เราสัญญาแค่อย่างเดียว: สร้างสิ่งที่ลูกค้าของคุณจะใช้จริง ส่วนอื่นๆเราตัดทิ้ง',
+      quote: '« เว็บสวยก็ดี เว็บที่สร้างรายได้ดีกว่า »',
+      p3: 'ตอนนี้เราสร้าง AI agents เป็นหลัก — phone agents ที่รับสายลูกค้า ผู้ช่วยรับออเดอร์ ระบบอัตโนมัติที่ทำงานแทนคุณ',
+      p4: 'พรุ่งนี้เราจะสร้างสิ่งที่คุณต้องการ ฝีมือยังเหมือนเดิม: เครื่องมือที่มีประโยชน์',
+    },
+    work: {
+      num: '02 / 05',
+      title_l1: 'ผลงาน',
+      title_l2_it: 'ที่คัดสรร',
+      intro: 'พาร์ทเนอร์ 6 ราย 6 อาชีพ วิธีเดียวกัน: แก้ปัญหาทางธุรกิจจริง',
+      items: [
+        { name: 'Feuillette', desc: 'Phone agent สำหรับร้านเบเกอรี่ — รับออเดอร์อัตโนมัติ', tags: ['AI', 'เสียง', 'CRM'], year: '2025' },
+        { name: 'Gecko Cabane', desc: 'เว็บร้านอาหาร + จองโต๊ะ ดีไซน์เฉพาะ โฮสติ้งดูแลให้', tags: ['เว็บ', 'จอง'], year: '2024' },
+        { name: 'Les Folies Temps Danse', desc: 'แพลตฟอร์มลงทะเบียนโรงเรียนสอนเต้น', tags: ['เว็บ', 'จัดการ'], year: '2024' },
+        { name: 'Ghjulianu Codani', desc: 'Portfolio ระดับมืออาชีพ', tags: ['เว็บ', 'บรรณาธิการ'], year: '2025' },
+      ],
+    },
+    phone: {
+      num: '03 / 05',
+      badge: 'LIVE · PHONE AGENT',
+      title_l1: 'ลูกค้าโทรมา',
+      title_l2: '',
+      title_l3_it: 'เรารับสาย',
+      sub: 'AI voice agent ที่เชื่อมกับ CRM หรือสมุดออเดอร์ของคุณ มันรับสาย เข้าใจ ยืนยัน — ขณะที่คุณทำงาน',
+      features: [
+        'ตอบทันที 24/7 แม้ระหว่างให้บริการ',
+        'รับออเดอร์ครบพร้อมยืนยันทาง SMS',
+        'เชื่อมกับเครื่องมือคุณ (CRM ปฏิทิน สต็อก)',
+        'เสียงฝรั่งเศสธรรมชาติ โทนตามที่คุณเลือก',
+      ],
+      cta_demo: 'ฟังเดโม',
+      cta_more: 'ทำงานอย่างไร',
+      flow_label: 'FLUX แบบเรียลไทม์',
+      flow_rec: 'REC · 02:14',
+      flow_steps: [
+        { t: '02:14', k: 'รับสาย', v: '+33 6 12 — คุณดูบัวส์' },
+        { t: '02:14', k: 'VAPI ↔ Claude', v: 'เข้าใจออเดอร์' },
+        { t: '02:15', k: 'MCP → CRM', v: 'สร้างออเดอร์ #2418' },
+        { t: '02:15', k: 'ยืนยัน', v: 'ส่ง SMS · ✓' },
+      ],
+    },
+    partners: {
+      title: 'ลูกค้าที่ไว้วางใจ — ตั้งแต่ 2023',
+      items: [
+        { name: 'Selenium Studio', role: 'STUDIO หุ้นส่วน', color: '#C4F542' },
+        { name: 'Gecko Cabane', role: 'ร้านอาหาร', color: '#E07856' },
+        { name: 'Victor Verissimo', role: 'ARTIST PORTFOLIO', color: '#9A9690' },
+        { name: 'Ghjulianu Codani', role: 'PROFESSIONAL', color: '#C4F542' },
+        { name: 'Les Folies Temps Danse', role: 'โรงเรียนสอนเต้น', color: '#E07856' },
+        { name: 'AJMG·EXP', role: 'EXPERTISE', color: '#9A9690' },
+      ],
+    },
+    contact: {
+      num: '05 / 05',
+      title_l1: 'มีโปรเจกต์?',
+      title_l2_it: 'คุยกัน',
+      sub: 'ตอบใน 24 ชม ทำการ ปรึกษาครั้งแรกฟรี ไม่มีพันธะ เพื่อเข้าใจว่าคุณอยู่ตรงไหนและอะไรเหมาะกับคุณ',
+      info: [
+        { k: 'อีเมล', v: 'business@contact-selenium-studio.com' },
+        { k: 'โทรศัพท์', v: '+33 (0)6 — ตามที่ขอ' },
+        { k: 'ที่อยู่', v: 'ตูร์ ฝรั่งเศส · รีโมททุกที่' },
+        { k: 'ความพร้อม', v: 'โปรเจกต์ใหม่ตั้งแต่ มิ.ย. 2026' },
+      ],
+      form: {
+        name_l: 'คุณคือ',
+        name_p: 'ชื่อ + นามสกุล',
+        email_l: 'อีเมล',
+        email_p: 'you@company.com',
+        type_l: 'ประเภทโปรเจกต์',
+        type_o: ['เว็บไซต์การตลาด', 'เครื่องมือภายใน', 'AI / Phone agent', 'สร้างใหม่ / ย้ายระบบ', 'อื่นๆ — มาคุยกัน'],
+        msg_l: 'โปรเจกต์ใน 2-3 บรรทัด',
+        msg_p: 'อธิบายสิ่งที่ติดขัด หรือสิ่งที่อยากสร้าง…',
+        submit: 'ส่ง',
+        submitting: 'กำลังส่ง…',
+        success: 'รับเรียบร้อย — ตอบใน 24ชม',
+        note: 'เราไม่เก็บอะไรนอกจากอีเมลนี้',
+      },
+    },
+    footer: {
+      built: 'ออกแบบและเขียนโค้ดที่ตูร์',
+      legal: 'ข้อกำหนดทางกฎหมาย',
+      rights: 'สงวนลิขสิทธิ์',
     },
   },
 };
