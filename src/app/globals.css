@@ -395,3 +395,174 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
   .split .line span { transform: none !important; transition: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ─── Services Page ───
+   All classes used by the 9 services section components.
+   CSS vars only — never hardcode hex.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Services Hero ───────────────────────────────── */
+.s-hero { min-height: 100svh; display: flex; flex-direction: column; padding: 0; background: var(--bg); position: relative; overflow: hidden; }
+.s-hero-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.4; pointer-events: none; }
+.s-hero-top { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; }
+.crumb-back { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-dim); text-decoration: none; letter-spacing: 0.1em; }
+.crumb-back:hover { color: var(--ink); }
+.s-pill { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-dim); letter-spacing: 0.1em; }
+.s-hero-title { font-family: var(--font-display); font-size: clamp(4rem, 12vw, 10rem); line-height: 0.95; color: var(--ink); padding: 2rem 1.5rem; }
+.s-hero-title .it { font-style: italic; color: var(--acid); }
+.s-hero-bottom { display: flex; flex-direction: column; gap: 2rem; padding: 2rem 1.5rem; border-top: 1px solid var(--line); }
+.s-hero-sub { font-size: 1rem; color: var(--ink-dim); max-width: 480px; line-height: 1.7; margin-bottom: 1.5rem; }
+.s-hero-ctas { display: flex; flex-wrap: wrap; gap: 1rem; }
+.s-hero-meta { display: flex; flex-direction: column; gap: 0.25rem; }
+.s-hero-meta .k { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; }
+.s-hero-meta .v { font-family: var(--font-display); font-size: 1.75rem; color: var(--ink); line-height: 1; }
+
+@media (min-width: 900px) {
+  .s-hero-bottom { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+  .s-hero-title { font-size: clamp(6rem, 14vw, 12rem); }
+}
+
+/* ─── Shared button overrides for services page ───── */
+/* .btn, .btn-primary, .btn-ghost, .ar defined in Phase 2.
+   Services page uses square (border-radius: 0) buttons per design.
+   Override only what differs: use a services-scoped selector. */
+.s-hero .btn,
+.phone-cta .btn,
+.final-buttons .btn {
+  border-radius: 0;
+}
+
+/* Checkmark / arrow accent helper */
+.c { color: var(--acid); font-family: var(--font-mono); }
+
+/* ─── Problem Section ─────────────────────────────── */
+.problem-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.problem-card { background: var(--bg); padding: 2rem; }
+.pn { display: block; font-family: var(--font-mono); font-size: 2rem; color: var(--warm); margin-bottom: 1rem; line-height: 1; }
+.problem-card h3 { font-family: var(--font-display); font-size: 1.3rem; color: var(--ink); margin-bottom: 0.75rem; }
+.problem-card p { color: var(--ink-dim); line-height: 1.7; }
+.problem-good { margin-top: 3rem; padding: 1.5rem 2rem; border-left: 3px solid var(--acid); color: var(--ink); font-size: 1rem; }
+
+@media (min-width: 900px) {
+  .problem-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── Approach Section ────────────────────────────── */
+.approach { display: grid; gap: 3rem; }
+.benefits { display: flex; flex-direction: column; gap: 0.75rem; }
+.benefit { display: flex; gap: 1rem; align-items: baseline; color: var(--ink-dim); font-size: 1rem; line-height: 1.6; }
+.benefit .c { color: var(--acid); flex-shrink: 0; }
+.approach-cards { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.approach-card { background: var(--bg); padding: 1.5rem 2rem; display: flex; gap: 1.5rem; align-items: flex-start; }
+.approach-card .idx { font-family: var(--font-mono); font-size: 1.5rem; color: var(--acid); opacity: 0.4; flex-shrink: 0; line-height: 1; }
+.approach-card h4 { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); margin-bottom: 0.25rem; }
+.approach-card p { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.6; }
+
+@media (min-width: 900px) {
+  .approach { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* ─── Offers Section ──────────────────────────────── */
+.offers-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.offer { background: var(--bg); padding: 2.5rem; position: relative; }
+.offer.popular { background: var(--bg-2); }
+.pop-tag { position: absolute; top: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em; color: var(--acid); border: 1px solid var(--acid); padding: 0.25rem 0.5rem; }
+.o-name { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); margin-bottom: 0.25rem; }
+.o-tag { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); letter-spacing: 0.1em; margin-bottom: 1rem; }
+.o-from { font-family: var(--font-mono); font-size: 0.65rem; color: var(--ink-dim); letter-spacing: 0.1em; }
+.o-price { font-family: var(--font-display); font-size: 1.75rem; color: var(--ink); margin-bottom: 0.75rem; line-height: 1; }
+.o-desc { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+.o-feats { list-style: none; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.5rem; padding: 0; }
+.o-feat { display: flex; gap: 0.75rem; align-items: baseline; font-size: 0.875rem; color: var(--ink-dim); }
+.o-cta { display: inline-block; padding: 0.75rem 1.5rem; background: var(--acid); color: var(--bg); font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.05em; text-decoration: none; transition: background 0.2s; }
+.o-cta:hover { background: var(--ink); }
+.offer.popular .o-cta { background: var(--acid); }
+
+@media (min-width: 900px) {
+  .offers-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ─── Phone Agent Explainer ───────────────────────── */
+.phone-steps { display: grid; gap: 1.5rem; }
+.ph-step { padding: 2rem; border: 1px solid var(--line); }
+.ph-step .ico { font-family: var(--font-mono); font-size: 2.5rem; color: var(--acid); margin-bottom: 1rem; line-height: 1; }
+.ph-step h4 { font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); margin-bottom: 0.5rem; }
+.ph-step p { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.6; }
+.phone-cta { margin-top: 2.5rem; }
+
+@media (min-width: 900px) {
+  .phone-steps { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ─── Maintenance Section ─────────────────────────── */
+.maintenance-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.mpack { background: var(--bg); padding: 2.5rem; position: relative; }
+.mpack.popular { background: var(--bg-2); }
+.price-row { display: flex; align-items: baseline; gap: 0.25rem; margin-bottom: 0.75rem; }
+.pcur { font-family: var(--font-mono); font-size: 1rem; color: var(--ink-dim); }
+.pval { font-family: var(--font-display); font-size: 3rem; color: var(--ink); line-height: 1; }
+.pnote { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-dim); }
+.pper { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-dim); }
+.mdesc { color: var(--ink-dim); font-size: 0.875rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.mfeats { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0; }
+.mfeat { display: flex; gap: 0.75rem; align-items: baseline; font-size: 0.875rem; color: var(--ink-dim); }
+.perks { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.perk { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-dim); letter-spacing: 0.08em; }
+
+@media (min-width: 900px) {
+  .maintenance-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Upsell / Options Section ────────────────────── */
+.upsell-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.upsell-card { background: var(--bg); padding: 1.75rem; }
+.upsell-card:hover { background: var(--bg-2); }
+.un { font-family: var(--font-mono); font-size: 1.25rem; color: var(--acid); opacity: 0.4; margin-bottom: 0.75rem; line-height: 1; }
+.upsell-card h4 { font-family: var(--font-display); font-size: 1rem; color: var(--ink); margin-bottom: 0.25rem; }
+.upsell-card p { color: var(--ink-dim); font-size: 0.85rem; line-height: 1.5; }
+
+@media (min-width: 900px) {
+  .upsell-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ─── Methodology Rail ────────────────────────────── */
+.method { position: relative; padding-left: 2px; }
+.method-rail { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.method-rail-active { position: absolute; left: 0; top: 0; width: 2px; background: var(--acid); transition: height 0.1s linear; }
+.method-steps { display: flex; flex-direction: column; gap: 0; }
+.method-step { padding: 2.5rem 0 2.5rem 2.5rem; border-bottom: 1px solid var(--line); position: relative; }
+.ndot { position: absolute; left: -5px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; border-radius: 50%; background: var(--line); border: 2px solid var(--line); transition: background 0.3s, border-color 0.3s; }
+.method-step.active .ndot { background: var(--acid); border-color: var(--acid); }
+.meta { }
+.num-big { display: block; font-family: var(--font-mono); font-size: 2.5rem; color: var(--ink-faint); line-height: 1; margin-bottom: 0.5rem; transition: color 0.3s; }
+.method-step.active .num-big { color: var(--acid); }
+.method-step h3 { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink-dim); margin-bottom: 0.5rem; font-weight: 400; transition: color 0.3s, font-weight 0.3s; }
+.method-step.active h3 { color: var(--ink); font-weight: 700; }
+.method-step p { color: var(--ink-faint); font-size: 0.9rem; line-height: 1.7; transition: color 0.3s; }
+.method-step.active p { color: var(--ink-dim); }
+
+@media (min-width: 900px) {
+  .method { padding-left: 3rem; }
+  .num-big { font-size: 4rem; }
+}
+
+/* ─── Reassurance Section ─────────────────────────── */
+.reassure-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.reassure { background: var(--bg); padding: 2rem; display: flex; gap: 1.5rem; align-items: flex-start; }
+.rn { font-family: var(--font-mono); font-size: 1.5rem; color: var(--acid); opacity: 0.4; flex-shrink: 0; line-height: 1; min-width: 3rem; }
+.reassure h4 { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 0.5rem; }
+.reassure p { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.7; }
+
+@media (min-width: 900px) {
+  .reassure-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── Final CTA Section ───────────────────────────── */
+.final-cta { padding: 8rem 0; border-top: 1px solid var(--line); }
+.final-cta .num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint); letter-spacing: 0.1em; margin-bottom: 2rem; }
+.final-title { font-family: var(--font-display); font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; color: var(--ink); margin-bottom: 2.5rem; }
+.final-title .it { font-style: italic; color: var(--acid); }
+.final-desc { font-size: 1.1rem; color: var(--ink-dim); max-width: 520px; line-height: 1.7; margin-bottom: 2.5rem; }
+.final-buttons { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+.final-note { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); letter-spacing: 0.1em; }
