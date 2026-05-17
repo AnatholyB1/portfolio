@@ -91,100 +91,91 @@ export interface Translations {
   services: {
     hero: {
       badge: string;
-      title: string;
-      subtitle: string;
-      description: string;
+      title_l1: string;
+      title_l2: string;
+      title_l3_it: string;
+      sub: string;
       cta_audit: string;
       cta_offers: string;
+      meta: { k: string; v: string }[];
     };
     problem: {
-      title: string;
-      subtitle: string;
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      items: { n: string; title: string; desc: string }[];
       good_news: string;
-      items: { icon: string; title: string; description: string }[];
     };
-    solution: {
-      badge: string;
-      title: string;
-      p1: string;
-      p2: string;
+    approach: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
       benefits: string[];
-      card1_title: string;
-      card1_desc: string;
-      card2_title: string;
-      card2_desc: string;
-      card3_title: string;
-      card3_desc: string;
+      cards: { t: string; d: string }[];
     };
     offers: {
-      title: string;
-      subtitle: string;
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
       from: string;
       popular: string;
       cta: string;
-      items: {
-        name: string;
-        tagline: string;
-        price: string;
-        description: string;
-        features: string[];
-      }[];
+      items: { name: string; tagline: string; price: string; description: string; features: string[] }[];
+    };
+    phone: {
+      num: string;
+      badge: string;
+      title_l1: string;
+      title_l2: string;
+      title_l3_it: string;
+      sub: string;
+      steps: { label: string; desc: string }[];
+      cta: string;
     };
     maintenance: {
-      badge: string;
-      title: string;
-      subtitle: string;
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
       recommended: string;
       per_month: string;
-      annual_discount: string;
-      no_commitment: string;
-      scalable: string;
-      currency_symbol: string;
-      packs: {
-        name: string;
-        price: string;
-        description: string;
-        features: string[];
-        popular?: boolean;
-        priceNote?: string;
-      }[];
+      currency: string;
+      packs: { name: string; price: string; description: string; features: string[]; popular?: boolean; priceNote?: string }[];
+      perks: string[];
     };
     upsell: {
-      title: string;
-      subtitle: string;
-      options: { name: string; description: string; icon: string }[];
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      options: { name: string; desc: string }[];
     };
-    methodology: {
-      title: string;
-      subtitle: string;
-      steps: { number: string; title: string; description: string }[];
+    method: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      steps: { n: string; t: string; d: string }[];
     };
     reassurance: {
-      title: string;
-      points: { icon: string; title: string; description: string }[];
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      points: { t: string; d: string }[];
     };
-    cta_final: {
-      title: string;
-      description: string;
+    finalCta: {
+      num: string;
+      title_l1: string;
+      title_l2: string;
+      title_l3_it: string;
+      desc: string;
       cta: string;
       email: string;
       note: string;
-    };
-    phoneAgent: {
-      badge: string;
-      title: string;
-      subtitle: string;
-      steps: { icon: string; label: string; description: string }[];
-      cta_label: string;
-    };
-    partners: {
-      title: string;
-      selenium_role: string;
-      gecko_role: string;
-      victor_role: string;
-      ghjulianu_role: string;
-      folies_role: string;
-      ajmg_role: string;
     };
   };
   landing: {
@@ -365,249 +356,147 @@ const fr: Translations = {
   },
   services: {
     hero: {
-      badge: 'Création de sites web pour PME',
-      title: "Donnez à votre entreprise l'image qu'elle mérite",
-      subtitle:
-        'Sites web modernes, performants et maintenus dans le temps pour les PME locales qui veulent <strong class="text-white">gagner en crédibilité</strong> et <strong class="text-emerald-400">générer plus de contacts</strong>.',
-      description:
-        "Une solution clé en main, sans jargon technique. Vous vous concentrez sur votre métier, nous nous occupons de votre présence digitale.",
-      cta_audit: 'Demander un audit gratuit',
-      cta_offers: 'Découvrir nos offres',
+      badge: "OFFRES & TARIFS — 2026",
+      title_l1: "Sites,",
+      title_l2: "outils,",
+      title_l3_it: "agents.",
+      sub: "Des solutions clés en main pour les commerces, restaurants et services qui veulent gagner en crédibilité, libérer du temps et capter plus de clients.",
+      cta_audit: "Réserver un audit gratuit",
+      cta_offers: "Voir les offres",
+      meta: [
+        { k: "Délai moyen", v: "3 à 6 semaines" },
+        { k: "Engagement", v: "Aucun" },
+        { k: "Devis", v: "Sous 48h" },
+      ],
     },
     problem: {
-      title: 'Votre entreprise mérite mieux',
-      subtitle: "Chaque jour sans présence digitale efficace, c'est des opportunités qui s'évaporent",
-      good_news: "La bonne nouvelle ? Ces problèmes ont une solution simple et accessible.",
+      num: "01 / 09",
+      title_l1: "Ce que ça vous",
+      title_l2_it: "coûte.",
+      intro: "Chaque jour sans présence digitale efficace, ce sont des appels manqués, des clients qui choisissent vos concurrents et de la crédibilité qui s'évapore.",
       items: [
-        {
-          icon: '🚫',
-          title: 'Pas de site internet',
-          description:
-            'Vos clients potentiels ne vous trouvent pas en ligne. Ils se tournent vers vos concurrents qui, eux, sont visibles.',
-        },
-        {
-          icon: '📱',
-          title: 'Site obsolète ou non adapté mobile',
-          description:
-            'Un site vieillissant ou difficile à lire sur smartphone renvoie une image peu professionnelle de votre entreprise.',
-        },
-        {
-          icon: '📉',
-          title: 'Zéro contact via internet',
-          description:
-            "Votre site existe mais ne génère aucune demande. Il ne travaille pas pour vous, il dort.",
-        },
-        {
-          icon: '❌',
-          title: 'Perte de crédibilité',
-          description:
-            "En 2026, une entreprise sans présence digitale moderne perd la confiance de ses prospects avant même le premier contact.",
-        },
+        { n: "A", title: "Pas de site, pas de visibilité", desc: "Vos clients potentiels ne vous trouvent pas en ligne. Ils se tournent vers vos concurrents qui, eux, sont visibles." },
+        { n: "B", title: "Site obsolète ou non mobile", desc: "Un site vieillissant ou difficile à lire sur smartphone renvoie une image peu professionnelle de votre entreprise." },
+        { n: "C", title: "Zéro contact via internet", desc: "Votre site existe mais ne génère aucune demande. Il ne travaille pas pour vous, il dort." },
+        { n: "D", title: "Perte de crédibilité", desc: "En 2026, une entreprise sans présence digitale moderne perd la confiance de ses prospects avant le premier contact." },
       ],
+      good_news: "La bonne nouvelle : ces problèmes ont une solution simple et accessible.",
     },
-    solution: {
-      badge: 'Notre approche',
-      title: 'Spécialiste de la présence digitale pour PME locales',
-      p1: "Nous créons des sites web sur mesure qui transforment vos visiteurs en clients. Pas de solutions génériques : chaque projet est pensé pour <strong class=\"text-white\">votre activité</strong> et <strong class=\"text-white\">votre marché local</strong>.",
-      p2: "Notre mission : vous offrir une <strong class=\"text-emerald-400\">vitrine digitale professionnelle</strong> qui travaille pour vous 24h/24, génère des contacts qualifiés et renforce votre crédibilité.",
+    approach: {
+      num: "02 / 09",
+      title_l1: "Notre",
+      title_l2_it: "approche.",
+      intro: "On crée des sites sur mesure qui transforment vos visiteurs en clients. Pas de générique : chaque projet est pensé pour votre activité et votre marché local.",
       benefits: [
-        'Sites modernes et professionnels',
-        'Optimisés pour générer des contacts',
-        'Rapides et performants',
-        'Adaptés à tous les écrans',
-        'Référencement local inclus',
-        'Accompagnement personnalisé',
+        "Sites modernes et professionnels",
+        "Optimisés pour générer des contacts",
+        "Rapides et performants",
+        "Adaptés à tous les écrans",
+        "Référencement local inclus",
+        "Accompagnement personnalisé",
       ],
-      card1_title: 'Orienté résultats',
-      card1_desc: 'Chaque élément est pensé pour convertir',
-      card2_title: 'Partenaire long terme',
-      card2_desc: "Un accompagnement qui ne s'arrête pas à la mise en ligne",
-      card3_title: 'Qualité premium',
-      card3_desc: 'Technologies modernes, design soigné',
+      cards: [
+        { t: "Orienté résultats", d: "Chaque élément est pensé pour convertir." },
+        { t: "Partenaire long terme", d: "Un accompagnement qui ne s'arrête pas à la mise en ligne." },
+        { t: "Qualité premium", d: "Technologies modernes, design soigné." },
+      ],
     },
     offers: {
-      title: 'Nos offres',
-      subtitle: 'Des solutions adaptées à chaque étape de votre croissance',
-      from: 'À partir de',
-      popular: 'Le plus populaire',
-      cta: 'Demander un devis',
+      num: "03 / 09",
+      title_l1: "Nos",
+      title_l2_it: "offres.",
+      intro: "Quatre formules adaptées à chaque étape de votre croissance. Le prix est public, le devis arrive sous 48h.",
+      from: "À partir de",
+      popular: "Le plus demandé",
+      cta: "Demander un devis",
       items: [
-        {
-          name: 'Landing Page Professionnelle',
-          tagline: "L'essentiel pour être visible",
-          price: '1 200 – 1 800 €',
-          description: 'Une présence en ligne claire et professionnelle pour démarrer',
-          features: [
-            'Design moderne et personnalisé',
-            'Adapté mobile et tablette',
-            'Présentation claire de vos services',
-            'Formulaire de contact',
-            'Intégration Google Maps',
-            'SEO local de base',
-            'Mise en ligne incluse',
-          ],
-        },
-        {
-          name: 'Rebranding + Site Premium',
-          tagline: 'Transformez votre image',
-          price: '2 500 – 4 000 €',
-          description: 'Modernisez complètement votre image et renforcez votre crédibilité',
-          features: [
-            'Audit de votre image actuelle',
-            'Modernisation de votre logo',
-            'Nouvelle palette de couleurs',
-            'Typographies professionnelles',
-            'Mini charte graphique',
-            'Nouveau site cohérent avec votre identité',
-            'Formation utilisation basique',
-          ],
-        },
-        {
-          name: 'Projet Sur Mesure',
-          tagline: 'Vos besoins spécifiques',
-          price: 'Sur devis',
-          description: "Pour les projets qui nécessitent des fonctionnalités avancées",
-          features: [
-            'Site multi-pages complet',
-            'Boutique en ligne (e-commerce)',
-            'Système de réservation',
-            'Fonctionnalités spécifiques',
-            'Refonte complète de site',
-            'Intégrations personnalisées',
-            'Accompagnement dédié',
-          ],
-        },
-        {
-          name: 'Agent Vocal IA',
-          tagline: "Votre téléphone, automatisé par l'IA",
-          price: 'À partir de 990 €',
-          description: 'Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.',
-          features: [
-            'Setup VAPI + numéro Twilio',
-            'Voix ElevenLabs ultra-naturelle',
-            'Connexion CRM via protocole MCP',
-            '1 scénario métier sur mesure',
-            '1 mois de support inclus',
-          ],
-        },
+        { name: "Landing Page", tagline: "L'essentiel pour être visible", price: "1 200 – 1 800 €", description: "Une présence en ligne claire et professionnelle pour démarrer.", features: ["Design moderne et personnalisé", "Adapté mobile et tablette", "Présentation claire de vos services", "Formulaire de contact", "Intégration Google Maps", "SEO local de base", "Mise en ligne incluse"] },
+        { name: "Rebranding + Site Premium", tagline: "Transformez votre image", price: "2 500 – 4 000 €", description: "Modernisez complètement votre image et renforcez votre crédibilité.", features: ["Audit de votre image actuelle", "Modernisation du logo", "Nouvelle palette de couleurs", "Typographies professionnelles", "Mini charte graphique", "Nouveau site cohérent", "Formation utilisation"] },
+        { name: "Projet Sur Mesure", tagline: "Vos besoins spécifiques", price: "Sur devis", description: "Pour les projets qui nécessitent des fonctionnalités avancées.", features: ["Site multi-pages complet", "Boutique en ligne", "Système de réservation", "Fonctionnalités spécifiques", "Refonte complète", "Intégrations personnalisées", "Accompagnement dédié"] },
+        { name: "Agent Vocal IA", tagline: "Votre téléphone, automatisé", price: "À partir de 990 €", description: "Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.", features: ["Setup VAPI + numéro Twilio", "Voix ElevenLabs ultra-naturelle", "Connexion CRM via MCP", "1 scénario métier sur mesure", "1 mois de support inclus"] },
       ],
+    },
+    phone: {
+      num: "04 / 09",
+      badge: "PHONE AGENT — COMMENT ÇA MARCHE",
+      title_l1: "Vos clients",
+      title_l2: "appellent,",
+      title_l3_it: "on répond.",
+      sub: "Une solution clé en main connectée à vos outils en quelques heures. Vous gardez la main, l'agent fait le reste.",
+      steps: [
+        { label: "Le client appelle", desc: "Un numéro Twilio dédié à votre business." },
+        { label: "L'IA comprend", desc: "Claude Sonnet analyse la demande en français naturel." },
+        { label: "Le CRM est mis à jour", desc: "Via le protocole MCP, la commande ou le RDV s'enregistre." },
+        { label: "Vous êtes notifié", desc: "Votre dashboard se met à jour en temps réel." },
+      ],
+      cta: "Tester la démo live",
     },
     maintenance: {
-      badge: "Tranquillité d'esprit digitale",
-      title: 'Maintenance & Hébergement',
-      subtitle: "Votre site reste performant, sécurisé et à jour. Vous n'avez rien à gérer.",
-      recommended: 'Recommandé',
-      per_month: '/mois',
-      annual_discount: '-10% si paiement annuel',
-      no_commitment: 'Sans engagement',
-      scalable: 'Évolutif selon vos besoins',
-      currency_symbol: '€',
+      num: "05 / 09",
+      title_l1: "Maintenance",
+      title_l2_it: "& hébergement.",
+      intro: "Votre site reste performant, sécurisé et à jour. Vous n'avez rien à gérer. Trois formules, sans engagement.",
+      recommended: "Recommandé",
+      per_month: "/mois",
+      currency: "€",
       packs: [
-        {
-          name: 'Essentiel',
-          price: '49',
-          description: "L'indispensable pour un site sécurisé et fonctionnel",
-          features: [
-            'Hébergement haute performance',
-            'Nom de domaine inclus',
-            'Certificat SSL (https)',
-            'Sauvegardes automatiques',
-            'Monitoring 24/7',
-            'Mises à jour techniques',
-            'Support par email',
-          ],
-        },
-        {
-          name: 'Business',
-          price: '79',
-          description: 'Pour les entreprises qui évoluent',
-          popular: true,
-          features: [
-            'Tout du pack Essentiel',
-            '1h de modification par mois',
-            'Optimisation des performances',
-            'Rapport mensuel simplifié',
-            'Temps de réponse prioritaire',
-          ],
-        },
-        {
-          name: 'Premium',
-          price: '129',
-          priceNote: '+',
-          description: 'Tranquillité totale et croissance continue',
-          features: [
-            'Tout du pack Business',
-            '2h de modifications par mois',
-            'Sécurité renforcée',
-            'Optimisation SEO continue',
-            'Assistance prioritaire',
-            'Conseils stratégiques mensuels',
-          ],
-        },
+        { name: "Essentiel", price: "49", description: "L'indispensable pour un site sécurisé et fonctionnel.", features: ["Hébergement haute performance", "Nom de domaine inclus", "Certificat SSL (https)", "Sauvegardes automatiques", "Monitoring 24/7", "Mises à jour techniques", "Support par email"] },
+        { name: "Business", price: "79", popular: true, description: "Pour les entreprises qui évoluent.", features: ["Tout du pack Essentiel", "1h de modification par mois", "Optimisation des performances", "Rapport mensuel simplifié", "Temps de réponse prioritaire"] },
+        { name: "Premium", price: "129", priceNote: "+", description: "Tranquillité totale et croissance continue.", features: ["Tout du pack Business", "2h de modifications par mois", "Sécurité renforcée", "Optimisation SEO continue", "Assistance prioritaire", "Conseils stratégiques mensuels"] },
       ],
+      perks: ["−10% si paiement annuel", "Sans engagement", "Évolutif selon vos besoins"],
     },
     upsell: {
-      title: 'Options disponibles',
-      subtitle: 'Personnalisez votre projet selon vos besoins spécifiques',
+      num: "06 / 09",
+      title_l1: "Options",
+      title_l2_it: "complémentaires.",
+      intro: "Personnalisez votre projet selon vos besoins spécifiques.",
       options: [
-        { name: 'Création de contenu', description: 'Rédaction professionnelle de vos textes', icon: '✍️' },
-        { name: 'SEO avancé', description: 'Optimisation poussée pour Google', icon: '📈' },
-        { name: 'Campagnes Google Ads', description: 'Publicité ciblée pour plus de visibilité', icon: '🎯' },
-        { name: 'Intégration CRM', description: 'Connectez votre site à vos outils', icon: '🔗' },
-        { name: 'Blog intégré', description: 'Partagez votre expertise', icon: '📝' },
-        { name: 'Site multilingue', description: 'Touchez une audience internationale', icon: '🌍' },
-        { name: 'Heures supplémentaires', description: 'Modifications additionnelles à la demande', icon: '⏱️' },
-        { name: 'Formation personnalisée', description: 'Apprenez à gérer votre site', icon: '🎓' },
+        { name: "Création de contenu", desc: "Rédaction professionnelle de vos textes" },
+        { name: "SEO avancé", desc: "Optimisation poussée pour Google" },
+        { name: "Campagnes Google Ads", desc: "Publicité ciblée pour plus de visibilité" },
+        { name: "Intégration CRM", desc: "Connectez votre site à vos outils" },
+        { name: "Blog intégré", desc: "Partagez votre expertise" },
+        { name: "Site multilingue", desc: "Touchez une audience internationale" },
+        { name: "Heures supplémentaires", desc: "Modifications additionnelles à la demande" },
+        { name: "Formation personnalisée", desc: "Apprenez à gérer votre site" },
       ],
     },
-    methodology: {
-      title: 'Comment ça se passe ?',
-      subtitle: 'Un processus simple et transparent, de la première discussion à la mise en ligne',
+    method: {
+      num: "07 / 09",
+      title_l1: "Comment",
+      title_l2_it: "ça se passe.",
+      intro: "Un processus simple et transparent, de la première discussion à la mise en ligne. Six étapes, pas une de plus.",
       steps: [
-        { number: '01', title: 'Audit gratuit', description: "Nous analysons votre situation actuelle et vos objectifs lors d'un appel de 30 minutes." },
-        { number: '02', title: 'Proposition claire', description: 'Vous recevez un devis détaillé, sans surprise, avec un planning précis.' },
-        { number: '03', title: 'Maquette', description: 'Nous créons une maquette visuelle de votre site pour validation avant développement.' },
-        { number: '04', title: 'Développement', description: 'Nous construisons votre site avec les dernières technologies pour performance et sécurité.' },
-        { number: '05', title: 'Mise en ligne', description: 'Votre site est publié et configuré sur votre nom de domaine.' },
-        { number: '06', title: 'Suivi 30 jours', description: 'Nous restons disponibles pour ajustements et vous accompagnons dans la prise en main.' },
+        { n: "01", t: "Audit gratuit", d: "On analyse votre situation actuelle et vos objectifs lors d'un appel de 30 minutes." },
+        { n: "02", t: "Proposition claire", d: "Vous recevez un devis détaillé, sans surprise, avec un planning précis." },
+        { n: "03", t: "Maquette", d: "On crée une maquette visuelle pour validation avant développement." },
+        { n: "04", t: "Développement", d: "On construit votre site avec les dernières technologies pour performance et sécurité." },
+        { n: "05", t: "Mise en ligne", d: "Votre site est publié et configuré sur votre nom de domaine." },
+        { n: "06", t: "Suivi 30 jours", d: "On reste disponibles pour ajustements et on vous accompagne dans la prise en main." },
       ],
     },
     reassurance: {
-      title: 'Pourquoi nous faire confiance ?',
+      num: "08 / 09",
+      title_l1: "Pourquoi nous faire",
+      title_l2_it: "confiance.",
+      intro: "Quatre raisons concrètes qui changent vraiment la relation.",
       points: [
-        { icon: '👤', title: 'Interlocuteur unique', description: 'Un seul contact du début à la fin. Pas de transfert entre services, pas de répétition de vos besoins.' },
-        { icon: '🔑', title: 'Solution clé en main', description: 'Nous gérons tout : design, développement, hébergement, mise en ligne. Vous n\'avez rien à faire.' },
-        { icon: '🤝', title: 'Accompagnement personnalisé', description: 'Chaque projet est unique. Nous prenons le temps de comprendre votre activité et vos objectifs.' },
-        { icon: '🚀', title: 'Vision long terme', description: "Nous ne sommes pas juste un prestataire, mais un partenaire qui accompagne votre croissance digitale." },
+        { t: "Interlocuteur unique", d: "Un seul contact du début à la fin. Pas de transfert entre services, pas de répétition de vos besoins." },
+        { t: "Solution clé en main", d: "On gère tout : design, développement, hébergement, mise en ligne. Vous n'avez rien à faire." },
+        { t: "Accompagnement personnalisé", d: "Chaque projet est unique. On prend le temps de comprendre votre activité et vos objectifs." },
+        { t: "Vision long terme", d: "On n'est pas juste un prestataire, mais un partenaire qui accompagne votre croissance digitale." },
       ],
     },
-    cta_final: {
-      title: 'Prêt à transformer votre présence digitale ?',
-      description: "Réservez un <strong class=\"text-white\">audit gratuit de 30 minutes</strong>. Nous analyserons ensemble votre situation et définirons la meilleure stratégie pour votre entreprise.",
-      cta: 'Réserver mon audit gratuit',
-      email: 'Envoyer un email',
-      note: 'Sans engagement • 100% gratuit • Réponse sous 24h',
-    },
-    phoneAgent: {
-      badge: 'Nouveau',
-      title: "Comment fonctionne l'agent vocal IA ?",
-      subtitle: 'Une solution clé en main connectée à vos outils en quelques heures.',
-      steps: [
-        { icon: '📞', label: 'Le client appelle', description: 'Un numéro Twilio dédié à votre business.' },
-        { icon: '🧠', label: "L'IA comprend", description: 'Claude Sonnet analyse la demande en français naturel.' },
-        { icon: '🗄️', label: 'Le CRM est mis à jour', description: "Via le protocole MCP, la commande ou le RDV s'enregistre." },
-        { icon: '🔔', label: 'Vous êtes notifié', description: 'Votre dashboard se met à jour en temps réel.' },
-      ],
-      cta_label: 'Tester la démo live',
-    },
-    partners: {
-      title: 'Ils nous font confiance',
-      selenium_role: 'Agence Digitale',
-      gecko_role: 'Restaurant',
-      victor_role: 'Portfolio Créatif',
-      ghjulianu_role: 'Artiste Corse',
-      folies_role: 'Troupe de Danse',
-      ajmg_role: 'Service de Conseil',
+    finalCta: {
+      num: "09 / 09",
+      title_l1: "Prêt à",
+      title_l2: "transformer",
+      title_l3_it: "votre présence ?",
+      desc: "Réservez un audit gratuit de 30 minutes. On analysera ensemble votre situation et on définira la meilleure stratégie pour votre entreprise.",
+      cta: "Réserver mon audit gratuit",
+      email: "Envoyer un email",
+      note: "Sans engagement · 100% gratuit · Réponse sous 24h",
     },
   },
   landing: {
@@ -815,249 +704,140 @@ const en: Translations = {
   },
   services: {
     hero: {
-      badge: 'Web development for SMEs',
-      title: 'Give your business the image it deserves',
-      subtitle:
-        'Modern, high-performance websites maintained over time for local SMEs that want to <strong class="text-white">build credibility</strong> and <strong class="text-emerald-400">generate more leads</strong>.',
-      description:
-        'A turnkey solution, free of technical jargon. You focus on your business, we handle your digital presence.',
-      cta_audit: 'Request a free audit',
-      cta_offers: 'Discover our offers',
+      badge: "OFFERS & PRICES — 2026",
+      title_l1: "Sites,",
+      title_l2: "tools,",
+      title_l3_it: "agents.",
+      sub: "Turnkey solutions for shops, restaurants and services that want to build credibility, free up time and capture more customers.",
+      cta_audit: "Book a free audit",
+      cta_offers: "See offers",
+      meta: [
+        { k: "Average timeline", v: "3 to 6 weeks" },
+        { k: "Commitment", v: "None" },
+        { k: "Quote", v: "Within 48h" },
+      ],
     },
     problem: {
-      title: 'Your business deserves better',
-      subtitle: 'Every day without an effective digital presence, opportunities slip away',
-      good_news: 'The good news? These problems have a simple and accessible solution.',
+      num: "01 / 09",
+      title_l1: "What it",
+      title_l2_it: "costs you.",
+      intro: "Every day without an effective digital presence means missed calls, customers choosing your competitors, and credibility slipping away.",
       items: [
-        {
-          icon: '🚫',
-          title: 'No website',
-          description:
-            'Potential customers cannot find you online. They turn to your competitors who are visible.',
-        },
-        {
-          icon: '📱',
-          title: 'Outdated or non-mobile site',
-          description:
-            'An aging or hard-to-read website on a smartphone projects an unprofessional image of your business.',
-        },
-        {
-          icon: '📉',
-          title: 'Zero online inquiries',
-          description:
-            'Your site exists but generates no requests. It is not working for you — it is just sitting there.',
-        },
-        {
-          icon: '❌',
-          title: 'Loss of credibility',
-          description:
-            'In 2026, a company without a modern digital presence loses the trust of prospects before the first contact.',
-        },
+        { n: "A", title: "No site, no visibility", desc: "Potential customers cannot find you online. They turn to your competitors who are visible." },
+        { n: "B", title: "Outdated or non-mobile site", desc: "An aging or hard-to-read site on a smartphone projects an unprofessional image." },
+        { n: "C", title: "Zero online enquiries", desc: "Your site exists but generates no requests. It is not working for you — it is just sitting there." },
+        { n: "D", title: "Loss of credibility", desc: "In 2026, a business without a modern digital presence loses prospect trust before the first contact." },
       ],
+      good_news: "The good news: these problems have a simple and accessible solution.",
     },
-    solution: {
-      badge: 'Our approach',
-      title: 'Specialist in digital presence for local SMEs',
-      p1: 'We create tailor-made websites that convert visitors into customers. No generic solutions: each project is designed for <strong class="text-white">your business</strong> and <strong class="text-white">your local market</strong>.',
-      p2: 'Our mission: to provide you with a <strong class="text-emerald-400">professional digital showcase</strong> that works for you 24/7, generates qualified leads, and strengthens your credibility.',
-      benefits: [
-        'Modern and professional sites',
-        'Optimised to generate leads',
-        'Fast and high-performing',
-        'Responsive on all screens',
-        'Local SEO included',
-        'Personalised support',
+    approach: {
+      num: "02 / 09",
+      title_l1: "Our",
+      title_l2_it: "approach.",
+      intro: "We craft tailor-made sites that turn visitors into customers. No generics: every project is designed for your business and your local market.",
+      benefits: ["Modern, professional sites", "Tuned to generate leads", "Fast and high-performing", "Responsive on all screens", "Local SEO included", "Personalised support"],
+      cards: [
+        { t: "Results-driven", d: "Every element is built to convert." },
+        { t: "Long-term partner", d: "Support that does not stop at launch." },
+        { t: "Premium quality", d: "Modern technologies, refined design." },
       ],
-      card1_title: 'Results-driven',
-      card1_desc: 'Every element is designed to convert',
-      card2_title: 'Long-term partner',
-      card2_desc: 'Support that does not stop at launch',
-      card3_title: 'Premium quality',
-      card3_desc: 'Modern technologies, refined design',
     },
     offers: {
-      title: 'Our offers',
-      subtitle: 'Solutions adapted to every stage of your growth',
-      from: 'Starting from',
-      popular: 'Most popular',
-      cta: 'Request a quote',
+      num: "03 / 09",
+      title_l1: "Our",
+      title_l2_it: "offers.",
+      intro: "Four formulas for each stage of your growth. The price is public, the quote lands within 48h.",
+      from: "Starting from",
+      popular: "Most requested",
+      cta: "Request a quote",
       items: [
-        {
-          name: 'Professional Landing Page',
-          tagline: 'The essentials to be visible',
-          price: '$1,300 – $2,000',
-          description: 'A clear and professional online presence to get started',
-          features: [
-            'Modern and custom design',
-            'Mobile and tablet friendly',
-            'Clear presentation of your services',
-            'Contact form',
-            'Google Maps integration',
-            'Basic local SEO',
-            'Deployment included',
-          ],
-        },
-        {
-          name: 'Rebranding + Premium Site',
-          tagline: 'Transform your image',
-          price: '$2,750 – $4,400',
-          description: 'Completely modernise your image and strengthen your credibility',
-          features: [
-            'Audit of your current image',
-            'Logo modernisation',
-            'New colour palette',
-            'Professional typography',
-            'Mini brand guidelines',
-            'New site consistent with your identity',
-            'Basic usage training',
-          ],
-        },
-        {
-          name: 'Custom Project',
-          tagline: 'Your specific needs',
-          price: 'On request',
-          description: 'For projects that require advanced features',
-          features: [
-            'Full multi-page site',
-            'Online shop (e-commerce)',
-            'Booking system',
-            'Specific features',
-            'Full website redesign',
-            'Custom integrations',
-            'Dedicated support',
-          ],
-        },
-        {
-          name: 'AI Voice Agent',
-          tagline: 'Your phone line, automated by AI',
-          price: 'From €990',
-          description: 'An intelligent phone agent that answers, qualifies and records — 24/7.',
-          features: [
-            'VAPI + Twilio number setup',
-            'Ultra-natural ElevenLabs voice',
-            'CRM connection via MCP protocol',
-            '1 custom business scenario',
-            '1 month of support included',
-          ],
-        },
+        { name: "Landing Page", tagline: "The essentials to be visible", price: "$1,300 – $2,000", description: "A clear, professional online presence to get started.", features: ["Modern and custom design", "Mobile and tablet friendly", "Clear presentation of services", "Contact form", "Google Maps integration", "Basic local SEO", "Deployment included"] },
+        { name: "Rebranding + Premium Site", tagline: "Transform your image", price: "$2,750 – $4,400", description: "Completely modernise your image and strengthen your credibility.", features: ["Image audit", "Logo modernisation", "New colour palette", "Professional typography", "Mini brand guidelines", "New consistent site", "Basic usage training"] },
+        { name: "Custom Project", tagline: "Your specific needs", price: "On request", description: "For projects that require advanced features.", features: ["Full multi-page site", "Online shop (e-commerce)", "Booking system", "Specific features", "Full website redesign", "Custom integrations", "Dedicated support"] },
+        { name: "AI Voice Agent", tagline: "Your phone, automated", price: "From €990", description: "An intelligent phone agent that answers, qualifies and records — 24/7.", features: ["VAPI + Twilio setup", "Ultra-natural ElevenLabs voice", "CRM connection via MCP", "1 custom scenario", "1 month of support"] },
       ],
+    },
+    phone: {
+      num: "04 / 09",
+      badge: "PHONE AGENT — HOW IT WORKS",
+      title_l1: "Your customers",
+      title_l2: "call,",
+      title_l3_it: "we answer.",
+      sub: "A turnkey solution connected to your tools in a few hours. You stay in control, the agent does the rest.",
+      steps: [
+        { label: "Customer calls", desc: "A dedicated Twilio number for your business." },
+        { label: "AI understands", desc: "Claude Sonnet handles the request in natural language." },
+        { label: "CRM is updated", desc: "Via MCP protocol, the order or appointment is logged." },
+        { label: "You are notified", desc: "Your dashboard updates in real time." },
+      ],
+      cta: "Try the live demo",
     },
     maintenance: {
-      badge: 'Digital peace of mind',
-      title: 'Maintenance & Hosting',
-      subtitle: 'Your site stays fast, secure, and up to date. You have nothing to manage.',
-      recommended: 'Recommended',
-      per_month: '/month',
-      annual_discount: '-10% for annual payment',
-      no_commitment: 'No commitment',
-      scalable: 'Adaptable to your needs',
-      currency_symbol: '$',
+      num: "05 / 09",
+      title_l1: "Maintenance",
+      title_l2_it: "& hosting.",
+      intro: "Your site stays fast, secure, up to date. You manage nothing. Three plans, no commitment.",
+      recommended: "Recommended",
+      per_month: "/month",
+      currency: "$",
       packs: [
-        {
-          name: 'Essential',
-          price: '55',
-          description: 'The essentials for a secure and functional site',
-          features: [
-            'High-performance hosting',
-            'Domain name included',
-            'SSL certificate (https)',
-            'Automatic backups',
-            '24/7 monitoring',
-            'Technical updates',
-            'Email support',
-          ],
-        },
-        {
-          name: 'Business',
-          price: '87',
-          description: 'For businesses on the move',
-          popular: true,
-          features: [
-            'Everything in Essential',
-            '1h of changes per month',
-            'Performance optimisation',
-            'Monthly simplified report',
-            'Priority response time',
-          ],
-        },
-        {
-          name: 'Premium',
-          price: '140',
-          priceNote: '+',
-          description: 'Total peace of mind and continuous growth',
-          features: [
-            'Everything in Business',
-            '2h of changes per month',
-            'Enhanced security',
-            'Ongoing SEO optimisation',
-            'Priority support',
-            'Monthly strategic advice',
-          ],
-        },
+        { name: "Essential", price: "55", description: "The essentials for a secure, functional site.", features: ["High-performance hosting", "Domain name included", "SSL certificate (https)", "Automatic backups", "24/7 monitoring", "Technical updates", "Email support"] },
+        { name: "Business", price: "87", popular: true, description: "For businesses on the move.", features: ["Everything in Essential", "1h of changes per month", "Performance tuning", "Monthly summary report", "Priority response time"] },
+        { name: "Premium", price: "140", priceNote: "+", description: "Total peace of mind and continuous growth.", features: ["Everything in Business", "2h of changes per month", "Enhanced security", "Ongoing SEO optimisation", "Priority support", "Monthly strategic advice"] },
       ],
+      perks: ["−10% for annual payment", "No commitment", "Adaptable to your needs"],
     },
     upsell: {
-      title: 'Available options',
-      subtitle: 'Customise your project to your specific needs',
+      num: "06 / 09",
+      title_l1: "Available",
+      title_l2_it: "options.",
+      intro: "Customise your project to your specific needs.",
       options: [
-        { name: 'Content creation', description: 'Professional copywriting', icon: '✍️' },
-        { name: 'Advanced SEO', description: 'In-depth optimisation for Google', icon: '📈' },
-        { name: 'Google Ads campaigns', description: 'Targeted ads for more visibility', icon: '🎯' },
-        { name: 'CRM integration', description: 'Connect your site to your tools', icon: '🔗' },
-        { name: 'Integrated blog', description: 'Share your expertise', icon: '📝' },
-        { name: 'Multilingual site', description: 'Reach an international audience', icon: '🌍' },
-        { name: 'Extra hours', description: 'Additional on-demand changes', icon: '⏱️' },
-        { name: 'Personalised training', description: 'Learn to manage your site', icon: '🎓' },
+        { name: "Content creation", desc: "Professional copywriting" },
+        { name: "Advanced SEO", desc: "In-depth optimisation for Google" },
+        { name: "Google Ads campaigns", desc: "Targeted ads for more visibility" },
+        { name: "CRM integration", desc: "Connect your site to your tools" },
+        { name: "Integrated blog", desc: "Share your expertise" },
+        { name: "Multilingual site", desc: "Reach an international audience" },
+        { name: "Extra hours", desc: "On-demand additional changes" },
+        { name: "Personalised training", desc: "Learn to run your site" },
       ],
     },
-    methodology: {
-      title: 'How does it work?',
-      subtitle: 'A simple and transparent process, from the first discussion to launch',
+    method: {
+      num: "07 / 09",
+      title_l1: "How it",
+      title_l2_it: "happens.",
+      intro: "A simple, transparent process from first chat to launch. Six steps, not one more.",
       steps: [
-        { number: '01', title: 'Free audit', description: 'We analyse your current situation and goals in a 30-minute call.' },
-        { number: '02', title: 'Clear proposal', description: 'You receive a detailed, no-surprise quote with a precise timeline.' },
-        { number: '03', title: 'Mockup', description: 'We create a visual mockup of your site for approval before development.' },
-        { number: '04', title: 'Development', description: 'We build your site using the latest technologies for performance and security.' },
-        { number: '05', title: 'Launch', description: 'Your site is published and configured on your domain name.' },
-        { number: '06', title: '30-day follow-up', description: 'We remain available for adjustments and guide you through onboarding.' },
+        { n: "01", t: "Free audit", d: "We analyse your current situation and goals in a 30-minute call." },
+        { n: "02", t: "Clear proposal", d: "You receive a detailed, no-surprise quote with a precise timeline." },
+        { n: "03", t: "Mockup", d: "We create a visual mockup for approval before development." },
+        { n: "04", t: "Build", d: "We build your site using the latest technologies for performance and security." },
+        { n: "05", t: "Launch", d: "Your site is published and configured on your domain." },
+        { n: "06", t: "30-day follow-up", d: "We stay available for adjustments and guide you through onboarding." },
       ],
     },
     reassurance: {
-      title: 'Why trust us?',
+      num: "08 / 09",
+      title_l1: "Why",
+      title_l2_it: "trust us.",
+      intro: "Four concrete reasons that really change the relationship.",
       points: [
-        { icon: '👤', title: 'Single point of contact', description: 'One contact from start to finish. No handoffs, no repeating yourself.' },
-        { icon: '🔑', title: 'Turnkey solution', description: 'We handle everything: design, development, hosting, launch. Nothing for you to manage.' },
-        { icon: '🤝', title: 'Personalised support', description: 'Every project is unique. We take the time to understand your business and goals.' },
-        { icon: '🚀', title: 'Long-term vision', description: "We are not just a vendor — we are a partner accompanying your digital growth." },
+        { t: "Single point of contact", d: "One contact from start to finish. No handoffs, no repeating yourself." },
+        { t: "Turnkey solution", d: "We handle everything: design, build, hosting, launch. Nothing for you to manage." },
+        { t: "Personalised support", d: "Each project is unique. We take time to understand your business and goals." },
+        { t: "Long-term vision", d: "We are not just a vendor — we are a partner accompanying your digital growth." },
       ],
     },
-    cta_final: {
-      title: 'Ready to transform your digital presence?',
-      description: 'Book a <strong class="text-white">free 30-minute audit</strong>. We will analyse your situation together and define the best strategy for your business.',
-      cta: 'Book my free audit',
-      email: 'Send an email',
-      note: 'No commitment • 100% free • Reply within 24h',
-    },
-    phoneAgent: {
-      badge: 'New',
-      title: 'How does the AI voice agent work?',
-      subtitle: 'A turnkey solution connected to your tools in a few hours.',
-      steps: [
-        { icon: '📞', label: 'Customer calls', description: 'A dedicated Twilio number for your business.' },
-        { icon: '🧠', label: 'AI understands', description: 'Claude Sonnet processes the request in natural language.' },
-        { icon: '🗄️', label: 'CRM is updated', description: 'Via MCP protocol, the order or appointment is recorded.' },
-        { icon: '🔔', label: 'You are notified', description: 'Your dashboard updates in real time.' },
-      ],
-      cta_label: 'Try the live demo',
-    },
-    partners: {
-      title: 'They trust us',
-      selenium_role: 'Digital Agency',
-      gecko_role: 'Restaurant',
-      victor_role: 'Creative Portfolio',
-      ghjulianu_role: 'Corsican Artist',
-      folies_role: 'Dance Company',
-      ajmg_role: 'Consulting Service',
+    finalCta: {
+      num: "09 / 09",
+      title_l1: "Ready to",
+      title_l2: "transform",
+      title_l3_it: "your presence?",
+      desc: "Book a free 30-minute audit. We will analyse your situation together and define the best strategy for your business.",
+      cta: "Book my free audit",
+      email: "Send an email",
+      note: "No commitment · 100% free · Reply within 24h",
     },
   },
   landing: {
@@ -1265,245 +1045,140 @@ const th: Translations = {
   },
   services: {
     hero: {
-      badge: 'สร้างเว็บไซต์สำหรับ SME',
-      title: 'มอบภาพลักษณ์ที่ธุรกิจของคุณสมควรได้รับ',
-      subtitle:
-        'เว็บไซต์ทันสมัย มีประสิทธิภาพสูง สำหรับ SME ที่ต้องการ <strong class="text-white">สร้างความน่าเชื่อถือ</strong> และ <strong class="text-emerald-400">สร้างลูกค้าเพิ่มขึ้น</strong>',
-      description:
-        'โซลูชันครบวงจร ไม่มีศัพท์เทคนิคซับซ้อน คุณโฟกัสที่ธุรกิจ เราดูแลการปรากฏตัวดิจิทัลของคุณ',
-      cta_audit: 'ขอรับการตรวจสอบฟรี',
-      cta_offers: 'ดูแพ็กเกจของเรา',
+      badge: "บริการ & ราคา — 2026",
+      title_l1: "เว็บไซต์",
+      title_l2: "เครื่องมือ",
+      title_l3_it: "AI agents.",
+      sub: "โซลูชันครบวงจรสำหรับร้านค้า ร้านอาหาร และบริการที่ต้องการสร้างความน่าเชื่อถือ ประหยัดเวลา และเพิ่มลูกค้า",
+      cta_audit: "ขอตรวจสอบฟรี",
+      cta_offers: "ดูบริการ",
+      meta: [
+        { k: "ระยะเวลาเฉลี่ย", v: "3 ถึง 6 สัปดาห์" },
+        { k: "พันธะ", v: "ไม่มี" },
+        { k: "ใบเสนอราคา", v: "ภายใน 48ชม" },
+      ],
     },
     problem: {
-      title: 'ธุรกิจของคุณสมควรได้รับสิ่งที่ดีกว่านี้',
-      subtitle: 'ทุกวันที่ขาดการปรากฏตัวดิจิทัลที่มีประสิทธิภาพ คือโอกาสที่สูญเสียไป',
-      good_news: 'ข่าวดีคือ? ปัญหาเหล่านี้มีทางแก้ไขที่ง่ายและเข้าถึงได้',
+      num: "01 / 09",
+      title_l1: "สิ่งที่",
+      title_l2_it: "คุณเสียไป",
+      intro: "ทุกวันที่ขาดการปรากฏตัวดิจิทัล คือสายที่พลาด ลูกค้าที่เลือกคู่แข่ง และความน่าเชื่อถือที่หายไป",
       items: [
-        {
-          icon: '🚫',
-          title: 'ไม่มีเว็บไซต์',
-          description: 'ลูกค้าที่มีศักยภาพไม่สามารถค้นหาคุณทางออนไลน์ได้ พวกเขาหันไปหาคู่แข่งที่มีตัวตนบนโลกออนไลน์',
-        },
-        {
-          icon: '📱',
-          title: 'เว็บไซต์ล้าสมัยหรือไม่รองรับมือถือ',
-          description: 'เว็บไซต์ที่ล้าสมัยหรืออ่านยากบนสมาร์ทโฟน สร้างภาพลักษณ์ที่ไม่เป็นมืออาชีพ',
-        },
-        {
-          icon: '📉',
-          title: 'ไม่มีการติดต่อผ่านอินเทอร์เน็ต',
-          description: 'เว็บไซต์ของคุณมีอยู่แต่ไม่สร้างคำขอใดๆ มันไม่ได้ทำงานให้คุณ',
-        },
-        {
-          icon: '❌',
-          title: 'สูญเสียความน่าเชื่อถือ',
-          description: 'ในปี 2026 บริษัทที่ไม่มีการปรากฏตัวดิจิทัลสมัยใหม่ สูญเสียความเชื่อมั่นของผู้มีโอกาสเป็นลูกค้าก่อนการติดต่อครั้งแรก',
-        },
+        { n: "A", title: "ไม่มีเว็บไซต์ ไม่มีตัวตน", desc: "ลูกค้าที่มีศักยภาพหาคุณไม่เจอออนไลน์ พวกเขาหันไปหาคู่แข่งที่มีตัวตน" },
+        { n: "B", title: "เว็บล้าสมัยหรือไม่รองรับมือถือ", desc: "เว็บเก่าหรืออ่านยากบนมือถือทำลายภาพลักษณ์มืออาชีพ" },
+        { n: "C", title: "ไม่มีการติดต่อผ่านอินเทอร์เน็ต", desc: "เว็บคุณมีอยู่แต่ไม่สร้างคำขอ มันไม่ได้ทำงานเพื่อคุณ" },
+        { n: "D", title: "สูญเสียความน่าเชื่อถือ", desc: "ในปี 2026 บริษัทที่ไม่มีตัวตนดิจิทัลทันสมัย สูญเสียความเชื่อมั่นก่อนการติดต่อแรก" },
       ],
+      good_news: "ข่าวดี: ปัญหาเหล่านี้มีทางแก้ที่ง่ายและเข้าถึงได้",
     },
-    solution: {
-      badge: 'แนวทางของเรา',
-      title: 'ผู้เชี่ยวชาญด้านการปรากฏตัวดิจิทัลสำหรับ SME ในท้องถิ่น',
-      p1: 'เราสร้างเว็บไซต์ที่ปรับแต่งตามความต้องการซึ่งเปลี่ยนผู้เยี่ยมชมให้กลายเป็นลูกค้า ไม่มีโซลูชันทั่วไป: แต่ละโปรเจกต์ถูกออกแบบสำหรับ <strong class="text-white">ธุรกิจของคุณ</strong> และ <strong class="text-white">ตลาดท้องถิ่นของคุณ</strong>',
-      p2: 'ภารกิจของเรา: มอบ <strong class="text-emerald-400">หน้าต่างดิจิทัลระดับมืออาชีพ</strong> ที่ทำงานให้คุณ 24 ชั่วโมง สร้างลูกค้าที่มีคุณภาพ และเสริมความน่าเชื่อถือของคุณ',
-      benefits: [
-        'เว็บไซต์ทันสมัยและเป็นมืออาชีพ',
-        'เพิ่มประสิทธิภาพในการสร้างลูกค้า',
-        'รวดเร็วและมีประสิทธิภาพสูง',
-        'รองรับทุกขนาดหน้าจอ',
-        'รวม SEO ท้องถิ่น',
-        'การสนับสนุนส่วนตัว',
+    approach: {
+      num: "02 / 09",
+      title_l1: "วิธีของ",
+      title_l2_it: "เรา",
+      intro: "เราสร้างเว็บที่ปรับแต่งตามความต้องการเพื่อเปลี่ยนผู้เข้าชมเป็นลูกค้า ไม่มีของทั่วไป",
+      benefits: ["เว็บไซต์ทันสมัย เป็นมืออาชีพ", "เพิ่มประสิทธิภาพในการสร้างลูกค้า", "รวดเร็วและมีประสิทธิภาพ", "รองรับทุกหน้าจอ", "รวม SEO ท้องถิ่น", "การสนับสนุนส่วนตัว"],
+      cards: [
+        { t: "มุ่งเน้นผลลัพธ์", d: "ทุกองค์ประกอบออกแบบเพื่อการแปลง" },
+        { t: "พันธมิตรระยะยาว", d: "การสนับสนุนที่ไม่หยุดแค่การเปิดตัว" },
+        { t: "คุณภาพระดับพรีเมียม", d: "เทคโนโลยีทันสมัย ดีไซน์ประณีต" },
       ],
-      card1_title: 'มุ่งเน้นผลลัพธ์',
-      card1_desc: 'ทุกองค์ประกอบออกแบบมาเพื่อการแปลง',
-      card2_title: 'พันธมิตรระยะยาว',
-      card2_desc: 'การสนับสนุนที่ไม่หยุดแค่การเปิดตัว',
-      card3_title: 'คุณภาพระดับพรีเมียม',
-      card3_desc: 'เทคโนโลยีทันสมัย ดีไซน์ที่ประณีต',
     },
     offers: {
-      title: 'แพ็กเกจของเรา',
-      subtitle: 'โซลูชันที่เหมาะกับทุกขั้นตอนการเติบโตของคุณ',
-      from: 'เริ่มต้นที่',
-      popular: 'ได้รับความนิยมมากที่สุด',
-      cta: 'ขอใบเสนอราคา',
+      num: "03 / 09",
+      title_l1: "บริการ",
+      title_l2_it: "ของเรา",
+      intro: "สี่แพ็กเกจสำหรับทุกขั้นของการเติบโต ราคาเปิดเผย ใบเสนอราคาส่งภายใน 48ชม",
+      from: "เริ่มต้นที่",
+      popular: "ได้รับความนิยม",
+      cta: "ขอใบเสนอราคา",
       items: [
-        {
-          name: 'Landing Page มืออาชีพ',
-          tagline: 'สิ่งจำเป็นสำหรับการมองเห็น',
-          price: '45,000 – 70,000 ฿',
-          description: 'การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพสำหรับการเริ่มต้น',
-          features: [
-            'ดีไซน์ทันสมัยและกำหนดเอง',
-            'รองรับมือถือและแท็บเล็ต',
-            'นำเสนอบริการของคุณอย่างชัดเจน',
-            'แบบฟอร์มติดต่อ',
-            'การผสาน Google Maps',
-            'SEO ท้องถิ่นพื้นฐาน',
-            'รวมการเปิดตัว',
-          ],
-        },
-        {
-          name: 'Rebranding + เว็บไซต์พรีเมียม',
-          tagline: 'เปลี่ยนภาพลักษณ์ของคุณ',
-          price: '100,000 – 155,000 ฿',
-          description: 'ปรับปรุงภาพลักษณ์ทั้งหมดและเสริมความน่าเชื่อถือ',
-          features: [
-            'ตรวจสอบภาพลักษณ์ปัจจุบัน',
-            'ปรับปรุงโลโก้',
-            'ชุดสีใหม่',
-            'ฟอนต์มืออาชีพ',
-            'แนวทางแบรนด์ขนาดเล็ก',
-            'เว็บไซต์ใหม่สอดคล้องกับอัตลักษณ์ของคุณ',
-            'การฝึกอบรมการใช้งานขั้นพื้นฐาน',
-          ],
-        },
-        {
-          name: 'โปรเจกต์กำหนดเอง',
-          tagline: 'ความต้องการเฉพาะของคุณ',
-          price: 'ตามการประเมิน',
-          description: 'สำหรับโปรเจกต์ที่ต้องการฟีเจอร์ขั้นสูง',
-          features: [
-            'เว็บไซต์หลายหน้าครบครัน',
-            'ร้านค้าออนไลน์ (e-commerce)',
-            'ระบบการจอง',
-            'ฟีเจอร์เฉพาะ',
-            'ออกแบบเว็บไซต์ใหม่ทั้งหมด',
-            'การผสานแบบกำหนดเอง',
-            'การสนับสนุนเฉพาะบุคคล',
-          ],
-        },
-        {
-          name: 'AI Voice Agent',
-          tagline: 'สายโทรศัพท์ของคุณ ขับเคลื่อนโดย AI',
-          price: 'เริ่มต้นที่ 990 €',
-          description: 'ตัวแทนโทรศัพท์อัจฉริยะที่ตอบ คัดกรอง และบันทึก — ตลอด 24 ชั่วโมง',
-          features: [
-            'ตั้งค่า VAPI + หมายเลข Twilio',
-            'เสียง ElevenLabs แบบธรรมชาติ',
-            'เชื่อมต่อ CRM ผ่านโปรโตคอล MCP',
-            '1 สถานการณ์ธุรกิจที่กำหนดเอง',
-            'รองรับ 1 เดือน',
-          ],
-        },
+        { name: "Landing Page", tagline: "สิ่งจำเป็นเพื่อการมองเห็น", price: "45,000 – 70,000 ฿", description: "การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพสำหรับการเริ่มต้น", features: ["ดีไซน์ทันสมัยและกำหนดเอง", "รองรับมือถือและแท็บเล็ต", "นำเสนอบริการของคุณอย่างชัดเจน", "แบบฟอร์มติดต่อ", "ผสาน Google Maps", "SEO ท้องถิ่น", "รวมการเปิดตัว"] },
+        { name: "Rebranding + เว็บพรีเมียม", tagline: "เปลี่ยนภาพลักษณ์", price: "100,000 – 155,000 ฿", description: "ปรับปรุงภาพลักษณ์ทั้งหมดและเสริมความน่าเชื่อถือ", features: ["ตรวจสอบภาพลักษณ์", "ปรับปรุงโลโก้", "ชุดสีใหม่", "ฟอนต์มืออาชีพ", "แนวทางแบรนด์", "เว็บไซต์ใหม่", "การฝึกอบรม"] },
+        { name: "โปรเจกต์กำหนดเอง", tagline: "ความต้องการเฉพาะ", price: "ตามการประเมิน", description: "สำหรับโปรเจกต์ที่ต้องการฟีเจอร์ขั้นสูง", features: ["เว็บหลายหน้า", "ร้านค้าออนไลน์", "ระบบการจอง", "ฟีเจอร์เฉพาะ", "ออกแบบใหม่ทั้งหมด", "การผสานกำหนดเอง", "การสนับสนุนเฉพาะ"] },
+        { name: "AI Voice Agent", tagline: "โทรศัพท์ของคุณ อัตโนมัติ", price: "เริ่มต้นที่ 990 €", description: "ตัวแทนโทรศัพท์อัจฉริยะ ตอบ คัดกรอง บันทึก 24ชม", features: ["ตั้งค่า VAPI + Twilio", "เสียง ElevenLabs ธรรมชาติ", "เชื่อม CRM ผ่าน MCP", "1 สถานการณ์กำหนดเอง", "รองรับ 1 เดือน"] },
       ],
+    },
+    phone: {
+      num: "04 / 09",
+      badge: "PHONE AGENT — ทำงานอย่างไร",
+      title_l1: "ลูกค้าโทรมา",
+      title_l2: "",
+      title_l3_it: "เรารับสาย",
+      sub: "โซลูชันครบวงจรเชื่อมกับเครื่องมือคุณในไม่กี่ชั่วโมง คุณคุมทุกอย่าง agent ทำที่เหลือ",
+      steps: [
+        { label: "ลูกค้าโทร", desc: "หมายเลข Twilio สำหรับธุรกิจคุณ" },
+        { label: "AI เข้าใจ", desc: "Claude Sonnet วิเคราะห์คำขอภาษาธรรมชาติ" },
+        { label: "CRM อัพเดท", desc: "ผ่าน MCP คำสั่งซื้อหรือนัดถูกบันทึก" },
+        { label: "คุณได้รับแจ้ง", desc: "Dashboard อัพเดทแบบเรียลไทม์" },
+      ],
+      cta: "ลองเดโม",
     },
     maintenance: {
-      badge: 'ความสงบใจด้านดิจิทัล',
-      title: 'การบำรุงรักษา & โฮสติ้ง',
-      subtitle: 'เว็บไซต์ของคุณทำงานได้อย่างมีประสิทธิภาพ ปลอดภัย และทันสมัย คุณไม่ต้องจัดการอะไรเลย',
-      recommended: 'แนะนำ',
-      per_month: '/เดือน',
-      annual_discount: '-10% สำหรับการชำระรายปี',
-      no_commitment: 'ไม่มีสัญญาผูกมัด',
-      scalable: 'ปรับได้ตามความต้องการ',
-      currency_symbol: '฿',
+      num: "05 / 09",
+      title_l1: "บำรุงรักษา",
+      title_l2_it: "& โฮสติ้ง",
+      intro: "เว็บไซต์คุณทำงานเร็ว ปลอดภัย ทันสมัย คุณไม่ต้องจัดการอะไร สามแพ็กเกจ ไม่มีพันธะ",
+      recommended: "แนะนำ",
+      per_month: "/เดือน",
+      currency: "฿",
       packs: [
-        {
-          name: 'Essential',
-          price: '1,900',
-          description: 'สิ่งจำเป็นสำหรับเว็บไซต์ที่ปลอดภัยและใช้งานได้',
-          features: [
-            'โฮสติ้งประสิทธิภาพสูง',
-            'รวมชื่อโดเมน',
-            'ใบรับรอง SSL (https)',
-            'การสำรองข้อมูลอัตโนมัติ',
-            'การตรวจสอบ 24/7',
-            'การอัปเดตทางเทคนิค',
-            'สนับสนุนทางอีเมล',
-          ],
-        },
-        {
-          name: 'Business',
-          price: '3,100',
-          description: 'สำหรับธุรกิจที่กำลังเติบโต',
-          popular: true,
-          features: [
-            'ทุกอย่างใน Essential',
-            '1 ชั่วโมงการแก้ไขต่อเดือน',
-            'การเพิ่มประสิทธิภาพ',
-            'รายงานรายเดือนแบบย่อ',
-            'เวลาตอบสนองที่รวดเร็ว',
-          ],
-        },
-        {
-          name: 'Premium',
-          price: '4,990',
-          priceNote: '+',
-          description: 'ความสงบใจทั้งหมดและการเติบโตต่อเนื่อง',
-          features: [
-            'ทุกอย่างใน Business',
-            '2 ชั่วโมงการแก้ไขต่อเดือน',
-            'ความปลอดภัยที่เพิ่มขึ้น',
-            'การเพิ่มประสิทธิภาพ SEO ต่อเนื่อง',
-            'การสนับสนุนด่วน',
-            'คำแนะนำเชิงกลยุทธ์รายเดือน',
-          ],
-        },
+        { name: "Essential", price: "1,900", description: "สิ่งจำเป็นเพื่อเว็บที่ปลอดภัยและใช้งานได้", features: ["โฮสติ้งประสิทธิภาพสูง", "รวมโดเมน", "SSL (https)", "สำรองข้อมูลอัตโนมัติ", "ตรวจสอบ 24/7", "อัพเดตเทคนิค", "สนับสนุนทางอีเมล"] },
+        { name: "Business", price: "3,100", popular: true, description: "สำหรับธุรกิจที่เติบโต", features: ["ทุกอย่างใน Essential", "1ชม แก้ไข/เดือน", "เพิ่มประสิทธิภาพ", "รายงานรายเดือน", "ตอบสนองด่วน"] },
+        { name: "Premium", price: "4,990", priceNote: "+", description: "ความสงบและการเติบโตต่อเนื่อง", features: ["ทุกอย่างใน Business", "2ชม แก้ไข/เดือน", "ความปลอดภัยเพิ่ม", "SEO ต่อเนื่อง", "สนับสนุนด่วน", "คำแนะนำเชิงกลยุทธ์รายเดือน"] },
       ],
+      perks: ["−10% หากชำระรายปี", "ไม่มีพันธะ", "ปรับได้ตามความต้องการ"],
     },
     upsell: {
-      title: 'ตัวเลือกเพิ่มเติม',
-      subtitle: 'ปรับแต่งโปรเจกต์ของคุณตามความต้องการเฉพาะ',
+      num: "06 / 09",
+      title_l1: "ตัวเลือก",
+      title_l2_it: "เพิ่มเติม",
+      intro: "ปรับแต่งโปรเจกต์ตามความต้องการเฉพาะ",
       options: [
-        { name: 'สร้างเนื้อหา', description: 'เขียนข้อความระดับมืออาชีพ', icon: '✍️' },
-        { name: 'SEO ขั้นสูง', description: 'การเพิ่มประสิทธิภาพเชิงลึกสำหรับ Google', icon: '📈' },
-        { name: 'Google Ads', description: 'โฆษณาแบบกำหนดเป้าหมายสำหรับการมองเห็นมากขึ้น', icon: '🎯' },
-        { name: 'การผสาน CRM', description: 'เชื่อมต่อเว็บไซต์กับเครื่องมือของคุณ', icon: '🔗' },
-        { name: 'บล็อกในตัว', description: 'แบ่งปันความเชี่ยวชาญของคุณ', icon: '📝' },
-        { name: 'เว็บไซต์หลายภาษา', description: 'เข้าถึงกลุ่มเป้าหมายระดับนานาชาติ', icon: '🌍' },
-        { name: 'ชั่วโมงพิเศษ', description: 'การแก้ไขเพิ่มเติมตามต้องการ', icon: '⏱️' },
-        { name: 'การฝึกอบรมส่วนตัว', description: 'เรียนรู้วิธีจัดการเว็บไซต์ของคุณ', icon: '🎓' },
+        { name: "สร้างเนื้อหา", desc: "เขียนข้อความระดับมืออาชีพ" },
+        { name: "SEO ขั้นสูง", desc: "ปรับแต่งเชิงลึกสำหรับ Google" },
+        { name: "Google Ads", desc: "โฆษณากำหนดเป้าหมาย" },
+        { name: "การผสาน CRM", desc: "เชื่อมเว็บกับเครื่องมือ" },
+        { name: "บล็อกในตัว", desc: "แบ่งปันความเชี่ยวชาญ" },
+        { name: "เว็บหลายภาษา", desc: "เข้าถึงระดับนานาชาติ" },
+        { name: "ชั่วโมงพิเศษ", desc: "แก้ไขเพิ่มเติมตามต้องการ" },
+        { name: "ฝึกอบรมส่วนตัว", desc: "เรียนรู้การจัดการเว็บ" },
       ],
     },
-    methodology: {
-      title: 'กระบวนการทำงานเป็นอย่างไร?',
-      subtitle: 'กระบวนการที่เรียบง่ายและโปร่งใส ตั้งแต่การสนทนาครั้งแรกจนถึงการเปิดตัว',
+    method: {
+      num: "07 / 09",
+      title_l1: "กระบวนการ",
+      title_l2_it: "ทำงาน",
+      intro: "กระบวนการเรียบง่ายและโปร่งใส จากการสนทนาแรกถึงการเปิดตัว หกขั้นตอน ไม่มากกว่านี้",
       steps: [
-        { number: '01', title: 'ตรวจสอบฟรี', description: 'เราวิเคราะห์สถานการณ์และเป้าหมายปัจจุบันของคุณในการโทร 30 นาที' },
-        { number: '02', title: 'ข้อเสนอที่ชัดเจน', description: 'คุณได้รับใบเสนอราคาโดยละเอียด ไม่มีค่าใช้จ่ายแอบแฝง พร้อมกำหนดเวลาที่แน่นอน' },
-        { number: '03', title: 'ต้นแบบ', description: 'เราสร้างต้นแบบภาพของเว็บไซต์ของคุณเพื่อการอนุมัติก่อนการพัฒนา' },
-        { number: '04', title: 'การพัฒนา', description: 'เราสร้างเว็บไซต์ของคุณด้วยเทคโนโลยีล่าสุดเพื่อประสิทธิภาพและความปลอดภัย' },
-        { number: '05', title: 'การเปิดตัว', description: 'เว็บไซต์ของคุณถูกเผยแพร่และกำหนดค่าบนชื่อโดเมนของคุณ' },
-        { number: '06', title: 'ติดตาม 30 วัน', description: 'เราพร้อมสำหรับการปรับเปลี่ยนและแนะนำคุณในการเริ่มต้นใช้งาน' },
+        { n: "01", t: "ตรวจสอบฟรี", d: "เราวิเคราะห์สถานการณ์และเป้าหมายในการโทร 30 นาที" },
+        { n: "02", t: "ข้อเสนอชัดเจน", d: "รับใบเสนอราคาละเอียด ไม่มีค่าใช้จ่ายแอบแฝง" },
+        { n: "03", t: "ต้นแบบ", d: "เราสร้างต้นแบบภาพเพื่อการอนุมัติ" },
+        { n: "04", t: "พัฒนา", d: "เราสร้างเว็บด้วยเทคโนโลยีล่าสุด" },
+        { n: "05", t: "เปิดตัว", d: "เว็บคุณเผยแพร่บนโดเมนของคุณ" },
+        { n: "06", t: "ติดตาม 30 วัน", d: "เราพร้อมปรับเปลี่ยนและแนะนำการใช้งาน" },
       ],
     },
     reassurance: {
-      title: 'ทำไมต้องไว้วางใจเรา?',
+      num: "08 / 09",
+      title_l1: "ทำไมต้อง",
+      title_l2_it: "ไว้ใจเรา",
+      intro: "สี่เหตุผลที่เปลี่ยนความสัมพันธ์ได้จริง",
       points: [
-        { icon: '👤', title: 'ผู้ติดต่อเดียว', description: 'ผู้ติดต่อเพียงคนเดียวตั้งแต่ต้นจนจบ ไม่มีการโอนย้าย ไม่ต้องอธิบายซ้ำ' },
-        { icon: '🔑', title: 'โซลูชันครบวงจร', description: 'เราจัดการทุกอย่าง: ดีไซน์ การพัฒนา โฮสติ้ง การเปิดตัว คุณไม่ต้องทำอะไร' },
-        { icon: '🤝', title: 'การสนับสนุนส่วนตัว', description: 'แต่ละโปรเจกต์มีความเฉพาะตัว เราใช้เวลาทำความเข้าใจธุรกิจและเป้าหมายของคุณ' },
-        { icon: '🚀', title: 'วิสัยทัศน์ระยะยาว', description: 'เราไม่ใช่แค่ผู้ให้บริการ แต่เป็นพันธมิตรที่ร่วมเดินทางในการเติบโตดิจิทัลของคุณ' },
+        { t: "ผู้ติดต่อเดียว", d: "ผู้ติดต่อเพียงคนเดียวตั้งแต่ต้นจนจบ" },
+        { t: "โซลูชันครบวงจร", d: "เราจัดการทุกอย่าง คุณไม่ต้องทำอะไร" },
+        { t: "การสนับสนุนส่วนตัว", d: "แต่ละโปรเจกต์ไม่เหมือนกัน เราใช้เวลาเข้าใจ" },
+        { t: "วิสัยทัศน์ระยะยาว", d: "เราไม่ใช่แค่ผู้ให้บริการ แต่เป็นพันธมิตร" },
       ],
     },
-    cta_final: {
-      title: 'พร้อมที่จะเปลี่ยนแปลงการปรากฏตัวดิจิทัลของคุณหรือยัง?',
-      description: 'จองการ <strong class="text-white">ตรวจสอบฟรี 30 นาที</strong> เราจะวิเคราะห์สถานการณ์ของคุณร่วมกันและกำหนดกลยุทธ์ที่ดีที่สุดสำหรับธุรกิจของคุณ',
-      cta: 'จองการตรวจสอบฟรีของฉัน',
-      email: 'ส่งอีเมล',
-      note: 'ไม่มีสัญญาผูกมัด • ฟรี 100% • ตอบกลับภายใน 24 ชั่วโมง',
-    },
-    phoneAgent: {
-      badge: 'ใหม่',
-      title: 'AI Voice Agent ทำงานอย่างไร?',
-      subtitle: 'โซลูชันสำเร็จรูปที่เชื่อมต่อกับเครื่องมือของคุณในไม่กี่ชั่วโมง',
-      steps: [
-        { icon: '📞', label: 'ลูกค้าโทรเข้า', description: 'หมายเลข Twilio เฉพาะสำหรับธุรกิจของคุณ' },
-        { icon: '🧠', label: 'AI เข้าใจ', description: 'Claude Sonnet วิเคราะห์คำขอด้วยภาษาธรรมชาติ' },
-        { icon: '🗄️', label: 'CRM อัปเดต', description: 'ผ่านโปรโตคอล MCP คำสั่งซื้อหรือการนัดหมายถูกบันทึก' },
-        { icon: '🔔', label: 'คุณได้รับการแจ้งเตือน', description: 'แดชบอร์ดของคุณอัปเดตแบบเรียลไทม์' },
-      ],
-      cta_label: 'ลองดูเดโมสด',
-    },
-    partners: {
-      title: 'พวกเขาไว้วางใจเรา',
-      selenium_role: 'เอเจนซี่ดิจิทัล',
-      gecko_role: 'ร้านอาหาร',
-      victor_role: 'พอร์ตโฟลิโอสร้างสรรค์',
-      folies_role: 'คณะนาฏศิลป์',
-      ghjulianu_role: 'ศิลปินคอร์ซิกา',
-      ajmg_role: 'บริการที่ปรึกษา',
+    finalCta: {
+      num: "09 / 09",
+      title_l1: "พร้อม",
+      title_l2: "เปลี่ยน",
+      title_l3_it: "ตัวตนคุณ?",
+      desc: "จองตรวจสอบฟรี 30 นาที เราจะวิเคราะห์สถานการณ์ร่วมกันและกำหนดกลยุทธ์ที่ดีที่สุด",
+      cta: "จองตรวจสอบฟรี",
+      email: "ส่งอีเมล",
+      note: "ไม่มีพันธะ · ฟรี 100% · ตอบใน 24ชม",
     },
   },
   landing: {
