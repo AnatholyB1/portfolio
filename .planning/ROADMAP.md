@@ -65,7 +65,14 @@ Plans:
   3. Maintenance packs (Essentiel €49, Business €79, Premium €129) display with popular badge; 8 add-on cards appear in the Options grid
   4. Methodology section scroll-rail highlights the active step as the user scrolls through 6 steps
   5. Reassurance grid (4 trust points), final CTA, Partners ticker, and Footer are present and complete the page
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 03-01-PLAN.md — i18n services namespace — replace translations.ts services block (fr/en/th)
+- [ ] 03-02-PLAN.md — Static sections batch 1 — ServicesHeroSection, ProblemSection, ApproachSection
+- [ ] 03-03-PLAN.md — Static sections batch 2 — OffersSection, PhoneAgentExplainer, MaintenanceSection, OptionsSection
+- [ ] 03-04-PLAN.md — MethodologySection (GSAP ScrollTrigger rail) + ClientProviders lazy export
+- [ ] 03-05-PLAN.md — ReassuranceSection + FinalCtaSection + services/page.tsx full rewrite
+- [ ] 03-06-PLAN.md — Services CSS in globals.css + human verification checkpoint
 **UI hint**: yes
 
 ### Phase 4: Rethemes + QA
@@ -87,5 +94,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
 | 2. Landing Page Rebuild | 6/6 | Complete | 2026-05-17 |
-| 3. Services Page Rebuild | 0/TBD | Not started | - |
+| 3. Services Page Rebuild | 0/6 | Not started | - |
 | 4. Rethemes + QA | 0/TBD | Not started | - |
