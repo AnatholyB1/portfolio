@@ -177,16 +177,15 @@ function ShapeWithRings({ shape, color }: { shape: Shape; color: string }) {
 
 export default function PartnersBanner() {
   const { t } = useLanguage();
-  const tp = t.services.partners;
 
-  const roles: Record<string, string> = {
-    selenium: tp.selenium_role,
-    gecko: tp.gecko_role,
-    victor: tp.victor_role,
-    ghjulianu: tp.ghjulianu_role,
-    folies: tp.folies_role,
-    ajmg: tp.ajmg_role,
-  };
+  // Role labels sourced from landing.partners.items (keyed by partner name)
+  const landingItems = t.landing.partners.items;
+  const roles: Record<string, string> = Object.fromEntries(
+    PARTNERS.map((p) => {
+      const match = landingItems.find((item) => item.name === p.name);
+      return [p.id, match?.role ?? p.name];
+    })
+  );
 
   // Duplicate for seamless infinite scroll (2 copies → animate -50%)
   const items = [...PARTNERS, ...PARTNERS];
@@ -205,7 +204,7 @@ export default function PartnersBanner() {
 
       {/* Title */}
       <p className="text-center text-xs font-mono tracking-[0.3em] text-white/25 uppercase mb-8 relative z-10">
-        {tp.title}
+        {t.landing.partners.title}
       </p>
 
       {/* Ticker track */}
