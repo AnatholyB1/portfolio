@@ -85,7 +85,12 @@ Plans:
   3. Language switcher cycles fr/en/th on both landing and services pages — all new content keys resolve in all three locales without fallback warnings
   4. All pages are usable at 900px viewport width and all animations are absent or simplified when prefers-reduced-motion is set
   5. /demo/feuillette loads without any visual change and passes a side-by-side screenshot comparison against the pre-milestone baseline
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 04-01-PLAN.md — /mentions-legales retheme: CSS var class substitution + agency metadata
+- [ ] 04-02-PLAN.md — /demo retheme: CSS var class substitution, Supabase wiring preserved
+- [ ] 04-03-PLAN.md — i18n audit: key coverage across landing + services + Navbar + Footer
+- [ ] 04-04-PLAN.md — QA checklist: feuillette diff, SEO grep, responsive + reduced-motion human verify
 **UI hint**: yes
 
 ## Progress
@@ -95,4 +100,4 @@ Plans:
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
 | 2. Landing Page Rebuild | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | 0/6 | Not started | - |
-| 4. Rethemes + QA | 0/TBD | Not started | - |
+| 4. Rethemes + QA | 0/4 | Not started | - |
