@@ -2,91 +2,10 @@ export type Lang = 'fr' | 'en' | 'th';
 
 export interface Translations {
   nav: {
-    home: string;
-    about: string;
     services: string;
-    projects: string;
     contact: string;
     manifeste: string;
     work: string;
-  };
-  hero: {
-    title: string;
-    subtitle: string;
-    description: string;
-    cta_services: string;
-    cta_projects: string;
-    cta_hire: string;
-  };
-  about: {
-    title: string;
-    p1_strong: string;
-    p1: string;
-    p2_strong: string;
-    p2: string;
-    p3_strong: string;
-    p3: string;
-    p4: string;
-    p4_strong: string;
-    p5_available: string;
-    p5_remote: string;
-    p5_based: string;
-    skills_title: string;
-  };
-  projects: {
-    title: string;
-    mono_subtitle: string;
-    description: string;
-    // per-project
-    selenium_subtitle: string;
-    selenium_desc: string;
-    gecko_subtitle: string;
-    gecko_desc: string;
-    victor_subtitle: string;
-    victor_desc: string;
-    ghjulianu_subtitle: string;
-    ghjulianu_desc: string;
-    folies_subtitle: string;
-    folies_desc: string;
-    // card UI
-    click_to_explore: string;
-    flip_back_hint: string;
-    hud_flip: string;
-    hud_interact: string;
-    about_label: string;
-    tech_label: string;
-    visit: string;
-    loading: string;
-    preview_blocked: string;
-    preview_blocked_desc: string;
-    open: string;
-  };
-  contact: {
-    title: string;
-    description: string;
-    email_label: string;
-    location_label: string;
-    location_value: string;
-    name_placeholder: string;
-    email_placeholder: string;
-    message_placeholder: string;
-    submit: string;
-    submitting: string;
-    success: string;
-    error: string;
-  };
-  footer: {
-    rights: string;
-    built_with: string;
-    legal_notice: string;
-  };
-  phoneAgent: {
-    badge: string;
-    title: string;
-    poweredBy: string;
-    benefits: string[];
-    cta_demo: string;
-    cta_services: string;
   };
   services: {
     hero: {
@@ -262,97 +181,10 @@ export interface Translations {
 
 const fr: Translations = {
   nav: {
-    home: 'Accueil',
-    about: 'À propos',
     services: 'Services',
-    projects: 'Projets',
     contact: 'Contact',
     manifeste: 'Manifeste',
     work: 'Réalisations',
-  },
-  hero: {
-    title: 'Développeur Full Stack & Ingénieur IA',
-    subtitle:
-      "Je construis des <strong>applications web scalables</strong>, des <strong>systèmes propulsés par l'IA</strong> et des <strong>APIs sur mesure</strong> qui accélèrent la croissance",
-    description:
-      "De l'automatisation intelligente aux plateformes prêtes pour la production — je transforme des idées complexes en solutions digitales puissantes. <span class=\"text-indigo-400\">Disponible pour des projets freelance.</span>",
-    cta_services: 'Mes Services',
-    cta_projects: 'Voir mes Projets',
-    cta_hire: 'Me contacter',
-  },
-  about: {
-    title: 'Pourquoi travailler avec moi',
-    p1_strong: 'Je délivre des résultats.',
-    p1: 'En tant que développeur full stack orienté backend, je me spécialise dans la construction de <strong class="text-indigo-400">systèmes scalables</strong> et de <strong class="text-indigo-400">solutions digitales intelligentes</strong> qui aident les entreprises à automatiser leurs processus, augmenter leur efficacité et développer leurs revenus.',
-    p2_strong: 'Mon expertise :',
-    p2: "Développement d'API personnalisées, architecture microservices, automatisation propulsée par l'IA et infrastructure cloud. Je transforme des besoins complexes en <strong class=\"text-cyan-400\">solutions prêtes pour la production</strong> — dans les délais et construites pour durer.",
-    p3_strong: 'Au-delà du code :',
-    p3: "Je crée des expériences web 3D immersives avec Three.js et WebGL, ajoutant une couche d'innovation qui différencie votre produit de la concurrence.",
-    p4: 'Co-fondateur de',
-    p4_strong: 'Votre projet pourrait être le prochain.',
-    p5_available: '✓ Disponible pour des projets freelance',
-    p5_remote: '✓ Collaboration à distance',
-    p5_based: '✓ Basé à Tours, France',
-    skills_title: 'Mes Compétences',
-  },
-  projects: {
-    title: 'Projets Phares & Études de Cas',
-    mono_subtitle: '// SOLUTIONS RÉELLES LIVRÉES AUX CLIENTS',
-    description:
-      "Des applications propulsées par l'IA aux systèmes CRM d'entreprise — découvrez comment j'ai aidé des entreprises à atteindre leurs objectifs",
-    selenium_subtitle: 'Agence Digitale',
-    selenium_desc: 'Agence digitale co-fondée livrant des plateformes web sur mesure, des animations 3D et des stratégies digitales orientées croissance pour les PME mondiales.',
-    gecko_subtitle: 'Site Restaurant',
-    gecko_desc: 'Site complet pour un restaurant avec menus, photos d\'ambiance, intégration Google Maps, informations de réservation et SEO local pour augmenter la fréquentation.',
-    victor_subtitle: 'Portfolio Créatif',
-    victor_desc: 'Portfolio soigné pour un professionnel créatif avec animations fluides, système de design raffiné et mise en valeur convaincante des compétences et réalisations.',
-    ghjulianu_subtitle: 'Site Artiste',
-    ghjulianu_desc: 'Site vitrine élégant pour l\'artiste corse Ghjulianu Codani, mettant en avant son univers musical et artistique avec un design immersif et une expérience utilisateur moderne.',
-    folies_subtitle: 'Site Compagnie de Danse',
-    folies_desc: 'Site complet pour la compagnie de danse Les Folies Temps Danse, présentant le répertoire, les actualités, les cours et les événements dans un design dynamique et animé.',
-    click_to_explore: 'CLIQUER POUR EXPLORER →',
-    flip_back_hint: '← CLIQUER POUR RETOURNER',
-    hud_flip: 'CLIQUER POUR RETOURNER',
-    hud_interact: 'INTERAGIR AVEC L\'APERÇU',
-    about_label: '// À PROPOS',
-    tech_label: '// STACK TECH',
-    visit: 'VISITER',
-    loading: 'CHARGEMENT…',
-    preview_blocked: 'APERÇU BLOQUÉ',
-    preview_blocked_desc: 'Ce site restreint l\'intégration externe.',
-    open: 'Ouvrir',
-  },
-  contact: {
-    title: 'Construisons quelque chose de grand',
-    description:
-      "Prêt à donner vie à votre projet ? Que vous ayez besoin d'une <strong class=\"text-white\">application web sur mesure</strong>, d'une <strong class=\"text-white\">intégration IA</strong> ou d'un <strong class=\"text-white\">système backend scalable</strong> — je suis là pour vous aider.",
-    email_label: 'Email',
-    location_label: 'Localisation',
-    location_value: 'Tours, France',
-    name_placeholder: 'Votre nom',
-    email_placeholder: 'Votre email',
-    message_placeholder: 'Votre message',
-    submit: 'Envoyer le message',
-    submitting: 'Envoi en cours...',
-    success: 'Message envoyé avec succès !',
-    error: "Échec de l'envoi. Veuillez réessayer.",
-  },
-  footer: {
-    rights: 'Tous droits réservés.',
-    built_with: 'Construit avec Next.js, Three.js & Tailwind CSS',
-    legal_notice: 'Mentions légales',
-  },
-  phoneAgent: {
-    badge: 'Nouveau',
-    title: 'Agent Vocal IA — Votre standard téléphonique automatisé',
-    poweredBy: 'Powered by VAPI · Claude · ElevenLabs · Twilio',
-    benefits: [
-      'Disponible 24h/24 et 7j/7 sans décrocher',
-      'Prend les commandes et RDV directement dans votre CRM',
-      'Connecté à vos outils métier via protocole MCP',
-    ],
-    cta_demo: 'Voir la démo live',
-    cta_services: 'En savoir plus',
   },
   services: {
     hero: {
@@ -610,97 +442,10 @@ const fr: Translations = {
 
 const en: Translations = {
   nav: {
-    home: 'Home',
-    about: 'About',
     services: 'Services',
-    projects: 'Projects',
     contact: 'Contact',
     manifeste: 'Manifesto',
     work: 'Work',
-  },
-  hero: {
-    title: 'Full Stack Developer & AI Engineer',
-    subtitle:
-      'I build <strong>scalable web applications</strong>, <strong>AI-powered systems</strong>, and <strong>custom APIs</strong> that drive business growth',
-    description:
-      'From intelligent automation to production-ready platforms — I turn complex ideas into powerful digital solutions. <span class="text-indigo-400">Available for freelance projects.</span>',
-    cta_services: 'My Services',
-    cta_projects: 'View My Projects',
-    cta_hire: 'Hire Me',
-  },
-  about: {
-    title: 'Why Work With Me',
-    p1_strong: 'I deliver results.',
-    p1: 'As a backend-oriented full stack developer, I specialize in building <strong class="text-indigo-400">scalable systems</strong> and <strong class="text-indigo-400">intelligent digital solutions</strong> that help businesses automate processes, increase efficiency, and grow revenue.',
-    p2_strong: 'My expertise:',
-    p2: 'Custom API development, microservices architecture, AI-powered automation, and cloud infrastructure. I transform complex requirements into <strong class="text-cyan-400">production-ready solutions</strong> — on time and built to scale.',
-    p3_strong: 'Beyond code:',
-    p3: 'I create immersive 3D web experiences using Three.js and WebGL, adding a layer of innovation that sets your product apart from competitors.',
-    p4: 'As co-founder of',
-    p4_strong: 'Your project could be next.',
-    p5_available: '✓ Available for freelance projects',
-    p5_remote: '✓ Remote collaboration',
-    p5_based: '✓ Based in Tours, France',
-    skills_title: 'My Skills',
-  },
-  projects: {
-    title: 'Featured Projects & Case Studies',
-    mono_subtitle: '// REAL SOLUTIONS DELIVERED TO CLIENTS',
-    description:
-      "From AI-powered applications to enterprise CRM systems — explore how I've helped businesses achieve their goals",
-    selenium_subtitle: 'Digital Agency',
-    selenium_desc: 'Co-founded digital agency delivering custom web platforms, 3D animations and growth-driven digital strategies for SMEs worldwide.',
-    gecko_subtitle: 'Restaurant Website',
-    gecko_desc: 'Full restaurant website with menu showcase, atmosphere photos, Google Maps integration, reservation info, and local SEO boosting foot traffic.',
-    victor_subtitle: 'Creative Portfolio',
-    victor_desc: 'Polished portfolio for a creative professional featuring fluid animations, a refined design system and compelling showcase of skills and work.',
-    ghjulianu_subtitle: 'Artist Website',
-    ghjulianu_desc: 'Elegant showcase website for Corsican artist Ghjulianu Codani, highlighting his musical and artistic world with an immersive design and modern user experience.',
-    folies_subtitle: 'Dance Company Website',
-    folies_desc: 'Full website for dance company Les Folies Temps Danse, presenting repertoire, news, classes and events in a dynamic and animated design.',
-    click_to_explore: 'CLICK TO EXPLORE →',
-    flip_back_hint: '← CLICK ANYWHERE TO FLIP BACK',
-    hud_flip: 'CLICK CARD TO FLIP',
-    hud_interact: 'INTERACT WITH PREVIEW',
-    about_label: '// ABOUT',
-    tech_label: '// TECH STACK',
-    visit: 'VISIT',
-    loading: 'LOADING…',
-    preview_blocked: 'PREVIEW BLOCKED',
-    preview_blocked_desc: 'This site restricts external embedding.',
-    open: 'Open',
-  },
-  contact: {
-    title: "Let's Build Something Great",
-    description:
-      'Ready to bring your project to life? Whether you need a <strong class="text-white">custom web application</strong>, <strong class="text-white">AI integration</strong>, or <strong class="text-white">scalable backend system</strong> — I\'m here to help.',
-    email_label: 'Email',
-    location_label: 'Location',
-    location_value: 'Tours, France',
-    name_placeholder: 'Your Name',
-    email_placeholder: 'Your Email',
-    message_placeholder: 'Your Message',
-    submit: 'Send Message',
-    submitting: 'Sending...',
-    success: 'Message sent successfully!',
-    error: 'Failed to send message. Please try again.',
-  },
-  footer: {
-    rights: 'All rights reserved.',
-    built_with: 'Built with Next.js, Three.js & Tailwind CSS',
-    legal_notice: 'Legal Notice',
-  },
-  phoneAgent: {
-    badge: 'New',
-    title: 'AI Voice Agent — Your phone line, automated',
-    poweredBy: 'Powered by VAPI · Claude · ElevenLabs · Twilio',
-    benefits: [
-      'Available 24/7 without picking up the phone',
-      'Takes orders and appointments directly into your CRM',
-      'Connected to your business tools via MCP protocol',
-    ],
-    cta_demo: 'See live demo',
-    cta_services: 'Learn more',
   },
   services: {
     hero: {
@@ -951,97 +696,10 @@ const en: Translations = {
 
 const th: Translations = {
   nav: {
-    home: 'หน้าหลัก',
-    about: 'เกี่ยวกับ',
     services: 'บริการ',
-    projects: 'โปรเจกต์',
     contact: 'ติดต่อ',
     manifeste: 'แถลงการณ์',
     work: 'ผลงาน',
-  },
-  hero: {
-    title: 'นักพัฒนา Full Stack & วิศวกร AI',
-    subtitle:
-      'ฉันสร้าง <strong>เว็บแอปพลิเคชันที่ขยายได้</strong>, <strong>ระบบขับเคลื่อนด้วย AI</strong> และ <strong>API ที่ปรับแต่งได้</strong> ที่ขับเคลื่อนการเติบโตของธุรกิจ',
-    description:
-      'จากระบบอัตโนมัติอัจฉริยะสู่แพลตฟอร์มพร้อมใช้งาน — ฉันเปลี่ยนแนวคิดซับซ้อนให้กลายเป็นโซลูชันดิจิทัลที่ทรงพลัง <span class="text-indigo-400">พร้อมรับงานฟรีแลนซ์</span>',
-    cta_services: 'บริการของฉัน',
-    cta_projects: 'ดูโปรเจกต์',
-    cta_hire: 'ว่าจ้างฉัน',
-  },
-  about: {
-    title: 'ทำไมต้องทำงานกับฉัน',
-    p1_strong: 'ฉันส่งมอบผลลัพธ์ที่แท้จริง',
-    p1: 'ในฐานะนักพัฒนา full stack ที่เชี่ยวชาญด้าน backend ฉันเชี่ยวชาญในการสร้าง <strong class="text-indigo-400">ระบบที่ขยายได้</strong> และ <strong class="text-indigo-400">โซลูชันดิจิทัลอัจฉริยะ</strong> ที่ช่วยให้ธุรกิจทำงานอัตโนมัติ เพิ่มประสิทธิภาพ และสร้างรายได้',
-    p2_strong: 'ความเชี่ยวชาญของฉัน:',
-    p2: 'การพัฒนา API แบบกำหนดเอง, สถาปัตยกรรม microservices, ระบบอัตโนมัติด้วย AI และโครงสร้างพื้นฐานคลาวด์ ฉันเปลี่ยนความต้องการซับซ้อนให้เป็น <strong class="text-cyan-400">โซลูชันพร้อมใช้งานจริง</strong> — ตรงเวลาและสร้างมาเพื่อความยั่งยืน',
-    p3_strong: 'นอกเหนือจากโค้ด:',
-    p3: 'ฉันสร้างประสบการณ์เว็บ 3D ที่ดื่มด่ำโดยใช้ Three.js และ WebGL เพิ่มนวัตกรรมที่ทำให้ผลิตภัณฑ์ของคุณโดดเด่นกว่าคู่แข่ง',
-    p4: 'ในฐานะผู้ร่วมก่อตั้ง',
-    p4_strong: 'โปรเจกต์ของคุณอาจเป็นลำดับถัดไป',
-    p5_available: '✓ พร้อมรับงานฟรีแลนซ์',
-    p5_remote: '✓ ทำงานทางไกลได้',
-    p5_based: '✓ ตั้งอยู่ที่ Tours, ฝรั่งเศส',
-    skills_title: 'ทักษะของฉัน',
-  },
-  projects: {
-    title: 'โปรเจกต์เด่น & กรณีศึกษา',
-    mono_subtitle: '// โซลูชันจริงที่ส่งมอบแก่ลูกค้า',
-    description:
-      'จากแอปพลิเคชันขับเคลื่อนด้วย AI ไปจนถึงระบบ CRM ระดับองค์กร — สำรวจว่าฉันช่วยให้ธุรกิจบรรลุเป้าหมายได้อย่างไร',
-    selenium_subtitle: 'เอเจนซี่ดิจิทัล',
-    selenium_desc: 'เอเจนซี่ดิจิทัลร่วมก่อตั้ง นำส่งแพลตฟอร์มเว็บที่กำหนดเอง แอนิเมชัน 3D และกลยุทธ์ดิจิทัลที่ขับเคลื่อนด้วยการเติบโตสำหรับ SME ทั่วโลก',
-    gecko_subtitle: 'เว็บไซต์ร้านอาหาร',
-    gecko_desc: 'เว็บไซต์ร้านอาหารครบครัน พร้อมเมนู ภาพบรรยากาศ การรวม Google Maps ข้อมูลการจอง และ SEO ท้องถิ่นเพื่อเพิ่มลูกค้า',
-    victor_subtitle: 'พอร์ตโฟลิโอสร้างสรรค์',
-    victor_desc: 'พอร์ตโฟลิโอสำหรับนักสร้างสรรค์มืออาชีพ พร้อมแอนิเมชันลื่นไหล ระบบดีไซน์ที่ประณีต และการนำเสนอทักษะและผลงานที่น่าสนใจ',
-    ghjulianu_subtitle: 'เว็บไซต์ศิลปิน',
-    ghjulianu_desc: 'เว็บไซต์โชว์เคสสำหรับศิลปิน Ghjulianu Codani แสดงถึงโลกดนตรีและศิลปะของเขาด้วยดีไซน์ที่น่าประทับใจและประสบการณ์ผู้ใช้ที่ทันสมัย',
-    folies_subtitle: 'เว็บไซต์คณะนาฏศิลป์',
-    folies_desc: 'เว็บไซต์ครบครันสำหรับคณะนาฏศิลป์ Les Folies Temps Danse นำเสนอผลงาน ข่าวสาร ชั้นเรียน และกิจกรรมในดีไซน์ที่ dynamic และมีชีวิตชีวา',
-    click_to_explore: 'คลิกเพื่อสำรวจ →',
-    flip_back_hint: '← คลิกเพื่อกลับ',
-    hud_flip: 'คลิกการ์ดเพื่อพลิก',
-    hud_interact: 'โต้ตอบกับพรีวิว',
-    about_label: '// เกี่ยวกับ',
-    tech_label: '// เทคโนโลยี',
-    visit: 'เยี่ยมชม',
-    loading: 'กำลังโหลด…',
-    preview_blocked: 'ไม่สามารถแสดงพรีวิว',
-    preview_blocked_desc: 'เว็บไซต์นี้จำกัดการฝังจากภายนอก',
-    open: 'เปิด',
-  },
-  contact: {
-    title: 'มาสร้างสิ่งที่ยิ่งใหญ่ด้วยกัน',
-    description:
-      'พร้อมที่จะทำให้โปรเจกต์ของคุณเป็นจริงหรือยัง? ไม่ว่าคุณจะต้องการ <strong class="text-white">เว็บแอปพลิเคชันแบบกำหนดเอง</strong>, <strong class="text-white">การผสาน AI</strong> หรือ <strong class="text-white">ระบบ backend ที่ขยายได้</strong> — ฉันพร้อมช่วยเหลือ',
-    email_label: 'อีเมล',
-    location_label: 'ที่ตั้ง',
-    location_value: 'Tours, ฝรั่งเศส',
-    name_placeholder: 'ชื่อของคุณ',
-    email_placeholder: 'อีเมลของคุณ',
-    message_placeholder: 'ข้อความของคุณ',
-    submit: 'ส่งข้อความ',
-    submitting: 'กำลังส่ง...',
-    success: 'ส่งข้อความสำเร็จ!',
-    error: 'ส่งข้อความไม่สำเร็จ กรุณาลองใหม่',
-  },
-  footer: {
-    rights: 'สงวนลิขสิทธิ์ทั้งหมด',
-    built_with: 'สร้างด้วย Next.js, Three.js & Tailwind CSS',
-    legal_notice: 'ข้อกฎหมาย',
-  },
-  phoneAgent: {
-    badge: 'ใหม่',
-    title: 'AI Voice Agent — ระบบโทรศัพท์อัตโนมัติ',
-    poweredBy: 'ขับเคลื่อนโดย VAPI · Claude · ElevenLabs · Twilio',
-    benefits: [
-      'พร้อมให้บริการ 24/7 โดยไม่ต้องรับสาย',
-      'รับคำสั่งซื้อและนัดหมายลงใน CRM ของคุณ',
-      'เชื่อมต่อกับเครื่องมือธุรกิจผ่านโปรโตคอล MCP',
-    ],
-    cta_demo: 'ดูเดโมสด',
-    cta_services: 'เรียนรู้เพิ่มเติม',
   },
   services: {
     hero: {
