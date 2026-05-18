@@ -138,7 +138,7 @@ export default function PhoneAgent() {
               ))}
             </ul>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <a href="#contact" className="btn btn-primary">
+              <a href="/demo" className="btn btn-primary">
                 {pa.cta_demo} <span className="ar">→</span>
               </a>
               <a href="/services#phone-agent" className="btn btn-ghost">{pa.cta_more}</a>

@@ -10,9 +10,8 @@ export default function ReassuranceSection() {
       <div className="wrap">
         <div className="sec-head" data-reveal>
           <div className="sec-num">{ts.num}</div>
-          <h2 className="sec-title split">
-            <span className="line"><span>{ts.title_l1}</span></span>
-            <span className="line"><span><em className="it">{ts.title_l2_it}</em></span></span>
+          <h2 className="sec-title">
+            {ts.title_l1}<br /><em className="it">{ts.title_l2_it}</em>
           </h2>
           <p className="sec-intro">{ts.intro}</p>
         </div>

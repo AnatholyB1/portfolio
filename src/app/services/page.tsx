@@ -5,7 +5,7 @@
 import { useReveals } from '@/hooks/useReveals';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import PartnersBanner from '@/components/sections/PartnersBanner';
+import Partners from '@/components/sections/Partners';
 import ServicesHeroSection from '@/components/sections/ServicesHeroSection';
 import ProblemSection from '@/components/sections/ProblemSection';
 import ApproachSection from '@/components/sections/ApproachSection';
@@ -34,7 +34,7 @@ export default function ServicesPage() {
         <OptionsSection />
         <MethodologySectionLazy />
         <ReassuranceSection />
-        <PartnersBanner />
+        <Partners />
         <FinalCtaSection />
       </main>
       <Footer />

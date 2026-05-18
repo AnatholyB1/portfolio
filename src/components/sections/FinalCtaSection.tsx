@@ -19,10 +19,7 @@ export default function FinalCtaSection() {
           <a href="/#contact" className="btn btn-primary">
             {ts.cta} <span className="ar">→</span>
           </a>
-          <a
-            href="mailto:business@contact-selenium-studio.com"
-            className="btn btn-ghost"
-          >
+          <a href="/#contact" className="btn btn-ghost">
             {ts.email}
           </a>
         </div>

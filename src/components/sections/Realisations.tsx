@@ -21,8 +21,9 @@ export default function Realisations() {
           {projects.map((project) => {
             const item = w.items[project.index];
             const Wrapper = project.href ? 'a' : 'div';
+            const isExternal = project.href?.startsWith('http');
             const wrapperProps = project.href
-              ? { href: project.href, className: 'work-item' }
+              ? { href: project.href, className: 'work-item', ...(isExternal && { target: '_blank', rel: 'noopener noreferrer' }) }
               : { className: 'work-item' };
             return (
               <Wrapper key={project.name} {...wrapperProps}>
@@ -57,7 +58,7 @@ export default function Realisations() {
               —— PROCHAINE ÉTAPE
             </span>
             <h3>Voir toutes nos <em className="it acid">offres &amp; tarifs</em></h3>
-            <p>Quatre formules, des prix publics et un devis sous 48h.</p>
+            <p>Quatre formules, des prix publics et un devis sous 48h. Vous trouverez probablement ce qu&apos;il vous faut.</p>
           </div>
           <span className="bridge-arrow">→</span>
         </a>

@@ -33,7 +33,7 @@ export default function PhoneAgentExplainer() {
         </div>
 
         <div className="phone-cta" data-reveal>
-          <a href="/#contact" className="btn btn-primary">
+          <a href="/demo" className="btn btn-primary">
             {ts.cta} <span className="ar">→</span>
           </a>
         </div>

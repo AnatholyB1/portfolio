@@ -24,18 +24,18 @@ export const projects: Project[] = [
     index: 1,
     name: 'Gecko Cabane',
     year: '2024',
-    href: null,
+    href: 'https://geckocabanerestaurant.com',
   },
   {
     index: 2,
     name: 'Les Folies Temps Danse',
     year: '2024',
-    href: null,
+    href: 'https://lesfoliestempsdanse.com',
   },
   {
     index: 3,
     name: 'Ghjulianu Codani',
     year: '2025',
-    href: null,
+    href: 'https://ghjulianu-codani.com',
   },
 ];

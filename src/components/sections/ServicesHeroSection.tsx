@@ -10,7 +10,7 @@ export default function ServicesHeroSection() {
       <div className="s-hero-grid" />
       <div className="wrap" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
         <div className="s-hero-top" data-reveal>
-          <a href="/" className="crumb-back">← Accueil</a>
+          <a href="/" className="crumb-back">← Retour à l&apos;accueil</a>
           <span className="s-pill"><span className="dot" />{ts.badge}</span>
         </div>
 
