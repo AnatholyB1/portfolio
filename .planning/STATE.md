@@ -1,35 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: — Visual Redesign (Selenium Phase 02)
-status: complete
-last_updated: "2026-05-18T00:00:00.000Z"
+milestone: v1.1
+milestone_name: (not yet defined — run /gsd:new-milestone)
+status: v1.0 complete — planning next milestone
+last_updated: "2026-05-18"
 last_activity: 2026-05-18
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 22
-  completed_plans: 22
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-15)
+See: .planning/PROJECT.md (updated 2026-05-18 after v1.0)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 4 — QA & Polish
+**Current focus:** v1.0 complete — start next milestone with `/gsd:new-milestone`
 
 ## Current Position
 
-Phase: 4 of 4 (Rethemes + QA)
-Plan: 04-03 complete — i18n audit done, dead keys removed, I18N-01/I18N-02 verdicts written.
-Status: active — 04-04 (QA final) is next.
-Last activity: 2026-05-18
+Milestone v1.0 shipped 2026-05-18.
+All 4 phases complete, all 21 plans complete, all 29 requirements met.
+Archived: `.planning/milestones/v1.0-ROADMAP.md`, `.planning/milestones/v1.0-REQUIREMENTS.md`
 
-Progress: [███████░░░] 78%
+Progress: [██████████] 100% (v1.0 complete)
 
 ## Performance Metrics
 
@@ -58,38 +57,26 @@ Progress: [███████░░░] 78%
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Rebuild pages (not patch) — mockup is fundamentally different React structure
-- Keep LanguageContext — fr/en/th already handled, new keys slot in
-- CSS vars for design tokens — matches globals.css approach from mockup
-- Dynamic import for 3D canvas — Three.js not SSR-safe
-- CustomCursor uses dynamic ssr:false — browser-only APIs (window.matchMedia, addEventListener) require this pattern
-- Dot tracks instantly, ring lerps at 0.18 — visual lag creates branded cursor feel
-- No 'use client' on hook files — applied by consuming component, not the hook itself
-- transition-delay via JS (el.style.transitionDelay) not CSS attr() — attr() for non-content properties lacks universal browser support
-- useReveals not mounted in layout.tsx — called from root page component in Phase 2
-- ClientProviders.tsx as 'use client' boundary: dynamic()+ssr:false is forbidden in Next.js Server Components (Turbopack). All browser-only dynamic imports routed through ClientProviders.
-- metadata export in layout.tsx only — Next.js App Router forbids export const metadata in Client Components (page.tsx is 'use client')
-- Absolute hrefs (/#manifeste, /#work, /#contact) in Navbar and Footer — relative hrefs (#manifeste) fail when navigating from /services
-- Dead legacy translation namespaces removed from translations.ts (hero, about, projects, contact-legacy, footer-legacy, phoneAgent) — confirmed zero component matches before deletion
-- Footer nav link labels (Manifeste/Work/Services/Contact) are hardcoded — non-blocking for I18N-01/02, follow-up wiring to t.nav.* needed before v1.0
+All v1.0 decisions logged in PROJECT.md Key Decisions table.
 
 ### Pending Todos
 
-None yet.
+None — milestone closed.
 
 ### Blockers/Concerns
 
-- /demo/feuillette must NOT be touched — enforce as hard constraint in Phase 4 QA
+None — v1.0 shipped clean.
 
 ## Deferred Items
 
-None — all Phase 1 deferred items resolved.
+Items acknowledged at v1.0 milestone close (2026-05-18):
+
+| Category | Item | Status |
+|----------|------|--------|
+| i18n | Footer nav labels (Manifeste/Work/Services/Contact) hardcoded — not wired to t.nav.* | Deferred to v1.1 |
+| accessibility | CinemaIntro, CustomCursor, PhoneAgent, MethodologySection missing JS-level prefers-reduced-motion guards | Deferred to v1.1 (CSS guards cover core behavior) |
 
 ## Session Continuity
 
-Last session: 2026-05-18T08:30:00Z
-Stopped at: Completed 04-03-PLAN.md — i18n audit done
-Resume file: None
+Last session: 2026-05-18 — v1.0 milestone closed
+Resume: Start fresh with `/gsd:new-milestone` to define v1.1
