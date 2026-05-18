@@ -44,8 +44,8 @@
 
 ### i18n & Quality
 
-- [ ] **I18N-01**: All new landing content wired to LanguageContext (fr/en/th keys from landing-i18n.jsx)
-- [ ] **I18N-02**: All new services content wired to LanguageContext (fr/en/th keys from services-i18n.jsx)
+- [x] **I18N-01**: All new landing content wired to LanguageContext (fr/en/th keys from landing-i18n.jsx)
+- [x] **I18N-02**: All new services content wired to LanguageContext (fr/en/th keys from services-i18n.jsx)
 - [ ] **QA-01**: All pages responsive at 900px mobile breakpoint
 - [ ] **QA-02**: All animations respect prefers-reduced-motion
 - [ ] **QA-03**: SEO metadata updated to agency positioning (remove freelance/hire-developer keywords)
@@ -90,8 +90,8 @@
 | SVC-10 | Phase 3 | Pending |
 | THEME-01 | Phase 4 | Pending |
 | THEME-02 | Phase 4 | Pending |
-| I18N-01 | Phase 4 | Pending |
-| I18N-02 | Phase 4 | Pending |
+| I18N-01 | Phase 4 | Complete |
+| I18N-02 | Phase 4 | Complete |
 | QA-01 | Phase 4 | Pending |
 | QA-02 | Phase 4 | Pending |
 | QA-03 | Phase 4 | Pending |

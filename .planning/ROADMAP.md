@@ -87,9 +87,9 @@ Plans:
   5. /demo/feuillette loads without any visual change and passes a side-by-side screenshot comparison against the pre-milestone baseline
 **Plans**: 4 plans
 Plans:
-- [ ] 04-01-PLAN.md — /mentions-legales retheme: CSS var class substitution + agency metadata
-- [ ] 04-02-PLAN.md — /demo retheme: CSS var class substitution, Supabase wiring preserved
-- [ ] 04-03-PLAN.md — i18n audit: key coverage across landing + services + Navbar + Footer
+- [x] 04-01-PLAN.md — /mentions-legales retheme: CSS var class substitution + agency metadata
+- [x] 04-02-PLAN.md — /demo retheme: CSS var class substitution, Supabase wiring preserved
+- [x] 04-03-PLAN.md — i18n audit: key coverage across landing + services + Navbar + Footer
 - [ ] 04-04-PLAN.md — QA checklist: feuillette diff, SEO grep, responsive + reduced-motion human verify
 **UI hint**: yes
 
@@ -100,4 +100,4 @@ Plans:
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
 | 2. Landing Page Rebuild | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | 0/6 | Not started | - |
-| 4. Rethemes + QA | 0/4 | Not started | - |
+| 4. Rethemes + QA | 3/4 | In progress | - |

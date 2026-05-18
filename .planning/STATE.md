@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: — Visual Redesign (Selenium Phase 02)
 status: active
-last_updated: "2026-05-18T00:00:00.000Z"
+last_updated: "2026-05-18T08:30:00.000Z"
 last_activity: 2026-05-18
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 18
-  completed_plans: 18
-  percent: 75
+  completed_plans: 21
+  percent: 78
 ---
 
 # Project State
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-15)
 ## Current Position
 
 Phase: 4 of 4 (Rethemes + QA)
-Plan: Phase 4 context gathered. Ready to plan.
-Status: Phase 4 discussion complete — CONTEXT.md written. Run /gsd-plan-phase 04.
+Plan: 04-03 complete — i18n audit done, dead keys removed, I18N-01/I18N-02 verdicts written.
+Status: active — 04-04 (QA final) is next.
 Last activity: 2026-05-18
 
-Progress: [█████░░░░░] 50%
+Progress: [███████░░░] 78%
 
 ## Performance Metrics
 
@@ -49,7 +49,8 @@ Progress: [█████░░░░░] 50%
 **Recent Trend:**
 
 - Last 9 plans: 01-01 (~5 min), 01-02 (~5 min), 01-03 (~4 min), 01-04 (~4 min), 01-05 (~8 min), 02-01 (~6 min), 02-03 (~5 min), 02-04 (~3 min), 02-05 (~3 min)
-- Trend: Consistent ~3-8 min per plan
+- Phase 4: 04-01 (~10 min), 04-02 (~10 min), 04-03 (~10 min)
+- Trend: Consistent ~3-10 min per plan
 
 *Updated after each plan completion*
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - ClientProviders.tsx as 'use client' boundary: dynamic()+ssr:false is forbidden in Next.js Server Components (Turbopack). All browser-only dynamic imports routed through ClientProviders.
 - metadata export in layout.tsx only — Next.js App Router forbids export const metadata in Client Components (page.tsx is 'use client')
 - Absolute hrefs (/#manifeste, /#work, /#contact) in Navbar and Footer — relative hrefs (#manifeste) fail when navigating from /services
+- Dead legacy translation namespaces removed from translations.ts (hero, about, projects, contact-legacy, footer-legacy, phoneAgent) — confirmed zero component matches before deletion
+- Footer nav link labels (Manifeste/Work/Services/Contact) are hardcoded — non-blocking for I18N-01/02, follow-up wiring to t.nav.* needed before v1.0
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ None — all Phase 1 deferred items resolved.
 
 ## Session Continuity
 
-Last session: 2026-05-16T22:07:15.689Z
-Stopped at: context exhaustion at 90% (2026-05-16)
+Last session: 2026-05-18T08:30:00Z
+Stopped at: Completed 04-03-PLAN.md — i18n audit done
 Resume file: None
