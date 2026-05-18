@@ -13,7 +13,7 @@ Milestone v1.0 replaces the freelance-era portfolio with the Selenium Phase 02 a
 - [x] **Phase 1: Design System Foundation** — CSS vars, fonts, cursor, scroll-reveal, cinema intro wired globally
 - [x] **Phase 2: Landing Page Rebuild** — Full page.tsx rebuild with all hero, editorial, and contact sections
 - [ ] **Phase 3: Services Page Rebuild** — Full services/page.tsx with all 9 sections and i18n
-- [ ] **Phase 4: Rethemes + QA** — /mentions-legales and /demo retheme, i18n wiring, integration QA
+- [x] **Phase 4: Rethemes + QA** — /mentions-legales and /demo retheme, i18n wiring, integration QA
 
 ## Phase Details
 
@@ -67,12 +67,12 @@ Plans:
   5. Reassurance grid (4 trust points), final CTA, Partners ticker, and Footer are present and complete the page
 **Plans**: 6 plans
 Plans:
-- [ ] 03-01-PLAN.md — i18n services namespace — replace translations.ts services block (fr/en/th)
-- [ ] 03-02-PLAN.md — Static sections batch 1 — ServicesHeroSection, ProblemSection, ApproachSection
-- [ ] 03-03-PLAN.md — Static sections batch 2 — OffersSection, PhoneAgentExplainer, MaintenanceSection, OptionsSection
-- [ ] 03-04-PLAN.md — MethodologySection (GSAP ScrollTrigger rail) + ClientProviders lazy export
-- [ ] 03-05-PLAN.md — ReassuranceSection + FinalCtaSection + services/page.tsx full rewrite
-- [ ] 03-06-PLAN.md — Services CSS in globals.css + human verification checkpoint
+- [x] 03-01-PLAN.md — i18n services namespace — replace translations.ts services block (fr/en/th)
+- [x] 03-02-PLAN.md — Static sections batch 1 — ServicesHeroSection, ProblemSection, ApproachSection
+- [x] 03-03-PLAN.md — Static sections batch 2 — OffersSection, PhoneAgentExplainer, MaintenanceSection, OptionsSection
+- [x] 03-04-PLAN.md — MethodologySection (GSAP ScrollTrigger rail) + ClientProviders lazy export
+- [x] 03-05-PLAN.md — ReassuranceSection + FinalCtaSection + services/page.tsx full rewrite
+- [x] 03-06-PLAN.md — Services CSS in globals.css + human verification checkpoint
 **UI hint**: yes
 
 ### Phase 4: Rethemes + QA
@@ -90,7 +90,7 @@ Plans:
 - [x] 04-01-PLAN.md — /mentions-legales retheme: CSS var class substitution + agency metadata
 - [x] 04-02-PLAN.md — /demo retheme: CSS var class substitution, Supabase wiring preserved
 - [x] 04-03-PLAN.md — i18n audit: key coverage across landing + services + Navbar + Footer
-- [ ] 04-04-PLAN.md — QA checklist: feuillette diff, SEO grep, responsive + reduced-motion human verify
+- [x] 04-04-PLAN.md — QA checklist: feuillette diff, SEO grep, responsive + reduced-motion human verify
 **UI hint**: yes
 
 ## Progress
@@ -99,5 +99,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Design System Foundation | 5/5 | Complete | 2026-05-15 |
 | 2. Landing Page Rebuild | 6/6 | Complete | 2026-05-17 |
-| 3. Services Page Rebuild | 0/6 | Not started | - |
-| 4. Rethemes + QA | 3/4 | In progress | - |
+| 3. Services Page Rebuild | 6/6 | Complete | 2026-05-18 |
+| 4. Rethemes + QA | 4/4 | Complete | 2026-05-18 |
