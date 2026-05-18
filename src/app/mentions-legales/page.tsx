@@ -3,17 +3,17 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'Mentions Légales | Anatholy BRICON',
-  description: 'Mentions légales du site personnel de Anatholy BRICON, développeur Full Stack & ingénieur IA freelance basé à Tours, France.',
+  title: 'Mentions Légales | BRICON ANATHOLY',
+  description: 'Mentions légales de Selenium Phase 02, agence web & IA basée à Tours, France.',
   robots: { index: true, follow: true },
 };
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-10">
-    <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-indigo-500/30">
+    <h2 className="text-xl font-bold text-[var(--ink)] mb-4 pb-2 border-b border-[var(--line)]">
       {title}
     </h2>
-    <div className="text-gray-400 leading-relaxed space-y-2 text-sm">
+    <div className="text-[var(--ink-dim)] leading-relaxed space-y-2 text-sm">
       {children}
     </div>
   </div>
@@ -23,43 +23,43 @@ export default function MentionsLegalesPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#030311] pt-32 pb-20 px-4">
+      <main className="min-h-screen bg-[var(--bg)] pt-32 pb-20 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-12 text-center">
-            <p className="text-xs font-mono tracking-[0.3em] text-indigo-400/70 uppercase mb-3">
+            <p className="text-xs font-mono tracking-[0.3em] text-[var(--acid)]/70 uppercase mb-3">
               // INFORMATIONS LÉGALES
             </p>
-            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
+            <h1 className="text-4xl font-bold text-[var(--ink)]">
               Mentions Légales
             </h1>
-            <p className="text-gray-500 text-sm mt-3">
+            <p className="text-[var(--ink-faint)] text-sm mt-3">
               Conformément à la loi n°2004‑575 du 21 juin 2004 pour la confiance dans l&apos;économie numérique (LCEN)
             </p>
           </div>
 
           {/* 1 – Éditeur du site */}
           <Section title="1. Éditeur du site">
-            <p><span className="text-gray-300 font-medium">Nom :</span> BRICON Anatholy</p>
-            <p><span className="text-gray-300 font-medium">Qualité :</span> Entrepreneur individuel — Développeur web & IA freelance</p>
-            <p><span className="text-gray-300 font-medium">Adresse :</span> Tours (37), France</p>
+            <p><span className="text-[var(--ink)] font-medium">Nom :</span> BRICON Anatholy</p>
+            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence web & IA — Selenium Phase 02</p>
+            <p><span className="text-[var(--ink)] font-medium">Adresse :</span> Tours (37), France</p>
             <p>
-              <span className="text-gray-300 font-medium">Contact :</span>{' '}
+              <span className="text-[var(--ink)] font-medium">Contact :</span>{' '}
               <a
                 href="mailto:contact@selenium-studio.com"
-                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+                className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
                 contact@selenium-studio.com
               </a>
             </p>
-            <p><span className="text-gray-300 font-medium">Directeur de la publication :</span> BRICON Anatholy</p>
+            <p><span className="text-[var(--ink)] font-medium">Directeur de la publication :</span> BRICON Anatholy</p>
           </Section>
 
           {/* 2 – Hébergement */}
           <Section title="2. Hébergement">
             <p>Le présent site est hébergé par :</p>
             <p className="mt-2">
-              <span className="text-gray-300 font-medium">Vercel Inc.</span><br />
+              <span className="text-[var(--ink)] font-medium">Vercel Inc.</span><br />
               340 Pine Street, Suite 701<br />
               San Francisco, California 94104<br />
               États-Unis<br />
@@ -67,7 +67,7 @@ export default function MentionsLegalesPage() {
                 href="https://vercel.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+                className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
                 https://vercel.com
               </a>
@@ -100,16 +100,16 @@ export default function MentionsLegalesPage() {
               <li>Droit à la portabilité de vos données</li>
             </ul>
             <p className="mt-2">
-              <span className="text-gray-300 font-medium">Données collectées :</span> Le formulaire de contact collecte uniquement votre nom, votre adresse e-mail et le contenu de votre message, dans le seul but de répondre à votre demande. Ces données ne sont ni cédées ni vendues à des tiers.
+              <span className="text-[var(--ink)] font-medium">Données collectées :</span> Le formulaire de contact collecte uniquement votre nom, votre adresse e-mail et le contenu de votre message, dans le seul but de répondre à votre demande. Ces données ne sont ni cédées ni vendues à des tiers.
             </p>
             <p>
-              <span className="text-gray-300 font-medium">Durée de conservation :</span> Les données sont conservées le temps nécessaire au traitement de votre demande, et au maximum 3 ans à compter du dernier contact.
+              <span className="text-[var(--ink)] font-medium">Durée de conservation :</span> Les données sont conservées le temps nécessaire au traitement de votre demande, et au maximum 3 ans à compter du dernier contact.
             </p>
             <p>
               Pour exercer vos droits ou pour toute question relative au traitement de vos données, vous pouvez contacter :{' '}
               <a
                 href="mailto:contact@selenium-studio.com"
-                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+                className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
                 contact@selenium-studio.com
               </a>
@@ -120,7 +120,7 @@ export default function MentionsLegalesPage() {
                 href="https://www.cnil.fr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+                className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
                 CNIL
               </a>{' '}
@@ -165,7 +165,7 @@ export default function MentionsLegalesPage() {
             </p>
           </Section>
 
-          <p className="text-center text-gray-600 text-xs font-mono mt-10">
+          <p className="text-center text-[var(--ink-faint)] text-xs font-mono mt-10">
             Dernière mise à jour : mars 2026
           </p>
         </div>
