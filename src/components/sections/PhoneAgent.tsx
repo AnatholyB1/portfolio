@@ -142,6 +142,7 @@ export default function PhoneAgent() {
                 {pa.cta_demo} <span className="ar">→</span>
               </a>
               <a href="/services#phone-agent" className="btn btn-ghost">{pa.cta_more}</a>
+              <a href="/calculateur-roi" className="btn btn-ghost">{pa.cta_roi}</a>
             </div>
           </div>
 

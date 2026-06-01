@@ -208,6 +208,15 @@ export default function DemoPage() {
             </div>
           </div>
 
+          <div className="mt-12 text-center">
+            <p className="text-[var(--ink-dim)] text-sm mb-4">
+              Ce que vous voyez tourner ici, chiffré pour votre boutique
+            </p>
+            <a href="/calculateur-roi" className="btn btn-ghost">
+              Calculer le ROI d&apos;un agent <span className="ar">→</span>
+            </a>
+          </div>
+
           <div className="mt-10 text-center text-[var(--ink-faint)] text-xs">
             Propulsé par VAPI · Claude Sonnet · ElevenLabs · Twilio · Supabase
           </div>

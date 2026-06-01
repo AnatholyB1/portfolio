@@ -285,6 +285,25 @@ export default function FeuilletteDemo() {
             </div>
           </div>
 
+          {/* CTA Calculateur ROI */}
+          <div className="mt-12 text-center">
+            <p className="text-sm mb-4" style={{ color: '#8a6a50' }}>
+              Ce que cet agent fait gagner à Feuillette, chiffré
+            </p>
+            <a
+              href="/calculateur-roi"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-opacity hover:opacity-85"
+              style={{
+                backgroundColor: '#5a3217',
+                color: '#f5ede0',
+                fontFamily: 'var(--font-cormorant), serif',
+                letterSpacing: '0.04em',
+              }}
+            >
+              Calculer le ROI →
+            </a>
+          </div>
+
           {/* Footer mini */}
           <div className="mt-10 text-center text-xs" style={{ color: '#c0a882' }}>
             Propulsé par VAPI · Claude Sonnet · ElevenLabs · Twilio · Supabase
