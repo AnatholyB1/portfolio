@@ -574,3 +574,82 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .final-desc { font-size: 18px; color: var(--ink-dim); max-width: 48ch; line-height: 1.6; margin: 0 auto 40px; }
 .final-buttons { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 24px; }
 .final-note { font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ink-faint); text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE 4 — ROI CALCULATOR (outil terrain /calculateur-roi)
+   ═══════════════════════════════════════════════════════════════ */
+
+.roi-page { padding: 120px 0 80px; min-height: 100vh; }
+.roi-head { margin-bottom: 40px; }
+.roi-title { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(40px, 7vw, 88px); line-height: 0.9; letter-spacing: -0.04em; margin: 24px 0 16px; }
+.roi-title .it { font-style: italic; color: var(--acid); }
+.roi-sub { color: var(--ink-dim); font-size: 17px; line-height: 1.55; max-width: 54ch; }
+
+.roi-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 980px) { .roi-layout { grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; } }
+
+/* ─── Panneau d'inputs ─── */
+.roi-panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+.roi-panel + .roi-panel { margin-top: 16px; }
+.roi-panel-title { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-bottom: 18px; }
+
+.roi-field { padding: 14px 0; border-top: 1px solid var(--line); }
+.roi-field:first-of-type { border-top: none; padding-top: 0; }
+.roi-field-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 12px; }
+.roi-label { font-size: 14px; color: var(--ink); display: flex; align-items: center; gap: 8px; line-height: 1.3; }
+.roi-num-wrap { display: inline-flex; align-items: baseline; gap: 6px; flex-shrink: 0; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 8px; padding: 6px 10px; transition: border-color .2s; }
+.roi-num-wrap:focus-within { border-color: var(--acid); }
+.roi-num { width: 56px; background: transparent; border: none; outline: none; color: var(--acid); font-family: var(--font-mono), monospace; font-size: 16px; text-align: right; -moz-appearance: textfield; appearance: textfield; }
+.roi-num::-webkit-outer-spin-button, .roi-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.roi-suffix { font-family: var(--font-mono), monospace; font-size: 11px; color: var(--ink-faint); white-space: nowrap; }
+.roi-range { width: 100%; accent-color: var(--acid); height: 4px; cursor: pointer; }
+
+.roi-tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 10px; cursor: help; font-family: var(--font-mono), monospace; flex-shrink: 0; }
+
+/* ─── Toggle upside ─── */
+.roi-toggle { display: flex; align-items: center; gap: 14px; width: 100%; background: none; border: none; cursor: pointer; padding: 0; text-align: left; color: var(--ink); font-size: 15px; font-family: var(--font-body), sans-serif; }
+.roi-toggle-track { flex-shrink: 0; width: 46px; height: 26px; border-radius: 100px; background: var(--bg); border: 1px solid var(--line-strong); position: relative; transition: background .25s, border-color .25s; }
+.roi-toggle-knob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink-faint); transition: transform .25s, background .25s; }
+.roi-toggle.on .roi-toggle-track { background: var(--acid-soft); border-color: var(--acid); }
+.roi-toggle.on .roi-toggle-knob { transform: translateX(20px); background: var(--acid); }
+.roi-upside { margin-top: 4px; }
+
+/* ─── Accordéon paramètres ─── */
+.roi-adv { margin-top: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); }
+.roi-adv summary { cursor: pointer; padding: 20px 28px; font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-dim); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.roi-adv summary::-webkit-details-marker { display: none; }
+.roi-adv summary::after { content: '+'; color: var(--acid); font-size: 18px; line-height: 1; }
+.roi-adv[open] summary::after { content: '−'; }
+.roi-adv-body { padding: 0 28px 24px; }
+
+/* ─── Cartes résultat ─── */
+.roi-results { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 980px) { .roi-results { position: sticky; top: 100px; } }
+.roi-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+.roi-card-label { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-faint); margin-bottom: 12px; }
+.roi-big { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(40px, 8vw, 60px); line-height: 1; letter-spacing: -0.03em; color: var(--acid); }
+.roi-big-unit { font-size: 0.36em; color: var(--ink-dim); font-family: var(--font-mono), monospace; letter-spacing: 0; }
+.roi-card-note { font-size: 14px; color: var(--ink-dim); margin-top: 12px; line-height: 1.5; }
+
+.roi-card-main { border-color: var(--acid); background: linear-gradient(180deg, rgba(196,245,66,0.06) 0%, transparent 60%); }
+.roi-claim { font-size: 16px; color: var(--ink); line-height: 1.55; }
+.roi-claim strong { color: var(--acid); font-weight: 600; }
+.roi-mult { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(48px, 11vw, 76px); line-height: 1; letter-spacing: -0.03em; color: var(--acid); margin: 18px 0 2px; }
+.roi-mult-sub { font-size: 14px; color: var(--ink-dim); }
+.roi-amort { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; color: var(--ink); line-height: 1.5; }
+.roi-amort strong { color: var(--acid); }
+.roi-amort.neg { color: var(--warm); }
+
+.roi-card-bonus { border-color: var(--line-strong); background: var(--bg-3); }
+.roi-badge { display: inline-block; font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #000; background: var(--acid); padding: 5px 10px; border-radius: 100px; margin-bottom: 14px; }
+.roi-bonus-main { font-size: 17px; color: var(--ink); line-height: 1.5; }
+.roi-bonus-main strong { color: var(--acid); }
+.roi-bonus-total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-dim); }
+
+.roi-mention { font-size: 13px; color: var(--ink-faint); line-height: 1.6; padding: 4px 2px 0; }
+
+@media (max-width: 980px) {
+  .roi-page { padding: 100px 0 60px; }
+  .roi-panel, .roi-card { padding: 22px; }
+  .roi-adv summary, .roi-adv-body { padding-left: 22px; padding-right: 22px; }
+}
