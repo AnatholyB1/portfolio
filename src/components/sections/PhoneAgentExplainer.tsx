@@ -32,10 +32,11 @@ export default function PhoneAgentExplainer() {
           ))}
         </div>
 
-        <div className="phone-cta" data-reveal>
+        <div className="phone-cta" data-reveal style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="/demo" className="btn btn-primary">
             {ts.cta} <span className="ar">→</span>
           </a>
+          <a href="/calculateur-roi" className="btn btn-ghost">{ts.cta_roi}</a>
         </div>
       </div>
     </section>

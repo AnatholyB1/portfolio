@@ -53,6 +53,7 @@ export interface Translations {
       sub: string;
       steps: { label: string; desc: string }[];
       cta: string;
+      cta_roi: string;
     };
     maintenance: {
       num: string;
@@ -142,6 +143,7 @@ export interface Translations {
       features: string[];
       cta_demo: string;
       cta_more: string;
+      cta_roi: string;
       flow_label: string;
       flow_rec: string;
       flow_steps: { t: string; k: string; v: string }[];
@@ -262,6 +264,7 @@ const fr: Translations = {
         { label: "Vous êtes notifié", desc: "Votre dashboard se met à jour en temps réel." },
       ],
       cta: "Tester la démo live",
+      cta_roi: "Calculer le ROI",
     },
     maintenance: {
       num: "05 / 09",
@@ -386,6 +389,7 @@ const fr: Translations = {
       ],
       cta_demo: 'Écouter une démo',
       cta_more: 'Comment ça marche',
+      cta_roi: 'Calculer le ROI',
       flow_label: 'FLUX TEMPS RÉEL',
       flow_rec: 'REC · 02:14',
       flow_steps: [
@@ -516,6 +520,7 @@ const en: Translations = {
         { label: "You are notified", desc: "Your dashboard updates in real time." },
       ],
       cta: "Try the live demo",
+      cta_roi: "Calculate the ROI",
     },
     maintenance: {
       num: "05 / 09",
@@ -640,6 +645,7 @@ const en: Translations = {
       ],
       cta_demo: 'Hear a demo',
       cta_more: 'How it works',
+      cta_roi: 'Calculate the ROI',
       flow_label: 'REAL-TIME FLOW',
       flow_rec: 'REC · 02:14',
       flow_steps: [
@@ -770,6 +776,7 @@ const th: Translations = {
         { label: "คุณได้รับแจ้ง", desc: "Dashboard อัพเดทแบบเรียลไทม์" },
       ],
       cta: "ลองเดโม",
+      cta_roi: "คำนวณ ROI",
     },
     maintenance: {
       num: "05 / 09",
@@ -894,6 +901,7 @@ const th: Translations = {
       ],
       cta_demo: 'ฟังเดโม',
       cta_more: 'ทำงานอย่างไร',
+      cta_roi: 'คำนวณ ROI',
       flow_label: 'FLUX แบบเรียลไทม์',
       flow_rec: 'REC · 02:14',
       flow_steps: [
