@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Lang } from '@/lib/translations';
+import { SevalysWordmark } from '@/components/ui/SevalysMark';
 
 const LANGS: Lang[] = ['fr', 'en', 'th'];
 const SECTIONS = ['contact', 'work', 'manifeste'] as const; // reverse order: last wins
@@ -50,9 +51,8 @@ export default function Navbar() {
 
   return (
     <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
-      <a href="/#top" className="nav-brand">
-        <span className="glyph" />
-        BRICON ANATHOLY
+      <a href="/#top" className="nav-brand" aria-label="Sèvalys — accueil">
+        <SevalysWordmark />
       </a>
 
       <div className="nav-links">

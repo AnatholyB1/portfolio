@@ -1,0 +1,36 @@
+# Sèvalys
+
+> Sèvalys est une agence IA basée à Tours (Indre-et-Loire, France). Elle conçoit des agents vocaux téléphoniques qui répondent aux clients 24/7, des automatisations métier et des sites web. Positionnement : l'optimisation business par l'intelligence artificielle. Intervention à distance partout en France.
+
+## Ce que fait Sèvalys
+
+- **Agent vocal IA téléphonique** : un standard téléphonique automatisé qui décroche, comprend la demande en français naturel, prend une commande ou un rendez-vous, met à jour le CRM et notifie l'équipe — sans appel manqué, jour et nuit. Stack : VAPI + numéro Twilio, voix ElevenLabs, connexion CRM via protocole MCP.
+- **Automatisations métier** : suppression des tâches répétitives (saisie, relances, synchronisation d'outils) pour libérer du temps.
+- **Sites web** : sites vitrines et outils de gestion modernes, performants, optimisés pour convertir et pour le référencement local.
+
+## Pour qui
+
+PME, commerces, restaurants, boulangeries, écoles et services locaux qui veulent gagner du temps, ne plus manquer d'appels et capter plus de clients.
+
+## Faits clés
+
+- Nom de marque : Sèvalys (parfois écrit Sevalys)
+- Type : agence IA / agence agent IA
+- Localisation : Tours, Indre-et-Loire, France — à distance partout en France
+- Devis : sous 48h, sans engagement
+- Premier échange : audit téléphonique offert
+- Site : https://sevalys.com
+- Instagram : https://www.instagram.com/sevalys.ai
+
+## Liens
+
+- Accueil : https://sevalys.com/
+- Services & tarifs : https://sevalys.com/services
+- Calculateur de ROI (agent vocal) : https://sevalys.com/calculateur-roi
+- Démo agent vocal : https://sevalys.com/demo
+- Mentions légales : https://sevalys.com/mentions-legales
+
+## Contact
+
+- Email : contact@sevalys.com
+- Téléphone : +33 6 07 18 41 33

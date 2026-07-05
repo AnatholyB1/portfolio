@@ -191,7 +191,7 @@ export default function HeroSection() {
         {/* Top pill + label */}
         <div className="hero-top" data-reveal>
           <span className="pill mono"><span className="dot" />{tl.hero.pill}</span>
-          <span className="label">BRICON ANATHOLY — 2026</span>
+          <span className="label">SÈVALYS — 2026</span>
         </div>
 
         {/* Stage: title left, canvas right */}

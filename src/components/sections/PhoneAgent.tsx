@@ -77,7 +77,7 @@ function PhoneFlow({ steps, active, label, rec }: {
                 <span className="mono" style={{ fontSize: 10, color: isActive ? 'var(--acid)' : 'var(--ink-faint)', letterSpacing: '0.15em' }}>
                   {s.t}
                 </span>
-                <span style={{ fontFamily: "var(--font-bricolage), serif", fontSize: 22, letterSpacing: '-0.02em', color: isActive ? 'var(--ink)' : 'var(--ink-dim)' }}>
+                <span style={{ fontFamily: "var(--font-display), sans-serif", fontSize: 22, letterSpacing: '-0.02em', color: isActive ? 'var(--ink)' : 'var(--ink-dim)' }}>
                   {s.k}
                 </span>
               </div>

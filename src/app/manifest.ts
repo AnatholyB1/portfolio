@@ -2,25 +2,32 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BRICON ANATHOLY — Agence digitale",
-    short_name: "BRICON",
+    name: "Sèvalys — Agence IA · Agents vocaux & automatisations",
+    short_name: "Sèvalys",
     description:
-      "Sites web, outils de gestion et agents IA pour PME locales. Basé à Tours, France.",
+      "Agence IA à Tours : agents vocaux téléphoniques 24/7, automatisations métier et sites qui convertissent. Optimisation business par l'IA.",
+    id: "/",
     start_url: "/",
+    scope: "/",
     display: "standalone",
+    orientation: "portrait",
     background_color: "#0A0B0C",
-    theme_color: "#C4F542",
+    theme_color: "#0A0B0C",
+    lang: "fr-FR",
+    dir: "ltr",
     categories: ["business", "productivity", "technology"],
     icons: [
       {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose: "any",
       },
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
+        purpose: "any",
       },
       {
         src: "/icon-maskable.png",
