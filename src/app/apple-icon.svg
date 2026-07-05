@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none">
-  <rect width="180" height="180" rx="40" fill="#0A0B0C"/>
-  <text x="90" y="124" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="700" letter-spacing="-3" fill="#C4F542">AB</text>
+  <rect width="180" height="180" fill="#0A0B0C"/>
+  <g transform="translate(30 30) scale(1)">
+    <path d="M84 40 C84 26 64 22 50 28 C36 34 34 50 52 56 C70 62 86 66 84 82 C82 98 60 102 44 94" fill="none" stroke="#C4F542" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse cx="97" cy="29" rx="11" ry="5" transform="rotate(-38 97 29)" fill="#C4F542"/>
+  </g>
 </svg>

@@ -1,5 +1,6 @@
 'use client';
 import { useLanguage } from '@/context/LanguageContext';
+import { SevalysWordmark } from '@/components/ui/SevalysMark';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -11,7 +12,7 @@ export default function Footer() {
       <a href="/services" className="wordmark wordmark-link">
         <div className="wrap">
           <div className="wordmark-row">
-            <span>BRICON ANATHOLY</span>
+            <span>Sèvalys</span>
             <span className="it">·</span>
             <span>services</span>
             <span className="it">·</span>
@@ -23,8 +24,7 @@ export default function Footer() {
       <footer>
         <div className="wrap foot">
           <div className="foot-brand">
-            <span className="glyph" />
-            BRICON ANATHOLY
+            <SevalysWordmark />
           </div>
           <span className="label">{f.built}</span>
           <div className="foot-links">

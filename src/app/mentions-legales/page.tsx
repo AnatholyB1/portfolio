@@ -3,8 +3,8 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'Mentions Légales | BRICON ANATHOLY',
-  description: 'Mentions légales de Selenium Phase 02, agence web & IA basée à Tours, France.',
+  title: 'Mentions Légales',
+  description: 'Mentions légales de Sèvalys, agence IA basée à Tours, France.',
   robots: { index: true, follow: true },
 };
 
@@ -40,8 +40,8 @@ export default function MentionsLegalesPage() {
 
           {/* 1 – Éditeur du site */}
           <Section title="1. Éditeur du site">
-            <p><span className="text-[var(--ink)] font-medium">Nom :</span> BRICON Anatholy</p>
-            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence web & IA — Selenium Phase 02</p>
+            <p><span className="text-[var(--ink)] font-medium">Nom :</span> Sèvalys</p>
+            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence IA — marque exploitée par Anatholy Bricon</p>
             <p><span className="text-[var(--ink)] font-medium">Adresse :</span> Tours (37), France</p>
             <p>
               <span className="text-[var(--ink)] font-medium">Contact :</span>{' '}
@@ -52,7 +52,7 @@ export default function MentionsLegalesPage() {
                 contact@selenium-studio.com
               </a>
             </p>
-            <p><span className="text-[var(--ink)] font-medium">Directeur de la publication :</span> BRICON Anatholy</p>
+            <p><span className="text-[var(--ink)] font-medium">Directeur de la publication :</span> Anatholy Bricon</p>
           </Section>
 
           {/* 2 – Hébergement */}
@@ -77,7 +77,7 @@ export default function MentionsLegalesPage() {
           {/* 3 – Propriété intellectuelle */}
           <Section title="3. Propriété intellectuelle">
             <p>
-              L&apos;ensemble des éléments constituant ce site (textes, images, graphismes, code source, animations, logotypes) sont la propriété exclusive de BRICON Anatholy, sauf mention contraire explicite.
+              L&apos;ensemble des éléments constituant ce site (textes, images, graphismes, code source, animations, logotypes) sont la propriété exclusive de Sèvalys, sauf mention contraire explicite.
             </p>
             <p>
               Toute reproduction, représentation, modification, publication ou adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sans autorisation écrite préalable.
@@ -131,17 +131,20 @@ export default function MentionsLegalesPage() {
           {/* 5 – Cookies */}
           <Section title="5. Cookies">
             <p>
-              Ce site n&apos;utilise pas de cookies à des fins publicitaires ou de traçage. Aucun cookie de mesure d&apos;audience tiers n&apos;est déposé sur votre terminal.
+              Ce site n&apos;utilise pas de cookies à des fins publicitaires ni de revente de données.
             </p>
             <p>
               Des cookies techniques strictement nécessaires au bon fonctionnement du site (comme la préférence de langue) peuvent être utilisés. Ces derniers ne nécessitent pas de consentement préalable conformément à l&apos;article 82 de la loi Informatique et Libertés.
+            </p>
+            <p>
+              <span className="text-[var(--ink)] font-medium">Mesure d&apos;audience :</span> le site utilise PostHog pour mesurer l&apos;audience et améliorer l&apos;expérience (pages vues, provenance du trafic, interactions). Cet outil est configuré de façon respectueuse de la vie privée : pas de publicité, pas de revente, adresse IP anonymisée et respect du signal « Do Not Track » de votre navigateur.
             </p>
           </Section>
 
           {/* 6 – Liens hypertextes */}
           <Section title="6. Liens hypertextes">
             <p>
-              Le site peut contenir des liens vers des sites internet tiers. BRICON Anatholy n&apos;exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu ou leur politique de confidentialité.
+              Le site peut contenir des liens vers des sites internet tiers. Sèvalys n&apos;exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu ou leur politique de confidentialité.
             </p>
             <p>
               La création de liens hypertextes vers ce site est autorisée sous réserve de ne pas nuire à l&apos;image du site ou de son éditeur, et sous réserve que le lien ne soit pas présenté dans un cadre (framing).
@@ -151,7 +154,7 @@ export default function MentionsLegalesPage() {
           {/* 7 – Limitation de responsabilité */}
           <Section title="7. Limitation de responsabilité">
             <p>
-              BRICON Anatholy s&apos;efforce d&apos;assurer l&apos;exactitude et la mise à jour des informations diffusées sur ce site. Toutefois, il ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition.
+              Sèvalys s&apos;efforce d&apos;assurer l&apos;exactitude et la mise à jour des informations diffusées sur ce site. Toutefois, elle ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations mises à disposition.
             </p>
             <p>
               L&apos;éditeur ne saurait être tenu responsable des dommages directs ou indirects résultant de l&apos;utilisation de ce site ou de l&apos;impossibilité d&apos;y accéder.
@@ -166,7 +169,7 @@ export default function MentionsLegalesPage() {
           </Section>
 
           <p className="text-center text-[var(--ink-faint)] text-xs font-mono mt-10">
-            Dernière mise à jour : mars 2026
+            Dernière mise à jour : juillet 2026
           </p>
         </div>
       </main>
