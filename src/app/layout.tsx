@@ -111,7 +111,7 @@ export default function RootLayout({
     description:
       "Sèvalys est une agence IA basée à Tours : agents vocaux téléphoniques, automatisations métier et sites web. Positionnement : optimisation business par l'intelligence artificielle.",
     slogan: "Optimisation business par l'IA.",
-    email: "business@contact-selenium-studio.com",
+    email: "contact@sevalys.com",
     telephone: "+33 6 07 18 41 33",
     knowsAbout: [
       "Agent vocal IA",
@@ -141,7 +141,7 @@ export default function RootLayout({
     logo: `${SITE_URL}/icon-192.png`,
     image: `${SITE_URL}/og-image.png`,
     telephone: "+33 6 07 18 41 33",
-    email: "business@contact-selenium-studio.com",
+    email: "contact@sevalys.com",
     serviceType: [
       "Agent vocal IA téléphonique",
       "Automatisation métier",

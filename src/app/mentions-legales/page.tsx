@@ -46,10 +46,10 @@ export default function MentionsLegalesPage() {
             <p>
               <span className="text-[var(--ink)] font-medium">Contact :</span>{' '}
               <a
-                href="mailto:contact@selenium-studio.com"
+                href="mailto:contact@sevalys.com"
                 className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
-                contact@selenium-studio.com
+                contact@sevalys.com
               </a>
             </p>
             <p><span className="text-[var(--ink)] font-medium">Directeur de la publication :</span> Anatholy Bricon</p>
@@ -108,10 +108,10 @@ export default function MentionsLegalesPage() {
             <p>
               Pour exercer vos droits ou pour toute question relative au traitement de vos données, vous pouvez contacter :{' '}
               <a
-                href="mailto:contact@selenium-studio.com"
+                href="mailto:contact@sevalys.com"
                 className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
               >
-                contact@selenium-studio.com
+                contact@sevalys.com
               </a>
             </p>
             <p>
