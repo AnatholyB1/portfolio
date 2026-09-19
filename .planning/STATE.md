@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: planning
-last_updated: "2026-09-19T23:24:51.984Z"
-last_activity: 2026-09-19
+last_updated: "2026-09-20T00:00:00.000Z"
+last_activity: 2026-09-20
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,23 +17,25 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-18 after v1.0)
+See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** v1.0 complete — start next milestone with `/gsd:new-milestone`
+**Current focus:** Phase 5 — Prospect Capture Backend (ready to plan)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-09-19 — Milestone v1.1 started
+Phase: 5 of 9 (Prospect Capture Backend)
+Plan: — of TBD
+Status: Roadmap complete, ready to plan Phase 5
+Last activity: 2026-09-20 — ROADMAP.md and STATE.md created for v1.1, 26/26 requirements mapped
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 9 (v1.0 only)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 
@@ -46,9 +48,8 @@ Last activity: 2026-09-19 — Milestone v1.1 started
 
 **Recent Trend:**
 
-- Last 9 plans: 01-01 (~5 min), 01-02 (~5 min), 01-03 (~4 min), 01-04 (~4 min), 01-05 (~8 min), 02-01 (~6 min), 02-03 (~5 min), 02-04 (~3 min), 02-05 (~3 min)
-- Phase 4: 04-01 (~10 min), 04-02 (~10 min), 04-03 (~10 min)
-- Trend: Consistent ~3-10 min per plan
+- v1.0 closed at 9 tracked plans across Phases 1-2 (Phases 3-4 not individually timed in this log)
+- v1.1 not yet started — no plans executed
 
 *Updated after each plan completion*
 
@@ -56,33 +57,31 @@ Last activity: 2026-09-19 — Milestone v1.1 started
 
 ### Decisions
 
-All v1.0 decisions logged in PROJECT.md Key Decisions table.
+Full decision log lives in PROJECT.md Key Decisions table. Decisions specific to v1.1 scoping (resolved in REQUIREMENTS.md 2026-09-20):
+
+- New dedicated Supabase `prospects`-style table, same project, NOT a reuse of the products/orders/stock demo schema (Phase 5)
+- "No price anywhere" applies to ALL offers — existing AND new — reversing the SEO doc's earlier pricing-transparency recommendation; to be documented in the SEO strategy doc during Phase 8
+- Long-form service/simulator copy stays in the existing `translations.ts` i18n system (fr/en/th) per SVC-06 — project chose NOT to follow the research's "French-only content file" suggestion
 
 ### Pending Todos
 
-None — milestone closed.
+None yet for v1.1.
 
 ### Blockers/Concerns
 
-None — v1.0 shipped clean.
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260919-wig | n8n → Resend pour le formulaire de contact: email de statut au prospect, notification a contact@sevalys.com, et refonte du style du dropdown select | 2026-09-19 | 7d08ded | [260919-wig-n8n-resend-pour-le-formulaire-de-contact](./quick/260919-wig-n8n-resend-pour-le-formulaire-de-contact/) |
+None — requirements and roadmap for v1.1 are settled; both scoping ambiguities flagged by research (CRM reuse, pricing scope) were resolved during requirements definition.
 
 ## Deferred Items
 
-Items acknowledged at v1.0 milestone close (2026-05-18):
+Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not in v1.1 scope:
 
 | Category | Item | Status |
 |----------|------|--------|
-| i18n | Footer nav labels (Manifeste/Work/Services/Contact) hardcoded — not wired to t.nav.* | Deferred to v1.1 |
-| accessibility | CinemaIntro, CustomCursor, PhoneAgent, MethodologySection missing JS-level prefers-reduced-motion guards | Deferred to v1.1 (CSS guards cover core behavior) |
+| i18n | Footer nav labels (Manifeste/Work/Services/Contact) hardcoded — not wired to t.nav.* | Deferred (not in v1.1 requirements) |
+| accessibility | CinemaIntro, CustomCursor, PhoneAgent, MethodologySection missing JS-level prefers-reduced-motion guards | Deferred (not in v1.1 requirements) |
 
 ## Session Continuity
 
-Last session: 2026-09-19T21:41:53.000Z
-Last activity: 2026-09-19 - Completed quick task 260919-wig: n8n → Resend pour le formulaire de contact
-Resume: Start fresh with `/gsd:new-milestone` to define v1.1
+Last session: 2026-09-20T00:00:00.000Z
+Stopped at: ROADMAP.md and STATE.md written for v1.1 (Phases 5-9), REQUIREMENTS.md traceability updated
+Resume file: None — next step is `/gsd:plan-phase 5`

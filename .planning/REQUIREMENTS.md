@@ -82,42 +82,47 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 
 ## Traceability
 
-*(remplie par le roadmapper)*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRIX-01 | — | Pending |
-| PRIX-02 | — | Pending |
-| SVC-01 | — | Pending |
-| SVC-02 | — | Pending |
-| SVC-03 | — | Pending |
-| SVC-04 | — | Pending |
-| SVC-05 | — | Pending |
-| SVC-06 | — | Pending |
-| SIMU-01 | — | Pending |
-| SIMU-02 | — | Pending |
-| SIMU-03 | — | Pending |
-| SIMU-04 | — | Pending |
-| SIMU-05 | — | Pending |
-| SIMU-06 | — | Pending |
-| SIMU-07 | — | Pending |
-| SIMU-08 | — | Pending |
-| CRM-01 | — | Pending |
-| CRM-02 | — | Pending |
-| CRM-03 | — | Pending |
-| CRM-04 | — | Pending |
-| LANDING-01 | — | Pending |
-| LANDING-02 | — | Pending |
-| LANDING-03 | — | Pending |
-| SEO-01 | — | Pending |
-| SEO-02 | — | Pending |
-| SEO-03 | — | Pending |
+| PRIX-01 | Phase 8 | Pending |
+| PRIX-02 | Phase 8 | Pending |
+| SVC-01 | Phase 6 | Pending |
+| SVC-02 | Phase 6 | Pending |
+| SVC-03 | Phase 6 | Pending |
+| SVC-04 | Phase 6 | Pending |
+| SVC-05 | Phase 6 | Pending |
+| SVC-06 | Phase 6 | Pending |
+| SIMU-01 | Phase 7 | Pending |
+| SIMU-02 | Phase 7 | Pending |
+| SIMU-03 | Phase 7 | Pending |
+| SIMU-04 | Phase 7 | Pending |
+| SIMU-05 | Phase 7 | Pending |
+| SIMU-06 | Phase 7 | Pending |
+| SIMU-07 | Phase 7 | Pending |
+| SIMU-08 | Phase 7 | Pending |
+| CRM-01 | Phase 5 | Pending |
+| CRM-02 | Phase 5 | Pending |
+| CRM-03 | Phase 5 | Pending |
+| CRM-04 | Phase 5 | Pending |
+| LANDING-01 | Phase 8 | Pending |
+| LANDING-02 | Phase 8 | Pending |
+| LANDING-03 | Phase 8 | Pending |
+| SEO-01 | Phase 9 | Pending |
+| SEO-02 | Phase 9 | Pending |
+| SEO-03 | Phase 9 | Pending |
 
 **Coverage:**
 - v1 requirements: 26 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 26 ⚠️ (to be resolved by roadmapper)
+- Mapped to phases: 26/26 ✓
+- Unmapped: 0
+
+**Phase summary:**
+- Phase 5 — Prospect Capture Backend: CRM-01, CRM-02, CRM-03, CRM-04 (4)
+- Phase 6 — Service Pages (Template + Content): SVC-01 through SVC-06 (6)
+- Phase 7 — Diagnostic Simulator: SIMU-01 through SIMU-08 (8)
+- Phase 8 — Landing Simplification & Pricing Policy: PRIX-01, PRIX-02, LANDING-01, LANDING-02, LANDING-03 (5)
+- Phase 9 — SEO & Discovery Wiring: SEO-01, SEO-02, SEO-03 (3)
 
 ---
 *Requirements defined: 2026-09-20*
-*Last updated: 2026-09-20 after initial definition*
+*Last updated: 2026-09-20 — roadmap created, 26/26 requirements mapped to Phases 5-9*
