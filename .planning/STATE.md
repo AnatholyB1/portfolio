@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.1
-milestone_name: milestone
-status: v1.0 complete — planning next milestone
-last_updated: "2026-05-18T19:38:52.940Z"
+milestone_name: Extension de l'offre & refonte commerciale
+status: planning
+last_updated: "2026-09-19T23:24:51.984Z"
+last_activity: 2026-09-19
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 21
-  completed_plans: 21
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -23,11 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-18 after v1.0)
 
 ## Current Position
 
-Milestone v1.0 shipped 2026-05-18.
-All 4 phases complete, all 21 plans complete, all 29 requirements met.
-Archived: `.planning/milestones/v1.0-ROADMAP.md`, `.planning/milestones/v1.0-REQUIREMENTS.md`
-
-Progress: [██████████] 100% (v1.0 complete)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-09-19 — Milestone v1.1 started
 
 ## Performance Metrics
 

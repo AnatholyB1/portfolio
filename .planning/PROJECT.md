@@ -8,6 +8,17 @@ Agency website for BRICON ANATHOLY, a web & AI agency based in Tours, France, ta
 
 A patron de PME lands on the site and immediately understands what we do, trusts us, and knows how to contact us — in under 60 seconds.
 
+## Current Milestone: v1.1 Extension de l'offre & refonte commerciale
+
+**Goal:** Étendre le catalogue de services Sèvalys et refondre la présentation commerciale pour qualifier les prospects sans jamais afficher de prix, en intégrant la stratégie SEO/GEO/AEO.
+
+**Target features:**
+- 4 nouveaux services : Community Management, Branding, Meta Ads, Google Ads (promu d'option upsell à offre à part entière)
+- Page de présentation dédiée par service (existants + nouveaux) : problème résolu / fonctionnement / enjeux — jamais de prix
+- Landing page simplifiée : problèmes résolus, présentation des services, fonctionnement, enjeux, preuve sociale (réalisations + témoignages) — CTA uniquement vers simulateur ou contact (email/téléphone)
+- Simulateur de diagnostic : qualification des besoins du visiteur → recommandation des services pertinents → capture du prospect dans le CRM Supabase existant → incitation à appeler/contacter
+- Intégration de la stratégie SEO/GEO/AEO (`docs/strategie-seo-geo-llm-2026-09.md`) : nouvelles pages piliers par service, `/simulateur` comme page pilier transverse, extension du schema.org
+
 ## Requirements
 
 ### Validated
@@ -26,9 +37,9 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 
 ### Active
 
-*(Start next milestone with `/gsd:new-milestone` to define v1.1 requirements)*
+v1.1 in progress — see Current Milestone above. Requirements to be detailed in `.planning/REQUIREMENTS.md`.
 
-Candidates from v1.0 deferred work:
+Carried over from v1.0 deferred work (not in v1.1 scope, still pending):
 - [ ] Footer nav labels wired to LanguageContext (t.nav.* keys — currently hardcoded)
 - [ ] JS-level prefers-reduced-motion guards in CinemaIntro, CustomCursor, PhoneAgent, MethodologySection
 
@@ -86,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-18 after v1.0 milestone*
+*Last updated: 2026-09-20 — started v1.1 milestone*
