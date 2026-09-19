@@ -2,12 +2,6 @@
 import { useState, FormEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
-const FORM_URL = process.env.NEXT_PUBLIC_FORM_URL || 'https://example.com/api/contact';
-
-if (!process.env.NEXT_PUBLIC_FORM_URL && typeof window !== 'undefined') {
-  console.warn('[ContactSection] NEXT_PUBLIC_FORM_URL is not set — using fallback URL');
-}
-
 export default function ContactSection() {
   const { t } = useLanguage();
   const c = t.landing.contact;
@@ -24,17 +18,15 @@ export default function ContactSection() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('sending');
-    const fullMessage = formData.projectType
-      ? `[${formData.projectType}]\n\n${formData.message}`
-      : formData.message;
     try {
-      const response = await fetch(FORM_URL, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          message: fullMessage,
+          projectType: formData.projectType,
+          message: formData.message,
         }),
       });
       setStatus(response.ok ? 'sent' : 'error');
