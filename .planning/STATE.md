@@ -66,6 +66,12 @@ None — milestone closed.
 
 None — v1.0 shipped clean.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260919-wig | n8n → Resend pour le formulaire de contact: email de statut au prospect, notification a contact@sevalys.com, et refonte du style du dropdown select | 2026-09-19 | 7d08ded | [260919-wig-n8n-resend-pour-le-formulaire-de-contact](./quick/260919-wig-n8n-resend-pour-le-formulaire-de-contact/) |
+
 ## Deferred Items
 
 Items acknowledged at v1.0 milestone close (2026-05-18):
@@ -77,5 +83,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18):
 
 ## Session Continuity
 
-Last session: 2026-05-18T19:38:52.933Z
+Last session: 2026-09-19T21:41:53.000Z
+Last activity: 2026-09-19 - Completed quick task 260919-wig: n8n → Resend pour le formulaire de contact
 Resume: Start fresh with `/gsd:new-milestone` to define v1.1
