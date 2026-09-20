@@ -40,7 +40,13 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
   2. The public write path allows inserts only (RLS insert-only) — no anonymous read, update, or delete of prospect records
   3. Automated/bot submissions (honeypot-filled or too-fast) are rejected before being written to the database
   4. Every new prospect submission triggers a Resend email notification to the Sèvalys team
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Install zod + vitest, extract the prospect payload schema and spam predicate into src/lib/prospects-schema.ts
+- [ ] 05-02-PLAN.md — Write and apply the prospects table migration: RLS with zero anon grants + 12-month pg_cron purge
+- [ ] 05-03-PLAN.md — Service-role Supabase client + POST /api/simulateur (spam guard, insert, Resend notification) + unit tests
+- [ ] 05-04-PLAN.md — Live end-to-end verification: bundle-leak gate, curl checklist, anon RLS denial, notification confirmation
 
 ### Phase 6: Service Pages (Template + Content)
 **Goal**: Every one of the 9 offers (5 existing + 4 new) has its own dedicated, price-free, citable presentation page, replacing the current pricing-heavy `/services` single page.
@@ -103,7 +109,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 2. Landing Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
-| 5. Prospect Capture Backend | v1.1 | 0/TBD | Not started | - |
+| 5. Prospect Capture Backend | v1.1 | 0/4 | Planned | - |
 | 6. Service Pages (Template + Content) | v1.1 | 0/TBD | Not started | - |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
