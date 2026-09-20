@@ -35,6 +35,7 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 - ✓ Mentions légales rethemed to new design system — v1.0
 - ✓ /demo CRM dashboard rethemed to new design system — v1.0
 - ✓ Remove freelance-era signals (bio, skills bars, StarkDisplay Iron Man, "Hire me") — v1.0
+- ✓ 9 dedicated price-free service pages (`/services/[slug]`) + index, FAQPage JSON-LD, icon-illustrated fonctionnement section — Phase 6, v1.1 (SVC-01 through SVC-06)
 
 ### Active
 
