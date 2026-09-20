@@ -1,5 +1,25 @@
 export type Lang = 'fr' | 'en' | 'th';
 
+// Content shape for a single /services/[slug] page (Phase 6). Joined via
+// Service.index in src/data/services.ts -> t.services.pages.items[index].
+export interface ServicePageContent {
+  name: string;
+  tagline: string;
+  h1Lead: string;
+  h1Benefit: string;
+  sub: string;
+  metaTitle: string;
+  metaDescription: string;
+  directAnswer: string;
+  problems: { n: string; title: string; desc: string }[];
+  features: string[];
+  enjeux: string[];
+  caseQuote: string | null;
+  signals: { t: string; d: string }[];
+  faq: { q: string; a: string }[];
+  crossLink: { label: string; slug: string } | null;
+}
+
 export interface Translations {
   nav: {
     services: string;
@@ -43,6 +63,19 @@ export interface Translations {
       popular: string;
       cta: string;
       items: { name: string; tagline: string; price: string; description: string; features: string[] }[];
+    };
+    pages: {
+      index: { badge: string; title_l1: string; title_l2_it: string; sub: string; num: string; intro: string; cardCta: string };
+      back: string;
+      answerLabel: string;
+      caseLabel: string;
+      headings: { probleme: string; fonctionnement: string; enjeux: string; preuve: string; faq: string };
+      ctaHeading_l1: string;
+      ctaHeading_l2_it: string;
+      ctaSub: string;
+      ctaPrimary: string;
+      ctaSecondary: string;
+      items: ServicePageContent[];
     };
     phone: {
       num: string;
@@ -249,6 +282,33 @@ const fr: Translations = {
         { name: "Projet Sur Mesure", tagline: "Vos besoins spécifiques", price: "Sur devis", description: "Pour les projets qui nécessitent des fonctionnalités avancées.", features: ["Site multi-pages complet", "Boutique en ligne", "Système de réservation", "Fonctionnalités spécifiques", "Refonte complète", "Intégrations personnalisées", "Accompagnement dédié"] },
         { name: "Agent Vocal IA", tagline: "Votre téléphone, automatisé", price: "À partir de 990 €", description: "Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.", features: ["Setup VAPI + numéro Twilio", "Voix ElevenLabs ultra-naturelle", "Connexion CRM via MCP", "1 scénario métier sur mesure", "1 mois de support inclus"] },
       ],
+    },
+    pages: {
+      index: {
+        badge: "NOS SERVICES — 2026",
+        title_l1: "Nos",
+        title_l2_it: "services.",
+        sub: "Neuf expertises pour rendre votre entreprise visible, crédible et joignable. Choisissez la vôtre — ou laissez le diagnostic vous guider.",
+        num: "01 / 01",
+        intro: "Chaque service a sa page dédiée : le problème qu'il résout, comment on procède, et ce que ça change pour vous.",
+        cardCta: "Découvrir ce service →",
+      },
+      back: "← Retour aux services",
+      answerLabel: "EN BREF",
+      caseLabel: "ÉTUDE DE CAS",
+      headings: {
+        probleme: "Le problème qu'on résout",
+        fonctionnement: "Comment ça marche",
+        enjeux: "Ce que ça change pour vous",
+        preuve: "Preuve sociale",
+        faq: "Questions fréquentes",
+      },
+      ctaHeading_l1: "Pas sûr que ce soit",
+      ctaHeading_l2_it: "votre besoin ?",
+      ctaSub: "Deux minutes de diagnostic et vous saurez. Sinon, écrivez-nous directement.",
+      ctaPrimary: "Faire mon diagnostic →",
+      ctaSecondary: "Nous contacter",
+      items: [],
     },
     phone: {
       num: "04 / 09",
@@ -506,6 +566,33 @@ const en: Translations = {
         { name: "AI Voice Agent", tagline: "Your phone, automated", price: "From €990", description: "An intelligent phone agent that answers, qualifies and records — 24/7.", features: ["VAPI + Twilio setup", "Ultra-natural ElevenLabs voice", "CRM connection via MCP", "1 custom scenario", "1 month of support"] },
       ],
     },
+    pages: {
+      index: {
+        badge: "OUR SERVICES — 2026",
+        title_l1: "Our",
+        title_l2_it: "services.",
+        sub: "Nine areas of expertise to make your business visible, credible and reachable. Pick yours — or let the diagnostic guide you.",
+        num: "01 / 01",
+        intro: "Each service has its own dedicated page: the problem it solves, how we proceed, and what changes for you.",
+        cardCta: "Discover this service →",
+      },
+      back: "← Back to services",
+      answerLabel: "IN SHORT",
+      caseLabel: "CASE STUDY",
+      headings: {
+        probleme: "The problem we solve",
+        fonctionnement: "How it works",
+        enjeux: "What changes for you",
+        preuve: "Social proof",
+        faq: "Frequently asked questions",
+      },
+      ctaHeading_l1: "Not sure that's",
+      ctaHeading_l2_it: "what you need?",
+      ctaSub: "Two minutes of diagnostic and you'll know. Otherwise, write to us directly.",
+      ctaPrimary: "Run my diagnostic →",
+      ctaSecondary: "Contact us",
+      items: [],
+    },
     phone: {
       num: "04 / 09",
       badge: "PHONE AGENT — HOW IT WORKS",
@@ -761,6 +848,33 @@ const th: Translations = {
         { name: "โปรเจกต์กำหนดเอง", tagline: "ความต้องการเฉพาะ", price: "ตามการประเมิน", description: "สำหรับโปรเจกต์ที่ต้องการฟีเจอร์ขั้นสูง", features: ["เว็บหลายหน้า", "ร้านค้าออนไลน์", "ระบบการจอง", "ฟีเจอร์เฉพาะ", "ออกแบบใหม่ทั้งหมด", "การผสานกำหนดเอง", "การสนับสนุนเฉพาะ"] },
         { name: "AI Voice Agent", tagline: "โทรศัพท์ของคุณ อัตโนมัติ", price: "เริ่มต้นที่ 990 €", description: "ตัวแทนโทรศัพท์อัจฉริยะ ตอบ คัดกรอง บันทึก 24ชม", features: ["ตั้งค่า VAPI + Twilio", "เสียง ElevenLabs ธรรมชาติ", "เชื่อม CRM ผ่าน MCP", "1 สถานการณ์กำหนดเอง", "รองรับ 1 เดือน"] },
       ],
+    },
+    pages: {
+      index: {
+        badge: "บริการของเรา — 2026",
+        title_l1: "บริการ",
+        title_l2_it: "ของเรา",
+        sub: "เก้าความเชี่ยวชาญเพื่อให้ธุรกิจของคุณมองเห็นได้ น่าเชื่อถือ และติดต่อได้ง่าย เลือกบริการของคุณ — หรือให้แบบประเมินช่วยแนะนำ",
+        num: "01 / 01",
+        intro: "แต่ละบริการมีหน้าเฉพาะของตัวเอง: ปัญหาที่แก้ไข วิธีการทำงาน และสิ่งที่เปลี่ยนแปลงสำหรับคุณ",
+        cardCta: "ดูรายละเอียดบริการนี้ →",
+      },
+      back: "← กลับไปหน้าบริการ",
+      answerLabel: "สรุปสั้นๆ",
+      caseLabel: "กรณีศึกษา",
+      headings: {
+        probleme: "ปัญหาที่เราแก้ไข",
+        fonctionnement: "วิธีการทำงาน",
+        enjeux: "สิ่งที่เปลี่ยนแปลงสำหรับคุณ",
+        preuve: "หลักฐานทางสังคม",
+        faq: "คำถามที่พบบ่อย",
+      },
+      ctaHeading_l1: "ไม่แน่ใจว่านี่คือ",
+      ctaHeading_l2_it: "สิ่งที่คุณต้องการ?",
+      ctaSub: "แบบประเมินสองนาทีแล้วคุณจะรู้ หรือติดต่อเราได้โดยตรง",
+      ctaPrimary: "เริ่มแบบประเมิน →",
+      ctaSecondary: "ติดต่อเรา",
+      items: [],
     },
     phone: {
       num: "04 / 09",
