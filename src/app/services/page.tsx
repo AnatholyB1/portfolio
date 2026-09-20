@@ -52,7 +52,14 @@ export default function ServicesPage() {
                     <div className="o-num">{String(i + 1).padStart(2, '0')}</div>
                     <div className="o-name">{copy.name}</div>
                     <div className="o-tag">{copy.tagline}</div>
-                    <p className="o-desc">{copy.sub}</p>
+                    <div className="o-problems">
+                      {copy.problems.slice(0, 2).map((item, k) => (
+                        <div className="o-problem" key={k}>
+                          <span className="o-pn">{item.n}</span>
+                          <span>{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
                     <ul className="o-feats">
                       {copy.features.slice(0, 3).map((f, j) => (
                         <li className="o-feat" key={j}>
