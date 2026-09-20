@@ -476,11 +476,8 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .offer { background: var(--bg-2); padding: 32px 28px 28px; border: 1px solid var(--line); border-radius: 12px; position: relative; display: flex; flex-direction: column; transition: transform .35s, border-color .35s; overflow: hidden; }
 .offer:hover { transform: translateY(-6px); border-color: var(--acid); }
 .offer.popular { background: linear-gradient(180deg, rgba(196,245,66,0.05) 0%, transparent 60%); border-color: var(--acid); }
-.pop-tag { position: absolute; top: 0; right: 24px; transform: translateY(-50%); font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.15em; color: #000; background: var(--acid); padding: 6px 12px; border-radius: 100px; text-transform: uppercase; }
 .o-name { font-family: var(--font-display), serif; font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 4px; line-height: 1.1; }
 .o-tag { font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 24px; }
-.o-from { font-family: var(--font-mono), monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); }
-.o-price { font-family: var(--font-display), serif; font-weight: 500; font-size: 28px; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 16px; line-height: 1.1; }
 .o-desc { color: var(--ink-dim); font-size: 13px; line-height: 1.5; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
 .o-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; flex: 1; padding: 0; }
 .o-feat { display: flex; gap: 10px; align-items: start; font-size: 13px; color: var(--ink-dim); line-height: 1.4; }
