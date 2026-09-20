@@ -106,6 +106,10 @@ None - no external service configuration required.
 - The three content-writing plans (06-03, 06-05, 06-06) can append `ServicePageContent` entries into `items[]` in index order (0-2, 3-5, 6-8 respectively) without touching this plan's files again.
 - No blockers.
 
+## Self-Check: PASSED
+
+All created files verified present on disk; all 7 commit hashes (d37906d, 54494ed, 7852c27, ee8f546, b7e160b, 127141a, a5d5b6f) verified present in git log.
+
 ---
 *Phase: 06-service-pages-template-content*
 *Completed: 2026-09-20*
