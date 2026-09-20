@@ -56,6 +56,7 @@ export function buildProspectPayload(input: {
   consent: boolean;
   answers: Answer[];
   formRenderedAt: number;
+  website?: string;
 }): ProspectSubmission {
   if (input.consent !== true) {
     throw new Error(
@@ -70,12 +71,27 @@ export function buildProspectPayload(input: {
     reponsesDiagnostic: input.answers,
     servicesRecommandes: computeRecommendedServices(input.answers),
     consentementRgpd: true as const,
-    website: '',
+    // Forwarded verbatim from the DOM's uncontrolled honeypot input (read via
+    // ref at submit time, never state). A legitimate visitor never touches
+    // it, so it defaults to empty; a scripted bot that fills every field
+    // populates it, which is exactly what the server's isSpamSubmission
+    // (src/lib/prospects-schema.ts) checks for. Hardcoding '' here would
+    // make that server-side check permanently unreachable.
+    website: input.website ?? '',
     formRenderedAt: input.formRenderedAt,
   };
 
   // Mirrors the server's own safeParse — a UX guard so the client fails
   // loudly on a malformed body instead of letting the server silently 400
   // (07-RESEARCH.md Security Domain, V5). Not a security boundary.
-  return prospectSchema.parse(payload);
+  //
+  // Validated on a website-normalized COPY, not the real payload: the
+  // schema's website field is max(0), which a bot-filled honeypot value
+  // deliberately violates. The server's isSpamSubmission reads that raw,
+  // unvalidated field before any zod parsing occurs (route.ts) — if this
+  // function threw on a non-empty honeypot instead of forwarding it, the
+  // bot's request would never even reach the server, defeating the silent
+  // (no-signal) rejection the backend was built for.
+  prospectSchema.parse({ ...payload, website: '' });
+  return payload;
 }

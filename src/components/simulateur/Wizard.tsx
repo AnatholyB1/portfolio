@@ -3,7 +3,7 @@
 // ordering, scoring, payload assembly, copy and CSS classes already exist
 // and are tested elsewhere — this component is composition, not new logic.
 
-import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   buildStepSequence,
@@ -49,6 +49,9 @@ export default function Wizard() {
   // timing check (07-RESEARCH.md Pitfall 3: avoids the hydration mismatch a
   // plain `Date.now()` call in the render body would cause).
   const [formRenderedAt] = useState(() => Date.now());
+  // Uncontrolled on purpose (see the honeypot <input> below) — read via ref
+  // at submit time so a bot-filled value actually reaches the payload.
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const steps = buildStepSequence(answers);
 
@@ -77,7 +80,13 @@ export default function Wizard() {
     e.preventDefault();
     setStatus('sending');
     try {
-      const payload = buildProspectPayload({ contact, consent, answers, formRenderedAt });
+      const payload = buildProspectPayload({
+        contact,
+        consent,
+        answers,
+        formRenderedAt,
+        website: honeypotRef.current?.value ?? '',
+      });
       const res = await fetch('/api/simulateur', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -267,10 +276,12 @@ export default function Wizard() {
           </div>
 
           {/* Honeypot: uncontrolled, always empty for a legitimate visitor.
-              The server's isSpamSubmission reads this field plus
-              formRenderedAt — the wizard must not re-implement that check
-              client-side. */}
+              Read via honeypotRef at submit time and forwarded verbatim to
+              buildProspectPayload — the server's isSpamSubmission reads
+              this field plus formRenderedAt; the wizard must not
+              re-implement that check client-side, only relay the value. */}
           <input
+            ref={honeypotRef}
             type="text"
             name="website"
             className="sim-honeypot"

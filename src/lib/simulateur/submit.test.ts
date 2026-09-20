@@ -107,9 +107,14 @@ describe('buildProspectPayload', () => {
     expect(Object.keys(payload).sort()).toEqual(EXPECTED_PAYLOAD_KEYS);
   });
 
-  it("website is the empty string", () => {
+  it('website defaults to the empty string when no honeypot value is passed (legitimate visitor)', () => {
     const payload = buildProspectPayload(validInput());
     expect(payload.website).toBe('');
+  });
+
+  it('website forwards a non-empty honeypot value verbatim (bot filled the hidden field) rather than hardcoding it empty', () => {
+    const payload = buildProspectPayload(validInput({ website: 'http://spam.example' }));
+    expect(payload.website).toBe('http://spam.example');
   });
 
   it('consentementRgpd is the boolean true, not merely truthy', () => {
