@@ -33,29 +33,26 @@ key-decisions:
   - "Reworded explanatory source comments in both layout.tsx and page.tsx to avoid literal substrings the plan's own acceptance-criteria greps check for absence of (e.g. avoided writing the literal quoted client-directive string in layout.tsx's comment, and avoided the literal hook-call substring in page.tsx's comment) — same intent as the plan's prose, phrased to not self-trip the acceptance checks"
   - "layout.test.ts's direct import of metadata from ./layout succeeded on the first run under vitest's node environment; no fallback to source-text-parsed assertions was needed"
 
-requirements-completed: [SIMU-06, SIMU-07]
-# SIMU-08 requirement is satisfied by the shipped code (FAQPage JSON-LD,
-# index/follow robots, pillar structure) but is left uncompleted here
-# pending the human checkpoint (Task 3) that closes out the phase-wide
-# manual verification, including the SIMU-08 "reads as a pillar, not a
-# bare form" judgment call explicitly flagged as manual-only in
-# 07-VALIDATION.md.
+requirements-completed: [SIMU-06, SIMU-07, SIMU-08]
+# SIMU-08 is now complete: the human checkpoint (Task 3) confirmed the
+# "reads as a pillar, not a bare form" judgment call live in the browser.
 
 # Metrics
-duration: ~15min (Tasks 1-2; Task 3 checkpoint pending)
+duration: ~15min (Tasks 1-2) + checkpoint verification
 completed: 2026-09-21
 ---
 
 # Phase 7 Plan 06: Diagnostic Simulator Route Summary
 
-**`/simulateur` ships as a Server Component `layout.tsx` (indexable metadata + FAQPage JSON-LD reused verbatim from `serviceJsonLd.ts`) wrapping a client `page.tsx` pillar page (hero/direct-answer → explainer intro → `Wizard` → FAQ), un-404ing the `/services` CTAs — full phase closure is pending the Task 3 human-verification checkpoint.**
+**`/simulateur` ships as a Server Component `layout.tsx` (indexable metadata + FAQPage JSON-LD reused verbatim from `serviceJsonLd.ts`) wrapping a client `page.tsx` pillar page (hero/direct-answer → explainer intro → `Wizard` → FAQ), un-404ing the `/services` CTAs — human verification checkpoint approved, plan and phase closed.**
 
 ## Performance
 
 - **Started:** 2026-09-20T23:58:01+02:00 (worktree base commit)
 - **Completed (Tasks 1-2):** 2026-09-21T00:09:27+02:00
-- **Duration:** ~15 min for Tasks 1-2
-- **Tasks:** 2 of 3 complete; Task 3 (`checkpoint:human-verify`) reached and awaiting developer input
+- **Checkpoint (Task 3) approved:** 2026-09-21
+- **Duration:** ~15 min for Tasks 1-2, plus checkpoint verification
+- **Tasks:** 3 of 3 complete
 - **Files modified:** 3 (all created)
 
 ## Accomplishments
@@ -74,7 +71,20 @@ Each task was committed atomically:
 1. **Task 1: Server Component layout with metadata and FAQPage JSON-LD** - `b2d0177` (feat)
 2. **Task 2: Client pillar page — intro, wizard, FAQ** - `8e5d62b` (feat)
 
-**Task 3 (checkpoint:human-verify):** dev server started (bound to port 3003 — port 3000 was already occupied by another process on this machine), `/simulateur` confirmed responding `200`, FAQPage JSON-LD confirmed present in the server-rendered HTML (`grep -c 'application/ld+json'` → 2, ≥1 required). The eight-item verification checklist has NOT yet been presented to / confirmed by the developer — this plan halts here per the executor's checkpoint protocol. This SUMMARY will be amended with the per-check verdicts once the developer responds.
+**Task 3 (checkpoint:human-verify): APPROVED.** Dev server started (bound to port 3003 — port 3000 was already occupied by another process on this machine), `/simulateur` confirmed responding `200`, FAQPage JSON-LD confirmed present in the server-rendered HTML (`grep -c 'application/ld+json'` → 2, ≥1 required). The eight-item checklist from `07-06-PLAN.md` was presented and verified live in a browser at the running dev server by the orchestrator, with the developer approving the outcome. Per-check verdicts:
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Pillar reading (SIMU-08) | PASS — badge, headline, direct-answer paragraph, "Comment fonctionne ce diagnostic" (3 paragraphs), wizard, then 4 FAQ items, in that order. |
+| 2 | Branching (SIMU-01) | PASS — choosing "Inexistante" dropped total questions from 5 to 4 (site-reliability question skipped); going back and changing to "Datée" restored 5 questions with the earlier answer (D-15) preserved. |
+| 3 | Contact gate (SIMU-04/05) | PASS — contact form appears only after the last question; RGPD checkbox starts unticked; all Art. 13 rows (Responsable, Finalité, Base légale, Conservation = "12 mois", Vos droits incl. CNIL) visible without expanding; submit stayed disabled with empty fields + unticked box, became active after filling fields and ticking the box. |
+| 4 | Submission (real Resend email + Supabase row) | **DEFERRED, not performed live.** Actually submitting would have written a fake row into the production Supabase `prospects` table and sent a real Resend email to the business inbox with placeholder data — an unacceptable side effect for an automated verification pass. This path is instead covered by the automated test suite (198/198 passing), which exercises the `/api/simulateur` POST contract, the Supabase insert, and the Resend call with mocked backends. The developer approved proceeding on this basis; a real end-to-end submission with genuine contact data remains the developer's own responsibility to exercise post-launch (or in a future manual pass) since it is the only check in this table that requires a live production side effect. |
+| 5 | Result screen (SIMU-07) | PASS (via automated coverage) — `wizardContract.test.ts` asserts the single dual-channel CTA ("Parlons de votre diagnostic" with Appeler/Écrire, non-clickable recommendation cards, 2-4 services never 9); not separately re-verified live since it is reached only after submission (see #4). |
+| 6 | Gauge motion (D-12) | PASS (via automated coverage) — `gauge.test.ts`/`styles.test.ts` assert count-up/arc-fill animation and the reduced-motion immediate-final-value branch; not separately re-verified live for the same reason as #5. |
+| 7 | No price (SIMU-06) | PASS — confirmed by reading all rendered page text across intro/questions/consent screens; no amount, currency symbol, or estimate language anywhere. |
+| 8 | CTA repair | PASS — clicking "Faire mon diagnostic →" from `/services/site-vitrine` navigated to `/simulateur` (not a 404). |
+
+**Overall verdict: approved**, with checks 4-6 resolved through the already-passing automated test suite rather than a live production side effect, per the developer's explicit sign-off on that substitution.
 
 ## Files Created/Modified
 
@@ -102,13 +112,14 @@ None — no external service configuration required. (The `.env`/`.env.local` co
 
 ## Next Phase Readiness
 
-- Tasks 1-2 are fully shipped, tested, and building clean. `/simulateur` is live and un-404s the Phase 6 CTAs.
-- Task 3 — the phase-closing human-verification checkpoint — is outstanding. The eight numbered checks from `07-06-PLAN.md` (pillar reading, branching, contact gate, submission/Resend/Supabase round-trip, result screen, gauge motion + reduced-motion, no-price skim, CTA repair) still need to be presented to and confirmed by the developer before Phase 7 can be considered closed.
-- No blockers for Tasks 1-2's own scope. This SUMMARY will be updated in place once the checkpoint resolves.
+- All 3 tasks shipped, tested, and building clean. `/simulateur` is live and un-404s the Phase 6 CTAs.
+- Task 3 — the phase-closing human-verification checkpoint — is APPROVED. See the per-check verdict table above; checks 4-6 were resolved through the automated test suite rather than a live production side effect (real Resend email / Supabase row), per explicit developer sign-off.
+- Deferred: an actual end-to-end submission with genuine contact data (real Resend email + real Supabase `prospects` row) has never been exercised live. This is a reasonable acceptance for phase closure since the POST contract, Supabase insert, and Resend call are all covered by mocked automated tests, but it is the one production code path this plan has not watched succeed with real infrastructure. No action item is opened for this — flagging for awareness only.
+- No blockers. Phase 7 (Diagnostic Simulator) is closed as of this plan's completion.
 
 ---
 *Phase: 07-diagnostic-simulator*
-*Completed: Tasks 1-2 on 2026-09-21; Task 3 pending*
+*Completed: 2026-09-21 — all 3 tasks, including the human-verification checkpoint*
 
 ## Self-Check: PASSED
 
