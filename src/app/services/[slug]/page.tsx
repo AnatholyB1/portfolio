@@ -7,6 +7,7 @@ import { useReveals } from '@/hooks/useReveals';
 import { useLanguage } from '@/context/LanguageContext';
 import { getServiceBySlug } from '@/data/services';
 import { projects } from '@/data/projects';
+import { getFeatureIcon } from '@/lib/serviceIcons';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -64,13 +65,17 @@ export default function ServiceSlugPage({
         <section className="svc-sec">
           <div className="wrap">
             <h2 className="svc-h2">{p.headings.fonctionnement}</h2>
-            <ul className="o-feats">
-              {copy.features.map((f, j) => (
-                <li className="o-feat" key={j}>
-                  <span className="c">✓</span>{f}
-                </li>
-              ))}
-            </ul>
+            <div className="feat-grid">
+              {copy.features.map((f, j) => {
+                const Icon = getFeatureIcon(svc.featureIcons[j]);
+                return (
+                  <div className="feat-item" data-reveal data-reveal-delay={String(j % 4)} key={j}>
+                    <span className="feat-icon"><Icon size={22} strokeWidth={1.75} /></span>
+                    <p>{f}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 

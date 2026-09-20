@@ -689,6 +689,29 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .svc-sec .o-feat { font-size: 16px; line-height: 1.4; }
 .svc-sec .o-feat .c { color: var(--acid); font-size: 13px; }
 
+/* "Comment ça marche" icon grid — replaces a plain checkmark text list with
+   a per-bullet icon (see src/lib/serviceIcons.ts) so each step is legible
+   at a glance, not just read. Icon accent uses --acid, consistent with the
+   checkmarks it replaces (UI-SPEC's reserved-for list already covers
+   "checkmarks" under the primary accent). */
+.feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 32px; }
+@media (max-width: 699px) { .feat-grid { grid-template-columns: 1fr; } }
+.feat-item { display: flex; align-items: flex-start; gap: 16px; }
+.feat-icon {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(196,245,66,0.08); border: 1px solid rgba(196,245,66,0.25);
+  color: var(--acid);
+  transform: scale(0.6) rotate(-8deg); opacity: 0;
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .5s ease;
+}
+.feat-item.in .feat-icon { transform: scale(1) rotate(0deg); opacity: 1; }
+.feat-item p { color: var(--ink-dim); font-size: 15px; line-height: 1.5; padding-top: 10px; margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .feat-icon { opacity: 1; transform: none; transition: none; }
+}
+
 .svc-case { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 32px; }
 .svc-case-q { font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.25; color: var(--ink); margin: 0; }
 .svc-case-src { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-top: 16px; }
