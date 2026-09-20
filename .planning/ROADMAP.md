@@ -72,8 +72,31 @@ Plans:
   4. Each service page's FAQ is marked up with schema.org `FAQPage` and includes a directly citable answer block under its key headings (H1/H2)
   5. All service page copy lives in the fr/en/th `translations.ts` system, written concisely
 
-**Plans**: TBD
+**Plans**: 7 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+
+- [ ] 06-01-PLAN.md — Data spine: services.ts (9 slugs), serviceJsonLd.ts (escaped JSON-LD), t.services.pages schema + Wave 0 tests
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 06-02-PLAN.md — /services/[slug] route: server layout (static params, metadata, FAQPage JSON-LD), client template, 404, phase-6 CSS
+- [ ] 06-03-PLAN.md — Content batch A (fr/en/th): Site Vitrine, Rebranding + Site Premium, Branding — includes the SVC-04 boundary and cross-links
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 06-04-PLAN.md — /services index rewrite: 9 data-driven cards, no price row, no badge + index metadata + link test
+- [ ] 06-05-PLAN.md — Content batch B (fr/en/th): Projet Sur Mesure, Agent Vocal IA, Maintenance
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 06-06-PLAN.md — Content batch C (fr/en/th): Community Management, Meta Ads, Google Ads — completes the 9
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 06-07-PLAN.md — 9-of-9 completeness gate, production build verification (static pages, JSON-LD, zero price strings), human verification
 
 ### Phase 7: Diagnostic Simulator
 
@@ -133,7 +156,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
-| 6. Service Pages (Template + Content) | v1.1 | 0/TBD | Not started | - |
+| 6. Service Pages (Template + Content) | v1.1 | 0/7 | Planned | - |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
