@@ -1,21 +1,17 @@
 ---
 phase: 06-service-pages-template-content
-verified: 2026-09-20T18:45:00Z
-status: human_needed
-score: 6/6 must-haves verified (automated); 1 checkpoint requires real human sign-off
+verified: 2026-09-20T21:45:00Z
+status: passed
+score: 6/6 must-haves verified (automated); human sign-off complete
 overrides_applied: 0
-human_verification:
-  - test: "Visit /services and each of the 9 /services/[slug] pages in a running dev server (npm run dev)"
-    expected: "9 numbered cards, no price/badge; each page renders problème → fonctionnement → enjeux → preuve sociale → FAQ → double CTA in that order; Branding and Rebranding + Site Premium read as a deliberate, non-competing split and cross-link to each other; the direct-answer block under each H1 reads as a stand-alone, quotable paragraph; FAQ opens/closes and the answer stays in the DOM when collapsed; language switch (EN/TH) shows fully translated content with no French fallback; /services/nexistepas shows the styled 404"
-    why_human: "06-07-SUMMARY.md documents that this exact checklist (Task 3 of 06-07-PLAN.md, a `checkpoint:human-verify gate=\"blocking\"` task) was never run by a human — it was auto-approved by the orchestrator under an `--auto`/`--chain` run, on the stated basis that automated tests already covered equivalent ground. Automated tests can confirm data shape and string non-emptiness; they cannot confirm that the Branding/Rebranding boundary genuinely reads as intentional to a prospect, that the citable answer blocks are good writing, or that anything renders correctly on screen. This is exactly the class of check the plan itself flagged as human-only (SVC-04: 'cannot be checked automatically'; SVC-05 citability: requires reading the text). No VERIFICATION-level evidence exists that a human ever looked at the rendered pages."
 ---
 
 # Phase 6: Service Pages (Template + Content) Verification Report
 
 **Phase Goal:** Every one of the 9 offers (5 existing + 4 new) has its own dedicated, price-free, citable presentation page, replacing the current pricing-heavy `/services` single page.
-**Verified:** 2026-09-20T18:45:00Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Verified:** 2026-09-20T21:45:00Z (re-verification)
+**Status:** passed
+**Re-verification:** Yes — user approved after live review via `06-HUMAN-UAT.md`, following three rounds of fixes during that review: `/services/nexistepas` 404 bug fixed (`9fb95c6`), index cards redesigned with problem-solved chips (`cfb9277`), "Comment ça marche" redesigned as a lucide-icon grid (`e498303`). Original automated verification (below) is otherwise unchanged.
 
 ## Goal Achievement
 
