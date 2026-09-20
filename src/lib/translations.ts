@@ -34,6 +34,61 @@ export type SocialProof =
 
 export type ServicePageContent = ServicePageContentBase & SocialProof;
 
+/**
+ * Content shape for the /simulateur diagnostic wizard (Phase 7). The
+ * `questions` record's outer keys are the question ids from
+ * `src/lib/simulateur/questions.ts` and the inner `options` keys are that
+ * question's option `value` strings; `translations.test.ts` enforces the
+ * join, so renaming an id there without renaming it here is a test failure
+ * rather than a silently missing label. `faq` intentionally reuses the
+ * `{ q, a }` shape so `buildFaqJsonLd` (src/lib/serviceJsonLd.ts) consumes
+ * it unchanged.
+ */
+export interface SimulateurContent {
+  metaTitle: string;
+  metaDescription: string;
+  badge: string;
+  h1Lead: string;
+  h1Benefit: string;
+  sub: string;
+  directAnswer: string;
+  intro: { heading: string; paragraphs: string[] };
+  start: string;
+  progressLabel: string;
+  next: string;
+  nextFinal: string;
+  back: string;
+  questions: Record<string, { text: string; hint: string; options: Record<string, string> }>;
+  contact: {
+    heading: string;
+    sub: string;
+    nomLabel: string;
+    nomPlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    telephoneLabel: string;
+    telephonePlaceholder: string;
+    consentLabel: string;
+    rgpdHeading: string;
+    rgpdMentions: { k: string; v: string }[];
+    submit: string;
+    submitting: string;
+    errorHeading: string;
+    errorBody: string;
+  };
+  result: {
+    heading: string;
+    gaugeCaption: string;
+    framing: { low: string; mid: string; high: string };
+    servicesHeading: string;
+    ctaHeading: string;
+    ctaSub: string;
+    callLabel: string;
+    writeLabel: string;
+  };
+  faq: { q: string; a: string }[];
+}
+
 export interface Translations {
   nav: {
     services: string;
@@ -145,6 +200,7 @@ export interface Translations {
       note: string;
     };
   };
+  simulateur: SimulateurContent;
   landing: {
     hero: {
       pill: string;
@@ -757,6 +813,140 @@ const fr: Translations = {
       email: "Envoyer un email",
       note: "Sans engagement · 100% gratuit · Réponse sous 24h",
     },
+  },
+  simulateur: {
+    metaTitle: 'Simulateur de diagnostic digital à Tours · Sèvalys',
+    metaDescription: "Répondez à quelques questions sur votre activité et obtenez immédiatement une recommandation personnalisée de 2 à 4 leviers digitaux prioritaires, sans engagement.",
+    badge: 'Diagnostic · sans engagement',
+    h1Lead: 'Quels leviers digitaux',
+    h1Benefit: 'pour votre entreprise ?',
+    sub: "Un diagnostic court et honnête : quelques questions sur votre activité, et nous identifions les 2 à 4 leviers qui comptent vraiment pour vous — pas une liste de tout ce que nous savons faire.",
+    directAnswer: "Le simulateur Sèvalys est un questionnaire de diagnostic en ligne : vous répondez à quatre ou cinq questions sur votre secteur, l'état de votre présence en ligne et vos freins actuels, puis vous obtenez immédiatement une recommandation de 2 à 4 services adaptés et un indice de maturité digitale. Aucune estimation chiffrée n'est produite.",
+    intro: {
+      heading: 'Comment fonctionne ce diagnostic',
+      paragraphs: [
+        "Ce diagnostic sert à trier. La plupart des entreprises que nous rencontrons n'ont pas besoin de tout refaire : elles ont besoin de savoir par quoi commencer.",
+        "Vous répondez à quatre ou cinq questions — votre secteur, l'état de votre présence en ligne, ce qui vous freine aujourd'hui, et votre priorité des trois prochains mois. Chaque réponse pondère les neuf services de Sèvalys, et seuls les deux à quatre mieux classés vous sont proposés.",
+        "Répondez honnêtement, surtout quand la réponse est peu flatteuse : une réponse optimiste produit une recommandation inutile. À la fin, vous laissez vos coordonnées et votre résultat s'affiche immédiatement.",
+      ],
+    },
+    start: 'Commencer mon diagnostic →',
+    progressLabel: 'Question {current} sur {total}',
+    next: 'Suivant →',
+    nextFinal: 'Voir ma recommandation →',
+    back: '← Précédent',
+    questions: {
+      'secteur': {
+        text: 'Dans quel secteur travaillez-vous ?',
+        hint: "Cela nous aide à pondérer les recommandations. Aucun service n'est écarté d'avance.",
+        options: {
+          'commerce-local': 'Commerce de proximité',
+          'restauration-hotellerie': 'Restauration ou hôtellerie',
+          'artisan-btp': 'Artisanat ou BTP',
+          'services-pro': 'Services aux entreprises',
+          'sante-bien-etre': 'Santé ou bien-être',
+          autre: 'Autre secteur',
+        },
+      },
+      'presence-en-ligne': {
+        text: "Comment jugez-vous votre présence en ligne aujourd'hui ?",
+        hint: 'Site, fiche Google, réseaux sociaux : votre impression générale suffit.',
+        options: {
+          inexistante: 'Inexistante — on ne me trouve nulle part',
+          datee: 'Datée — ça existe, mais ça ne me ressemble plus',
+          correcte: 'Correcte — ça fait le travail, sans plus',
+          solide: 'Solide — je suis satisfait de l\'ensemble',
+        },
+      },
+      'site-fiabilite': {
+        text: 'Votre site actuel est-il suivi, à jour et fiable ?',
+        hint: 'Mises à jour, sauvegardes, sécurité, vitesse de chargement.',
+        options: {
+          'jamais-touche': "Personne n'y a touché depuis sa mise en ligne",
+          'bugs-frequents': 'Il plante ou ralentit régulièrement',
+          'quelques-alertes': 'Quelques alertes de temps en temps',
+          'suivi-regulier': 'Il est suivi régulièrement',
+        },
+      },
+      'frictions': {
+        text: "Qu'est-ce qui vous freine le plus aujourd'hui ?",
+        hint: 'Plusieurs réponses possibles.',
+        options: {
+          'appels-manques': 'Je rate des appels',
+          'pas-assez-de-demandes': "Je n'ai pas assez de demandes entrantes",
+          'image-depassee': 'Mon image ne correspond plus à ce que je fais',
+          'site-lent-ou-casse': 'Mon site est lent ou cassé',
+          'reseaux-inactifs': 'Mes réseaux sociaux sont à l\'abandon',
+          'taches-repetitives': 'Je perds du temps sur des tâches répétitives',
+          'rien-de-bloquant': 'Rien ne me bloque, je veux surtout progresser',
+        },
+      },
+      'priorite': {
+        text: 'Sur quoi voulez-vous agir en priorité dans les trois prochains mois ?',
+        hint: 'Une seule priorité : c\'est ce qui rend le diagnostic utile.',
+        options: {
+          'etre-trouve': 'Être trouvé plus facilement',
+          'convertir-plus': 'Transformer plus de visiteurs en clients',
+          'gagner-du-temps': 'Gagner du temps au quotidien',
+          'changer-d-image': "Changer d'image",
+        },
+      },
+    },
+    contact: {
+      heading: 'Où vous envoyer votre diagnostic ?',
+      sub: 'Vos réponses sont enregistrées avec vos coordonnées pour que nous puissions revenir vers vous avec un avis argumenté. Votre résultat s\'affiche juste après.',
+      nomLabel: 'Nom',
+      nomPlaceholder: 'Votre nom',
+      emailLabel: 'Email',
+      emailPlaceholder: 'vous@entreprise.fr',
+      telephoneLabel: 'Téléphone',
+      telephonePlaceholder: '06 00 00 00 00',
+      consentLabel: "J'accepte que Sèvalys utilise mes réponses pour me recontacter dans le cadre de ce diagnostic.",
+      rgpdHeading: 'Traitement de vos données',
+      rgpdMentions: [
+        { k: 'Responsable', v: 'Sèvalys — Anatholy Bricon, Tours (37), France — contact@sevalys.com' },
+        { k: 'Finalité', v: 'Qualification de votre demande et prise de contact par notre équipe' },
+        { k: 'Base légale', v: 'Votre consentement, donné en cochant la case ci-dessus' },
+        { k: 'Conservation', v: '12 mois si vous ne devenez pas client, puis suppression automatique' },
+        { k: 'Vos droits', v: 'Accès, rectification, effacement, limitation, opposition et portabilité, à exercer auprès de contact@sevalys.com. Vous pouvez introduire une réclamation auprès de la CNIL.' },
+      ],
+      submit: 'Obtenir mon diagnostic →',
+      submitting: 'Envoi en cours…',
+      errorHeading: 'Une erreur est survenue',
+      errorBody: "Votre diagnostic n'a pas pu être envoyé. Réessayez, ou contactez-nous directement : +33 (0)6 07 18 41 33 / contact@sevalys.com.",
+    },
+    result: {
+      heading: 'Votre diagnostic',
+      gaugeCaption: 'Indice de maturité digitale',
+      framing: {
+        low: "Beaucoup de leviers restent inexploités. C'est une bonne nouvelle : les gains les plus rapides sont devant vous, et les services ci-dessous sont exactement par où commencer.",
+        mid: 'Vos fondations tiennent, mais plusieurs leviers tournent au ralenti. Les services ci-dessous sont ceux qui débloqueront le plus de résultats à court terme.',
+        high: 'Votre base est solide. Ce qu\'il vous reste à gagner se joue sur l\'exécution — les services ci-dessous sont les leviers les plus rentables dans votre situation.',
+      },
+      servicesHeading: 'Vos leviers prioritaires',
+      ctaHeading: 'Parlons de votre diagnostic',
+      ctaSub: 'Un échange de quinze minutes suffit à confirmer — ou corriger — ce que ce diagnostic a identifié.',
+      callLabel: 'Appeler',
+      writeLabel: 'Écrire',
+    },
+    faq: [
+      {
+        q: 'Le simulateur donne-t-il une estimation chiffrée ?',
+        a: "Non. Il identifie les leviers prioritaires pour votre situation, pas un montant. Un chiffre annoncé sans avoir vu votre activité n'aurait aucune valeur — nous en parlons lors de l'échange qui suit.",
+      },
+      {
+        q: 'Combien de temps prend le diagnostic ?',
+        a: "Moins de deux minutes. Quatre ou cinq questions selon vos réponses : si vous n'avez pas encore de présence en ligne, la question sur la fiabilité de votre site est automatiquement passée.",
+      },
+      {
+        q: 'Pourquoi seulement 2 à 4 services recommandés ?',
+        a: "Parce qu'une recommandation qui liste les neuf services n'est pas une recommandation. Chaque réponse pondère les services, et seuls les deux à quatre mieux classés vous sont proposés. Le reste attendra.",
+      },
+      {
+        q: 'Que deviennent mes réponses ?',
+        a: 'Elles sont enregistrées avec vos coordonnées pour préparer notre échange, conservées 12 mois au maximum si vous ne devenez pas client, puis supprimées automatiquement. Vous pouvez demander leur suppression à tout moment à contact@sevalys.com.',
+      },
+    ],
   },
   landing: {
     hero: {
