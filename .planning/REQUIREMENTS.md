@@ -21,14 +21,14 @@
 
 ### SIMU (simulateur de diagnostic)
 
-- [ ] **SIMU-01**: Le visiteur répond à une série de questions sur ses problèmes/besoins, avec logique de branchement (questions non pertinentes sautées selon les réponses précédentes)
-- [ ] **SIMU-02**: À la fin, le simulateur recommande un sous-ensemble de 2 à 4 services pertinents parmi les 9 — jamais "tous les services"
+- [x] **SIMU-01**: Le visiteur répond à une série de questions sur ses problèmes/besoins, avec logique de branchement (questions non pertinentes sautées selon les réponses précédentes)
+- [x] **SIMU-02**: À la fin, le simulateur recommande un sous-ensemble de 2 à 4 services pertinents parmi les 9 — jamais "tous les services"
 - [x] **SIMU-03**: L'écran de résultat affiche une jauge/score visuel en complément de la recommandation textuelle (purement visuel, non stocké comme métrique)
-- [ ] **SIMU-04**: Le formulaire de capture de contact apparaît uniquement entre la dernière question et l'affichage du résultat — jamais avant la première question
-- [ ] **SIMU-05**: Le formulaire inclut une case de consentement RGPD non pré-cochée avec mentions Art. 13 (identité du responsable, finalité, base légale, durée de conservation, droits)
-- [ ] **SIMU-06**: Le simulateur ne mentionne, n'affiche, ni n'estime aucun prix à aucune étape
-- [ ] **SIMU-07**: L'écran de résultat propose une action unique claire ("nous contacter"), présentée avec deux canaux (appeler / écrire) — pas deux objectifs concurrents
-- [ ] **SIMU-08**: `/simulateur` est écrit comme une page pilier explicative et citable (pas un formulaire nu), conformément à la stratégie GEO/AEO
+- [x] **SIMU-04**: Le formulaire de capture de contact apparaît uniquement entre la dernière question et l'affichage du résultat — jamais avant la première question
+- [x] **SIMU-05**: Le formulaire inclut une case de consentement RGPD non pré-cochée avec mentions Art. 13 (identité du responsable, finalité, base légale, durée de conservation, droits)
+- [x] **SIMU-06**: Le simulateur ne mentionne, n'affiche, ni n'estime aucun prix à aucune étape
+- [x] **SIMU-07**: L'écran de résultat propose une action unique claire ("nous contacter"), présentée avec deux canaux (appeler / écrire) — pas deux objectifs concurrents
+- [x] **SIMU-08**: `/simulateur` est écrit comme une page pilier explicative et citable (pas un formulaire nu), conformément à la stratégie GEO/AEO
 
 ### CRM (stockage des prospects)
 
@@ -92,14 +92,14 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 | SVC-04 | Phase 6 | Complete |
 | SVC-05 | Phase 6 | Complete |
 | SVC-06 | Phase 6 | Complete |
-| SIMU-01 | Phase 7 | Pending |
-| SIMU-02 | Phase 7 | Pending |
+| SIMU-01 | Phase 7 | Complete |
+| SIMU-02 | Phase 7 | Complete |
 | SIMU-03 | Phase 7 | Complete |
-| SIMU-04 | Phase 7 | Pending |
-| SIMU-05 | Phase 7 | Pending |
-| SIMU-06 | Phase 7 | Pending |
-| SIMU-07 | Phase 7 | Pending |
-| SIMU-08 | Phase 7 | Pending |
+| SIMU-04 | Phase 7 | Complete |
+| SIMU-05 | Phase 7 | Complete |
+| SIMU-06 | Phase 7 | Complete |
+| SIMU-07 | Phase 7 | Complete |
+| SIMU-08 | Phase 7 | Complete |
 | CRM-01 | Phase 5 | Complete |
 | CRM-02 | Phase 5 | Complete |
 | CRM-03 | Phase 5 | Complete |
