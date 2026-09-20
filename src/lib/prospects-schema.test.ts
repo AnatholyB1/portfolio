@@ -15,6 +15,12 @@ const validPayload = {
   formRenderedAt: Date.now() - 5000,
 };
 
+function omit<T extends object, K extends keyof T>(obj: T, key: K): Omit<T, K> {
+  const clone = { ...obj };
+  delete clone[key];
+  return clone;
+}
+
 describe('prospectSchema', () => {
   it('accepts a complete valid payload', () => {
     const result = prospectSchema.safeParse(validPayload);
@@ -22,20 +28,17 @@ describe('prospectSchema', () => {
   });
 
   it('rejects a payload missing telephone (D-01)', () => {
-    const { telephone, ...rest } = validPayload;
-    const result = prospectSchema.safeParse(rest);
+    const result = prospectSchema.safeParse(omit(validPayload, 'telephone'));
     expect(result.success).toBe(false);
   });
 
   it('rejects a payload missing nom', () => {
-    const { nom, ...rest } = validPayload;
-    const result = prospectSchema.safeParse(rest);
+    const result = prospectSchema.safeParse(omit(validPayload, 'nom'));
     expect(result.success).toBe(false);
   });
 
   it('rejects a payload missing email', () => {
-    const { email, ...rest } = validPayload;
-    const result = prospectSchema.safeParse(rest);
+    const result = prospectSchema.safeParse(omit(validPayload, 'email'));
     expect(result.success).toBe(false);
   });
 
@@ -50,8 +53,7 @@ describe('prospectSchema', () => {
   });
 
   it('rejects a missing consentementRgpd', () => {
-    const { consentementRgpd, ...rest } = validPayload;
-    const result = prospectSchema.safeParse(rest);
+    const result = prospectSchema.safeParse(omit(validPayload, 'consentementRgpd'));
     expect(result.success).toBe(false);
   });
 
