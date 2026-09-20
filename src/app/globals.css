@@ -735,4 +735,49 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .svc-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
 .svc-cta .svc-ctas { justify-content: center; }
 
+/* ---- Simulateur (Phase 7) ---- */
+
+/* Wizard shell */
+.sim-wizard { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 32px; }
+.sim-progress-track { height: 4px; background: var(--line); border-radius: 100px; overflow: hidden; margin-bottom: 32px; }
+.sim-progress-fill { height: 100%; background: var(--acid); transition: width .35s cubic-bezier(.2,.85,.2,1); }
+.sim-q-text { font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 32px; }
+.sim-options { display: grid; gap: 16px; }
+.sim-option { min-height: 44px; display: flex; align-items: center; gap: 4px; width: 100%; text-align: left; padding: 8px 20px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.3; cursor: pointer; transition: border-color .2s, background .2s; }
+.sim-option:hover { border-color: var(--line-strong); }
+.sim-option.selected { background: var(--acid-soft); border-color: var(--acid); }
+.sim-option:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+.sim-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 32px; }
+.sim-nav .btn { min-height: 44px; }
+
+/* Contact-capture screen */
+.sim-contact-sub { color: var(--ink-dim); font-size: 16px; line-height: 1.5; margin: 0 0 32px; }
+.sim-consent { display: flex; align-items: flex-start; gap: 8px; min-height: 44px; margin-top: 16px; cursor: pointer; }
+.sim-consent input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--acid); cursor: pointer; }
+.sim-consent-label { font-size: 16px; line-height: 1.5; color: var(--ink); }
+.sim-rgpd { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+.sim-rgpd .row { display: grid; grid-template-columns: 180px 1fr; gap: 16px; font-size: 13px; line-height: 1.5; color: var(--ink-dim); }
+.sim-rgpd .k { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-faint); }
+.sim-error { margin-top: 16px; padding: 16px 20px; border: 1px solid var(--warm); border-radius: 12px; color: var(--ink); }
+.sim-error h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 16px; color: var(--warm); margin: 0 0 4px; }
+.sim-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* Result screen */
+.sim-result { display: grid; gap: 48px; justify-items: center; text-align: center; }
+.sim-gauge { display: grid; gap: 16px; justify-items: center; }
+.sim-gauge-num { font-family: var(--font-display), serif; font-weight: 500; font-size: 40px; fill: var(--ink); }
+.sim-gauge-caption { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); }
+.sim-gauge-framing { font-size: 16px; line-height: 1.5; color: var(--ink-dim); max-width: 46ch; margin: 0; }
+.sim-services { display: grid; gap: 16px; width: 100%; }
+.sim-service-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 32px; text-align: left; }
+.sim-service-card h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.25; margin: 0 0 8px; }
+.sim-service-card p { font-size: 16px; line-height: 1.5; color: var(--ink-dim); margin: 0; }
+.sim-cta { display: grid; gap: 16px; justify-items: center; padding-top: 64px; border-top: 1px solid var(--line); width: 100%; }
+.sim-cta-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.sim-cta-row .btn { min-height: 44px; }
+
+/* Pillar page shell */
+.sim-intro { display: grid; gap: 32px; max-width: 68ch; }
+.sim-section-gap { padding: 48px 0; }
+
 .o-num { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-bottom: 8px; }

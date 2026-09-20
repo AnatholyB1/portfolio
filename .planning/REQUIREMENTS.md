@@ -23,7 +23,7 @@
 
 - [ ] **SIMU-01**: Le visiteur répond à une série de questions sur ses problèmes/besoins, avec logique de branchement (questions non pertinentes sautées selon les réponses précédentes)
 - [ ] **SIMU-02**: À la fin, le simulateur recommande un sous-ensemble de 2 à 4 services pertinents parmi les 9 — jamais "tous les services"
-- [ ] **SIMU-03**: L'écran de résultat affiche une jauge/score visuel en complément de la recommandation textuelle (purement visuel, non stocké comme métrique)
+- [x] **SIMU-03**: L'écran de résultat affiche une jauge/score visuel en complément de la recommandation textuelle (purement visuel, non stocké comme métrique)
 - [ ] **SIMU-04**: Le formulaire de capture de contact apparaît uniquement entre la dernière question et l'affichage du résultat — jamais avant la première question
 - [ ] **SIMU-05**: Le formulaire inclut une case de consentement RGPD non pré-cochée avec mentions Art. 13 (identité du responsable, finalité, base légale, durée de conservation, droits)
 - [ ] **SIMU-06**: Le simulateur ne mentionne, n'affiche, ni n'estime aucun prix à aucune étape
@@ -94,7 +94,7 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 | SVC-06 | Phase 6 | Complete |
 | SIMU-01 | Phase 7 | Pending |
 | SIMU-02 | Phase 7 | Pending |
-| SIMU-03 | Phase 7 | Pending |
+| SIMU-03 | Phase 7 | Complete |
 | SIMU-04 | Phase 7 | Pending |
 | SIMU-05 | Phase 7 | Pending |
 | SIMU-06 | Phase 7 | Pending |
