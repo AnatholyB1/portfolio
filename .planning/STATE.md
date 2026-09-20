@@ -66,7 +66,7 @@ Full decision log lives in PROJECT.md Key Decisions table. Decisions specific to
 
 ### Pending Todos
 
-None yet for v1.1.
+- Restructurer la landing page autour des problèmes PME, pas de l'agent vocal — `.planning/todos/pending/2026-09-20-landing-page-trop-ax-e-agent-vocal-restructurer-en-probl-mes.md` — resolves during Phase 8 (Landing Simplification & Pricing Policy)
 
 ### Blockers/Concerns
 
