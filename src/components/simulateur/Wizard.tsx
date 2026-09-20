@@ -3,7 +3,7 @@
 // ordering, scoring, payload assembly, copy and CSS classes already exist
 // and are tested elsewhere — this component is composition, not new logic.
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   buildStepSequence,
@@ -11,6 +11,7 @@ import {
   applicableQuestionIds,
 } from '@/lib/simulateur/wizardSteps';
 import { getQuestionById, type Answer } from '@/lib/simulateur/questions';
+import { canSubmit, buildProspectPayload } from '@/lib/simulateur/submit';
 
 // Same off-screen technique as .sim-honeypot (globals.css), but WITHOUT
 // aria-hidden — this text must be announced by assistive tech, so it
@@ -68,6 +69,34 @@ export default function Wizard() {
   // or removes the `site-fiabilite` step — no separate skip handling here.
   const setAnswer = (questionId: string) => (value: string | string[]) =>
     setAnswers((prev) => [...prev.filter((a) => a.questionId !== questionId), { questionId, value }]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const payload = buildProspectPayload({ contact, consent, answers, formRenderedAt });
+      const res = await fetch('/api/simulateur', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const body = await res.json();
+      // The API deliberately answers { ok: true } for silently-rejected
+      // spam too, so the visitor experience is identical either way by
+      // design — this branch never distinguishes the two cases.
+      if (body.ok === true) {
+        setStatus('idle');
+        const resultIndex = steps.findIndex((st) => st.kind === 'result');
+        setStepIndex(resultIndex);
+      } else {
+        // body.error (one of the developer/log-only strings) is never
+        // read, logged or rendered to the visitor.
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
 
   if (!step) return null;
 
@@ -187,11 +216,96 @@ export default function Wizard() {
   }
 
   if (step.kind === 'contact') {
-    // Filled in by Task 2.
+    const isSending = status === 'sending';
+    const submitDisabled = isSending || !canSubmit({ contact, consent, answers });
+
     return (
       <div className="sim-wizard">
         {progressBar(1)}
-        {/* TODO(Task 2): contact-capture form, RGPD consent, honeypot, submission, error state */}
+        <h2 className="svc-h2">{t.simulateur.contact.heading}</h2>
+        <p className="sim-contact-sub">{t.simulateur.contact.sub}</p>
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label>{t.simulateur.contact.nomLabel}</label>
+            <input
+              type="text"
+              required
+              autoComplete="name"
+              placeholder={t.simulateur.contact.nomPlaceholder}
+              value={contact.nom}
+              onChange={(e) => setContact({ ...contact, nom: e.target.value })}
+            />
+          </div>
+          <div className="field">
+            <label>{t.simulateur.contact.emailLabel}</label>
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              placeholder={t.simulateur.contact.emailPlaceholder}
+              value={contact.email}
+              onChange={(e) => setContact({ ...contact, email: e.target.value })}
+            />
+          </div>
+          <div className="field">
+            <label>{t.simulateur.contact.telephoneLabel}</label>
+            <input
+              type="tel"
+              required
+              autoComplete="tel"
+              placeholder={t.simulateur.contact.telephonePlaceholder}
+              value={contact.telephone}
+              onChange={(e) => setContact({ ...contact, telephone: e.target.value })}
+            />
+          </div>
+
+          {/* Honeypot: uncontrolled, always empty for a legitimate visitor.
+              The server's isSpamSubmission reads this field plus
+              formRenderedAt — the wizard must not re-implement that check
+              client-side. */}
+          <input
+            type="text"
+            name="website"
+            className="sim-honeypot"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            defaultValue=""
+          />
+
+          <label className="sim-consent">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+            />
+            <span className="sim-consent-label">{t.simulateur.contact.consentLabel}</span>
+          </label>
+          {/* Always-visible Art. 13 mentions — never collapsed, never inside
+              <details> — must be visible at the moment consent is given. */}
+          <div className="sim-rgpd">
+            <span className="label">{t.simulateur.contact.rgpdHeading}</span>
+            {t.simulateur.contact.rgpdMentions.map((mention) => (
+              <div className="row" key={mention.k}>
+                <span className="k">{mention.k}</span>
+                <span>{mention.v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="sim-nav">
+            <button type="submit" className="btn btn-primary" disabled={submitDisabled}>
+              {isSending ? t.simulateur.contact.submitting : t.simulateur.contact.submit}
+            </button>
+          </div>
+
+          {status === 'error' && (
+            <div className="sim-error">
+              <h3>{t.simulateur.contact.errorHeading}</h3>
+              <p>{t.simulateur.contact.errorBody}</p>
+            </div>
+          )}
+        </form>
       </div>
     );
   }
