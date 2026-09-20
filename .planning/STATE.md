@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: executing
-stopped_at: Phase 6 context gathered
-last_updated: "2026-09-20T13:17:09.748Z"
-last_activity: 2026-09-20 -- Phase 5 planning complete
+stopped_at: Phase 6 UI-SPEC approved
+last_updated: "2026-09-20T14:14:34.861Z"
+last_activity: 2026-09-20 -- Phase 6 planning complete
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 4
+  total_plans: 11
   completed_plans: 4
   percent: 20
 ---
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 Phase: 5 of 9 (Prospect Capture Backend)
 Plan: — of TBD
 Status: Ready to execute
-Last activity: 2026-09-20 -- Phase 5 planning complete
+Last activity: 2026-09-20 -- Phase 6 planning complete
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -83,6 +83,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 
 ## Session Continuity
 
-Last session: 2026-09-20T13:17:09.730Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-service-pages-template-content/06-CONTEXT.md
+Last session: 2026-09-20T13:39:52.123Z
+Stopped at: Phase 6 UI-SPEC approved
+Resume file: .planning/phases/06-service-pages-template-content/06-UI-SPEC.md
