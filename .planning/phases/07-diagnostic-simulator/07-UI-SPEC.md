@@ -1,10 +1,11 @@
 ---
 phase: 7
 slug: diagnostic-simulator
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-09-20
+reviewed_at: 2026-09-20
 ---
 
 # Phase 7 — UI Design Contract
