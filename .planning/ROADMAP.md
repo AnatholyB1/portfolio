@@ -23,7 +23,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 
 **Milestone Goal:** Étendre le catalogue de services Sèvalys à 9 offres, retirer tout affichage de prix du site, ajouter un simulateur de diagnostic qui qualifie et capture les prospects, et intégrer la stratégie SEO/GEO/AEO — sans jamais afficher de prix nulle part.
 
-- [ ] **Phase 5: Prospect Capture Backend** - New Supabase prospects table + insert-only RLS + spam guard + Resend notification, built and testable independently of any UI
+- [x] **Phase 5: Prospect Capture Backend** - New Supabase prospects table + insert-only RLS + spam guard + Resend notification, built and testable independently of any UI (completed 2026-09-20)
 - [ ] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services`
 - [ ] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA
 - [ ] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi)
@@ -57,7 +57,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 05-04-PLAN.md — Live end-to-end verification: bundle-leak gate, curl checklist, anon RLS denial, notification confirmation
+- [x] 05-04-PLAN.md — Live end-to-end verification: bundle-leak gate, curl checklist, anon RLS denial, notification confirmation
 
 ### Phase 6: Service Pages (Template + Content)
 
@@ -132,7 +132,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 2. Landing Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
-| 5. Prospect Capture Backend | v1.1 | 3/4 | In Progress|  |
+| 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 0/TBD | Not started | - |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
