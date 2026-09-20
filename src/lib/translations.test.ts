@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { translations } from './translations';
 import { services, getServiceBySlug } from '@/data/services';
+import { QUESTIONS } from '@/lib/simulateur/questions';
 
 const LANGS = ['fr', 'en', 'th'] as const;
 
@@ -8,6 +9,29 @@ const LANGS = ['fr', 'en', 'th'] as const;
 // for any locale, at any stage of the phase (covers items[] automatically
 // as later plans append entries).
 const PRICE_PATTERN = /€|฿|\bprix\b|\btarifs?\b|\beuros?\b|\bprice\b|\bpricing\b|à partir de/i;
+
+// SIMU-06 guard — deliberately stricter than SVC-02's PRICE_PATTERN because
+// the simulator must also never claim a service is free of charge or
+// promise a written estimate (devis/gratuit/free), on top of the currency
+// and price/tariff vocabulary PRICE_PATTERN already covers.
+const SIMU_PRICE_PATTERN = /€|฿|\$|£|\bprix\b|\btarifs?\b|\beuros?\b|\bprice\b|\bpricing\b|\bdevis\b|\bco[uû]te?\w*\b|\bgratuit\w*\b|\bfree\b|à partir de/i;
+
+/** Recursively descends plain objects and arrays and collects every string
+ * leaf value, paired with a dotted key path for failure messages. */
+function collectStringLeaves(value: unknown, path: string): { path: string; value: string }[] {
+  if (typeof value === 'string') {
+    return [{ path, value }];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((item, i) => collectStringLeaves(item, `${path}[${i}]`));
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>).flatMap(([k, v]) =>
+      collectStringLeaves(v, path ? `${path}.${k}` : k)
+    );
+  }
+  return [];
+}
 
 describe('translations.services.pages — skeleton (SVC-06)', () => {
   for (const lang of LANGS) {
@@ -213,6 +237,118 @@ describe('service pages content — complete set (SVC-01..06, 9-of-9 completenes
       }
       expect(words).toBeGreaterThanOrEqual(200);
       expect(words).toBeLessThanOrEqual(700);
+    }
+  });
+});
+
+describe('translations.simulateur (SIMU-05, SIMU-06, SIMU-08)', () => {
+  // SIMU-06
+  it('no price, tariff, currency or free-of-charge language appears in t.simulateur, for any locale', () => {
+    for (const lang of LANGS) {
+      const serialized = JSON.stringify(translations[lang].simulateur);
+      expect(serialized).not.toMatch(PRICE_PATTERN);
+      expect(serialized).not.toMatch(SIMU_PRICE_PATTERN);
+    }
+  });
+
+  // Key join (forward): every question/option in QUESTIONS has a label in every locale.
+  it('every QUESTIONS id and option value has a defined, non-empty label in every locale', () => {
+    for (const lang of LANGS) {
+      const simQuestions = translations[lang].simulateur.questions;
+      for (const question of QUESTIONS) {
+        const entry = simQuestions[question.id];
+        expect(entry, `${lang}: simulateur.questions["${question.id}"]`).toBeDefined();
+        expect(entry.text.trim().length, `${lang}: questions["${question.id}"].text`).toBeGreaterThan(0);
+        expect(entry.hint.trim().length, `${lang}: questions["${question.id}"].hint`).toBeGreaterThan(0);
+        for (const option of question.options) {
+          const label = entry.options[option.value];
+          expect(label, `${lang}: questions["${question.id}"].options["${option.value}"]`).toBeDefined();
+          expect(
+            label?.trim().length ?? 0,
+            `${lang}: questions["${question.id}"].options["${option.value}"]`
+          ).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  // Key join (reverse): no stale question or option key survives in translations.ts.
+  it('no locale declares a questions/options key absent from QUESTIONS (no stale labels)', () => {
+    const validQuestionIds = new Set(QUESTIONS.map((q) => q.id));
+    for (const lang of LANGS) {
+      const simQuestions = translations[lang].simulateur.questions;
+      for (const questionId of Object.keys(simQuestions)) {
+        expect(validQuestionIds.has(questionId), `${lang}: stale question key "${questionId}"`).toBe(true);
+      }
+      for (const question of QUESTIONS) {
+        const entry = simQuestions[question.id];
+        if (!entry) continue;
+        const validOptionValues = new Set(question.options.map((o) => o.value));
+        for (const optionKey of Object.keys(entry.options)) {
+          expect(
+            validOptionValues.has(optionKey),
+            `${lang}: stale option key "${optionKey}" on question "${question.id}"`
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
+  // Locale parity
+  it('intro.paragraphs (3), contact.rgpdMentions (5) and faq (4) have identical lengths across fr/en/th', () => {
+    const introLengths = LANGS.map((lang) => translations[lang].simulateur.intro.paragraphs.length);
+    const rgpdLengths = LANGS.map((lang) => translations[lang].simulateur.contact.rgpdMentions.length);
+    const faqLengths = LANGS.map((lang) => translations[lang].simulateur.faq.length);
+
+    expect(new Set(introLengths).size).toBe(1);
+    expect(new Set(rgpdLengths).size).toBe(1);
+    expect(new Set(faqLengths).size).toBe(1);
+
+    expect(introLengths[0]).toBe(3);
+    expect(rgpdLengths[0]).toBe(5);
+    expect(faqLengths[0]).toBe(4);
+  });
+
+  // SIMU-05
+  it('Art. 13 completeness: rgpdMentions covers controller, email, 12-month retention and CNIL in every locale', () => {
+    for (const lang of LANGS) {
+      const simulateur = translations[lang].simulateur;
+      const rgpdText = simulateur.contact.rgpdMentions.map((m) => m.v).join(' ');
+      expect(rgpdText, `${lang}: rgpdMentions`).toContain('contact@sevalys.com');
+      expect(rgpdText, `${lang}: rgpdMentions`).toContain('Sèvalys');
+      expect(rgpdText, `${lang}: rgpdMentions`).toContain('12');
+      expect(rgpdText, `${lang}: rgpdMentions`).toContain('CNIL');
+      expect(simulateur.contact.consentLabel.trim().length, `${lang}: consentLabel`).toBeGreaterThan(0);
+    }
+  });
+
+  // SIMU-08
+  it('faq has at least 3 entries with non-empty q/a in every locale, feeding a non-trivial buildFaqJsonLd mainEntity', () => {
+    for (const lang of LANGS) {
+      const faq = translations[lang].simulateur.faq;
+      expect(faq.length, `${lang}: faq.length`).toBeGreaterThanOrEqual(3);
+      for (const entry of faq) {
+        expect(entry.q.trim().length, `${lang}: faq entry q`).toBeGreaterThan(0);
+        expect(entry.a.trim().length, `${lang}: faq entry a`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  // Template integrity
+  it('progressLabel contains both {current} and {total} tokens in every locale', () => {
+    for (const lang of LANGS) {
+      const progressLabel = translations[lang].simulateur.progressLabel;
+      expect(progressLabel, `${lang}: progressLabel`).toContain('{current}');
+      expect(progressLabel, `${lang}: progressLabel`).toContain('{total}');
+    }
+  });
+
+  it('every leaf string in translations[lang].simulateur is non-empty after trimming', () => {
+    for (const lang of LANGS) {
+      const leaves = collectStringLeaves(translations[lang].simulateur, `${lang}.simulateur`);
+      for (const leaf of leaves) {
+        expect(leaf.value.trim().length, leaf.path).toBeGreaterThan(0);
+      }
     }
   });
 });
