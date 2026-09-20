@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Services — Agents IA, automatisations & sites web pour PME | Sèvalys",
-  description: "Sèvalys — agence IA à Tours. Agents vocaux téléphoniques 24/7, automatisations métier et sites web performants pour PME, commerces et services. Solution clé en main : design, développement, hébergement, maintenance. Devis sous 48h.",
+  title: "Nos 9 services — sites, identité, publicité et agents IA | Sèvalys",
+  description: "Sèvalys propose 9 services pour PME à Tours : sites, identité de marque, agent vocal IA, maintenance, community management et publicité Meta & Google Ads.",
   keywords: [
     "agent vocal IA",
     "agent téléphonique IA",
@@ -22,7 +22,17 @@ export const metadata: Metadata = {
     "landing page professionnelle",
     "rebranding entreprise",
     "agence IA Tours",
-    "Sèvalys"
+    "Sèvalys",
+    "site vitrine tours",
+    "refonte site internet tours",
+    "agence branding tours",
+    "création logo identité visuelle pme",
+    "projet web sur mesure tours",
+    "agent vocal IA tours",
+    "maintenance site web tours",
+    "community manager tours",
+    "agence meta ads tours",
+    "agence google ads tours"
   ],
   authors: [{ name: "Sèvalys" }],
   creator: "Sèvalys",
@@ -39,8 +49,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Services — Agents IA, automatisations & sites web | Sèvalys",
-    description: "Agents vocaux téléphoniques 24/7, automatisations métier et sites performants pour PME locales. Solution clé en main avec maintenance incluse.",
+    title: "Nos 9 services | Sèvalys",
+    description: "Sites, identité, publicité et agents IA pour PME à Tours.",
     type: "website",
     locale: "fr_FR",
     siteName: "Sèvalys",
@@ -48,8 +58,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Services — Agents IA & sites web | Sèvalys",
-    description: "Agents IA, automatisations et sites web pour PME : design, développement, hébergement, maintenance. Devis sous 48h.",
+    title: "Nos 9 services | Sèvalys",
+    description: "Sites, identité, publicité et agents IA pour PME à Tours.",
   },
   alternates: {
     canonical: "/services",

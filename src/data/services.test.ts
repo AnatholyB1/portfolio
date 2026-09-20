@@ -1,6 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getServiceBySlug, services } from './services';
 import { projects } from './projects';
+
+const servicesIndexPageSource = readFileSync(
+  new URL('../app/services/page.tsx', import.meta.url),
+  'utf8'
+);
 
 const LOCKED_SLUGS = [
   'site-vitrine',
@@ -65,5 +71,38 @@ describe('getServiceBySlug', () => {
 
   it('returns undefined for an unknown slug', () => {
     expect(getServiceBySlug('does-not-exist')).toBeUndefined();
+  });
+});
+
+describe('/services index page', () => {
+  it("imports services from '@/data/services'", () => {
+    expect(servicesIndexPageSource).toMatch(/import\s*\{\s*services\s*\}\s*from\s*['"]@\/data\/services['"]/);
+  });
+
+  it('is data-driven via a services.map( call, not 9 hardcoded cards', () => {
+    expect(servicesIndexPageSource).toContain('services.map(');
+  });
+
+  it('builds hrefs from the /services/ template prefix plus the slug expression', () => {
+    expect(servicesIndexPageSource).toMatch(/`\/services\/\$\{s\.slug\}`/);
+  });
+
+  it('contains no hardcoded /services/<literal-slug> string for any of the 9 slugs', () => {
+    for (const s of services) {
+      expect(servicesIndexPageSource).not.toContain(`"/services/${s.slug}"`);
+      expect(servicesIndexPageSource).not.toContain(`'/services/${s.slug}'`);
+    }
+  });
+
+  it('contains none of the price/popularity tokens (SVC-03 + D-10)', () => {
+    for (const token of ['o-price', 'o-from', 'pop-tag', 'popular']) {
+      expect(servicesIndexPageSource).not.toContain(token);
+    }
+  });
+
+  it('contains no price language (€, prix, tarif)', () => {
+    for (const token of ['€', 'prix', 'tarif']) {
+      expect(servicesIndexPageSource).not.toContain(token);
+    }
   });
 });
