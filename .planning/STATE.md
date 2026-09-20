@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: executing
-stopped_at: Phase 7 UI-SPEC approved
-last_updated: "2026-09-20T20:55:23.154Z"
+status: ready_to_plan
+stopped_at: Phase 07 complete (6/6) — ready to discuss Phase 8
+last_updated: 2026-09-20T22:49:58.141Z
 last_activity: 2026-09-20 -- Phase 7 execution started
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 17
-  completed_plans: 11
+  completed_plans: 17
   percent: 40
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 7 — Diagnostic Simulator
+**Current focus:** Phase 8 — landing simplification & pricing policy
 
 ## Current Position
 
-Phase: 7 (Diagnostic Simulator) — EXECUTING
-Plan: 1 of 6
-Status: Executing Phase 7
-Last activity: 2026-09-20 -- Phase 7 execution started
+Phase: 8
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-20
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -36,7 +36,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Velocity:**
 
-- Total plans completed: 16 (v1.0 only)
+- Total plans completed: 22 (v1.0 only)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 
@@ -47,6 +47,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 1 | 5 | ~27 min | ~5 min |
 | Phase 2 | 4 | ~20 min | ~5 min |
 | 6 | 7 | - | - |
+| 07 | 6 | - | - |
 
 **Recent Trend:**
 
