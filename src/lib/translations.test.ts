@@ -59,7 +59,13 @@ describe('translations.services.pages — skeleton (SVC-06)', () => {
         expect(item.problems.length).toBeGreaterThan(0);
         expect(item.features.length).toBeGreaterThan(0);
         expect(item.enjeux.length).toBeGreaterThan(0);
-        expect(item.signals.length).toBeGreaterThan(0);
+        // signals is [] when caseQuote is used instead (see ServicePageContent
+        // interface contract: "3 trust signals when caseQuote is null, otherwise []").
+        if (item.caseQuote === null) {
+          expect(item.signals.length).toBeGreaterThan(0);
+        } else {
+          expect(item.signals.length).toBe(0);
+        }
         expect(item.faq.length).toBeGreaterThan(0);
       }
     }
