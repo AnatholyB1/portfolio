@@ -3,8 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: planning
-last_updated: "2026-09-20T00:00:00.000Z"
-last_activity: 2026-09-20
+stopped_at: Phase 5 context gathered
+last_updated: "2026-09-20T07:43:52.315Z"
+last_activity: 2026-09-20 — ROADMAP.md and STATE.md created for v1.1, 26/26 requirements mapped
 progress:
   total_phases: 5
   completed_phases: 0
@@ -82,6 +83,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 
 ## Session Continuity
 
-Last session: 2026-09-20T00:00:00.000Z
-Stopped at: ROADMAP.md and STATE.md written for v1.1 (Phases 5-9), REQUIREMENTS.md traceability updated
-Resume file: None — next step is `/gsd:plan-phase 5`
+Last session: 2026-09-20T07:43:52.297Z
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-prospect-capture-backend/05-CONTEXT.md
