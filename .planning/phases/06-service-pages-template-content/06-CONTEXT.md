@@ -32,8 +32,8 @@ Give every one of the 9 offers (5 existing: Landing Page, Rebranding+Premium, Pr
 - **D-10:** Drop the "popular" emphasis tag/badge that exists today on the offers grid (middle offer highlighted). No static popularity badge on the new index — the diagnostic simulator (Phase 7) is the intended mechanism for surfacing which service fits a given visitor, not a badge.
 
 ### Design inspiration sourcing
-- **D-11:** Pull both structural/component inspiration from 21st.dev (e.g., FAQ accordion patterns, service/feature-card layouts) and content/flow inspiration from other agency or SaaS marketing sites — both sources are in scope, not just one.
-- **D-12:** No specific 21st.dev components or reference sites were named by the user — the phase researcher (and/or `/gsd:ui-phase`, since this phase has a UI hint) should search for and select fitting examples during research/design rather than waiting on user-supplied links.
+- **D-11 [informational]:** Pull both structural/component inspiration from 21st.dev (e.g., FAQ accordion patterns, service/feature-card layouts) and content/flow inspiration from other agency or SaaS marketing sites — both sources are in scope, not just one. **Resolved:** `06-UI-SPEC.md` (approved 6/6 dimensions) settled this by declaring a bespoke hand-rolled CSS system with zero UI-library dependencies (no shadcn/Radix), consistent with RESEARCH.md's anti-pattern guidance against introducing a component library for a single FAQ accordion — no PLAN.md task references this decision directly since it was resolved one artifact upstream of planning.
+- **D-12 [informational]:** No specific 21st.dev components or reference sites were named by the user — the phase researcher (and/or `/gsd:ui-phase`, since this phase has a UI hint) should search for and select fitting examples during research/design rather than waiting on user-supplied links. **Resolved:** same as D-11 — `06-UI-SPEC.md` made the final call (no component library) rather than sourcing specific external examples.
 
 ### Claude's Discretion
 - Exact Branding vs Rebranding+Premium wording/scope split (D-07) — draft it, confirm during planning.
