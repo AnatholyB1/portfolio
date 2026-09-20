@@ -36,7 +36,6 @@ This codebase's shipped spacing does not follow a strict 8-point-only grid in ev
 | xs | 4px | Icon-to-text gaps (`.o-feat`, `.check`, checkmark bullets) |
 | sm | 8px | Tag/pill internal padding, tight vertical rhythm inside FAQ `<summary>`, and card internal gaps (`.reassure`, `.offer` internal stacks) — reuses the standard 8px step; supersedes any non-standard intermediate value |
 | md | 16px | Grid gaps between cards (index grid, FAQ list, reassurance grid) |
-| md+ | 24–28px | Card padding (`.reassure`, `.problem-card`-style trust-signal cards) — existing exception, keep |
 | lg | 32px | Layout gaps between major in-page blocks (hero → problème, fonctionnement → enjeux) |
 | xl | 48px | `sec-head` bottom margin equivalent for compact page (this phase's pages are shorter than the index/landing, so use the 48px "mobile" section gap, not the 140px desktop `.sec` default — see Layout Patterns) |
 | 2xl | 64px | Spacing before FAQ block and before final double-CTA block |
@@ -44,6 +43,8 @@ This codebase's shipped spacing does not follow a strict 8-point-only grid in ev
 Exceptions: intentionally denser rhythm (32–64px vertical gaps instead of the landing/index's 140px `.sec` padding) on all 9 `/services/[slug]` pages — justified by D-02 (concise ~300-500 word pages; full `.sec` spacing would create excessive dead space per section on short content).
 
 The `/services` index page inherits the existing, unmodified `.sec` CSS (its shipped 140px top/bottom section padding from `ServicesHeroSection`/`OffersSection`). That value is out of scope for this phase's new spacing tokens — it is pre-existing, shipped styling that this phase does not touch, not a new token this contract declares.
+
+Card padding for trust-signal / pain-point cards (`.reassure`, `.problem-card`) is likewise out of scope for this phase's new spacing tokens: these classes ship with existing, unmodified padding (`.reassure` 36px, `.problem-card` 36px/36px/36px/80px) from Phase 1-4. Per the Component & Layout Patterns section below, this phase reuses those classes verbatim for the "Preuve sociale" and "Problème résolu" sections rather than introducing a new padding value — so no new card-padding token is declared here, and no off-scale value (e.g. 28px) enters this phase's contract.
 
 ---
 
@@ -147,5 +148,3 @@ Accent reserved for (explicit, no other elements): primary CTA background, check
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
-</content>
-</invoke>
