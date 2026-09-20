@@ -33,7 +33,7 @@
 ### CRM (stockage des prospects)
 
 - [x] **CRM-01**: Chaque soumission du simulateur crée un enregistrement prospect dans une nouvelle table Supabase dédiée (même projet Supabase que le CRM existant — pas de réutilisation du schéma products/orders/stock)
-- [ ] **CRM-02**: La table prospects est protégée par une politique RLS insert-only côté écriture publique
+- [x] **CRM-02**: La table prospects est protégée par une politique RLS insert-only côté écriture publique
 - [x] **CRM-03**: La soumission du simulateur est protégée contre le spam (rate-limiting et/ou honeypot)
 - [x] **CRM-04**: Une notification email (via Resend, cohérent avec `/api/contact`) informe l'équipe Sèvalys de chaque nouveau prospect
 
@@ -101,7 +101,7 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 | SIMU-07 | Phase 7 | Pending |
 | SIMU-08 | Phase 7 | Pending |
 | CRM-01 | Phase 5 | Complete |
-| CRM-02 | Phase 5 | Pending |
+| CRM-02 | Phase 5 | Complete |
 | CRM-03 | Phase 5 | Complete |
 | CRM-04 | Phase 5 | Complete |
 | LANDING-01 | Phase 8 | Pending |
