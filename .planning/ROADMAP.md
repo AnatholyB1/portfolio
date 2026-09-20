@@ -48,8 +48,8 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 Plans:
 **Wave 1**
 
-- [ ] 05-01-PLAN.md — Install zod + vitest, extract the prospect payload schema and spam predicate into src/lib/prospects-schema.ts
-- [ ] 05-02-PLAN.md — Write and apply the prospects table migration: RLS with zero anon grants + 12-month pg_cron purge
+- [x] 05-01-PLAN.md — Install zod + vitest, extract the prospect payload schema and spam predicate into src/lib/prospects-schema.ts
+- [x] 05-02-PLAN.md — Write and apply the prospects table migration: RLS with zero anon grants + 12-month pg_cron purge
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -132,7 +132,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 2. Landing Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
-| 5. Prospect Capture Backend | v1.1 | 0/4 | Planned | - |
+| 5. Prospect Capture Backend | v1.1 | 2/4 | In Progress|  |
 | 6. Service Pages (Template + Content) | v1.1 | 0/TBD | Not started | - |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
