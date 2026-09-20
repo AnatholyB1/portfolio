@@ -29,36 +29,36 @@ created: 2026-09-20
 
 ## Spacing Scale
 
-This codebase's shipped spacing does not follow a strict 8-point-only grid — it uses 4px-multiple values with several established intermediate steps for card/component padding. Declared scale for this phase (reusing exactly what `/services` already uses, so new pages feel identical to shipped pages):
+This codebase's shipped spacing does not follow a strict 8-point-only grid in every corner, but this phase's declared contract sticks to the standard set `{4, 8, 16, 24, 32, 48, 64}` only — no intermediate or off-scale values are introduced for new work in this phase:
 
 | Token | Value | Usage in this phase |
 |-------|-------|----------------------|
 | xs | 4px | Icon-to-text gaps (`.o-feat`, `.check`, checkmark bullets) |
-| sm | 8px | Tag/pill internal padding, tight vertical rhythm inside FAQ `<summary>` |
-| sm+ | 12–14px | Card internal gaps (`.reassure`, `.offer` internal stacks) — existing exception, keep |
+| sm | 8px | Tag/pill internal padding, tight vertical rhythm inside FAQ `<summary>`, and card internal gaps (`.reassure`, `.offer` internal stacks) — reuses the standard 8px step; supersedes any non-standard intermediate value |
 | md | 16px | Grid gaps between cards (index grid, FAQ list, reassurance grid) |
 | md+ | 24–28px | Card padding (`.reassure`, `.problem-card`-style trust-signal cards) — existing exception, keep |
 | lg | 32px | Layout gaps between major in-page blocks (hero → problème, fonctionnement → enjeux) |
 | xl | 48px | `sec-head` bottom margin equivalent for compact page (this phase's pages are shorter than the index/landing, so use the 48px "mobile" section gap, not the 140px desktop `.sec` default — see Layout Patterns) |
 | 2xl | 64px | Spacing before FAQ block and before final double-CTA block |
-| 3xl | 80–140px | Reserved for `/services` index page top/bottom section padding only (reuses `.sec` as-is); individual `/services/[slug]` pages use the tighter 32–64px rhythм above, per D-02's 300-500 word concise-page target — a 140px `.sec` rhythm on a short page reads as empty/broken |
 
-Exceptions: intentionally denser rhythm (32–64px vertical gaps instead of the landing/index's 140px `.sec` padding) on all 9 `/services/[slug]` pages — justified by D-02 (concise ~300-500 word pages; full `.sec` spacing would create excessive dead space per section on short content). The `/services` index page keeps the existing 140px `.sec` rhythm unchanged (it inherits `ServicesHeroSection`/`OffersSection`-style spacing already shipped).
+Exceptions: intentionally denser rhythm (32–64px vertical gaps instead of the landing/index's 140px `.sec` padding) on all 9 `/services/[slug]` pages — justified by D-02 (concise ~300-500 word pages; full `.sec` spacing would create excessive dead space per section on short content).
+
+The `/services` index page inherits the existing, unmodified `.sec` CSS (its shipped 140px top/bottom section padding from `ServicesHeroSection`/`OffersSection`). That value is out of scope for this phase's new spacing tokens — it is pre-existing, shipped styling that this phase does not touch, not a new token this contract declares.
 
 ---
 
 ## Typography
 
-Reuses the existing 3-font system (`--font-display`/`--font-body`/`--font-mono`) and existing size/weight values already shipped elsewhere in `globals.css` — no new sizes invented for this phase.
+Reuses the existing 3-font system (`--font-display`/`--font-body`/`--font-mono`) and existing size/weight values already shipped elsewhere in `globals.css` — no new sizes invented for this phase. Exactly 4 declared sizes, per Dimension 4's cap.
 
 | Role | Size | Weight | Line Height | Font |
 |------|------|--------|-------------|------|
 | Display (H1 — service name + benefit) | `clamp(40px, 6vw, 72px)` (reuse `.sec-title` scale, not the larger `.hero-title`/`.s-hero-title` 144-180px scale — individual service pages are content pages, not the index landing) | 500 | 0.95 | `--font-display` |
-| Heading (H2 — Problème / Fonctionnement / Enjeux / Preuve sociale / FAQ section titles) | 32px | 500 | 1.15 | `--font-display` |
-| Subheading (H3 — FAQ `<summary>` question text, trust-signal card titles) | 20px | 500 | 1.25 | `--font-display` |
-| Body (paragraphs, FAQ answers, enjeux copy) | 16px | 400 | 1.55 | `--font-body` |
-| Feature bullet (`✓` fonctionnement list, reuses `.o-feat`) | 14px | 400 | 1.4 | `--font-body` |
+| Heading (H2 section titles — Problème / Fonctionnement / Enjeux / Preuve sociale / FAQ; also reused at the same size for H3 elements — FAQ `<summary>` question text, trust-signal card titles) | 32px | 500 | 1.15 (H2 section titles) · 1.25 (H3 FAQ summary / card titles) | `--font-display` |
+| Body (paragraphs, FAQ answers, enjeux copy; also reused for `✓` fonctionnement list bullets, `.o-feat`) | 16px | 400 | 1.55 (paragraphs) · 1.4 (checkmark bullets) | `--font-body` |
 | Label / meta (`.label`, `.sec-num`, mono uppercase tags, breadcrumb) | 11px | 500, uppercase, letter-spacing 0.15–0.18em | 1.2 | `--font-mono` |
+
+**Consolidation note:** The prior draft's "Subheading" (20px) and "Feature bullet" (14px) rows are removed to stay within the 4-size cap. FAQ `<summary>` question text and trust-signal card titles now reuse the Heading size (32px) rather than a dedicated Subheading size — differentiate them from true section H2s via heading level (`<h3>` vs `<h2>`) and a muted color (e.g. `--ink-dim` vs `--ink`) rather than a distinct size. Fonctionnement checkmark bullet copy (`.o-feat`) now reuses the Body size (16px) at a tighter line-height (1.4) rather than a dedicated 14px size — legibility holds at 16px for short bullet phrases.
 
 **Weights (exactly 2, per existing convention):** 400 (regular — all body/paragraph/bullet copy) and 500 (medium — all headings, display, card titles, CTA button labels). 700 is an existing, narrowly-scoped exception reserved for the nav-brand/wordmark logo only — do not use 700 anywhere in this phase's new content.
 
@@ -100,6 +100,8 @@ Accent reserved for (explicit, no other elements): primary CTA background, check
 
 *(Extends the template with the phase-specific structural contract the planner/executor need — this phase adds new component types, not just tokens.)*
 
+**Visual hierarchy:** For the per-service-page template, the H1 + primary CTA button is the focal point (first paint priority, largest accent-colored element on the page); the `✓` checkmark fonctionnement list is the secondary scan path (readers who skip the hero land here next to confirm relevance before committing to the CTA).
+
 ### Fixed per-service-page template (SVC-02, applies to all 9 `/services/[slug]` pages identically)
 
 1. **Hero** — new, lighter-weight variant of `.s-hero` (not the 90vh index hero). Breadcrumb back-link (`.crumb-back`, reuse as-is: "← Retour aux services", pointing to `/services` not `/`), H1 per Typography Display row, one-line sub (max ~20 words), double CTA immediately below (Primary + Secondary from Copywriting Contract).
@@ -107,14 +109,14 @@ Accent reserved for (explicit, no other elements): primary CTA background, check
 3. **Fonctionnement** (H2) — `✓` checkmark bullet list, **must** reuse `.o-feat`/`.check` pattern verbatim per D-03 (no prose conversion).
 4. **Enjeux** (H2) — short paragraph(s), body typography, no special component — plain text block, `--ink-dim` color for supporting copy per existing convention.
 5. **Preuve sociale** (H2) — hybrid per D-05/D-06: either (a) one existing case study (Feuillette / Gecko Cabane / Les Folies Temps Danse — reuse `src/data/projects.ts` as source of truth per canonical refs) rendered as a compact citation/quote block, or (b) 2-3 trust-signal chips (méthodologie, garantie, "sans engagement", réactivité) reusing the `.reassure`/`.perk` visual pattern. Never force an irrelevant case study.
-6. **FAQ** (H2, with a direct-answer block under the H1 or this H2 per SVC-05) — native `<details>`/`<summary>` per item, **no custom JS accordion state** (RESEARCH.md Don't Hand-Roll). Question = `<summary>` styled as Subheading (H3-equivalent), answer = always-in-DOM `<p>` (never conditionally rendered on open state — crawlability requirement).
+6. **FAQ** (H2, with a direct-answer block under the H1 or this H2 per SVC-05) — native `<details>`/`<summary>` per item, **no custom JS accordion state** (RESEARCH.md Don't Hand-Roll). Question = `<summary>` styled per the Heading role's H3 usage (32px, muted color), answer = always-in-DOM `<p>` (never conditionally rendered on open state — crawlability requirement).
 7. **Double CTA (footer)** — repeat Primary + Secondary CTA from hero, using `.final-cta`-style compact block (not the full 160px `.final-cta` padding — use the tighter phase-specific rhythm from Spacing Scale).
 
 ### `/services` index page (SVC-03)
 
 - Grid of 9 cards reusing `.offer`/`.offers-grid` container CSS with the price row (`.o-from`/`.o-price`) **removed entirely** and the `popular`/`.pop-tag` badge **removed entirely** (D-10 — no static popularity badge; the simulator is the discovery mechanism, not a badge).
 - Grouping vs. flat list (D-09): **recommend flat, numbered list** (reuse `.sec-num`-style index numbers 01-09) rather than adding a `category` field — 9 items is still scannable as a single grid at the existing `.offers-grid` 4-column desktop / 2-column tablet breakpoints (`min-width: 1100px` / `600-1099px`), and avoids a data-model change (`services.ts` category field) not otherwise required by any SVC-* requirement. If the planner finds 9 flat cards visually crowded once real copy is in, categorized grouping remains a valid fallback — not a hard block.
-- Each card: service name (Subheading size), one-line tagline (existing `.o-tag` mono-label style), 2-3 truncated `✓` bullets (reuse `.o-feats`, capped), single CTA ("Découvrir ce service →").
+- Each card: service name (Heading role, H3 usage), one-line tagline (existing `.o-tag` mono-label style), 2-3 truncated `✓` bullets (reuse `.o-feats`, capped), single CTA ("Découvrir ce service →").
 
 ### FAQ schema (SVC-05)
 
@@ -145,3 +147,5 @@ Accent reserved for (explicit, no other elements): primary CTA background, check
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
+</content>
+</invoke>
