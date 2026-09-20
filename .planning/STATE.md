@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: ready_to_plan
-stopped_at: Phase 6 complete (7/7) — ready to discuss Phase 7
-last_updated: 2026-09-20T19:21:41.207Z
-last_activity: 2026-09-20 -- Phase 6 execution started
+status: planning
+stopped_at: Phase 7 context gathered
+last_updated: "2026-09-20T19:56:48.213Z"
+last_activity: 2026-09-20
 progress:
   total_phases: 5
   completed_phases: 2
@@ -84,6 +84,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 
 ## Session Continuity
 
-Last session: 2026-09-20T16:41:54.377Z
-Stopped at: Phase 6 executed — human verification pending
-Resume file: .planning/phases/06-service-pages-template-content/06-HUMAN-UAT.md
+Last session: 2026-09-20T19:56:48.188Z
+Stopped at: Phase 7 context gathered
+Resume file: .planning/phases/07-diagnostic-simulator/07-CONTEXT.md
