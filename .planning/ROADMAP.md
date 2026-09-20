@@ -53,7 +53,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 05-03-PLAN.md — Service-role Supabase client + POST /api/simulateur (spam guard, insert, Resend notification) + unit tests
+- [x] 05-03-PLAN.md — Service-role Supabase client + POST /api/simulateur (spam guard, insert, Resend notification) + unit tests
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -132,7 +132,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 2. Landing Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-17 |
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
-| 5. Prospect Capture Backend | v1.1 | 2/4 | In Progress|  |
+| 5. Prospect Capture Backend | v1.1 | 3/4 | In Progress|  |
 | 6. Service Pages (Template + Content) | v1.1 | 0/TBD | Not started | - |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
