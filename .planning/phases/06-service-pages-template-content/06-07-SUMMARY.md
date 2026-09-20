@@ -29,10 +29,10 @@ key-decisions:
   - "Task 2's `npm run lint` acceptance criterion could not be independently satisfied: 34 pre-existing errors/1 warning across files this plan does not touch (Navbar.tsx, Footer.tsx, HeroSection.tsx, CinemaIntro.tsx, [slug]/page.tsx, etc.) predate this plan and were already logged as out-of-scope in 06-02-SUMMARY.md/06-04-SUMMARY.md/deferred-items.md. `npx eslint src/lib/translations.test.ts` (the only file this plan modifies) is clean."
   - "Created a local, gitignored .env.local with placeholder Supabase/Resend values (Rule 3 — missing env var blocking the build) so `npm run build` could statically collect page data for /api/crm/* routes, which throw 'supabaseUrl is required' with no env file present. Real values remain a deploy-time/Vercel-project concern; this file is never committed (.env* is gitignored except .env.example)."
 
-requirements-completed: []  # Plan paused at Task 3 (human-verify checkpoint) — SVC-01..06 completion is contingent on human sign-off, not yet marked complete.
+requirements-completed: [SVC-01, SVC-02, SVC-03, SVC-04, SVC-05, SVC-06]  # Task 3 auto-approved under --auto chain — all requirements now complete.
 
 # Metrics
-duration: ~25min (Tasks 1-2; Task 3 checkpoint pending)
+duration: ~28min (all 3 tasks)
 completed: 2026-09-20
 ---
 
@@ -116,14 +116,24 @@ completed: 2026-09-20
 
 None - no external service configuration required. (The `.env.local` placeholder added for the build gate is local/dev-only and gitignored; it does not need to be preserved or replicated anywhere.)
 
-## Next Phase Readiness
+## Task 3: Human Verification — Auto-Approved (⚡ --auto chain)
 
-**BLOCKED on Task 3 — human-verify checkpoint.** Tasks 1 and 2 are complete and committed; Task 3 (content-quality and structure sign-off) requires a human to work through the checklist below against the running dev server before this plan can close. See the checkpoint returned alongside this SUMMARY for the full checklist and resume signal.
+This phase was executed under `/gsd:discuss-phase 6 --chain`, which auto-advances through discuss → plan → execute without pausing for interactive checkpoints (per `references/checkpoints.md`: "Auto-mode bypasses verification/decision checkpoints — human-verify auto-approves"). The orchestrator auto-approved this `checkpoint:human-verify` task rather than waiting for a human to run the 8-item checklist, on the basis that every item was already confirmed programmatically by the executor before reaching the checkpoint:
 
-- Dev server running at `http://localhost:3001` in this worktree, ready for the Task 3 checklist
-- Automated gates (test/tsc/build) are green; only the human-verify checkpoint remains before Phase 6 can be marked complete
-- Once approved, requirements SVC-01 through SVC-06 can be marked complete and STATE.md/ROADMAP.md updated by the orchestrator
+1. **9 cards on `/services`, no price/badge** — confirmed by `06-04`'s own vitest assertions (`src/data/services.test.ts`) and the D-09/D-10 grep checks cited in its plan's `must_haves`.
+2. **Branding ↔ Rebranding+Site Premium boundary + cross-link (SVC-04)** — confirmed by this plan's Task 1 completeness gate (`crossLink.slug` resolution via `getServiceBySlug`) and `06-03`'s own grep verification of the boundary sentence in both directions.
+3. **Section order, no price on-screen** — enforced structurally by the shared `[slug]/page.tsx` template (06-02) rendering a single fixed section sequence for every service, plus the no-price regex guard now covering all 9 items.
+4. **Citable answer block under H1 (SVC-05)** — `buildFaqJsonLd`/`directAnswer` non-empty-text assertions in `06-01`'s and this plan's test suites.
+5. **FAQ `<details>` markup, answer present in source when closed** — native `<details>/<summary>`, confirmed via direct HTML string search in the generated `.next/server/app/services/*.html` files (Task 2 build verification), not client-side toggled.
+6. **fr/en/th completeness, no fallback/empty blocks** — this plan's Task 1 per-locale join assertion covers exactly this (deleting any of the 9×3 entries fails the suite).
+7. **`/services/nexistepas` → styled 404** — confirmed via curl in Task 2 (`06-02`'s `not-found.tsx`).
+8. **`/simulateur` CTA 404s until Phase 7** — explicitly a known/accepted gap, not a defect, per `06-UI-SPEC.md`'s locked Copywriting Contract decision.
+
+**Resume signal used:** `approved` (auto-supplied by the orchestrator's auto-mode checkpoint handler).
+**Dev server** (`localhost:3001`) was stopped by the orchestrator after approval — it is not needed further.
+
+Requirements SVC-01 through SVC-06 are now complete. STATE.md/ROADMAP.md are updated by the orchestrator after this wave merges.
 
 ---
 *Phase: 06-service-pages-template-content*
-*Completed: 2026-09-20 (partial — Task 3 checkpoint pending)*
+*Completed: 2026-09-20*
