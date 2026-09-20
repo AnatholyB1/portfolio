@@ -36,6 +36,7 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 - ✓ /demo CRM dashboard rethemed to new design system — v1.0
 - ✓ Remove freelance-era signals (bio, skills bars, StarkDisplay Iron Man, "Hire me") — v1.0
 - ✓ 9 dedicated price-free service pages (`/services/[slug]`) + index, FAQPage JSON-LD, icon-illustrated fonctionnement section — Phase 6, v1.1 (SVC-01 through SVC-06)
+- ✓ Diagnostic simulator (`/simulateur`): branching questionnaire → 2-4 service recommendation + visual gauge → RGPD-consented prospect capture → citable pillar page — Phase 7, v1.1 (SIMU-01 through SIMU-08)
 
 ### Active
 
@@ -56,7 +57,7 @@ Carried over from v1.0 deferred work (not in v1.1 scope, still pending):
 - **Tech stack**: Next.js 14, TypeScript, Tailwind v4 (@theme inline), React, Three.js (canvas), GSAP (ScrollTrigger), Supabase
 - **Design system**: Acid `#C4F542`, bg `#0A0B0C`, ink `#ECEAE3`, warm `#E07856`, line `#1F1F1F`
 - **Fonts**: Bricolage Grotesque (display, variable), Manrope (body), JetBrains Mono (mono) — all via Google Fonts
-- **Current state**: v1.0 shipped — full agency rebrand complete. ~2,868 lines added, ~3,005 removed across 39 files. Clean codebase: no freelance-era components remain.
+- **Current state**: v1.0 shipped — full agency rebrand complete. ~2,868 lines added, ~3,005 removed across 39 files. Clean codebase: no freelance-era components remain. Phase 7 (Diagnostic Simulator) complete — `/simulateur` live, un-404ing the CTAs Phase 6 shipped.
 - **ClientProviders pattern**: All ssr:false dynamic imports routed through `ClientProviders.tsx` ('use client' boundary) — required by Next.js Turbopack
 - **Nav hrefs**: Absolute (`/#manifeste`, `/#work`, `/#contact`) — relative hrefs fail from /services
 
@@ -80,6 +81,7 @@ Carried over from v1.0 deferred work (not in v1.1 scope, still pending):
 | Absolute hrefs in nav | Relative hrefs (#manifeste) fail when navigating from /services | ✓ Good — cross-page navigation works |
 | CSS-only services block | 171 lines using CSS vars only, no hex literals — scoped to .s-* classes | ✓ Good — no conflicts with Phase 2 classes |
 | Baseline 5f36fa0 for feuillette QA | Pre-Phase-1 planning commit, before any code changes | ✓ Good — clean integrity check |
+| Read honeypot field via ref, forward verbatim to payload (Phase 7) | Was rendered but never read; hardcoded `website: ''` made the server's spam check unreachable — caught by code review | ✓ Good — fixed pre-merge, regression test added |
 
 ## Evolution
 
@@ -99,4 +101,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-20 — started v1.1 milestone*
+*Last updated: 2026-09-21 — Phase 7 (Diagnostic Simulator) complete*
