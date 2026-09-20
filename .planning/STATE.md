@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: executing
-stopped_at: Phase 6 executed — human verification pending
-last_updated: "2026-09-20T16:41:54.388Z"
+status: ready_to_plan
+stopped_at: Phase 6 complete (7/7) — ready to discuss Phase 7
+last_updated: 2026-09-20T19:21:41.207Z
 last_activity: 2026-09-20 -- Phase 6 execution started
 progress:
   total_phases: 5
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 6 — Service Pages (Template + Content)
+**Current focus:** Phase 7 — diagnostic simulator
 
 ## Current Position
 
-Phase: 6 (Service Pages (Template + Content)) — EXECUTING
-Plan: 1 of 7
-Status: Executing Phase 6
-Last activity: 2026-09-20 -- Phase 6 execution started
+Phase: 7
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-20
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -36,7 +36,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Velocity:**
 
-- Total plans completed: 9 (v1.0 only)
+- Total plans completed: 16 (v1.0 only)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 
@@ -46,6 +46,7 @@ Progress: [░░░░░░░░░░] 0%
 |-------|-------|-------|----------|
 | Phase 1 | 5 | ~27 min | ~5 min |
 | Phase 2 | 4 | ~20 min | ~5 min |
+| 6 | 7 | - | - |
 
 **Recent Trend:**
 

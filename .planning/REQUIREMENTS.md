@@ -12,12 +12,12 @@
 
 ### SVC (pages de service, 9 au total)
 
-- [ ] **SVC-01**: Chaque offre (Landing Page, Rebranding+Premium, Projet sur-mesure, Agent Vocal IA, Maintenance, Community Management, Branding, Meta Ads, Google Ads) a sa propre page dédiée `/services/[slug]`
-- [ ] **SVC-02**: Chaque page de service suit la structure : problème résolu → fonctionnement → enjeux → preuve sociale → FAQ → double CTA (simulateur / contact) — jamais de prix
-- [ ] **SVC-03**: `/services` devient une page d'index listant les 9 services avec lien vers chaque page dédiée
-- [ ] **SVC-04**: La page Branding distingue explicitement son périmètre de l'offre existante "Rebranding + Site Premium"
-- [ ] **SVC-05**: Chaque page de service inclut un schema.org `FAQPage` + un bloc de réponse directe citable sous les titres clés (H1/H2)
-- [ ] **SVC-06**: Le contenu des pages de service vit dans le système i18n existant (`translations.ts`, fr/en/th), rédigé de façon concise
+- [x] **SVC-01**: Chaque offre (Landing Page, Rebranding+Premium, Projet sur-mesure, Agent Vocal IA, Maintenance, Community Management, Branding, Meta Ads, Google Ads) a sa propre page dédiée `/services/[slug]`
+- [x] **SVC-02**: Chaque page de service suit la structure : problème résolu → fonctionnement → enjeux → preuve sociale → FAQ → double CTA (simulateur / contact) — jamais de prix
+- [x] **SVC-03**: `/services` devient une page d'index listant les 9 services avec lien vers chaque page dédiée
+- [x] **SVC-04**: La page Branding distingue explicitement son périmètre de l'offre existante "Rebranding + Site Premium"
+- [x] **SVC-05**: Chaque page de service inclut un schema.org `FAQPage` + un bloc de réponse directe citable sous les titres clés (H1/H2)
+- [x] **SVC-06**: Le contenu des pages de service vit dans le système i18n existant (`translations.ts`, fr/en/th), rédigé de façon concise
 
 ### SIMU (simulateur de diagnostic)
 
@@ -86,12 +86,12 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 |-------------|-------|--------|
 | PRIX-01 | Phase 8 | Pending |
 | PRIX-02 | Phase 8 | Pending |
-| SVC-01 | Phase 6 | Pending |
-| SVC-02 | Phase 6 | Pending |
-| SVC-03 | Phase 6 | Pending |
-| SVC-04 | Phase 6 | Pending |
-| SVC-05 | Phase 6 | Pending |
-| SVC-06 | Phase 6 | Pending |
+| SVC-01 | Phase 6 | Complete |
+| SVC-02 | Phase 6 | Complete |
+| SVC-03 | Phase 6 | Complete |
+| SVC-04 | Phase 6 | Complete |
+| SVC-05 | Phase 6 | Complete |
+| SVC-06 | Phase 6 | Complete |
 | SIMU-01 | Phase 7 | Pending |
 | SIMU-02 | Phase 7 | Pending |
 | SIMU-03 | Phase 7 | Pending |

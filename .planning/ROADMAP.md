@@ -156,7 +156,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
-| 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete   | 2026-09-20 |
+| 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
