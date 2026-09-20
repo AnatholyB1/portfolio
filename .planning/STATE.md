@@ -4,8 +4,8 @@ milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: executing
 stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-09-20T14:14:34.861Z"
-last_activity: 2026-09-20 -- Phase 6 planning complete
+last_updated: "2026-09-20T14:16:35.034Z"
+last_activity: 2026-09-20 -- Phase 6 execution started
 progress:
   total_phases: 5
   completed_phases: 1
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 5 — Prospect Capture Backend (ready to plan)
+**Current focus:** Phase 6 — Service Pages (Template + Content)
 
 ## Current Position
 
-Phase: 5 of 9 (Prospect Capture Backend)
-Plan: — of TBD
-Status: Ready to execute
-Last activity: 2026-09-20 -- Phase 6 planning complete
+Phase: 6 (Service Pages (Template + Content)) — EXECUTING
+Plan: 1 of 7
+Status: Executing Phase 6
+Last activity: 2026-09-20 -- Phase 6 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
