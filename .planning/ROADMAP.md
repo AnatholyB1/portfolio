@@ -82,8 +82,8 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 06-02-PLAN.md — /services/[slug] route: server layout (static params, metadata, FAQPage JSON-LD), client template, 404, phase-6 CSS
-- [ ] 06-03-PLAN.md — Content batch A (fr/en/th): Site Vitrine, Rebranding + Site Premium, Branding — includes the SVC-04 boundary and cross-links
+- [x] 06-02-PLAN.md — /services/[slug] route: server layout (static params, metadata, FAQPage JSON-LD), client template, 404, phase-6 CSS
+- [x] 06-03-PLAN.md — Content batch A (fr/en/th): Site Vitrine, Rebranding + Site Premium, Branding — includes the SVC-04 boundary and cross-links
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -156,7 +156,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
-| 6. Service Pages (Template + Content) | v1.1 | 1/7 | In Progress|  |
+| 6. Service Pages (Template + Content) | v1.1 | 3/7 | In Progress|  |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
