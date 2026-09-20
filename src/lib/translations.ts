@@ -27,7 +27,7 @@ export const LANG_TAG: Record<Lang, string> = {
 
 // Content shape for a single /services/[slug] page (Phase 6). Joined via
 // Service.index in src/data/services.ts -> t.services.pages.items[index].
-export interface ServicePageContent {
+interface ServicePageContentBase {
   name: string;
   tagline: string;
   h1Lead: string;
@@ -39,11 +39,25 @@ export interface ServicePageContent {
   problems: { n: string; title: string; desc: string }[];
   features: string[];
   enjeux: string[];
-  caseQuote: string | null;
-  signals: { t: string; d: string }[];
   faq: { q: string; a: string }[];
   crossLink: { label: string; slug: string } | null;
 }
+
+/**
+ * WR-01 (06-REVIEW.md): a service page shows either a single case-study
+ * quote (and no trust signals) or trust signals (and no quote) — never
+ * both, never neither. Modeled as a discriminated union on `caseQuote` so
+ * a violation (e.g. a future edit leaving `caseQuote` null while also
+ * leaving `signals` empty) is a compile error instead of a silently empty
+ * "Preuve sociale" section at runtime. This is enforced purely by the
+ * type — no data literals needed to change, since every existing entry
+ * already conforms to one of the two shapes below.
+ */
+export type SocialProof =
+  | { caseQuote: string; signals: [] }
+  | { caseQuote: null; signals: { t: string; d: string }[] };
+
+export type ServicePageContent = ServicePageContentBase & SocialProof;
 
 export interface Translations {
   nav: {
