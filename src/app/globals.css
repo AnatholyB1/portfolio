@@ -664,3 +664,52 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
   .roi-panel, .roi-card { padding: 22px; }
   .roi-adv summary, .roi-adv-body { padding-left: 22px; padding-right: 22px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Service pages (/services/[slug]) - phase 6
+   ═══════════════════════════════════════════════════════════════ */
+
+.svc-hero { padding: 64px 0 48px; }
+.svc-h1 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(40px, 6vw, 72px); line-height: 0.95; letter-spacing: -0.035em; margin: 0; }
+.svc-h1 .it { color: var(--acid); font-style: italic; }
+.svc-sub { font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.55; color: var(--ink-dim); max-width: 60ch; margin-top: 16px; }
+
+.svc-answer { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 32px; margin-top: 32px; }
+.svc-answer .label { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-bottom: 8px; display: block; }
+.svc-answer p { font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.55; color: var(--ink); margin: 0; max-width: 68ch; }
+
+.svc-sec { padding: 48px 0; border-top: 1px solid var(--line); }
+.svc-h2 { font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 32px; }
+.svc-body { font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.55; color: var(--ink-dim); max-width: 68ch; margin: 0; }
+.svc-body + .svc-body { margin-top: 16px; }
+
+.svc-problems { display: grid; gap: 16px; }
+@media (min-width: 900px) { .svc-problems { grid-template-columns: repeat(3, 1fr); } }
+
+.svc-sec .o-feat { font-size: 16px; line-height: 1.4; }
+.svc-sec .o-feat .c { color: var(--acid); font-size: 13px; }
+
+.svc-case { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 32px; }
+.svc-case-q { font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.25; color: var(--ink); margin: 0; }
+.svc-case-src { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-top: 16px; }
+.svc-case-src a { color: var(--acid); text-decoration: none; }
+
+.svc-sec .reassure h4 { font-size: 32px; line-height: 1.25; color: var(--ink-dim); }
+
+.faq-list { display: grid; gap: 16px; }
+.faq-item { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; }
+.faq-q { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px 32px; font-family: var(--font-display), serif; font-weight: 500; font-size: 32px; line-height: 1.25; color: var(--ink-dim); }
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after { content: '+'; color: var(--acid); font-size: 18px; line-height: 1; }
+.faq-item[open] .faq-q::after { content: '−'; }
+.faq-item[open] .faq-q { color: var(--ink); }
+.faq-a { padding: 0 32px 24px; font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.55; color: var(--ink-dim); max-width: 68ch; margin: 0; }
+
+.svc-crosslink { display: inline-block; margin-top: 24px; font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--acid); text-decoration: none; }
+.svc-crosslink:hover { color: var(--ink); }
+
+.svc-cta { padding: 64px 0; border-top: 1px solid var(--line); text-align: center; }
+.svc-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+.svc-cta .svc-ctas { justify-content: center; }
+
+.o-num { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-bottom: 8px; }
