@@ -87,8 +87,8 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 06-04-PLAN.md — /services index rewrite: 9 data-driven cards, no price row, no badge + index metadata + link test
-- [ ] 06-05-PLAN.md — Content batch B (fr/en/th): Projet Sur Mesure, Agent Vocal IA, Maintenance
+- [x] 06-04-PLAN.md — /services index rewrite: 9 data-driven cards, no price row, no badge + index metadata + link test
+- [x] 06-05-PLAN.md — Content batch B (fr/en/th): Projet Sur Mesure, Agent Vocal IA, Maintenance
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -156,7 +156,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
-| 6. Service Pages (Template + Content) | v1.1 | 3/7 | In Progress|  |
+| 6. Service Pages (Template + Content) | v1.1 | 5/7 | In Progress|  |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
