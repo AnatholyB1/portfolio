@@ -444,17 +444,19 @@ export function createServiceRoleClient() {
 | A2 | The Supabase project has not already had custom default-privilege changes applied (e.g., `ALTER DEFAULT PRIVILEGES`) that would grant `anon` broader access than a fresh project | Pattern 1 | Could mean `revoke all on table public.prospects from anon, authenticated;` is necessary-but-not-sufficient if some other mechanism re-grants access — the migration should be verified against the live project (via Supabase MCP `list_tables`/advisors, or dashboard) after applying, not just trusted from the SQL alone |
 | A3 | `2000ms` is a reasonable "too fast to be human" threshold for the timing check | Pattern 2 | Untested against this specific audience/flow (Phase 7 hasn't been built yet); if the simulator wizard is very short, legitimate fast users could be caught — the exact threshold should be revisited once Phase 7's step count/UX is known, not treated as final |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Is `SUPABASE_SERVICE_ROLE_KEY` set in the production (Vercel) environment, not just local `.env`?**
    - What we know: it's populated locally.
    - What's unclear: whether it's mirrored to Vercel's project environment variables (no `.vercel/` directory or `vercel.json` found in this repo to check programmatically).
    - Recommendation: confirm with the user before/at planning, or have the plan's execution phase include a verification step against the deployed environment (not just local dev) before considering CRM-01/02/04 fully done.
+   - **RESOLVED: 05-03-PLAN.md Task 1** queries the Vercel MCP for the env var name in Production, records present/absent/could-not-determine in the SUMMARY, and treats absence as a documented "Production blocker" rather than silently proceeding.
 
 2. **Does the project's Supabase plan/tier have any restriction on `pg_cron`?**
    - What we know: `pg_cron` is documented as available on all plans including free tier.
    - What's unclear: this specific project's exact plan tier was not inspected (would require Supabase MCP/dashboard access with the actual project selected).
    - Recommendation: verify via Supabase MCP (`list_extensions` or similar) or dashboard during the apply step; if unexpectedly restricted, fall back to a Vercel Cron hitting a small authenticated purge Route Handler as the documented alternative.
+   - **RESOLVED: 05-02-PLAN.md Task 3** verifies `pg_cron` availability during the apply step; if `create extension pg_cron` fails on the live project's tier, the task stops and flags D-04 as blocked with the documented Vercel Cron fallback, instead of silently dropping the retention requirement.
 
 ## Environment Availability
 
