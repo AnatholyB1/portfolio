@@ -115,3 +115,12 @@ None — no external service configuration required. (The `.env`/`.env.local` co
 ---
 *Phase: 07-diagnostic-simulator*
 *Completed: 2026-09-20*
+
+## Self-Check: PASSED
+
+- FOUND: src/components/simulateur/Wizard.tsx
+- FOUND: src/lib/simulateur/wizardContract.test.ts
+- FOUND: .planning/phases/07-diagnostic-simulator/07-05-SUMMARY.md
+- FOUND: e31eb7d (Task 1 commit)
+- FOUND: 36582bd (Task 2 commit)
+- FOUND: b7f0809 (Task 3 commit)
