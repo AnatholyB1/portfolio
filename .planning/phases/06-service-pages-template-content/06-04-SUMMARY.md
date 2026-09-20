@@ -129,6 +129,17 @@ None - no external service configuration required.
 - The automated `services.test.ts` regression guard will catch any future reversion to hardcoded cards or reintroduction of price/badge markup
 - Full `npm run build` across all 9 `/services/[slug]` pages remains gated to plan 06-07, as designed
 
+## Self-Check: PASSED
+
+- FOUND: src/app/services/page.tsx
+- FOUND: src/app/services/layout.tsx
+- FOUND: src/data/services.test.ts
+- FOUND: .planning/phases/06-service-pages-template-content/06-04-SUMMARY.md
+- FOUND commit: 901602e (feat 06-04 Task 1)
+- FOUND commit: ac2171c (docs 06-04 Task 2)
+- FOUND commit: 3e2310a (test 06-04 Task 3)
+- FOUND commit: aa4e6e6 (docs 06-04 SUMMARY)
+
 ---
 *Phase: 06-service-pages-template-content*
 *Completed: 2026-09-20*
