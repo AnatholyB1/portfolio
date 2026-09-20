@@ -29,7 +29,8 @@ blocked: 0
 ## Gaps
 
 ### 1. /services index cards are too plain — should surface "problem solved + how" per card, more visually
-status: open
+status: fixed
+resolution: Added up to 2 problem chips per card (letter badge + short problem title, reusing `copy.problems` and the existing `.pn` warm-badge visual language from the detail pages), replacing the plain description paragraph. No new content authored, no new design tokens. Commit `cfb9277`. Verified: 70/70 tests, tsc clean, production build still 9× static SSG. Screenshot-checked live on port 3002.
 found: 2026-09-20 (user review of live dev server)
 detail: The individual `/services/[slug]` pages already have a strong "Le problème qu'on résout" pattern (lettered A/B/C cards). The `/services` index cards currently show name/tagline/description/checkmark-feature-list only — no problem framing, no icons, minimal visual differentiation between the 9 cards. User wants the index cards to preview "quel problème + avec quoi" more visually, and asked for design inspiration research.
 recommendation: This is a visual/content redesign of `src/app/services/page.tsx`'s card component, not a bug fix. Recommend running a proper design pass (e.g. `/gsd:ui-phase` or a dedicated redesign iteration) rather than an ad hoc change, since it touches the approved 06-UI-SPEC.md design contract. The individual pages' existing lettered-problem-card pattern is the strongest available reference to reuse/adapt for the index, before reaching for external inspiration.
