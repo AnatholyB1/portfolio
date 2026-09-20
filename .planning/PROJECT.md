@@ -14,10 +14,11 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 
 **Target features:**
 - 4 nouveaux services : Community Management, Branding, Meta Ads, Google Ads (promu d'option upsell à offre à part entière)
-- Page de présentation dédiée par service (existants + nouveaux) : problème résolu / fonctionnement / enjeux — jamais de prix
+- Page de présentation dédiée par service (5 existants + 4 nouveaux) : problème résolu / fonctionnement / enjeux — texte concis, dans le système i18n existant (translations.ts, fr/en/th)
+- **Aucun prix affiché nulle part sur le site** — décision étendue à TOUTES les offres, existantes (Landing Page, Rebranding+Premium, Projet sur-mesure, Agent Vocal IA, Maintenance) et nouvelles. `/services` doit être revu en conséquence (retrait des prix affichés aujourd'hui).
 - Landing page simplifiée : problèmes résolus, présentation des services, fonctionnement, enjeux, preuve sociale (réalisations + témoignages) — CTA uniquement vers simulateur ou contact (email/téléphone)
-- Simulateur de diagnostic : qualification des besoins du visiteur → recommandation des services pertinents → capture du prospect dans le CRM Supabase existant → incitation à appeler/contacter
-- Intégration de la stratégie SEO/GEO/AEO (`docs/strategie-seo-geo-llm-2026-09.md`) : nouvelles pages piliers par service, `/simulateur` comme page pilier transverse, extension du schema.org
+- Simulateur de diagnostic : qualification des besoins du visiteur → recommandation des services pertinents → capture du prospect dans une **nouvelle table Supabase dédiée** (le CRM existant ne contient que le schéma bakery-demo produits/stock/commandes, pas de table prospects — même projet Supabase, nouvelle table avec RLS insert-only) → incitation à appeler/contacter
+- Intégration de la stratégie SEO/GEO/AEO (`docs/strategie-seo-geo-llm-2026-09.md`) : nouvelles pages piliers par service, `/simulateur` comme page pilier transverse, extension du schema.org — **note : la doc recommandait la transparence tarifaire comme différenciateur local ; cette décision de masquer tous les prix inverse ce point, à documenter dans la doc SEO**
 
 ## Requirements
 
