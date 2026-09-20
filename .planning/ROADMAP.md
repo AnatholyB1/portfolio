@@ -111,8 +111,27 @@ Plans:
   4. No price, price range, or price estimate appears at any step of the simulator
   5. The result screen offers one clear action ("nous contacter") via two channels (appeler/écrire), and `/simulateur` itself reads as an explanatory, citable pillar page rather than a bare form
 
-**Plans**: TBD
+**Plans**: 6 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+
+- [ ] 07-01-PLAN.md — Data spine: question bank with branching (5 questions, 1 conditional), PRIORITY_ORDER tiebreak, wizard step machine + Wave 0 tests
+- [ ] 07-02-PLAN.md — Gauge geometry module, ScoreGauge component (GSAP count-up, reduced-motion safe), and the full `.sim-*` CSS layer
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 07-03-PLAN.md — Simulator i18n content fr/en/th: pillar intro, questions/options, RGPD Art. 13 block, result framing, FAQ + no-price guard
+- [ ] 07-04-PLAN.md — Scoring: computeRecommendedServices (2-4 clamp, fixed tiebreak), computeVisualScore (inverted severity), consent-gated payload assembly
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 07-05-PLAN.md — Wizard component: question screens + progress bar + back nav, RGPD-gated contact capture + submit, result screen + dual-channel CTA
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 07-06-PLAN.md — /simulateur route: Server Component metadata + FAQPage JSON-LD, client pillar page (intro → wizard → FAQ), human verification
 
 ### Phase 8: Landing Simplification & Pricing Policy
 
@@ -157,6 +176,6 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
-| 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
+| 7. Diagnostic Simulator | v1.1 | 0/6 | Planned | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
