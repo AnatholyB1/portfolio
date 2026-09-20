@@ -395,17 +395,19 @@ export default async function Page({ params }) {
 | A3 | `schema-dts` (mentioned only as an optional alternative, not recommended for install) is on the npm registry at `2.0.0` — confirmed via `npm view`, but the package name itself was surfaced via the official Next.js docs citation, not independently slopcheck-verified this session | Standard Stack / Alternatives Considered | Low — not recommended for actual install; if the planner chooses to add it anyway, re-verify via the full Package Legitimacy Gate first |
 | A4 | Recommending `dynamicParams = false` (hard 404 on unknown slugs) rather than leaving the default `true` | Architecture Patterns, Pattern 1 | Low — reversible route-segment-config flag; default `true` would instead attempt an on-demand render of an unknown slug and likely error inside the page body when `.find()` returns `undefined` |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should the "simulateur" CTA on all 9 pages link to `/simulateur` (not yet built, Phase 7) or to `/#contact` as an interim fallback?**
    - What we know: SVC-02 requires a double CTA "simulateur/contact"; Phase 7 builds `/simulateur`; phase ordering allows Phase 6 to ship before Phase 7.
    - What's unclear: Whether the project prefers a temporary 404 (accepted, documented) over a temporary same-destination double-CTA (technically satisfies "two buttons" but both would route to the same page for a while).
    - Recommendation: Build the CTA pointing at `/simulateur` now (see Pitfall 3) and note it in `STATE.md` as a known gap closed by Phase 7 — but this is the planner's/user's call, not locked by CONTEXT.md.
+   - **RESOLVED:** Locked in `06-UI-SPEC.md`'s Copywriting Contract (Option A — CTA points at `/simulateur` now, temporary 404 accepted) and implemented in `06-02-PLAN.md`/`06-04-PLAN.md`; the gap is recorded as a known/accepted item in `06-07-PLAN.md`'s completeness gate.
 
 2. **Which of the 3 existing case studies (Feuillette, Gecko Cabane, Les Folies Temps Dande) map to which of the 9 services under the D-05 hybrid rule?**
    - What we know: Feuillette = boulangerie/commerce with an agent vocal IA angle (per the SEO doc's proof-point framing); Gecko Cabane = restaurant; Les Folies Temps Danse = école/association.
    - What's unclear: Exactly which service pages (e.g., Agent Vocal IA obviously maps to Feuillette; but does Maintenance, Landing Page, or Community Management also plausibly cite one of these three, or do they fall back to trust signals only per D-05?) — this is a content-writing decision, not purely technical.
    - Recommendation: Planner/content-writing pass should explicitly map each of the 9 services to either one of the 3 case studies or "trust signals only," and record the mapping in the plan so it's not improvised per-page inconsistently.
+   - **RESOLVED:** Mapping locked in `06-01-PLAN.md` Task 1's table — Site Vitrine → Gecko Cabane, Projet Sur Mesure → Les Folies Temps Danse, Agent Vocal IA → Feuillette; the other six services use trust signals only (distinct sets per page, per D-05/D-06).
 
 ## Environment Availability
 

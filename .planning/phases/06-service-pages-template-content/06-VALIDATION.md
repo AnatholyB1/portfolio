@@ -1,8 +1,8 @@
 ---
 phase: 6
 slug: service-pages-template-content
-status: draft
-nyquist_compliant: false
+status: approved
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-09-20
 ---
@@ -38,16 +38,17 @@ created: 2026-09-20
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 06-XX-XX | TBD | TBD | SVC-01 | — | `services.ts` has exactly 9 entries with unique slugs matching the fixed slug list | unit | `npx vitest run src/data/services.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-01 | — | `translations.ts` `t.services.pages.items` has one entry per `services.ts` index, all 3 locales (fr/en/th), no missing keys | unit | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-02 | T-6-01 | No `price`/`tarif`/`€` substring in any service page content object | unit | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-05 | T-6-01 | `buildFaqJsonLd(faq)` produces valid `FAQPage` shape with non-empty answers | unit | `npx vitest run src/lib/serviceJsonLd.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-05 | T-6-01 | JSON-LD serialization escapes `<` characters (XSS regression guard) | unit | `npx vitest run src/lib/serviceJsonLd.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-06 | — | Word count per service page (fr locale) within ~300-500 word target (D-02) — advisory, warn not fail | unit (advisory) | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
-| 06-XX-XX | TBD | TBD | SVC-03 | — | `/services` index links to all 9 `/services/[slug]` paths, no broken hrefs | unit | `npx vitest run src/data/services.test.ts` | ❌ W0 | ⬜ pending |
+| 06-01-01 | 01 | 1 | SVC-01 | — | `services.ts` has exactly 9 entries with unique slugs matching the fixed slug list | unit | `npx vitest run src/data/services.test.ts` | ❌ W0 | ⬜ pending |
+| 06-01-03 | 01 | 1 | SVC-01 | — | `translations.ts` `t.services.pages.items` has one entry per `services.ts` index, all 3 locales (fr/en/th), no missing keys | unit | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
+| 06-03-03 / 06-05-03 / 06-06-03 | 03/05/06 | 2/3/4 | SVC-02 | T-6-01 | No `price`/`tarif`/`€` substring in any service page content object | unit | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
+| 06-01-02 | 01 | 1 | SVC-05 | T-6-01 | `buildFaqJsonLd(faq)` produces valid `FAQPage` shape with non-empty answers | unit | `npx vitest run src/lib/serviceJsonLd.test.ts` | ❌ W0 | ⬜ pending |
+| 06-01-02 | 01 | 1 | SVC-05 | T-6-01 | JSON-LD serialization escapes `<` characters (XSS regression guard) | unit | `npx vitest run src/lib/serviceJsonLd.test.ts` | ❌ W0 | ⬜ pending |
+| 06-03/05/06 | 03/05/06 | 2/3/4 | SVC-06 | — | Word count per service page (fr locale) within ~300-500 word target (D-02), hard bound 200-700 — advisory, warn not fail | unit (advisory) | `npx vitest run src/lib/translations.test.ts` | ❌ W0 | ⬜ pending |
+| 06-04-03 | 04 | 3 | SVC-03 | — | `/services` index links to all 9 `/services/[slug]` paths, no broken hrefs | unit | `npx vitest run src/data/services.test.ts` | ❌ W0 | ⬜ pending |
+| 06-07-01 | 07 | 5 | SVC-01…06 | — | 9-of-9 completeness gate: all slugs, all locales, no price, production build passes | unit + build | `npx vitest run && npm run build` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
-*Task IDs and plan/wave assignment finalized once gsd-planner produces PLAN.md files.*
+*Task IDs finalized from `06-01-PLAN.md` through `06-07-PLAN.md` (7 plans, 5 waves) — see PLAN.md files for exact task text. All rows remain pending until execute-phase runs each task's automated verify command.*
 
 ---
 
@@ -72,11 +73,11 @@ created: 2026-09-20
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 10s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies (confirmed by gsd-plan-checker across all 7 plans)
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (`src/data/services.test.ts`, `src/lib/translations.test.ts`, `src/lib/serviceJsonLd.test.ts` — all stubbed in plan 06-01)
+- [x] No watch-mode flags
+- [x] Feedback latency < 10s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-09-20 (gsd-plan-checker — 0 blockers, plans verified against this validation strategy)
