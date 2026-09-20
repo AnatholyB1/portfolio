@@ -22,7 +22,13 @@ export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export const dynamicParams = false;
+// dynamicParams stays at its default (true): Next.js 16's automatic 404 for
+// `dynamicParams = false` does not route to this segment's own not-found.tsx
+// (falls back to the generic Next.js 404 instead — a known upstream bug,
+// vercel/next.js#84738 / #87738). The explicit `notFound()` call below
+// already 404s any slug outside the fixed 9 and correctly renders this
+// segment's not-found.tsx, so dynamicParams=false brings no benefit here —
+// only the framework's broken shortcut.
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
