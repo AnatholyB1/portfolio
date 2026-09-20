@@ -127,7 +127,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 07-05-PLAN.md — Wizard component: question screens + progress bar + back nav, RGPD-gated contact capture + submit, result screen + dual-channel CTA
+- [x] 07-05-PLAN.md — Wizard component: question screens + progress bar + back nav, RGPD-gated contact capture + submit, result screen + dual-channel CTA
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -176,6 +176,6 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
-| 7. Diagnostic Simulator | v1.1 | 4/6 | In Progress|  |
+| 7. Diagnostic Simulator | v1.1 | 5/6 | In Progress|  |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
