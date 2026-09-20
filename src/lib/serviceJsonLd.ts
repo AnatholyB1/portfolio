@@ -10,18 +10,12 @@ export interface FaqItem {
 
 /**
  * Builds a schema.org FAQPage object for a single service page (SVC-05).
- *
- * `inLanguage` (optional, e.g. `"fr-FR"`/`"en-US"`/`"th-TH"`) should be set
- * to the resolved locale of the copy passed in `faq`, so the JSON-LD
- * declares which language its Q&A pairs are actually written in (CR-01,
- * 06-REVIEW.md). Omitted when not provided to keep the payload minimal.
  */
-export function buildFaqJsonLd(faq: FaqItem[], pageUrl: string, inLanguage?: string) {
+export function buildFaqJsonLd(faq: FaqItem[], pageUrl: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     '@id': `${pageUrl}#faq`,
-    ...(inLanguage ? { inLanguage } : {}),
     mainEntity: faq.map((f) => ({
       '@type': 'Question',
       name: f.q,

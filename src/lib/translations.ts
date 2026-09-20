@@ -1,30 +1,5 @@
 export type Lang = 'fr' | 'en' | 'th';
 
-/**
- * Resolves a Lang from an HTTP `Accept-Language` header value. Used by
- * Server Components (via `next/headers`) so server-rendered metadata and
- * JSON-LD for a request can match the locale that
- * `LanguageContext`'s `detectBrowserLang()` will pick client-side for the
- * same browser (fr/th get precedence on their primary subtag, everything
- * else — including Googlebot's default `en-US` render — falls back to
- * 'en'). See CR-01 in 06-REVIEW.md. A missing/empty header falls back to
- * 'fr', matching the site's fr-first default.
- */
-export function resolveLangFromAcceptLanguage(header: string | null | undefined): Lang {
-  const primary = header?.split(',')[0]?.trim().toLowerCase() ?? '';
-  if (primary.startsWith('th')) return 'th';
-  if (primary.startsWith('fr')) return 'fr';
-  if (primary.length === 0) return 'fr';
-  return 'en';
-}
-
-/** BCP-47-ish tag per Lang, for JSON-LD `inLanguage` / OpenGraph `locale` fields. */
-export const LANG_TAG: Record<Lang, string> = {
-  fr: 'fr-FR',
-  en: 'en-US',
-  th: 'th-TH',
-};
-
 // Content shape for a single /services/[slug] page (Phase 6). Joined via
 // Service.index in src/data/services.ts -> t.services.pages.items[index].
 interface ServicePageContentBase {
