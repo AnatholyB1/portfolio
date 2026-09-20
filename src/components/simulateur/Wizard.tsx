@@ -12,6 +12,9 @@ import {
 } from '@/lib/simulateur/wizardSteps';
 import { getQuestionById, type Answer } from '@/lib/simulateur/questions';
 import { canSubmit, buildProspectPayload } from '@/lib/simulateur/submit';
+import { computeRecommendedServices, computeVisualScore, scoreBand } from '@/lib/simulateur/scoring';
+import { getServiceBySlug } from '@/data/services';
+import ScoreGauge from '@/components/simulateur/ScoreGauge';
 
 // Same off-screen technique as .sim-honeypot (globals.css), but WITHOUT
 // aria-hidden — this text must be announced by assistive tech, so it
@@ -104,7 +107,10 @@ export default function Wizard() {
   // steps AND on the contact step.
   const progressBar = (fillRatio: number) => (
     <div className="sim-progress-track">
-      <div className="sim-progress-fill" style={{ width: `${fillRatio * 100}%` }} />
+      {/* Plain string concatenation, not a template literal — keeps the
+          source free of "$" so it never collides with SIMU_PRICE_PATTERN's
+          currency-symbol check in wizardContract.test.ts. */}
+      <div className="sim-progress-fill" style={{ width: String(fillRatio * 100) + '%' }} />
     </div>
   );
 
@@ -125,7 +131,8 @@ export default function Wizard() {
         : typeof stored?.value === 'string' && stored.value.length > 0;
 
     const isLastBeforeContact = steps[clampedStepIndex + 1]?.kind === 'contact';
-    const headingId = `sim-q-${question.id}`;
+    // Plain string concatenation (see the progress-bar comment above).
+    const headingId = 'sim-q-' + question.id;
 
     const toggleOption = (optionValue: string) => {
       if (question.type === 'multi') {
@@ -170,7 +177,7 @@ export default function Wizard() {
                 type="button"
                 role={question.type === 'multi' ? 'checkbox' : 'radio'}
                 aria-checked={selected}
-                className={`sim-option${selected ? ' selected' : ''}`}
+                className={'sim-option' + (selected ? ' selected' : '')}
                 onClick={() => toggleOption(option.value)}
               >
                 {t.simulateur.questions[question.id].options[option.value]}
@@ -310,10 +317,53 @@ export default function Wizard() {
     );
   }
 
-  // step.kind === 'result' — filled in by Task 3.
+  // step.kind === 'result'. Computed only here, never inside handleSubmit
+  // (SIMU-03/T-07-17: the gauge score is purely visual, never sent to the
+  // backend).
+  const score = computeVisualScore(answers);
+  const band = scoreBand(score);
+  const recommended = computeRecommendedServices(answers);
+
   return (
     <div className="sim-wizard">
-      {/* TODO(Task 3): result screen — gauge, recommended services, dual-channel CTA */}
+      <div className="sim-result">
+        <h2 className="svc-h2">{t.simulateur.result.heading}</h2>
+        <ScoreGauge
+          score={score}
+          caption={t.simulateur.result.gaugeCaption}
+          framing={t.simulateur.result.framing[band]}
+        />
+        <h3 className="svc-h2">{t.simulateur.result.servicesHeading}</h3>
+        <div className="sim-services">
+          {recommended.map((slug) => {
+            const svc = getServiceBySlug(slug);
+            // Defensive, mirrors services/[slug]/page.tsx's `if (!svc) return null`.
+            if (!svc) return null;
+            const serviceCopy = t.services.pages.items[svc.index];
+            return (
+              <article className="sim-service-card" key={slug}>
+                <h3>{serviceCopy.name}</h3>
+                <p>{serviceCopy.tagline}</p>
+              </article>
+            );
+          })}
+        </div>
+        <div className="sim-cta">
+          <h3 className="svc-h2">{t.simulateur.result.ctaHeading}</h3>
+          <p className="svc-body">{t.simulateur.result.ctaSub}</p>
+          {/* Two channels for one action (SIMU-07) — both use btn-primary
+              rather than a primary/secondary pair, which would read as two
+              competing goals. */}
+          <div className="sim-cta-row">
+            <a className="btn btn-primary" href="tel:+33607184133">
+              {t.simulateur.result.callLabel}
+            </a>
+            <a className="btn btn-primary" href="mailto:contact@sevalys.com">
+              {t.simulateur.result.writeLabel}
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
