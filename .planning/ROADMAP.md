@@ -24,7 +24,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 **Milestone Goal:** Étendre le catalogue de services Sèvalys à 9 offres, retirer tout affichage de prix du site, ajouter un simulateur de diagnostic qui qualifie et capture les prospects, et intégrer la stratégie SEO/GEO/AEO — sans jamais afficher de prix nulle part.
 
 - [x] **Phase 5: Prospect Capture Backend** - New Supabase prospects table + insert-only RLS + spam guard + Resend notification, built and testable independently of any UI (completed 2026-09-20)
-- [ ] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services`
+- [x] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services` (completed 2026-09-20)
 - [ ] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA
 - [ ] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi)
 - [ ] **Phase 9: SEO & Discovery Wiring** - Sitemap/llms.txt entries, per-offer schema.org Service objects, and a broken-link audit for the new route structure
@@ -96,7 +96,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 06-07-PLAN.md — 9-of-9 completeness gate, production build verification (static pages, JSON-LD, zero price strings), human verification
+- [x] 06-07-PLAN.md — 9-of-9 completeness gate, production build verification (static pages, JSON-LD, zero price strings), human verification
 
 ### Phase 7: Diagnostic Simulator
 
@@ -156,7 +156,7 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 3. Services Page Rebuild | v1.0 | 6/6 | Complete | 2026-05-18 |
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
-| 6. Service Pages (Template + Content) | v1.1 | 6/7 | In Progress|  |
+| 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete   | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 0/TBD | Not started | - |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
