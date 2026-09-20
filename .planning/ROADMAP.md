@@ -117,8 +117,8 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 07-01-PLAN.md — Data spine: question bank with branching (5 questions, 1 conditional), PRIORITY_ORDER tiebreak, wizard step machine + Wave 0 tests
-- [ ] 07-02-PLAN.md — Gauge geometry module, ScoreGauge component (GSAP count-up, reduced-motion safe), and the full `.sim-*` CSS layer
+- [x] 07-01-PLAN.md — Data spine: question bank with branching (5 questions, 1 conditional), PRIORITY_ORDER tiebreak, wizard step machine + Wave 0 tests
+- [x] 07-02-PLAN.md — Gauge geometry module, ScoreGauge component (GSAP count-up, reduced-motion safe), and the full `.sim-*` CSS layer
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -176,6 +176,6 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
-| 7. Diagnostic Simulator | v1.1 | 0/6 | Planned | - |
+| 7. Diagnostic Simulator | v1.1 | 2/6 | In Progress|  |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
