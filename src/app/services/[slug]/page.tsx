@@ -89,6 +89,12 @@ export default function ServiceSlugPage({
             {svc.caseStudyProjectIndex !== null && copy.caseQuote !== null ? (
               (() => {
                 const project = projects[svc.caseStudyProjectIndex as number];
+                // WR-02 (06-REVIEW.md): services.test.ts guarantees this join is
+                // valid today, but that's a test-time guarantee only — guard
+                // against a future projects.ts edit (entry removed/reordered)
+                // shipping without the test suite catching it, which would
+                // otherwise throw a client-side TypeError on `project.href`.
+                if (!project) return null;
                 return (
                   <div className="svc-case" data-reveal>
                     <p className="svc-case-q">« {copy.caseQuote} »</p>
