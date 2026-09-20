@@ -25,7 +25,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 
 - [x] **Phase 5: Prospect Capture Backend** - New Supabase prospects table + insert-only RLS + spam guard + Resend notification, built and testable independently of any UI (completed 2026-09-20)
 - [x] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services` (completed 2026-09-20)
-- [ ] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA
+- [x] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA (completed 2026-09-20)
 - [ ] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi)
 - [ ] **Phase 9: SEO & Discovery Wiring** - Sitemap/llms.txt entries, per-offer schema.org Service objects, and a broken-link audit for the new route structure
 
@@ -131,7 +131,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 07-06-PLAN.md — /simulateur route: Server Component metadata + FAQPage JSON-LD, client pillar page (intro → wizard → FAQ), human verification
+- [x] 07-06-PLAN.md — /simulateur route: Server Component metadata + FAQPage JSON-LD, client pillar page (intro → wizard → FAQ), human verification
 
 ### Phase 8: Landing Simplification & Pricing Policy
 
@@ -176,6 +176,6 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 4. Rethemes + QA | v1.0 | 4/4 | Complete | 2026-05-18 |
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
-| 7. Diagnostic Simulator | v1.1 | 5/6 | In Progress|  |
+| 7. Diagnostic Simulator | v1.1 | 6/6 | Complete   | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
