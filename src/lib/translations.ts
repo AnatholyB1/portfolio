@@ -97,16 +97,6 @@ export interface Translations {
     work: string;
   };
   services: {
-    hero: {
-      badge: string;
-      title_l1: string;
-      title_l2: string;
-      title_l3_it: string;
-      sub: string;
-      cta_audit: string;
-      cta_offers: string;
-      meta: { k: string; v: string }[];
-    };
     problem: {
       num: string;
       title_l1: string;
@@ -122,16 +112,6 @@ export interface Translations {
       intro: string;
       benefits: string[];
       cards: { t: string; d: string }[];
-    };
-    offers: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      from: string;
-      popular: string;
-      cta: string;
-      items: { name: string; tagline: string; price: string; description: string; features: string[] }[];
     };
     pages: {
       index: { badge: string; title_l1: string; title_l2_it: string; sub: string; num: string; intro: string; cardCta: string };
@@ -156,17 +136,6 @@ export interface Translations {
       steps: { label: string; desc: string }[];
       cta: string;
       cta_roi: string;
-    };
-    maintenance: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      recommended: string;
-      per_month: string;
-      currency: string;
-      packs: { name: string; price: string; description: string; features: string[]; popular?: boolean; priceNote?: string }[];
-      perks: string[];
     };
     upsell: {
       num: string;
@@ -229,12 +198,44 @@ export interface Translations {
       p3: string;
       p4: string;
     };
+    problems: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      items: { n: string; title: string; desc: string }[];
+      good_news: string;
+      cta: string;
+    };
+    servicesPreview: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+    };
     work: {
       num: string;
       title_l1: string;
       title_l2_it: string;
       intro: string;
       items: { name: string; desc: string; tags: string[]; year: string }[];
+      bridge_title_l1: string;
+      bridge_title_it: string;
+      bridge_body: string;
+    };
+    method: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      steps: { n: string; t: string; d: string }[];
+    };
+    enjeux: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      points: { t: string; d: string }[];
     };
     phone: {
       num: string;
@@ -292,20 +293,6 @@ const fr: Translations = {
     work: 'Réalisations',
   },
   services: {
-    hero: {
-      badge: "OFFRES & TARIFS — 2026",
-      title_l1: "Sites,",
-      title_l2: "outils,",
-      title_l3_it: "agents.",
-      sub: "Des solutions clés en main pour les commerces, restaurants et services qui veulent gagner en crédibilité, libérer du temps et capter plus de clients.",
-      cta_audit: "Réserver un audit gratuit",
-      cta_offers: "Voir les offres",
-      meta: [
-        { k: "Délai moyen", v: "3 à 6 semaines" },
-        { k: "Engagement", v: "Aucun" },
-        { k: "Devis", v: "Sous 48h" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "Ce que ça vous",
@@ -336,21 +323,6 @@ const fr: Translations = {
         { t: "Orienté résultats", d: "Chaque élément est pensé pour convertir." },
         { t: "Partenaire long terme", d: "Un accompagnement qui ne s'arrête pas à la mise en ligne." },
         { t: "Qualité premium", d: "Technologies modernes, design soigné." },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "Nos",
-      title_l2_it: "offres.",
-      intro: "Quatre formules adaptées à chaque étape de votre croissance. Le prix est public, le devis arrive sous 48h.",
-      from: "À partir de",
-      popular: "Le plus demandé",
-      cta: "Demander un devis",
-      items: [
-        { name: "Landing Page", tagline: "L'essentiel pour être visible", price: "1 200 – 1 800 €", description: "Une présence en ligne claire et professionnelle pour démarrer.", features: ["Design moderne et personnalisé", "Adapté mobile et tablette", "Présentation claire de vos services", "Formulaire de contact", "Intégration Google Maps", "SEO local de base", "Mise en ligne incluse"] },
-        { name: "Rebranding + Site Premium", tagline: "Transformez votre image", price: "2 500 – 4 000 €", description: "Modernisez complètement votre image et renforcez votre crédibilité.", features: ["Audit de votre image actuelle", "Modernisation du logo", "Nouvelle palette de couleurs", "Typographies professionnelles", "Mini charte graphique", "Nouveau site cohérent", "Formation utilisation"] },
-        { name: "Projet Sur Mesure", tagline: "Vos besoins spécifiques", price: "Sur devis", description: "Pour les projets qui nécessitent des fonctionnalités avancées.", features: ["Site multi-pages complet", "Boutique en ligne", "Système de réservation", "Fonctionnalités spécifiques", "Refonte complète", "Intégrations personnalisées", "Accompagnement dédié"] },
-        { name: "Agent Vocal IA", tagline: "Votre téléphone, automatisé", price: "À partir de 990 €", description: "Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.", features: ["Setup VAPI + numéro Twilio", "Voix ElevenLabs ultra-naturelle", "Connexion CRM via MCP", "1 scénario métier sur mesure", "1 mois de support inclus"] },
       ],
     },
     pages: {
@@ -746,21 +718,6 @@ const fr: Translations = {
       cta: "Tester la démo live",
       cta_roi: "Calculer le ROI",
     },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "Maintenance",
-      title_l2_it: "& hébergement.",
-      intro: "Votre site reste performant, sécurisé et à jour. Vous n'avez rien à gérer. Trois formules, sans engagement.",
-      recommended: "Recommandé",
-      per_month: "/mois",
-      currency: "€",
-      packs: [
-        { name: "Essentiel", price: "49", description: "L'indispensable pour un site sécurisé et fonctionnel.", features: ["Hébergement haute performance", "Nom de domaine inclus", "Certificat SSL (https)", "Sauvegardes automatiques", "Monitoring 24/7", "Mises à jour techniques", "Support par email"] },
-        { name: "Business", price: "79", popular: true, description: "Pour les entreprises qui évoluent.", features: ["Tout du pack Essentiel", "1h de modification par mois", "Optimisation des performances", "Rapport mensuel simplifié", "Temps de réponse prioritaire"] },
-        { name: "Premium", price: "129", priceNote: "+", description: "Tranquillité totale et croissance continue.", features: ["Tout du pack Business", "2h de modifications par mois", "Sécurité renforcée", "Optimisation SEO continue", "Assistance prioritaire", "Conseils stratégiques mensuels"] },
-      ],
-      perks: ["−10% si paiement annuel", "Sans engagement", "Évolutif selon vos besoins"],
-    },
     upsell: {
       num: "06 / 09",
       title_l1: "Options",
@@ -956,7 +913,7 @@ const fr: Translations = {
       title_l2_it: 'travaillent',
       title_l3: 'pour vos clients.',
       sub: "On conçoit des sites, des outils de gestion et des agents IA pour les commerces, restaurants et services. Pas du sur-mesure inutile : ce qui vous fait gagner du temps, des appels et des ventes.",
-      cta_primary: 'Voir nos offres',
+      cta_primary: 'Lancer le diagnostic',
       cta_secondary: 'Discutons de votre projet',
       stat_1_n: '06', stat_1_l: 'Partenaires actifs', stat_1_d: 'Restaurants, écoles, indépendants',
       stat_2_n: '24h', stat_2_l: 'Première réponse', stat_2_d: 'Audit téléphonique offert',
@@ -966,7 +923,7 @@ const fr: Translations = {
       canvas_r: 'ROTATION · 0.4 RPM',
     },
     manifeste: {
-      num: '01 / 05',
+      num: '01 / 07',
       title_l1: 'Sites, outils,',
       title_l2_it: 'agents.',
       intro: "Trois choses qu'on fait — pour une seule chose qu'on vise.",
@@ -976,8 +933,28 @@ const fr: Translations = {
       p3: "Aujourd'hui, on construit surtout des agents IA — phone agents qui répondent à vos clients, assistants qui prennent les commandes, automatisations qui font le boulot pendant que vous vivez.",
       p4: "Demain, on construira ce dont vous aurez besoin. Le métier reste le même : faire des outils utiles.",
     },
+    problems: {
+      num: '02 / 07',
+      title_l1: 'Ce qui vous',
+      title_l2_it: 'fait perdre des clients.',
+      intro: "Quatre situations qui reviennent chez presque toutes les PME qu'on rencontre.",
+      items: [
+        { n: '01', title: 'Invisible en ligne', desc: "Un client tape votre activité sur Google et tombe sur vos concurrents avant même de vous trouver. Chaque jour sans présence claire, c'est du monde qui part ailleurs." },
+        { n: '02', title: 'Personne ne répond au téléphone', desc: "Un appel manqué pendant le rush, c'est une commande ou une réservation qui part chez le concurrent d'à côté. Ça arrive plus souvent qu'on ne le pense." },
+        { n: '03', title: 'Une image dépassée', desc: 'Logo, site, réseaux : quand tout date d\'une autre époque, un nouveau client hésite avant même le premier échange.' },
+        { n: '04', title: 'Pas le temps de gérer les réseaux', desc: "Entre le quotidien et les clients sur place, les réseaux sociaux passent en dernier — alors que c'est souvent là que les nouveaux clients regardent en premier." },
+      ],
+      good_news: "La bonne nouvelle : chacun de ces problèmes a une solution simple, sans devoir tout changer d'un coup.",
+      cta: 'Tester le diagnostic',
+    },
+    servicesPreview: {
+      num: '03 / 07',
+      title_l1: 'Neuf façons',
+      title_l2_it: 'de vous aider.',
+      intro: 'Chaque service a sa page dédiée : le problème qu\'il résout, comment on procède, et ce que ça change pour vous.',
+    },
     work: {
-      num: '02 / 05',
+      num: '06 / 07',
       title_l1: 'Quelques',
       title_l2_it: 'réalisations.',
       intro: 'Six partenaires, six métiers différents, une même méthode : on règle un vrai problème métier.',
@@ -986,6 +963,33 @@ const fr: Translations = {
         { name: 'Gecko Cabane', desc: 'Site vitrine + réservation pour restaurant. Charte sur-mesure, hébergement managé.', tags: ['SITE', 'RESA'], year: '2024' },
         { name: 'Les Folies Temps Danse', desc: "Plateforme inscription école de danse — outils de gestion intégrés.", tags: ['WEB', 'GESTION'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio professionnel — design éditorial, intégration soignée.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
+      ],
+      bridge_title_l1: 'Quel service',
+      bridge_title_it: 'vous correspond ?',
+      bridge_body: "Deux minutes de diagnostic pour savoir exactement ce qu'il vous faut.",
+    },
+    method: {
+      num: '04 / 07',
+      title_l1: 'Comment',
+      title_l2_it: 'on travaille.',
+      intro: "Un déroulé simple, du premier échange au suivi dans la durée.",
+      steps: [
+        { n: '01', t: 'Diagnostic', d: 'On fait le point sur votre activité et ce qui vous freine aujourd\'hui, en quelques questions ciblées.' },
+        { n: '02', t: 'Proposition sur mesure', d: 'Vous recevez une recommandation claire des services adaptés à votre situation, sans jargon.' },
+        { n: '03', t: 'Déploiement', d: "On met en place la solution retenue, à votre rythme, avec des points d'étape réguliers." },
+        { n: '04', t: 'Suivi & support', d: 'On reste disponibles après la mise en ligne pour ajuster et répondre à vos questions.' },
+      ],
+    },
+    enjeux: {
+      num: '05 / 07',
+      title_l1: 'Ce qui est',
+      title_l2_it: 'en jeu.',
+      intro: 'Ne rien faire a aussi un effet — juste moins visible au quotidien.',
+      points: [
+        { t: 'Vos concurrents captent la recherche locale', d: 'Pendant que vous hésitez, ceux qui ont déjà une présence claire raflent les recherches Google de vos futurs clients.' },
+        { t: 'Les appels manqués s\'accumulent', d: "Un appel manqué isolé ne semble rien. Multiplié sur l'année, c'est un volume de commandes qui a filé ailleurs." },
+        { t: 'Votre image perd en crédibilité', d: "Une identité qui ne bouge pas pendant que le marché évolue finit par sembler dépassée, même si le service reste excellent." },
+        { t: 'Les réseaux sociaux vous échappent', d: "Sans présence régulière, l'audience qui s'y forme se construit ailleurs, chez ceux qui prennent le temps d'y être." },
       ],
     },
     phone: {
@@ -1025,7 +1029,7 @@ const fr: Translations = {
       ],
     },
     contact: {
-      num: '05 / 05',
+      num: '07 / 07',
       title_l1: 'Un projet ?',
       title_l2_it: 'Parlons-en.',
       sub: "On répond sous 24h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes et ce qui aurait du sens.",
@@ -1066,20 +1070,6 @@ const en: Translations = {
     work: 'Work',
   },
   services: {
-    hero: {
-      badge: "OFFERS & PRICES — 2026",
-      title_l1: "Sites,",
-      title_l2: "tools,",
-      title_l3_it: "agents.",
-      sub: "Turnkey solutions for shops, restaurants and services that want to build credibility, free up time and capture more customers.",
-      cta_audit: "Book a free audit",
-      cta_offers: "See offers",
-      meta: [
-        { k: "Average timeline", v: "3 to 6 weeks" },
-        { k: "Commitment", v: "None" },
-        { k: "Quote", v: "Within 48h" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "What it",
@@ -1103,21 +1093,6 @@ const en: Translations = {
         { t: "Results-driven", d: "Every element is built to convert." },
         { t: "Long-term partner", d: "Support that does not stop at launch." },
         { t: "Premium quality", d: "Modern technologies, refined design." },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "Our",
-      title_l2_it: "offers.",
-      intro: "Four formulas for each stage of your growth. The price is public, the quote lands within 48h.",
-      from: "Starting from",
-      popular: "Most requested",
-      cta: "Request a quote",
-      items: [
-        { name: "Landing Page", tagline: "The essentials to be visible", price: "$1,300 – $2,000", description: "A clear, professional online presence to get started.", features: ["Modern and custom design", "Mobile and tablet friendly", "Clear presentation of services", "Contact form", "Google Maps integration", "Basic local SEO", "Deployment included"] },
-        { name: "Rebranding + Premium Site", tagline: "Transform your image", price: "$2,750 – $4,400", description: "Completely modernise your image and strengthen your credibility.", features: ["Image audit", "Logo modernisation", "New colour palette", "Professional typography", "Mini brand guidelines", "New consistent site", "Basic usage training"] },
-        { name: "Custom Project", tagline: "Your specific needs", price: "On request", description: "For projects that require advanced features.", features: ["Full multi-page site", "Online shop (e-commerce)", "Booking system", "Specific features", "Full website redesign", "Custom integrations", "Dedicated support"] },
-        { name: "AI Voice Agent", tagline: "Your phone, automated", price: "From €990", description: "An intelligent phone agent that answers, qualifies and records — 24/7.", features: ["VAPI + Twilio setup", "Ultra-natural ElevenLabs voice", "CRM connection via MCP", "1 custom scenario", "1 month of support"] },
       ],
     },
     pages: {
@@ -1513,21 +1488,6 @@ const en: Translations = {
       cta: "Try the live demo",
       cta_roi: "Calculate the ROI",
     },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "Maintenance",
-      title_l2_it: "& hosting.",
-      intro: "Your site stays fast, secure, up to date. You manage nothing. Three plans, no commitment.",
-      recommended: "Recommended",
-      per_month: "/month",
-      currency: "$",
-      packs: [
-        { name: "Essential", price: "55", description: "The essentials for a secure, functional site.", features: ["High-performance hosting", "Domain name included", "SSL certificate (https)", "Automatic backups", "24/7 monitoring", "Technical updates", "Email support"] },
-        { name: "Business", price: "87", popular: true, description: "For businesses on the move.", features: ["Everything in Essential", "1h of changes per month", "Performance tuning", "Monthly summary report", "Priority response time"] },
-        { name: "Premium", price: "140", priceNote: "+", description: "Total peace of mind and continuous growth.", features: ["Everything in Business", "2h of changes per month", "Enhanced security", "Ongoing SEO optimisation", "Priority support", "Monthly strategic advice"] },
-      ],
-      perks: ["−10% for annual payment", "No commitment", "Adaptable to your needs"],
-    },
     upsell: {
       num: "06 / 09",
       title_l1: "Available",
@@ -1723,7 +1683,7 @@ const en: Translations = {
       title_l2_it: 'work',
       title_l3: 'for your customers.',
       sub: 'We design websites, internal tools and AI agents for restaurants, shops and local services. No useless custom work — just what saves you time, calls and sales.',
-      cta_primary: 'See our offers',
+      cta_primary: 'Start the diagnostic',
       cta_secondary: "Let's discuss your project",
       stat_1_n: '06', stat_1_l: 'Active partners', stat_1_d: 'Restaurants, schools, makers',
       stat_2_n: '24h', stat_2_l: 'First reply', stat_2_d: 'Free phone audit',
@@ -1733,7 +1693,7 @@ const en: Translations = {
       canvas_r: 'ROTATION · 0.4 RPM',
     },
     manifeste: {
-      num: '01 / 05',
+      num: '01 / 07',
       title_l1: 'Sites, tools,',
       title_l2_it: 'agents.',
       intro: 'Three things we make — for a single thing we aim at.',
@@ -1743,8 +1703,52 @@ const en: Translations = {
       p3: "Today, we mostly build AI agents — phone agents that answer your customers, assistants that take orders, automations that work while you live.",
       p4: "Tomorrow, we'll build what you'll need. The craft stays the same: useful tools.",
     },
+    problems: {
+      num: '02 / 07',
+      title_l1: 'What makes you',
+      title_l2_it: 'lose customers.',
+      intro: 'Four situations that come up with almost every small business we meet.',
+      items: [
+        { n: '01', title: 'Invisible online', desc: "A customer searches for your business on Google and finds your competitors before they find you. Every day without a clear presence, people go elsewhere." },
+        { n: '02', title: 'Nobody answers the phone', desc: "A missed call during the rush is an order or a booking that goes to the shop next door. It happens more often than you'd think." },
+        { n: '03', title: 'A dated image', desc: "Logo, site, social pages: when everything looks like another era, a new customer hesitates before the first exchange." },
+        { n: '04', title: "No time to run social media", desc: "Between the day-to-day and customers on site, social media comes last — even though that's often where new customers look first." },
+      ],
+      good_news: 'The good news: each of these problems has a simple fix, without changing everything at once.',
+      cta: 'Take the diagnostic',
+    },
+    servicesPreview: {
+      num: '03 / 07',
+      title_l1: 'Nine ways',
+      title_l2_it: 'to help you.',
+      intro: 'Each service has its own dedicated page: the problem it solves, how it works, and what it changes for you.',
+    },
+    method: {
+      num: '04 / 07',
+      title_l1: 'How',
+      title_l2_it: 'we work.',
+      intro: 'A simple process, from first contact to ongoing support.',
+      steps: [
+        { n: '01', t: 'Diagnostic', d: "We review your business and what's holding you back today, with a few targeted questions." },
+        { n: '02', t: 'Tailored proposal', d: 'You get a clear recommendation of the services suited to your situation, no jargon.' },
+        { n: '03', t: 'Deployment', d: 'We set up the chosen solution at your pace, with regular check-ins.' },
+        { n: '04', t: 'Support & follow-up', d: "We stay available after launch to adjust things and answer your questions." },
+      ],
+    },
+    enjeux: {
+      num: '05 / 07',
+      title_l1: "What's",
+      title_l2_it: 'at stake.',
+      intro: "Doing nothing has an effect too — just a less visible one, day to day.",
+      points: [
+        { t: 'Your competitors capture local search', d: 'While you hesitate, those who already have a clear presence take the Google searches from your future customers.' },
+        { t: 'Missed calls add up', d: 'A single missed call seems like nothing. Over a year, it adds up to a real volume of orders lost elsewhere.' },
+        { t: 'Your brand loses credibility', d: 'An identity that stays still while the market moves ends up looking dated, even when the service is still excellent.' },
+        { t: 'Social media slips away', d: 'Without a regular presence, the audience forming there builds up elsewhere, with those who take the time to show up.' },
+      ],
+    },
     work: {
-      num: '02 / 05',
+      num: '06 / 07',
       title_l1: 'Selected',
       title_l2_it: 'work.',
       intro: 'Six partners, six trades, one method: solve a real business problem.',
@@ -1754,6 +1758,9 @@ const en: Translations = {
         { name: 'Les Folies Temps Danse', desc: 'Dance school enrolment platform — integrated management tools.', tags: ['WEB', 'TOOLS'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Professional portfolio — editorial design, careful build.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
+      bridge_title_l1: 'Which service',
+      bridge_title_it: 'fits you?',
+      bridge_body: 'A two-minute diagnostic to find out exactly what you need.',
     },
     phone: {
       num: '03 / 05',
@@ -1792,7 +1799,7 @@ const en: Translations = {
       ],
     },
     contact: {
-      num: '05 / 05',
+      num: '07 / 07',
       title_l1: 'Got a project?',
       title_l2_it: "Let's talk.",
       sub: 'Reply within 24 business hours. First call free, no strings, to understand where you stand and what would make sense.',
@@ -1833,20 +1840,6 @@ const th: Translations = {
     work: 'ผลงาน',
   },
   services: {
-    hero: {
-      badge: "บริการ & ราคา — 2026",
-      title_l1: "เว็บไซต์",
-      title_l2: "เครื่องมือ",
-      title_l3_it: "AI agents.",
-      sub: "โซลูชันครบวงจรสำหรับร้านค้า ร้านอาหาร และบริการที่ต้องการสร้างความน่าเชื่อถือ ประหยัดเวลา และเพิ่มลูกค้า",
-      cta_audit: "ขอตรวจสอบฟรี",
-      cta_offers: "ดูบริการ",
-      meta: [
-        { k: "ระยะเวลาเฉลี่ย", v: "3 ถึง 6 สัปดาห์" },
-        { k: "พันธะ", v: "ไม่มี" },
-        { k: "ใบเสนอราคา", v: "ภายใน 48ชม" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "สิ่งที่",
@@ -1870,21 +1863,6 @@ const th: Translations = {
         { t: "มุ่งเน้นผลลัพธ์", d: "ทุกองค์ประกอบออกแบบเพื่อการแปลง" },
         { t: "พันธมิตรระยะยาว", d: "การสนับสนุนที่ไม่หยุดแค่การเปิดตัว" },
         { t: "คุณภาพระดับพรีเมียม", d: "เทคโนโลยีทันสมัย ดีไซน์ประณีต" },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "บริการ",
-      title_l2_it: "ของเรา",
-      intro: "สี่แพ็กเกจสำหรับทุกขั้นของการเติบโต ราคาเปิดเผย ใบเสนอราคาส่งภายใน 48ชม",
-      from: "เริ่มต้นที่",
-      popular: "ได้รับความนิยม",
-      cta: "ขอใบเสนอราคา",
-      items: [
-        { name: "Landing Page", tagline: "สิ่งจำเป็นเพื่อการมองเห็น", price: "45,000 – 70,000 ฿", description: "การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพสำหรับการเริ่มต้น", features: ["ดีไซน์ทันสมัยและกำหนดเอง", "รองรับมือถือและแท็บเล็ต", "นำเสนอบริการของคุณอย่างชัดเจน", "แบบฟอร์มติดต่อ", "ผสาน Google Maps", "SEO ท้องถิ่น", "รวมการเปิดตัว"] },
-        { name: "Rebranding + เว็บพรีเมียม", tagline: "เปลี่ยนภาพลักษณ์", price: "100,000 – 155,000 ฿", description: "ปรับปรุงภาพลักษณ์ทั้งหมดและเสริมความน่าเชื่อถือ", features: ["ตรวจสอบภาพลักษณ์", "ปรับปรุงโลโก้", "ชุดสีใหม่", "ฟอนต์มืออาชีพ", "แนวทางแบรนด์", "เว็บไซต์ใหม่", "การฝึกอบรม"] },
-        { name: "โปรเจกต์กำหนดเอง", tagline: "ความต้องการเฉพาะ", price: "ตามการประเมิน", description: "สำหรับโปรเจกต์ที่ต้องการฟีเจอร์ขั้นสูง", features: ["เว็บหลายหน้า", "ร้านค้าออนไลน์", "ระบบการจอง", "ฟีเจอร์เฉพาะ", "ออกแบบใหม่ทั้งหมด", "การผสานกำหนดเอง", "การสนับสนุนเฉพาะ"] },
-        { name: "AI Voice Agent", tagline: "โทรศัพท์ของคุณ อัตโนมัติ", price: "เริ่มต้นที่ 990 €", description: "ตัวแทนโทรศัพท์อัจฉริยะ ตอบ คัดกรอง บันทึก 24ชม", features: ["ตั้งค่า VAPI + Twilio", "เสียง ElevenLabs ธรรมชาติ", "เชื่อม CRM ผ่าน MCP", "1 สถานการณ์กำหนดเอง", "รองรับ 1 เดือน"] },
       ],
     },
     pages: {
@@ -2280,21 +2258,6 @@ const th: Translations = {
       cta: "ลองเดโม",
       cta_roi: "คำนวณ ROI",
     },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "บำรุงรักษา",
-      title_l2_it: "& โฮสติ้ง",
-      intro: "เว็บไซต์คุณทำงานเร็ว ปลอดภัย ทันสมัย คุณไม่ต้องจัดการอะไร สามแพ็กเกจ ไม่มีพันธะ",
-      recommended: "แนะนำ",
-      per_month: "/เดือน",
-      currency: "฿",
-      packs: [
-        { name: "Essential", price: "1,900", description: "สิ่งจำเป็นเพื่อเว็บที่ปลอดภัยและใช้งานได้", features: ["โฮสติ้งประสิทธิภาพสูง", "รวมโดเมน", "SSL (https)", "สำรองข้อมูลอัตโนมัติ", "ตรวจสอบ 24/7", "อัพเดตเทคนิค", "สนับสนุนทางอีเมล"] },
-        { name: "Business", price: "3,100", popular: true, description: "สำหรับธุรกิจที่เติบโต", features: ["ทุกอย่างใน Essential", "1ชม แก้ไข/เดือน", "เพิ่มประสิทธิภาพ", "รายงานรายเดือน", "ตอบสนองด่วน"] },
-        { name: "Premium", price: "4,990", priceNote: "+", description: "ความสงบและการเติบโตต่อเนื่อง", features: ["ทุกอย่างใน Business", "2ชม แก้ไข/เดือน", "ความปลอดภัยเพิ่ม", "SEO ต่อเนื่อง", "สนับสนุนด่วน", "คำแนะนำเชิงกลยุทธ์รายเดือน"] },
-      ],
-      perks: ["−10% หากชำระรายปี", "ไม่มีพันธะ", "ปรับได้ตามความต้องการ"],
-    },
     upsell: {
       num: "06 / 09",
       title_l1: "ตัวเลือก",
@@ -2490,7 +2453,7 @@ const th: Translations = {
       title_l2_it: 'ทำงาน',
       title_l3: 'เพื่อลูกค้าของคุณ',
       sub: 'เราออกแบบเว็บไซต์ เครื่องมือจัดการ และ AI agents สำหรับร้านอาหาร ร้านค้า และบริการท้องถิ่น ไม่มีของฟุ่มเฟือย — มีแต่สิ่งที่ช่วยประหยัดเวลา รับสายและเพิ่มยอดขาย',
-      cta_primary: 'ดูบริการ',
+      cta_primary: 'เริ่มวินิจฉัย',
       cta_secondary: 'คุยเรื่องโปรเจกต์',
       stat_1_n: '06', stat_1_l: 'พาร์ทเนอร์ปัจจุบัน', stat_1_d: 'ร้านอาหาร โรงเรียน อิสระ',
       stat_2_n: '24ชม', stat_2_l: 'ตอบกลับแรก', stat_2_d: 'ปรึกษาฟรี',
@@ -2500,7 +2463,7 @@ const th: Translations = {
       canvas_r: 'หมุน · 0.4 RPM',
     },
     manifeste: {
-      num: '01 / 05',
+      num: '01 / 07',
       title_l1: 'เว็บไซต์ เครื่องมือ',
       title_l2_it: 'AI agents',
       intro: 'สามอย่างที่เราทำ — เพื่อเป้าหมายเดียว',
@@ -2510,8 +2473,52 @@ const th: Translations = {
       p3: 'ตอนนี้เราสร้าง AI agents เป็นหลัก — phone agents ที่รับสายลูกค้า ผู้ช่วยรับออเดอร์ ระบบอัตโนมัติที่ทำงานแทนคุณ',
       p4: 'พรุ่งนี้เราจะสร้างสิ่งที่คุณต้องการ ฝีมือยังเหมือนเดิม: เครื่องมือที่มีประโยชน์',
     },
+    problems: {
+      num: '02 / 07',
+      title_l1: 'สิ่งที่ทำให้คุณ',
+      title_l2_it: 'เสียลูกค้า',
+      intro: 'สี่สถานการณ์ที่ธุรกิจ SME เกือบทุกรายที่เราพบเจอต้องเผชิญ',
+      items: [
+        { n: '01', title: 'มองไม่เห็นบนออนไลน์', desc: 'ลูกค้าค้นหาธุรกิจของคุณบน Google แล้วเจอคู่แข่งก่อนเจอคุณ ทุกวันที่ไม่มีตัวตนออนไลน์ที่ชัดเจน ลูกค้าก็เลือกที่อื่น' },
+        { n: '02', title: 'ไม่มีใครรับโทรศัพท์', desc: 'สายที่พลาดไปช่วงเร่งด่วน คือออเดอร์หรือการจองที่หลุดไปหาร้านข้างๆ เกิดขึ้นบ่อยกว่าที่คิด' },
+        { n: '03', title: 'ภาพลักษณ์ล้าสมัย', desc: 'โลโก้ เว็บไซต์ โซเชียล เมื่อทุกอย่างดูเหมือนยุคก่อน ลูกค้าใหม่ก็ลังเลตั้งแต่ยังไม่ได้คุยกัน' },
+        { n: '04', title: 'ไม่มีเวลาดูแลโซเชียลมีเดีย', desc: 'ระหว่างงานประจำวันกับลูกค้าที่ร้าน โซเชียลมีเดียมักถูกทิ้งไว้ทีหลัง ทั้งที่นั่นคือจุดแรกที่ลูกค้าใหม่มักมองหา' },
+      ],
+      good_news: 'ข่าวดีคือ ปัญหาแต่ละอย่างมีทางแก้ที่ไม่ซับซ้อน โดยไม่ต้องเปลี่ยนทุกอย่างพร้อมกัน',
+      cta: 'ทดสอบวินิจฉัย',
+    },
+    servicesPreview: {
+      num: '03 / 07',
+      title_l1: 'เก้าวิธี',
+      title_l2_it: 'ที่ช่วยคุณได้',
+      intro: 'แต่ละบริการมีหน้าเพจของตัวเอง: ปัญหาที่แก้ วิธีการทำงาน และสิ่งที่เปลี่ยนไปสำหรับคุณ',
+    },
+    method: {
+      num: '04 / 07',
+      title_l1: 'วิธีการ',
+      title_l2_it: 'ทำงานของเรา',
+      intro: 'ขั้นตอนง่ายๆ ตั้งแต่การพูดคุยครั้งแรกจนถึงการดูแลต่อเนื่อง',
+      steps: [
+        { n: '01', t: 'วินิจฉัย', d: 'เราตรวจสอบธุรกิจของคุณและสิ่งที่เป็นอุปสรรคอยู่ตอนนี้ ด้วยคำถามที่ตรงจุด' },
+        { n: '02', t: 'ข้อเสนอเฉพาะคุณ', d: 'คุณจะได้รับคำแนะนำที่ชัดเจนของบริการที่เหมาะกับสถานการณ์คุณ ไม่มีศัพท์เทคนิค' },
+        { n: '03', t: 'ดำเนินการ', d: 'เราติดตั้งโซลูชันที่เลือกไว้ตามจังหวะของคุณ พร้อมติดตามผลอย่างสม่ำเสมอ' },
+        { n: '04', t: 'ดูแลและสนับสนุน', d: 'เราพร้อมให้ความช่วยเหลือหลังเปิดใช้งาน เพื่อปรับแต่งและตอบคำถามของคุณ' },
+      ],
+    },
+    enjeux: {
+      num: '05 / 07',
+      title_l1: 'สิ่งที่',
+      title_l2_it: 'เสี่ยงอยู่',
+      intro: 'การไม่ทำอะไรเลยก็ส่งผลเช่นกัน เพียงแต่มองไม่เห็นชัดในแต่ละวัน',
+      points: [
+        { t: 'คู่แข่งของคุณครองพื้นที่การค้นหาในท้องถิ่น', d: 'ขณะที่คุณลังเล คนที่มีตัวตนออนไลน์ชัดเจนอยู่แล้วก็ดึงการค้นหาบน Google จากลูกค้าในอนาคตของคุณไป' },
+        { t: 'สายที่พลาดสะสมมากขึ้นเรื่อยๆ', d: 'สายที่พลาดครั้งเดียวดูเหมือนไม่มีอะไร แต่รวมกันตลอดทั้งปี กลายเป็นออเดอร์จำนวนมากที่หลุดไปที่อื่น' },
+        { t: 'ความน่าเชื่อถือของแบรนด์ลดลง', d: 'อัตลักษณ์ที่ไม่เปลี่ยนแปลงในขณะที่ตลาดเปลี่ยนไป จะดูล้าสมัยในที่สุด แม้บริการจะยังดีอยู่ก็ตาม' },
+        { t: 'โซเชียลมีเดียหลุดมือไป', d: 'หากไม่มีความสม่ำเสมอ กลุ่มผู้ชมที่ก่อตัวขึ้นจะไปอยู่ที่อื่น กับคนที่ใช้เวลาปรากฏตัวอยู่เสมอ' },
+      ],
+    },
     work: {
-      num: '02 / 05',
+      num: '06 / 07',
       title_l1: 'ผลงาน',
       title_l2_it: 'ที่คัดสรร',
       intro: 'พาร์ทเนอร์ 6 ราย 6 อาชีพ วิธีเดียวกัน: แก้ปัญหาทางธุรกิจจริง',
@@ -2521,6 +2528,9 @@ const th: Translations = {
         { name: 'Les Folies Temps Danse', desc: 'แพลตฟอร์มลงทะเบียนโรงเรียนสอนเต้น', tags: ['เว็บ', 'จัดการ'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio ระดับมืออาชีพ', tags: ['เว็บ', 'บรรณาธิการ'], year: '2025' },
       ],
+      bridge_title_l1: 'บริการไหน',
+      bridge_title_it: 'เหมาะกับคุณ?',
+      bridge_body: 'วินิจฉัยสองนาทีเพื่อรู้แน่ชัดว่าคุณต้องการอะไร',
     },
     phone: {
       num: '03 / 05',
@@ -2559,7 +2569,7 @@ const th: Translations = {
       ],
     },
     contact: {
-      num: '05 / 05',
+      num: '07 / 07',
       title_l1: 'มีโปรเจกต์?',
       title_l2_it: 'คุยกัน',
       sub: 'ตอบใน 24 ชม ทำการ ปรึกษาครั้งแรกฟรี ไม่มีพันธะ เพื่อเข้าใจว่าคุณอยู่ตรงไหนและอะไรเหมาะกับคุณ',
