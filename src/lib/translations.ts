@@ -238,19 +238,12 @@ export interface Translations {
       points: { t: string; d: string }[];
     };
     phone: {
-      num: string;
       badge: string;
       title_l1: string;
       title_l2: string;
       title_l3_it: string;
       sub: string;
-      features: string[];
-      cta_demo: string;
-      cta_more: string;
       cta_roi: string;
-      flow_label: string;
-      flow_rec: string;
-      flow_steps: { t: string; k: string; v: string }[];
     };
     partners: {
       title: string;
@@ -993,29 +986,12 @@ const fr: Translations = {
       ],
     },
     phone: {
-      num: '03 / 05',
       badge: 'LIVE · PHONE AGENT',
       title_l1: 'Vos clients',
       title_l2: 'appellent,',
       title_l3_it: 'on répond.',
       sub: "Un agent vocal IA, branché à votre CRM ou votre cahier de commandes. Il répond, comprend, confirme — pendant que vous travaillez.",
-      features: [
-        'Réponse instantanée 24/7, même quand vous êtes en service',
-        'Prise de commande complète avec confirmation SMS',
-        'Branché à votre outil (CRM, agenda, gestion stocks)',
-        'Voix française naturelle, ton choisi par vous',
-      ],
-      cta_demo: 'Écouter une démo',
-      cta_more: 'Comment ça marche',
-      cta_roi: 'Calculer le ROI',
-      flow_label: 'FLUX TEMPS RÉEL',
-      flow_rec: 'REC · 02:14',
-      flow_steps: [
-        { t: '02:14', k: 'Appel reçu', v: '+33 6 12 — Mme Dubois' },
-        { t: '02:14', k: 'VAPI ↔ Claude', v: 'Comprend la commande' },
-        { t: '02:15', k: 'MCP → CRM', v: "Crée l'ordre #2418" },
-        { t: '02:15', k: 'Confirmation', v: 'SMS envoyé · ✓' },
-      ],
+      cta_roi: "Découvrir l'agent vocal IA",
     },
     partners: {
       title: 'ILS NOUS FONT CONFIANCE — DEPUIS 2023',
@@ -1763,29 +1739,12 @@ const en: Translations = {
       bridge_body: 'A two-minute diagnostic to find out exactly what you need.',
     },
     phone: {
-      num: '03 / 05',
       badge: 'LIVE · PHONE AGENT',
       title_l1: 'Your customers',
       title_l2: 'call,',
       title_l3_it: 'we answer.',
       sub: 'An AI voice agent, wired into your CRM or order book. It answers, understands, confirms — while you work.',
-      features: [
-        'Instant 24/7 reply, even mid-service',
-        'Full order capture with SMS confirmation',
-        'Wired into your tool (CRM, calendar, stock)',
-        'Natural French voice, tone of your choice',
-      ],
-      cta_demo: 'Hear a demo',
-      cta_more: 'How it works',
-      cta_roi: 'Calculate the ROI',
-      flow_label: 'REAL-TIME FLOW',
-      flow_rec: 'REC · 02:14',
-      flow_steps: [
-        { t: '02:14', k: 'Call received', v: '+33 6 12 — Mrs Dubois' },
-        { t: '02:14', k: 'VAPI ↔ Claude', v: 'Understands the order' },
-        { t: '02:15', k: 'MCP → CRM', v: 'Creates order #2418' },
-        { t: '02:15', k: 'Confirmation', v: 'SMS sent · \u2713' },
-      ],
+      cta_roi: 'Discover the AI voice agent',
     },
     partners: {
       title: 'TRUSTED BY — SINCE 2023',
@@ -2533,29 +2492,12 @@ const th: Translations = {
       bridge_body: 'วินิจฉัยสองนาทีเพื่อรู้แน่ชัดว่าคุณต้องการอะไร',
     },
     phone: {
-      num: '03 / 05',
       badge: 'LIVE · PHONE AGENT',
-      title_l1: 'ลูกค้าโทรมา',
-      title_l2: '',
-      title_l3_it: 'เรารับสาย',
+      title_l1: 'ลูกค้าโทรเข้ามา',
+      title_l2: 'เรา',
+      title_l3_it: 'รับสาย',
       sub: 'AI voice agent ที่เชื่อมกับ CRM หรือสมุดออเดอร์ของคุณ มันรับสาย เข้าใจ ยืนยัน — ขณะที่คุณทำงาน',
-      features: [
-        'ตอบทันที 24/7 แม้ระหว่างให้บริการ',
-        'รับออเดอร์ครบพร้อมยืนยันทาง SMS',
-        'เชื่อมกับเครื่องมือคุณ (CRM ปฏิทิน สต็อก)',
-        'เสียงฝรั่งเศสธรรมชาติ โทนตามที่คุณเลือก',
-      ],
-      cta_demo: 'ฟังเดโม',
-      cta_more: 'ทำงานอย่างไร',
-      cta_roi: 'คำนวณ ROI',
-      flow_label: 'FLUX แบบเรียลไทม์',
-      flow_rec: 'REC · 02:14',
-      flow_steps: [
-        { t: '02:14', k: 'รับสาย', v: '+33 6 12 — คุณดูบัวส์' },
-        { t: '02:14', k: 'VAPI ↔ Claude', v: 'เข้าใจออเดอร์' },
-        { t: '02:15', k: 'MCP → CRM', v: 'สร้างออเดอร์ #2418' },
-        { t: '02:15', k: 'ยืนยัน', v: 'ส่ง SMS · ✓' },
-      ],
+      cta_roi: 'ค้นพบ AI voice agent',
     },
     partners: {
       title: 'ลูกค้าที่ไว้วางใจ — ตั้งแต่ 2023',

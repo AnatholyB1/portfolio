@@ -3,10 +3,10 @@ import { useLanguage } from '@/context/LanguageContext';
 
 export default function ProblemSection() {
   const { t } = useLanguage();
-  const ts = t.services.problem;
+  const ts = t.landing.problems;
 
   return (
-    <section className="sec">
+    <section className="sec" id="problems">
       <div className="wrap">
         <div className="sec-head" data-reveal>
           <div className="sec-num">{ts.num}</div>
@@ -32,6 +32,12 @@ export default function ProblemSection() {
         </div>
 
         <div className="problem-good" data-reveal>{ts.good_news}</div>
+
+        <div data-reveal style={{ marginTop: 32, textAlign: 'center' }}>
+          <a className="btn btn-primary" href="/simulateur">
+            {ts.cta} <span className="ar">→</span>
+          </a>
+        </div>
       </div>
     </section>
   );
