@@ -1,0 +1,38 @@
+'use client';
+import { useLanguage } from '@/context/LanguageContext';
+
+export default function EnjeuxSection() {
+  const { t } = useLanguage();
+  const ts = t.landing.enjeux;
+
+  return (
+    <section className="sec border-t">
+      <div className="wrap">
+        <div className="sec-head" data-reveal>
+          <div className="sec-num">{ts.num}</div>
+          <h2 className="sec-title">
+            {ts.title_l1}<br /><em className="it">{ts.title_l2_it}</em>
+          </h2>
+          <p className="sec-intro">{ts.intro}</p>
+        </div>
+
+        <div className="reassure-grid">
+          {ts.points.map((p, i) => (
+            <div
+              className="reassure"
+              key={i}
+              data-reveal
+              data-reveal-delay={String(i % 2)}
+            >
+              <span className="rn">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h4>{p.t}</h4>
+                <p>{p.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
