@@ -55,7 +55,7 @@ export default function Realisations() {
               className="mono"
               style={{ fontSize: 11, letterSpacing: '0.18em', color: 'var(--ink-faint)' }}
             >
-              —— PROCHAINE ÉTAPE
+              —— {w.bridge_eyebrow}
             </span>
             <h3>{w.bridge_title_l1} <em className="it acid">{w.bridge_title_it}</em></h3>
             <p>{w.bridge_body}</p>

@@ -219,6 +219,7 @@ export interface Translations {
       title_l2_it: string;
       intro: string;
       items: { name: string; desc: string; tags: string[]; year: string }[];
+      bridge_eyebrow: string;
       bridge_title_l1: string;
       bridge_title_it: string;
       bridge_body: string;
@@ -957,6 +958,7 @@ const fr: Translations = {
         { name: 'Les Folies Temps Danse', desc: "Plateforme inscription école de danse — outils de gestion intégrés.", tags: ['WEB', 'GESTION'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio professionnel — design éditorial, intégration soignée.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
+      bridge_eyebrow: 'PROCHAINE ÉTAPE',
       bridge_title_l1: 'Quel service',
       bridge_title_it: 'vous correspond ?',
       bridge_body: "Deux minutes de diagnostic pour savoir exactement ce qu'il vous faut.",
@@ -1734,6 +1736,7 @@ const en: Translations = {
         { name: 'Les Folies Temps Danse', desc: 'Dance school enrolment platform — integrated management tools.', tags: ['WEB', 'TOOLS'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Professional portfolio — editorial design, careful build.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
+      bridge_eyebrow: 'NEXT STEP',
       bridge_title_l1: 'Which service',
       bridge_title_it: 'fits you?',
       bridge_body: 'A two-minute diagnostic to find out exactly what you need.',
@@ -2487,6 +2490,7 @@ const th: Translations = {
         { name: 'Les Folies Temps Danse', desc: 'แพลตฟอร์มลงทะเบียนโรงเรียนสอนเต้น', tags: ['เว็บ', 'จัดการ'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio ระดับมืออาชีพ', tags: ['เว็บ', 'บรรณาธิการ'], year: '2025' },
       ],
+      bridge_eyebrow: 'ขั้นตอนถัดไป',
       bridge_title_l1: 'บริการไหน',
       bridge_title_it: 'เหมาะกับคุณ?',
       bridge_body: 'วินิจฉัยสองนาทีเพื่อรู้แน่ชัดว่าคุณต้องการอะไร',
