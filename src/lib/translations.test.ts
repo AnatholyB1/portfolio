@@ -352,3 +352,190 @@ describe('translations.simulateur (SIMU-05, SIMU-06, SIMU-08)', () => {
     }
   });
 });
+
+describe('translations.landing + translations.services — Phase 8 pricing policy (PRIX-01)', () => {
+  // The four new landing keys below (problems, servicesPreview, method, enjeux)
+  // and the work.bridge_* fields do not exist on the Translations interface
+  // yet — plans 03/05 add them. A direct `translations[lang].landing.problems`
+  // access would fail `tsc` today even though Vitest would transpile it
+  // (repo runs eslint-config-next/typescript, so `any` is also off the table).
+  // This local structural type + `landingOf` cast lets every assertion below
+  // compile now and keep compiling once the real fields land.
+  type Phase8Landing = {
+    problems: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      items: { n: string; title: string; desc: string }[];
+      good_news: string;
+      cta: string;
+    };
+    servicesPreview: { num: string; title_l1: string; title_l2_it: string; intro: string };
+    method: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      steps: { n: string; t: string; d: string }[];
+    };
+    enjeux: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      points: { t: string; d: string }[];
+    };
+    work: { num: string; bridge_title_l1: string; bridge_title_it: string; bridge_body: string };
+    manifeste: { num: string };
+    contact: { num: string };
+    phone: Record<string, unknown>;
+  };
+
+  const landingOf = (lang: (typeof LANGS)[number]) =>
+    translations[lang].landing as unknown as Partial<Phase8Landing>;
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing contains no pricing language (PRIX-01, forward regression guard — green today, must stay green)`, () => {
+      const serialized = JSON.stringify(translations[lang].landing);
+      expect(serialized).not.toMatch(PRICE_PATTERN);
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.services contains no pricing language (PRIX-01, RED until plan 03 removes hero/offers/maintenance)`, () => {
+      const serialized = JSON.stringify(translations[lang].services);
+      expect(serialized).not.toMatch(PRICE_PATTERN);
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.problems exists with the full Phase 8 shape, 3-4 items (RED until plan 03)`, () => {
+      const problems = landingOf(lang).problems;
+      expect(problems, `${lang}: t.landing.problems`).toBeDefined();
+      expect(problems?.num?.length ?? 0, `${lang}: problems.num`).toBeGreaterThan(0);
+      expect(problems?.title_l1?.length ?? 0, `${lang}: problems.title_l1`).toBeGreaterThan(0);
+      expect(problems?.title_l2_it?.length ?? 0, `${lang}: problems.title_l2_it`).toBeGreaterThan(0);
+      expect(problems?.intro?.length ?? 0, `${lang}: problems.intro`).toBeGreaterThan(0);
+      expect(problems?.good_news?.length ?? 0, `${lang}: problems.good_news`).toBeGreaterThan(0);
+      expect(problems?.cta?.length ?? 0, `${lang}: problems.cta`).toBeGreaterThan(0);
+      const items = problems?.items ?? [];
+      expect(items.length, `${lang}: problems.items.length`).toBeGreaterThanOrEqual(3);
+      expect(items.length, `${lang}: problems.items.length`).toBeLessThanOrEqual(4);
+      for (const [i, item] of items.entries()) {
+        expect(item.n?.length ?? 0, `${lang}: problems.items[${i}].n`).toBeGreaterThan(0);
+        expect(item.title?.length ?? 0, `${lang}: problems.items[${i}].title`).toBeGreaterThan(0);
+        expect(item.desc?.length ?? 0, `${lang}: problems.items[${i}].desc`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.servicesPreview exists with num/title_l1/title_l2_it/intro (RED until plan 03)`, () => {
+      const sp = landingOf(lang).servicesPreview;
+      expect(sp, `${lang}: t.landing.servicesPreview`).toBeDefined();
+      expect(sp?.num?.length ?? 0, `${lang}: servicesPreview.num`).toBeGreaterThan(0);
+      expect(sp?.title_l1?.length ?? 0, `${lang}: servicesPreview.title_l1`).toBeGreaterThan(0);
+      expect(sp?.title_l2_it?.length ?? 0, `${lang}: servicesPreview.title_l2_it`).toBeGreaterThan(0);
+      expect(sp?.intro?.length ?? 0, `${lang}: servicesPreview.intro`).toBeGreaterThan(0);
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.method exists with 3-4 steps (RED until plan 03)`, () => {
+      const method = landingOf(lang).method;
+      expect(method, `${lang}: t.landing.method`).toBeDefined();
+      const steps = method?.steps ?? [];
+      expect(steps.length, `${lang}: method.steps.length`).toBeGreaterThanOrEqual(3);
+      expect(steps.length, `${lang}: method.steps.length`).toBeLessThanOrEqual(4);
+      for (const [i, step] of steps.entries()) {
+        expect(step.n?.length ?? 0, `${lang}: method.steps[${i}].n`).toBeGreaterThan(0);
+        expect(step.t?.length ?? 0, `${lang}: method.steps[${i}].t`).toBeGreaterThan(0);
+        expect(step.d?.length ?? 0, `${lang}: method.steps[${i}].d`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.enjeux exists with 3-4 points (RED until plan 03)`, () => {
+      const enjeux = landingOf(lang).enjeux;
+      expect(enjeux, `${lang}: t.landing.enjeux`).toBeDefined();
+      const points = enjeux?.points ?? [];
+      expect(points.length, `${lang}: enjeux.points.length`).toBeGreaterThanOrEqual(3);
+      expect(points.length, `${lang}: enjeux.points.length`).toBeLessThanOrEqual(4);
+      for (const [i, point] of points.entries()) {
+        expect(point.t?.length ?? 0, `${lang}: enjeux.points[${i}].t`).toBeGreaterThan(0);
+        expect(point.d?.length ?? 0, `${lang}: enjeux.points[${i}].d`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.work gains bridge_title_l1/bridge_title_it/bridge_body (RED until plan 03)`, () => {
+      const work = landingOf(lang).work;
+      expect(work?.bridge_title_l1?.length ?? 0, `${lang}: work.bridge_title_l1`).toBeGreaterThan(0);
+      expect(work?.bridge_title_it?.length ?? 0, `${lang}: work.bridge_title_it`).toBeGreaterThan(0);
+      expect(work?.bridge_body?.length ?? 0, `${lang}: work.bridge_body`).toBeGreaterThan(0);
+    });
+  }
+
+  it('locale parity: problems.items.length, method.steps.length and enjeux.points.length are identical across fr/en/th (RED until plan 03)', () => {
+    const problemsLengths = LANGS.map((lang) => landingOf(lang).problems?.items?.length ?? -1);
+    const methodLengths = LANGS.map((lang) => landingOf(lang).method?.steps?.length ?? -1);
+    const enjeuxLengths = LANGS.map((lang) => landingOf(lang).enjeux?.points?.length ?? -1);
+    expect(new Set(problemsLengths).size, 'problems.items.length parity').toBe(1);
+    expect(new Set(methodLengths).size, 'method.steps.length parity').toBe(1);
+    expect(new Set(enjeuxLengths).size, 'enjeux.points.length parity').toBe(1);
+  });
+
+  for (const lang of LANGS) {
+    it(`${lang}: t.landing.phone no longer declares the removed teaser keys (RED until plan 05)`, () => {
+      const phoneKeys = Object.keys(
+        translations[lang].landing.phone as unknown as Record<string, unknown>
+      );
+      const removed = ['num', 'features', 'cta_demo', 'cta_more', 'flow_label', 'flow_rec', 'flow_steps'];
+      for (const key of removed) {
+        expect(phoneKeys, `${lang}: t.landing.phone should not declare "${key}"`).not.toContain(key);
+      }
+    });
+
+    it(`${lang}: t.landing.phone still declares the surviving teaser keys, non-empty`, () => {
+      const phone = translations[lang].landing.phone as unknown as Record<string, unknown>;
+      for (const key of ['badge', 'title_l1', 'title_l2', 'title_l3_it', 'sub', 'cta_roi']) {
+        const value = phone[key];
+        expect(typeof value === 'string' && value.length > 0, `${lang}: t.landing.phone.${key}`).toBe(true);
+      }
+    });
+  }
+
+  it('section counter integrity: manifeste/problems/servicesPreview/method/enjeux/work/contact are 01/07..07/07 in order, in every locale (RED until plans 03/05)', () => {
+    const expectedPairs: [string, string][] = [
+      ['manifeste', '01 / 07'],
+      ['problems', '02 / 07'],
+      ['servicesPreview', '03 / 07'],
+      ['method', '04 / 07'],
+      ['enjeux', '05 / 07'],
+      ['work', '06 / 07'],
+      ['contact', '07 / 07'],
+    ];
+    for (const lang of LANGS) {
+      const landingRecord = translations[lang].landing as unknown as Record<
+        string,
+        { num?: string } | undefined
+      >;
+      for (const [key, expectedNum] of expectedPairs) {
+        const actualNum = landingRecord[key]?.num;
+        expect(actualNum, `${lang}: t.landing.${key}.num`).toBe(expectedNum);
+      }
+    }
+  });
+
+  for (const lang of LANGS) {
+    it(`${lang}: every string leaf under t.landing is non-empty after trimming`, () => {
+      const leaves = collectStringLeaves(translations[lang].landing, `${lang}.landing`);
+      for (const leaf of leaves) {
+        expect(leaf.value.trim().length, leaf.path).toBeGreaterThan(0);
+      }
+    });
+  }
+});
