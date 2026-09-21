@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-09-21T16:40:32.351Z"
+stopped_at: Phase 8 UI-SPEC approved
+last_updated: "2026-09-21T17:02:59.682Z"
 last_activity: 2026-09-20
 progress:
   total_phases: 5
@@ -85,6 +85,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 
 ## Session Continuity
 
-Last session: 2026-09-21T16:40:32.335Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-landing-simplification-pricing-policy/08-CONTEXT.md
+Last session: 2026-09-21T17:02:59.666Z
+Stopped at: Phase 8 UI-SPEC approved
+Resume file: .planning/phases/08-landing-simplification-pricing-policy/08-UI-SPEC.md
