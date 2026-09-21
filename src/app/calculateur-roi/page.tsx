@@ -19,16 +19,12 @@ const DEFAULTS = {
   margeBrute: 64,
   // Paramètres avancés
   joursMois: 30,
-  prixMensuel: 499,
-  setup: 250,
   facteurInterruption: 1.0,
 };
 
 /* ─── Helpers de formatage (fr-FR) ──────────────────── */
 const fmtEur = (n: number) =>
   new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Math.round(n)) + ' €';
-const fmtMult = (n: number) =>
-  '×' + new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
 const fmtHours = (n: number) =>
   new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(n);
 
@@ -99,24 +95,7 @@ export default function CalculateurRoiPage() {
   const caRecupere = upside ? v.appelsManques * v.ticketMoyen * v.joursMois : 0;
   const margeRecuperee = caRecupere * (v.margeBrute / 100);
 
-  const gainNetSocle = capaciteRecuperee - v.prixMensuel;
-  const ratioSocle = v.prixMensuel > 0 ? capaciteRecuperee / v.prixMensuel : 0;
-  const amortissementMois = gainNetSocle > 0 ? v.setup / gainNetSocle : null;
-
   const beneficeTotal = capaciteRecuperee + margeRecuperee;
-  const ratioTotal = v.prixMensuel > 0 ? beneficeTotal / v.prixMensuel : 0;
-
-  /* ─── Libellé amortissement (toujours basé sur le socle) ─ */
-  let amortLabel: React.ReactNode;
-  let amortNeg = false;
-  if (gainNetSocle <= 0) {
-    amortLabel = "À ce volume, l'agent n'est pas encore rentabilisé.";
-    amortNeg = true;
-  } else if (amortissementMois! < 1) {
-    amortLabel = <>Rentabilisé en <strong>moins d&apos;un mois</strong>.</>;
-  } else {
-    amortLabel = <>Rentabilisé en <strong>~{Math.round(amortissementMois!)} mois</strong>.</>;
-  }
 
   return (
     <>
@@ -232,24 +211,6 @@ export default function CalculateurRoiPage() {
                     suffix="j"
                   />
                   <ControlRow
-                    label="Prix mensuel de la solution"
-                    value={v.prixMensuel}
-                    onChange={set('prixMensuel')}
-                    min={0}
-                    max={2000}
-                    step={1}
-                    suffix="€ / mois"
-                  />
-                  <ControlRow
-                    label="Setup one-shot"
-                    value={v.setup}
-                    onChange={set('setup')}
-                    min={0}
-                    max={2000}
-                    step={10}
-                    suffix="€"
-                  />
-                  <ControlRow
                     label="Facteur d'interruption"
                     value={v.facteurInterruption}
                     onChange={set('facteurInterruption')}
@@ -264,8 +225,8 @@ export default function CalculateurRoiPage() {
 
             {/* ═══ COLONNE RÉSULTATS ═══ */}
             <div className="roi-results">
-              {/* Carte 1 — Capacité récupérée */}
-              <div className="roi-card">
+              {/* Carte 1 — Capacité récupérée (promue en carte principale) */}
+              <div className="roi-card roi-card-main">
                 <div className="roi-card-label">Capacité opérationnelle récupérée</div>
                 <div className="roi-big">
                   {fmtEur(capaciteRecuperee)}
@@ -274,17 +235,6 @@ export default function CalculateurRoiPage() {
                 <p className="roi-card-note">
                   ~{fmtHours(tempsAppelMensuelH)} h/mois d&apos;équipe libérées du téléphone.
                 </p>
-              </div>
-
-              {/* Carte 2 — Principale (SOCLE seul) */}
-              <div className="roi-card roi-card-main">
-                <p className="roi-claim">
-                  Votre agent coûte <strong>{fmtEur(v.prixMensuel)}/mois</strong> et vous en
-                  rapporte <strong>{fmtEur(capaciteRecuperee)}/mois</strong>.
-                </p>
-                <div className="roi-mult">{fmtMult(ratioSocle)}</div>
-                <div className="roi-mult-sub">le coût de la solution</div>
-                <div className={`roi-amort ${amortNeg ? 'neg' : ''}`}>{amortLabel}</div>
               </div>
 
               {/* Carte 3 — Bonus upside (uniquement si toggle ON) */}
@@ -296,7 +246,7 @@ export default function CalculateurRoiPage() {
                     manqués (soit <strong>{fmtEur(margeRecuperee)}</strong> de marge supplémentaire).
                   </p>
                   <div className="roi-bonus-total">
-                    Bénéfice total : {fmtMult(ratioTotal)} le coût de la solution.
+                    Bénéfice total récupéré : <strong>{fmtEur(beneficeTotal)}/mois</strong> (capacité + CA additionnel).
                   </div>
                 </div>
               )}
@@ -304,9 +254,13 @@ export default function CalculateurRoiPage() {
               {/* Mention sous les résultats */}
               <p className="roi-mention">
                 {upside
-                  ? "Le temps récupéré rentabilise déjà l'agent à lui seul. Le CA récupéré vient par-dessus."
+                  ? "Le temps d'équipe récupéré est la donnée mesurée. Le CA récupéré sur les appels manqués vient par-dessus."
                   : "Estimation basée sur le seul temps d'équipe récupéré — donnée mesurée. Le CA récupéré sur les appels manqués est un bonus en plus : activez l'option si la boutique prend des commandes par téléphone."}
               </p>
+
+              <a href="/services/agent-vocal-ia" className="btn btn-primary">
+                Découvrir l&apos;agent vocal IA <span className="ar">→</span>
+              </a>
             </div>
           </div>
         </div>

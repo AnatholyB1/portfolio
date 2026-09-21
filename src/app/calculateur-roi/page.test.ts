@@ -74,11 +74,20 @@ describe('calculateur-roi source audit (PRIX-02)', () => {
     expect(labelIndex, 'capacity label must exist in source').toBeGreaterThan(-1);
 
     const precedingSource = roiSource.slice(0, labelIndex);
-    const lastRoiCardClassIndex = precedingSource.lastIndexOf('roi-card');
+    // Whole-token match: a bare `lastIndexOf('roi-card')` would also match
+    // inside sibling classes that share the "roi-card-" prefix (e.g.
+    // "roi-card-label", "roi-card-note", "roi-card-bonus") but are distinct
+    // CSS classes, not the card wrapper itself. Exclude those with a
+    // negative lookahead so only the standalone "roi-card" wrapper token
+    // counts.
+    const cardTokenMatches = [...precedingSource.matchAll(/\broi-card(?!-)/g)];
+    const lastRoiCardClassIndex = cardTokenMatches.length
+      ? cardTokenMatches[cardTokenMatches.length - 1].index
+      : -1;
     const lastRoiCardMainIndex = precedingSource.lastIndexOf('roi-card roi-card-main');
     expect(
       lastRoiCardClassIndex,
-      'nearest preceding "roi-card" class before the capacity label must be the "-main" occurrence'
+      'nearest preceding "roi-card" class token before the capacity label must be the "-main" occurrence'
     ).toBe(lastRoiCardMainIndex);
   });
 });
