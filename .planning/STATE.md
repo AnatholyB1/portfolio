@@ -4,8 +4,8 @@ milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: executing
 stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-09-21T17:48:18.284Z"
-last_activity: 2026-09-21 -- Phase 08 planning complete
+last_updated: "2026-09-21T17:50:46.244Z"
+last_activity: 2026-09-21 -- Phase 08 execution started
 progress:
   total_phases: 5
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 8 — landing simplification & pricing policy
+**Current focus:** Phase 08 — Landing Simplification & Pricing Policy
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-09-21 -- Phase 08 planning complete
+Phase: 08 (Landing Simplification & Pricing Policy) — EXECUTING
+Plan: 1 of 6
+Status: Executing Phase 08
+Last activity: 2026-09-21 -- Phase 08 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
