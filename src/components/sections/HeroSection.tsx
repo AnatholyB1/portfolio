@@ -206,7 +206,7 @@ export default function HeroSection() {
             </h1>
             <p className="hero-sub" data-reveal data-reveal-delay="2">{tl.hero.sub}</p>
             <div className="hero-ctas" data-reveal data-reveal-delay="3">
-              <a className="btn btn-primary" href="/services">
+              <a className="btn btn-primary" href="/simulateur">
                 {tl.hero.cta_primary} <span className="ar">→</span>
               </a>
               <a className="btn btn-ghost" href="#contact">{tl.hero.cta_secondary}</a>
