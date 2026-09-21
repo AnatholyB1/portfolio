@@ -49,7 +49,7 @@ export default function Realisations() {
           })}
         </div>
 
-        <a href="/services" className="work-bridge" data-reveal>
+        <a href="/simulateur" className="work-bridge" data-reveal>
           <div>
             <span
               className="mono"
@@ -57,8 +57,8 @@ export default function Realisations() {
             >
               —— PROCHAINE ÉTAPE
             </span>
-            <h3>Voir toutes nos <em className="it acid">offres &amp; tarifs</em></h3>
-            <p>Quatre formules, des prix publics et un devis sous 48h. Vous trouverez probablement ce qu&apos;il vous faut.</p>
+            <h3>{w.bridge_title_l1} <em className="it acid">{w.bridge_title_it}</em></h3>
+            <p>{w.bridge_body}</p>
           </div>
           <span className="bridge-arrow">→</span>
         </a>
