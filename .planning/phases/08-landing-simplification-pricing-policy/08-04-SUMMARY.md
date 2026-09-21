@@ -107,3 +107,7 @@ None. All three components render entirely from existing, populated `t.landing.*
 ---
 *Phase: 08-landing-simplification-pricing-policy*
 *Completed: 2026-09-21*
+
+## Self-Check: PASSED
+
+All created files verified present on disk (ServicesPreview.tsx, FonctionnementSection.tsx, EnjeuxSection.tsx, globals.css, this SUMMARY.md). All three task commits (3440506, 9302840) plus the metadata commit (e796bcf) confirmed present in `git log`.
