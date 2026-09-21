@@ -97,16 +97,6 @@ export interface Translations {
     work: string;
   };
   services: {
-    hero: {
-      badge: string;
-      title_l1: string;
-      title_l2: string;
-      title_l3_it: string;
-      sub: string;
-      cta_audit: string;
-      cta_offers: string;
-      meta: { k: string; v: string }[];
-    };
     problem: {
       num: string;
       title_l1: string;
@@ -122,16 +112,6 @@ export interface Translations {
       intro: string;
       benefits: string[];
       cards: { t: string; d: string }[];
-    };
-    offers: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      from: string;
-      popular: string;
-      cta: string;
-      items: { name: string; tagline: string; price: string; description: string; features: string[] }[];
     };
     pages: {
       index: { badge: string; title_l1: string; title_l2_it: string; sub: string; num: string; intro: string; cardCta: string };
@@ -156,17 +136,6 @@ export interface Translations {
       steps: { label: string; desc: string }[];
       cta: string;
       cta_roi: string;
-    };
-    maintenance: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      recommended: string;
-      per_month: string;
-      currency: string;
-      packs: { name: string; price: string; description: string; features: string[]; popular?: boolean; priceNote?: string }[];
-      perks: string[];
     };
     upsell: {
       num: string;
@@ -324,20 +293,6 @@ const fr: Translations = {
     work: 'Réalisations',
   },
   services: {
-    hero: {
-      badge: "OFFRES & TARIFS — 2026",
-      title_l1: "Sites,",
-      title_l2: "outils,",
-      title_l3_it: "agents.",
-      sub: "Des solutions clés en main pour les commerces, restaurants et services qui veulent gagner en crédibilité, libérer du temps et capter plus de clients.",
-      cta_audit: "Réserver un audit gratuit",
-      cta_offers: "Voir les offres",
-      meta: [
-        { k: "Délai moyen", v: "3 à 6 semaines" },
-        { k: "Engagement", v: "Aucun" },
-        { k: "Devis", v: "Sous 48h" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "Ce que ça vous",
@@ -368,21 +323,6 @@ const fr: Translations = {
         { t: "Orienté résultats", d: "Chaque élément est pensé pour convertir." },
         { t: "Partenaire long terme", d: "Un accompagnement qui ne s'arrête pas à la mise en ligne." },
         { t: "Qualité premium", d: "Technologies modernes, design soigné." },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "Nos",
-      title_l2_it: "offres.",
-      intro: "Quatre formules adaptées à chaque étape de votre croissance. Le prix est public, le devis arrive sous 48h.",
-      from: "À partir de",
-      popular: "Le plus demandé",
-      cta: "Demander un devis",
-      items: [
-        { name: "Landing Page", tagline: "L'essentiel pour être visible", price: "1 200 – 1 800 €", description: "Une présence en ligne claire et professionnelle pour démarrer.", features: ["Design moderne et personnalisé", "Adapté mobile et tablette", "Présentation claire de vos services", "Formulaire de contact", "Intégration Google Maps", "SEO local de base", "Mise en ligne incluse"] },
-        { name: "Rebranding + Site Premium", tagline: "Transformez votre image", price: "2 500 – 4 000 €", description: "Modernisez complètement votre image et renforcez votre crédibilité.", features: ["Audit de votre image actuelle", "Modernisation du logo", "Nouvelle palette de couleurs", "Typographies professionnelles", "Mini charte graphique", "Nouveau site cohérent", "Formation utilisation"] },
-        { name: "Projet Sur Mesure", tagline: "Vos besoins spécifiques", price: "Sur devis", description: "Pour les projets qui nécessitent des fonctionnalités avancées.", features: ["Site multi-pages complet", "Boutique en ligne", "Système de réservation", "Fonctionnalités spécifiques", "Refonte complète", "Intégrations personnalisées", "Accompagnement dédié"] },
-        { name: "Agent Vocal IA", tagline: "Votre téléphone, automatisé", price: "À partir de 990 €", description: "Un agent téléphonique intelligent qui répond, qualifie et enregistre — 24h/24.", features: ["Setup VAPI + numéro Twilio", "Voix ElevenLabs ultra-naturelle", "Connexion CRM via MCP", "1 scénario métier sur mesure", "1 mois de support inclus"] },
       ],
     },
     pages: {
@@ -778,21 +718,6 @@ const fr: Translations = {
       cta: "Tester la démo live",
       cta_roi: "Calculer le ROI",
     },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "Maintenance",
-      title_l2_it: "& hébergement.",
-      intro: "Votre site reste performant, sécurisé et à jour. Vous n'avez rien à gérer. Trois formules, sans engagement.",
-      recommended: "Recommandé",
-      per_month: "/mois",
-      currency: "€",
-      packs: [
-        { name: "Essentiel", price: "49", description: "L'indispensable pour un site sécurisé et fonctionnel.", features: ["Hébergement haute performance", "Nom de domaine inclus", "Certificat SSL (https)", "Sauvegardes automatiques", "Monitoring 24/7", "Mises à jour techniques", "Support par email"] },
-        { name: "Business", price: "79", popular: true, description: "Pour les entreprises qui évoluent.", features: ["Tout du pack Essentiel", "1h de modification par mois", "Optimisation des performances", "Rapport mensuel simplifié", "Temps de réponse prioritaire"] },
-        { name: "Premium", price: "129", priceNote: "+", description: "Tranquillité totale et croissance continue.", features: ["Tout du pack Business", "2h de modifications par mois", "Sécurité renforcée", "Optimisation SEO continue", "Assistance prioritaire", "Conseils stratégiques mensuels"] },
-      ],
-      perks: ["−10% si paiement annuel", "Sans engagement", "Évolutif selon vos besoins"],
-    },
     upsell: {
       num: "06 / 09",
       title_l1: "Options",
@@ -1145,20 +1070,6 @@ const en: Translations = {
     work: 'Work',
   },
   services: {
-    hero: {
-      badge: "OFFERS & PRICES — 2026",
-      title_l1: "Sites,",
-      title_l2: "tools,",
-      title_l3_it: "agents.",
-      sub: "Turnkey solutions for shops, restaurants and services that want to build credibility, free up time and capture more customers.",
-      cta_audit: "Book a free audit",
-      cta_offers: "See offers",
-      meta: [
-        { k: "Average timeline", v: "3 to 6 weeks" },
-        { k: "Commitment", v: "None" },
-        { k: "Quote", v: "Within 48h" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "What it",
@@ -1182,21 +1093,6 @@ const en: Translations = {
         { t: "Results-driven", d: "Every element is built to convert." },
         { t: "Long-term partner", d: "Support that does not stop at launch." },
         { t: "Premium quality", d: "Modern technologies, refined design." },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "Our",
-      title_l2_it: "offers.",
-      intro: "Four formulas for each stage of your growth. The price is public, the quote lands within 48h.",
-      from: "Starting from",
-      popular: "Most requested",
-      cta: "Request a quote",
-      items: [
-        { name: "Landing Page", tagline: "The essentials to be visible", price: "$1,300 – $2,000", description: "A clear, professional online presence to get started.", features: ["Modern and custom design", "Mobile and tablet friendly", "Clear presentation of services", "Contact form", "Google Maps integration", "Basic local SEO", "Deployment included"] },
-        { name: "Rebranding + Premium Site", tagline: "Transform your image", price: "$2,750 – $4,400", description: "Completely modernise your image and strengthen your credibility.", features: ["Image audit", "Logo modernisation", "New colour palette", "Professional typography", "Mini brand guidelines", "New consistent site", "Basic usage training"] },
-        { name: "Custom Project", tagline: "Your specific needs", price: "On request", description: "For projects that require advanced features.", features: ["Full multi-page site", "Online shop (e-commerce)", "Booking system", "Specific features", "Full website redesign", "Custom integrations", "Dedicated support"] },
-        { name: "AI Voice Agent", tagline: "Your phone, automated", price: "From €990", description: "An intelligent phone agent that answers, qualifies and records — 24/7.", features: ["VAPI + Twilio setup", "Ultra-natural ElevenLabs voice", "CRM connection via MCP", "1 custom scenario", "1 month of support"] },
       ],
     },
     pages: {
@@ -1592,21 +1488,6 @@ const en: Translations = {
       cta: "Try the live demo",
       cta_roi: "Calculate the ROI",
     },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "Maintenance",
-      title_l2_it: "& hosting.",
-      intro: "Your site stays fast, secure, up to date. You manage nothing. Three plans, no commitment.",
-      recommended: "Recommended",
-      per_month: "/month",
-      currency: "$",
-      packs: [
-        { name: "Essential", price: "55", description: "The essentials for a secure, functional site.", features: ["High-performance hosting", "Domain name included", "SSL certificate (https)", "Automatic backups", "24/7 monitoring", "Technical updates", "Email support"] },
-        { name: "Business", price: "87", popular: true, description: "For businesses on the move.", features: ["Everything in Essential", "1h of changes per month", "Performance tuning", "Monthly summary report", "Priority response time"] },
-        { name: "Premium", price: "140", priceNote: "+", description: "Total peace of mind and continuous growth.", features: ["Everything in Business", "2h of changes per month", "Enhanced security", "Ongoing SEO optimisation", "Priority support", "Monthly strategic advice"] },
-      ],
-      perks: ["−10% for annual payment", "No commitment", "Adaptable to your needs"],
-    },
     upsell: {
       num: "06 / 09",
       title_l1: "Available",
@@ -1959,20 +1840,6 @@ const th: Translations = {
     work: 'ผลงาน',
   },
   services: {
-    hero: {
-      badge: "บริการ & ราคา — 2026",
-      title_l1: "เว็บไซต์",
-      title_l2: "เครื่องมือ",
-      title_l3_it: "AI agents.",
-      sub: "โซลูชันครบวงจรสำหรับร้านค้า ร้านอาหาร และบริการที่ต้องการสร้างความน่าเชื่อถือ ประหยัดเวลา และเพิ่มลูกค้า",
-      cta_audit: "ขอตรวจสอบฟรี",
-      cta_offers: "ดูบริการ",
-      meta: [
-        { k: "ระยะเวลาเฉลี่ย", v: "3 ถึง 6 สัปดาห์" },
-        { k: "พันธะ", v: "ไม่มี" },
-        { k: "ใบเสนอราคา", v: "ภายใน 48ชม" },
-      ],
-    },
     problem: {
       num: "01 / 09",
       title_l1: "สิ่งที่",
@@ -1996,21 +1863,6 @@ const th: Translations = {
         { t: "มุ่งเน้นผลลัพธ์", d: "ทุกองค์ประกอบออกแบบเพื่อการแปลง" },
         { t: "พันธมิตรระยะยาว", d: "การสนับสนุนที่ไม่หยุดแค่การเปิดตัว" },
         { t: "คุณภาพระดับพรีเมียม", d: "เทคโนโลยีทันสมัย ดีไซน์ประณีต" },
-      ],
-    },
-    offers: {
-      num: "03 / 09",
-      title_l1: "บริการ",
-      title_l2_it: "ของเรา",
-      intro: "สี่แพ็กเกจสำหรับทุกขั้นของการเติบโต ราคาเปิดเผย ใบเสนอราคาส่งภายใน 48ชม",
-      from: "เริ่มต้นที่",
-      popular: "ได้รับความนิยม",
-      cta: "ขอใบเสนอราคา",
-      items: [
-        { name: "Landing Page", tagline: "สิ่งจำเป็นเพื่อการมองเห็น", price: "45,000 – 70,000 ฿", description: "การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพสำหรับการเริ่มต้น", features: ["ดีไซน์ทันสมัยและกำหนดเอง", "รองรับมือถือและแท็บเล็ต", "นำเสนอบริการของคุณอย่างชัดเจน", "แบบฟอร์มติดต่อ", "ผสาน Google Maps", "SEO ท้องถิ่น", "รวมการเปิดตัว"] },
-        { name: "Rebranding + เว็บพรีเมียม", tagline: "เปลี่ยนภาพลักษณ์", price: "100,000 – 155,000 ฿", description: "ปรับปรุงภาพลักษณ์ทั้งหมดและเสริมความน่าเชื่อถือ", features: ["ตรวจสอบภาพลักษณ์", "ปรับปรุงโลโก้", "ชุดสีใหม่", "ฟอนต์มืออาชีพ", "แนวทางแบรนด์", "เว็บไซต์ใหม่", "การฝึกอบรม"] },
-        { name: "โปรเจกต์กำหนดเอง", tagline: "ความต้องการเฉพาะ", price: "ตามการประเมิน", description: "สำหรับโปรเจกต์ที่ต้องการฟีเจอร์ขั้นสูง", features: ["เว็บหลายหน้า", "ร้านค้าออนไลน์", "ระบบการจอง", "ฟีเจอร์เฉพาะ", "ออกแบบใหม่ทั้งหมด", "การผสานกำหนดเอง", "การสนับสนุนเฉพาะ"] },
-        { name: "AI Voice Agent", tagline: "โทรศัพท์ของคุณ อัตโนมัติ", price: "เริ่มต้นที่ 990 €", description: "ตัวแทนโทรศัพท์อัจฉริยะ ตอบ คัดกรอง บันทึก 24ชม", features: ["ตั้งค่า VAPI + Twilio", "เสียง ElevenLabs ธรรมชาติ", "เชื่อม CRM ผ่าน MCP", "1 สถานการณ์กำหนดเอง", "รองรับ 1 เดือน"] },
       ],
     },
     pages: {
@@ -2405,21 +2257,6 @@ const th: Translations = {
       ],
       cta: "ลองเดโม",
       cta_roi: "คำนวณ ROI",
-    },
-    maintenance: {
-      num: "05 / 09",
-      title_l1: "บำรุงรักษา",
-      title_l2_it: "& โฮสติ้ง",
-      intro: "เว็บไซต์คุณทำงานเร็ว ปลอดภัย ทันสมัย คุณไม่ต้องจัดการอะไร สามแพ็กเกจ ไม่มีพันธะ",
-      recommended: "แนะนำ",
-      per_month: "/เดือน",
-      currency: "฿",
-      packs: [
-        { name: "Essential", price: "1,900", description: "สิ่งจำเป็นเพื่อเว็บที่ปลอดภัยและใช้งานได้", features: ["โฮสติ้งประสิทธิภาพสูง", "รวมโดเมน", "SSL (https)", "สำรองข้อมูลอัตโนมัติ", "ตรวจสอบ 24/7", "อัพเดตเทคนิค", "สนับสนุนทางอีเมล"] },
-        { name: "Business", price: "3,100", popular: true, description: "สำหรับธุรกิจที่เติบโต", features: ["ทุกอย่างใน Essential", "1ชม แก้ไข/เดือน", "เพิ่มประสิทธิภาพ", "รายงานรายเดือน", "ตอบสนองด่วน"] },
-        { name: "Premium", price: "4,990", priceNote: "+", description: "ความสงบและการเติบโตต่อเนื่อง", features: ["ทุกอย่างใน Business", "2ชม แก้ไข/เดือน", "ความปลอดภัยเพิ่ม", "SEO ต่อเนื่อง", "สนับสนุนด่วน", "คำแนะนำเชิงกลยุทธ์รายเดือน"] },
-      ],
-      perks: ["−10% หากชำระรายปี", "ไม่มีพันธะ", "ปรับได้ตามความต้องการ"],
     },
     upsell: {
       num: "06 / 09",
