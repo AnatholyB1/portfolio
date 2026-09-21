@@ -146,8 +146,27 @@ Plans:
   4. Every CTA on the landing page routes to the simulator or to direct contact (téléphone/email) — none points to a price or price anchor
   5. The landing's social proof section shows Feuillette, Gecko Cabane, and Les Folies Temps Danse as visible testimonials/case studies
 
-**Plans**: TBD
+**Plans**: 6 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+
+- [ ] 08-01-PLAN.md — Wave 0 guards: PRIX-01 landing/services price regression tests + source-string audits for layout.tsx, calculateur-roi and the landing CTA allowlist
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 08-02-PLAN.md — Pricing removal: /calculateur-roi stripped to a value calculator (D-01/D-02/D-03) + priceRange deleted from the global JSON-LD (D-09)
+- [ ] 08-03-PLAN.md — i18n content fr/en/th: t.landing.problems / servicesPreview / method / enjeux / work.bridge_*, new hero CTA label, 01/07 counter + deletion of the 3 orphaned price-carrying sections
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 08-04-PLAN.md — New landing sections: ServicesPreview (9 data-driven cards + .svc-preview-grid), FonctionnementSection, EnjeuxSection
+- [ ] 08-05-PLAN.md — Existing components: hero CTA → /simulateur, ProblemSection repurposed + CTA (D-04..D-06), bridge rewrite (D-10), PhoneAgent teaser reduction (D-07/D-08)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 08-06-PLAN.md — Final page.tsx composition in LANDING-01 order, full-suite/build/price-sweep gate, human verification
 
 ### Phase 9: SEO & Discovery Wiring
 
@@ -177,5 +196,5 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete   | 2026-09-20 |
-| 8. Landing Simplification & Pricing Policy | v1.1 | 0/TBD | Not started | - |
+| 8. Landing Simplification & Pricing Policy | v1.1 | 0/6 | Planned | - |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
