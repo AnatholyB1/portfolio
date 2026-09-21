@@ -167,7 +167,6 @@ export default function RootLayout({
       },
       geoRadius: "50000",
     },
-    priceRange: "€€",
     openingHours: "Mo-Fr 09:00-18:00",
   };
 
