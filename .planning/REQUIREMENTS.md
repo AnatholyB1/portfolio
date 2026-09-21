@@ -7,8 +7,8 @@
 
 ### PRIX (politique tarifaire)
 
-- [ ] **PRIX-01**: Aucun prix, fourchette de prix, ou mention tarifaire n'est affiché sur les 9 pages de service, la landing, ou le simulateur
-- [ ] **PRIX-02**: Le calculateur ROI (`/calculateur-roi`) n'affiche plus de prix (contradiction directe avec PRIX-01 sinon)
+- [x] **PRIX-01**: Aucun prix, fourchette de prix, ou mention tarifaire n'est affiché sur les 9 pages de service, la landing, ou le simulateur
+- [x] **PRIX-02**: Le calculateur ROI (`/calculateur-roi`) n'affiche plus de prix (contradiction directe avec PRIX-01 sinon)
 
 ### SVC (pages de service, 9 au total)
 
@@ -39,9 +39,9 @@
 
 ### LANDING (landing simplifiée)
 
-- [ ] **LANDING-01**: La landing suit l'ordre : problèmes résolus → aperçu des services (cartes renvoyant vers chaque page dédiée) → fonctionnement → enjeux → preuve sociale → CTA
-- [ ] **LANDING-02**: Tous les CTA de la landing renvoient vers le simulateur ou le contact direct (téléphone/email) — aucun CTA ne pointe vers un prix ou une ancre de prix
-- [ ] **LANDING-03**: La preuve sociale réutilise les réalisations existantes (Feuillette, Gecko Cabane, Les Folies Temps Danse) comme témoignages/études de cas visibles sur la landing
+- [x] **LANDING-01**: La landing suit l'ordre : problèmes résolus → aperçu des services (cartes renvoyant vers chaque page dédiée) → fonctionnement → enjeux → preuve sociale → CTA
+- [x] **LANDING-02**: Tous les CTA de la landing renvoient vers le simulateur ou le contact direct (téléphone/email) — aucun CTA ne pointe vers un prix ou une ancre de prix
+- [x] **LANDING-03**: La preuve sociale réutilise les réalisations existantes (Feuillette, Gecko Cabane, Les Folies Temps Danse) comme témoignages/études de cas visibles sur la landing
 
 ### SEO (intégration stratégie SEO/GEO/AEO)
 
@@ -84,8 +84,8 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRIX-01 | Phase 8 | Pending |
-| PRIX-02 | Phase 8 | Pending |
+| PRIX-01 | Phase 8 | Complete |
+| PRIX-02 | Phase 8 | Complete |
 | SVC-01 | Phase 6 | Complete |
 | SVC-02 | Phase 6 | Complete |
 | SVC-03 | Phase 6 | Complete |
@@ -104,9 +104,9 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 | CRM-02 | Phase 5 | Complete |
 | CRM-03 | Phase 5 | Complete |
 | CRM-04 | Phase 5 | Complete |
-| LANDING-01 | Phase 8 | Pending |
-| LANDING-02 | Phase 8 | Pending |
-| LANDING-03 | Phase 8 | Pending |
+| LANDING-01 | Phase 8 | Complete |
+| LANDING-02 | Phase 8 | Complete |
+| LANDING-03 | Phase 8 | Complete |
 | SEO-01 | Phase 9 | Pending |
 | SEO-02 | Phase 9 | Pending |
 | SEO-03 | Phase 9 | Pending |

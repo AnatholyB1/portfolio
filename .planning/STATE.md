@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: executing
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-09-21T17:50:46.244Z"
+status: ready_to_plan
+stopped_at: Phase 8 complete (6/6) — ready to discuss Phase 9
+last_updated: 2026-09-21T19:33:52.117Z
 last_activity: 2026-09-21 -- Phase 08 execution started
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 23
-  completed_plans: 17
+  completed_plans: 23
   percent: 60
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 08 — Landing Simplification & Pricing Policy
+**Current focus:** Phase 9 — seo & discovery wiring
 
 ## Current Position
 
-Phase: 08 (Landing Simplification & Pricing Policy) — EXECUTING
-Plan: 1 of 6
-Status: Executing Phase 08
-Last activity: 2026-09-21 -- Phase 08 execution started
+Phase: 9
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-21
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -36,7 +36,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Velocity:**
 
-- Total plans completed: 22 (v1.0 only)
+- Total plans completed: 28 (v1.0 only)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 
@@ -48,6 +48,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 2 | 4 | ~20 min | ~5 min |
 | 6 | 7 | - | - |
 | 07 | 6 | - | - |
+| 8 | 6 | - | - |
 
 **Recent Trend:**
 

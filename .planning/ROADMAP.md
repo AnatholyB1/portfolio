@@ -26,7 +26,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 - [x] **Phase 5: Prospect Capture Backend** - New Supabase prospects table + insert-only RLS + spam guard + Resend notification, built and testable independently of any UI (completed 2026-09-20)
 - [x] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services` (completed 2026-09-20)
 - [x] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA (completed 2026-09-20)
-- [ ] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi)
+- [x] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi) (completed 2026-09-21)
 - [ ] **Phase 9: SEO & Discovery Wiring** - Sitemap/llms.txt entries, per-offer schema.org Service objects, and a broken-link audit for the new route structure
 
 ## Phase Details
@@ -152,21 +152,21 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 08-01-PLAN.md — Wave 0 guards: PRIX-01 landing/services price regression tests + source-string audits for layout.tsx, calculateur-roi and the landing CTA allowlist
+- [x] 08-01-PLAN.md — Wave 0 guards: PRIX-01 landing/services price regression tests + source-string audits for layout.tsx, calculateur-roi and the landing CTA allowlist
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 08-02-PLAN.md — Pricing removal: /calculateur-roi stripped to a value calculator (D-01/D-02/D-03) + priceRange deleted from the global JSON-LD (D-09)
-- [ ] 08-03-PLAN.md — i18n content fr/en/th: t.landing.problems / servicesPreview / method / enjeux / work.bridge_*, new hero CTA label, 01/07 counter + deletion of the 3 orphaned price-carrying sections
+- [x] 08-02-PLAN.md — Pricing removal: /calculateur-roi stripped to a value calculator (D-01/D-02/D-03) + priceRange deleted from the global JSON-LD (D-09)
+- [x] 08-03-PLAN.md — i18n content fr/en/th: t.landing.problems / servicesPreview / method / enjeux / work.bridge_*, new hero CTA label, 01/07 counter + deletion of the 3 orphaned price-carrying sections
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 08-04-PLAN.md — New landing sections: ServicesPreview (9 data-driven cards + .svc-preview-grid), FonctionnementSection, EnjeuxSection
-- [ ] 08-05-PLAN.md — Existing components: hero CTA → /simulateur, ProblemSection repurposed + CTA (D-04..D-06), bridge rewrite (D-10), PhoneAgent teaser reduction (D-07/D-08)
+- [x] 08-04-PLAN.md — New landing sections: ServicesPreview (9 data-driven cards + .svc-preview-grid), FonctionnementSection, EnjeuxSection
+- [x] 08-05-PLAN.md — Existing components: hero CTA → /simulateur, ProblemSection repurposed + CTA (D-04..D-06), bridge rewrite (D-10), PhoneAgent teaser reduction (D-07/D-08)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 08-06-PLAN.md — Final page.tsx composition in LANDING-01 order, full-suite/build/price-sweep gate, human verification
+- [x] 08-06-PLAN.md — Final page.tsx composition in LANDING-01 order, full-suite/build/price-sweep gate, human verification
 
 ### Phase 9: SEO & Discovery Wiring
 
@@ -196,5 +196,5 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 5. Prospect Capture Backend | v1.1 | 4/4 | Complete   | 2026-09-20 |
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete   | 2026-09-20 |
-| 8. Landing Simplification & Pricing Policy | v1.1 | 0/6 | Planned | - |
+| 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete    | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 0/TBD | Not started | - |
