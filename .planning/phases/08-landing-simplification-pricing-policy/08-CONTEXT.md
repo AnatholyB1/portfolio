@@ -31,6 +31,20 @@ Restructure the landing page around PME pain-points → services (instead of bei
 - **D-09:** Remove the global `priceRange: "€€"` field from the `ProfessionalService` JSON-LD block in `src/app/layout.tsx` (line ~170) in this phase — it renders on every page including the landing, service pages, and simulator, so it falls within PRIX-01's "no price/tariff mention" scope even though it's schema markup rather than visible text. This is a distinct, already-existing field from the per-service `Service.priceRange` question the Phase 6 context flagged for Phase 9 — that one is about new objects Phase 9 will add, not this one.
 - **D-10:** Rewrite `Realisations.tsx`'s bridge block (the "Voir toutes nos offres & tarifs" / "Quatre formules, des prix publics et un devis sous 48h" copy right after the case-study list) to point to `/simulateur` instead of `/services`, with new copy that drops every price/tariff/"formules" mention (also fixes the stale "Quatre formules" — there are 9 offers now, not 4).
 
+### LANDING-02 scope clarification (post-planning)
+
+Added 2026-09-21 after plan-checker review of the Phase 8 plan set. **Not new scope** — this records explicitly what D-02, D-06 and D-08 already settled during `/gsd:discuss-phase 8`, so `/gsd:verify-work` does not re-raise it as an unconfirmed interpretive gap.
+
+- **D-11:** LANDING-02's literal wording ("every landing CTA → simulateur or direct contact", = **class A** in 08-UI-SPEC.md's CTA Destination Table) has exactly two confirmed, intentional exceptions — both routing to `/services/agent-vocal-ia`, both classified **class B**:
+  1. The calculateur-ROI results CTA (**D-02**).
+  2. The reduced `PhoneAgent.tsx` teaser CTA (**D-08**).
+
+  Rationale, confirmed with the user at discuss time and restated here for the audit trail: `/services/agent-vocal-ia` is itself price-free (Phase 6) and already carries its own simulateur/contact CTAs, so the visitor still reaches the simulator/contact funnel one hop later. Both surfaces are agent-vocal-specific, so routing through the dedicated service page preserves qualification context that a direct jump to `/simulateur` would discard. Locked decisions outrank literal requirement text; LANDING-02 is satisfied by class A + class B together.
+
+- **D-12:** The "aperçu des services" 9-card grid required by **LANDING-01** ("cartes renvoyant vers chaque page dédiée") links each card to its own `/services/{slug}` page. These per-card links are **class C** — service-preview *navigation*, not landing conversion CTAs — and are therefore outside LANDING-02's scope. They are a different section from the D-04/D-05 problem cards, which per **D-06** carry no per-card links at all and funnel through a single bottom CTA to `/simulateur` (class A).
+
+  Verification consequence: the `ALLOWED_HREFS` / `ALLOWED_HREF_PREFIXES` / `SLUG_TEMPLATE_HREF` allowlist in `src/app/page.test.ts` (plan 08-01, task 3) is the authoritative encoding of D-11/D-12. Do not "correct" it to a literal simulateur/contact-only check — a failure there means a real regression, not a too-permissive allowlist.
+
 ### Claude's Discretion
 - Exact wording of the 3-4 problem cards (D-05) and the section's intro/title copy.
 - Exact new headline/labels for the calculator's remaining "Capacité récupérée" card now that the price-comparison framing is gone (D-01).
@@ -112,3 +126,4 @@ None — the single matching todo was fully folded into this phase's decisions (
 
 *Phase: 8-landing-simplification-pricing-policy*
 *Context gathered: 2026-09-21*
+*Amended 2026-09-21: added D-11/D-12 (LANDING-02 scope clarification) after plan-checker review*

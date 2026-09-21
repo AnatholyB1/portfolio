@@ -292,7 +292,12 @@ it('PRIX-01: no priceRange field in global JSON-LD', () => {
 
 **If this table is empty:** N/A — see above; both entries are LOW-MEDIUM risk interpretation questions, not unverified factual claims (all file/content claims in this document were confirmed by direct `Read`/`Grep` against the actual repository, not by training-data recall).
 
-## Open Questions
+## Open Questions (RESOLVED — see 08-UI-SPEC.md)
+
+**Resolution status (added 2026-09-21, post-planning):** all four questions below are resolved; they are retained verbatim for the audit trail.
+
+- **#1 and #2** — resolved by `08-UI-SPEC.md`'s CTA Destination Table (which states "Resolves RESEARCH.md Open Questions #1 and #2"): `HeroSection.tsx`'s primary CTA is repointed to `/simulateur` (class A, plan 08-05), and the two `/services/agent-vocal-ia` destinations locked by D-02/D-08 are confirmed class-B exceptions to LANDING-02's literal wording. Now also recorded explicitly as **D-11** in `08-CONTEXT.md`.
+- **#3 and #4** — resolved by `08-UI-SPEC.md`'s section-order spec (which states "Resolves RESEARCH.md Open Questions #3 and #4"): the services overview survives as its own distinct 9-card `ServicesPreview` grid with per-card `/services/{slug}` links (class C, now **D-12** in `08-CONTEXT.md`), separate from the D-04-D-06 problem section; and "fonctionnement"/"enjeux" become distinct new `FonctionnementSection.tsx` / `EnjeuxSection.tsx` components rather than being absorbed loosely into `Manifeste`/`PhoneAgent` (plan 08-04, composed in plan 08-06).
 
 1. **Does `HeroSection.tsx`'s primary CTA (`/services`, "Voir nos offres") need to change under LANDING-02?**
    - What we know: It is a landing-page CTA, not mentioned anywhere in 08-CONTEXT.md, and its current destination (`/services`) is neither `/simulateur` nor direct contact.
