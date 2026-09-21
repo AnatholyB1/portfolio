@@ -229,12 +229,44 @@ export interface Translations {
       p3: string;
       p4: string;
     };
+    problems: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      items: { n: string; title: string; desc: string }[];
+      good_news: string;
+      cta: string;
+    };
+    servicesPreview: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+    };
     work: {
       num: string;
       title_l1: string;
       title_l2_it: string;
       intro: string;
       items: { name: string; desc: string; tags: string[]; year: string }[];
+      bridge_title_l1: string;
+      bridge_title_it: string;
+      bridge_body: string;
+    };
+    method: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      steps: { n: string; t: string; d: string }[];
+    };
+    enjeux: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      intro: string;
+      points: { t: string; d: string }[];
     };
     phone: {
       num: string;
@@ -956,7 +988,7 @@ const fr: Translations = {
       title_l2_it: 'travaillent',
       title_l3: 'pour vos clients.',
       sub: "On conçoit des sites, des outils de gestion et des agents IA pour les commerces, restaurants et services. Pas du sur-mesure inutile : ce qui vous fait gagner du temps, des appels et des ventes.",
-      cta_primary: 'Voir nos offres',
+      cta_primary: 'Lancer le diagnostic',
       cta_secondary: 'Discutons de votre projet',
       stat_1_n: '06', stat_1_l: 'Partenaires actifs', stat_1_d: 'Restaurants, écoles, indépendants',
       stat_2_n: '24h', stat_2_l: 'Première réponse', stat_2_d: 'Audit téléphonique offert',
@@ -966,7 +998,7 @@ const fr: Translations = {
       canvas_r: 'ROTATION · 0.4 RPM',
     },
     manifeste: {
-      num: '01 / 05',
+      num: '01 / 07',
       title_l1: 'Sites, outils,',
       title_l2_it: 'agents.',
       intro: "Trois choses qu'on fait — pour une seule chose qu'on vise.",
@@ -976,8 +1008,28 @@ const fr: Translations = {
       p3: "Aujourd'hui, on construit surtout des agents IA — phone agents qui répondent à vos clients, assistants qui prennent les commandes, automatisations qui font le boulot pendant que vous vivez.",
       p4: "Demain, on construira ce dont vous aurez besoin. Le métier reste le même : faire des outils utiles.",
     },
+    problems: {
+      num: '02 / 07',
+      title_l1: 'Ce qui vous',
+      title_l2_it: 'fait perdre des clients.',
+      intro: "Quatre situations qui reviennent chez presque toutes les PME qu'on rencontre.",
+      items: [
+        { n: '01', title: 'Invisible en ligne', desc: "Un client tape votre activité sur Google et tombe sur vos concurrents avant même de vous trouver. Chaque jour sans présence claire, c'est du monde qui part ailleurs." },
+        { n: '02', title: 'Personne ne répond au téléphone', desc: "Un appel manqué pendant le rush, c'est une commande ou une réservation qui part chez le concurrent d'à côté. Ça arrive plus souvent qu'on ne le pense." },
+        { n: '03', title: 'Une image dépassée', desc: 'Logo, site, réseaux : quand tout date d\'une autre époque, un nouveau client hésite avant même le premier échange.' },
+        { n: '04', title: 'Pas le temps de gérer les réseaux', desc: "Entre le quotidien et les clients sur place, les réseaux sociaux passent en dernier — alors que c'est souvent là que les nouveaux clients regardent en premier." },
+      ],
+      good_news: "La bonne nouvelle : chacun de ces problèmes a une solution simple, sans devoir tout changer d'un coup.",
+      cta: 'Tester le diagnostic',
+    },
+    servicesPreview: {
+      num: '03 / 07',
+      title_l1: 'Neuf façons',
+      title_l2_it: 'de vous aider.',
+      intro: 'Chaque service a sa page dédiée : le problème qu\'il résout, comment on procède, et ce que ça change pour vous.',
+    },
     work: {
-      num: '02 / 05',
+      num: '06 / 07',
       title_l1: 'Quelques',
       title_l2_it: 'réalisations.',
       intro: 'Six partenaires, six métiers différents, une même méthode : on règle un vrai problème métier.',
@@ -986,6 +1038,33 @@ const fr: Translations = {
         { name: 'Gecko Cabane', desc: 'Site vitrine + réservation pour restaurant. Charte sur-mesure, hébergement managé.', tags: ['SITE', 'RESA'], year: '2024' },
         { name: 'Les Folies Temps Danse', desc: "Plateforme inscription école de danse — outils de gestion intégrés.", tags: ['WEB', 'GESTION'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio professionnel — design éditorial, intégration soignée.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
+      ],
+      bridge_title_l1: 'Quel service',
+      bridge_title_it: 'vous correspond ?',
+      bridge_body: "Deux minutes de diagnostic pour savoir exactement ce qu'il vous faut.",
+    },
+    method: {
+      num: '04 / 07',
+      title_l1: 'Comment',
+      title_l2_it: 'on travaille.',
+      intro: "Un déroulé simple, du premier échange au suivi dans la durée.",
+      steps: [
+        { n: '01', t: 'Diagnostic', d: 'On fait le point sur votre activité et ce qui vous freine aujourd\'hui, en quelques questions ciblées.' },
+        { n: '02', t: 'Proposition sur mesure', d: 'Vous recevez une recommandation claire des services adaptés à votre situation, sans jargon.' },
+        { n: '03', t: 'Déploiement', d: "On met en place la solution retenue, à votre rythme, avec des points d'étape réguliers." },
+        { n: '04', t: 'Suivi & support', d: 'On reste disponibles après la mise en ligne pour ajuster et répondre à vos questions.' },
+      ],
+    },
+    enjeux: {
+      num: '05 / 07',
+      title_l1: 'Ce qui est',
+      title_l2_it: 'en jeu.',
+      intro: 'Ne rien faire a aussi un effet — juste moins visible au quotidien.',
+      points: [
+        { t: 'Vos concurrents captent la recherche locale', d: 'Pendant que vous hésitez, ceux qui ont déjà une présence claire raflent les recherches Google de vos futurs clients.' },
+        { t: 'Les appels manqués s\'accumulent', d: "Un appel manqué isolé ne semble rien. Multiplié sur l'année, c'est un volume de commandes qui a filé ailleurs." },
+        { t: 'Votre image perd en crédibilité', d: "Une identité qui ne bouge pas pendant que le marché évolue finit par sembler dépassée, même si le service reste excellent." },
+        { t: 'Les réseaux sociaux vous échappent', d: "Sans présence régulière, l'audience qui s'y forme se construit ailleurs, chez ceux qui prennent le temps d'y être." },
       ],
     },
     phone: {
@@ -1025,7 +1104,7 @@ const fr: Translations = {
       ],
     },
     contact: {
-      num: '05 / 05',
+      num: '07 / 07',
       title_l1: 'Un projet ?',
       title_l2_it: 'Parlons-en.',
       sub: "On répond sous 24h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes et ce qui aurait du sens.",
