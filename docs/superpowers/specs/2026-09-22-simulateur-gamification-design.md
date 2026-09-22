@@ -21,6 +21,10 @@ Hors périmètre :
 - Vrai modal/bottom-sheet séparé pour le budget (voir Composants → Rendu du budget)
 - Tout changement au backend Phase 5 (`src/app/api/simulateur/route.ts`, `prospects-schema.ts`) — non modifiable
 
+**Deux contraintes verrouillées découvertes pendant l'écriture du plan (confirmées avec l'utilisateur) :**
+1. `translations.test.ts` (SIMU-06/SIMU-08) interdit tout symbole monétaire ou mot de prix (`€`, `$`, `£`, `฿`, "prix", "tarifs", "euros", "devis", "gratuit"...) n'importe où dans `t.simulateur`, toutes locales confondues — politique "jamais de prix affiché" déjà en place depuis la Phase 8. Les libellés de la question budget doivent donc être **qualitatifs, jamais numériques/monétaires** (voir section i18n, mis à jour).
+2. `questions.test.ts` verrouille `QUESTIONS.length` entre 3 et 5 (D-02, décision Phase 7). Ajouter `budget` comme 6ᵉ question nécessite de faire passer cette borne à 6 **consciemment** — traité comme une extension délibérée de D-02, pas une régression, et documenté comme tel dans le test.
+
 ---
 
 ## Bug mobile — diagnostic
@@ -130,17 +134,19 @@ Nouvelle branche selon `question.variant` (défaut `'cards'` si absent) :
 
 ## i18n (`src/lib/translations.ts` — fr, en, th)
 
-Nouvelle entrée dans les 3 locales, même forme que les questions existantes. Copie FR de référence (EN/TH à traduire à l'identique du reste du fichier, même ton que les questions existantes) :
+Nouvelle entrée dans les 3 locales, même forme que les questions existantes. **Labels qualitatifs uniquement — aucun chiffre, aucun symbole monétaire** (contrainte SIMU-06/SIMU-08, voir Périmètre). Les identifiants internes (`'budget-0-500'`, etc.) gardent des chiffres dans leur nom de `value` — ce sont des clés internes de `questions.ts`, jamais rendues à l'écran, donc hors de portée de `PRICE_PATTERN`/`SIMU_PRICE_PATTERN` (qui ne scannent que `translations.ts`).
+
+Copie FR de référence (EN/TH à traduire à l'identique du reste du fichier, même ton que les questions existantes) :
 
 ```ts
 budget: {
-  text: 'Quel budget envisagez-vous pour ce projet ?',
-  hint: 'Une fourchette suffit — elle nous aide à cadrer une recommandation réaliste.',
+  text: 'Quel budget avez-vous en tête pour ce projet ?',
+  hint: 'Une estimation suffit — elle nous aide à cadrer une recommandation réaliste.',
   options: {
-    'budget-0-500': '0 € – 500 €',
-    'budget-500-1500': '500 € – 1 500 €',
-    'budget-1500-3000': '1 500 € – 3 000 €',
-    'budget-3000-plus': '3 000 € et plus',
+    'budget-0-500': 'Budget serré, je découvre les options',
+    'budget-500-1500': 'Budget modéré, prêt à investir raisonnablement',
+    'budget-1500-3000': 'Budget confortable, je veux un vrai résultat',
+    'budget-3000-plus': 'Budget conséquent, sans limite stricte',
   },
 },
 ```
@@ -151,9 +157,10 @@ Aucun changement de copie pour `presence-en-ligne` / `site-fiabilite` / `priorit
 
 ## Tests
 
-- `questions.test.ts` : cas pour `budget` (présence des 4 options, `weights` corrects, absence de `severity`).
+- `questions.test.ts` : borne D-02 (`QUESTIONS.length` entre 3 et 5) relevée à 6, avec commentaire documentant l'extension délibérée ; `LOCKED_QUESTION_IDS` et les fixtures `FULL_PATH_ANSWERS`/`SKIPPED_PATH_ANSWERS` mises à jour pour inclure `budget` ; cas pour `budget` (présence des 4 options, `weights` corrects, absence de `severity`).
 - `scoring.test.ts` : une réponse `budget` contribue à `computeRecommendedServices` mais jamais à `computeVisualScore`.
-- `wizardSteps.test.ts` / `wizardContract.test.ts` : mise à jour des fixtures de comptage (5 → 6 questions applicables par défaut) ; `progressRatio`/`applicableQuestionIds` restent corrects sans changement de logique.
+- `wizardSteps.test.ts` : `FULL_PATH_ANSWERS`/`SKIPPED_PATH_ANSWERS` gagnent une réponse `budget`, sinon `progressRatio` ne vaut plus 1 une fois "tout" répondu (5 → 6 questions applicables par défaut) ; `progressRatio`/`applicableQuestionIds` restent corrects sans changement de logique.
+- `translations.test.ts` : la nouvelle entrée `budget` dans les 3 locales doit passer le test existant "no price, tariff, currency or free-of-charge language" sans modification du test lui-même — c'est une contrainte que la copie doit respecter, pas l'inverse.
 - Nouveau test Wizard (rendu) : interaction sur le slider `variant: 'range'` → la valeur stockée correspond au palier sélectionné ; rendu `variant: 'mood'` → sélection change bien `aria-checked` ; rendu `variant: 'cards'` → icône affichée quand `option.icon` est défini, absente sinon (pas de crash).
 - `styles.test.ts` (si existant couvre des assertions de classes CSS) : vérifier que les nouvelles classes (`sim-option-icon-grid`, `sim-mood-row`, `sim-range-*`) sont bien appliquées selon le variant.
 
