@@ -21,6 +21,15 @@ const REQUIRED_SELECTORS = [
   '.sim-option:hover',
   '.sim-option.selected',
   '.sim-option:focus-visible',
+  '.sim-option-icon',
+  '.sim-mood-row',
+  '.sim-mood-option',
+  '.sim-mood-option.selected',
+  '.sim-mood-option:focus-visible',
+  '.sim-mood-icon',
+  '.sim-range-wrap',
+  '.sim-range-value',
+  '.sim-range-input',
   '.sim-nav',
   '.sim-nav .btn',
   '.sim-contact-sub',
@@ -77,5 +86,24 @@ describe('globals.css simulateur layer', () => {
     for (const block of gaugeBlocks) {
       expect(block).not.toContain('--warm');
     }
+  });
+
+  // Mobile overflow fix (2026-09-22): .sim-rgpd .row must collapse to a
+  // single column under 480px instead of forcing a fixed 180px key column
+  // that pushes long values off-screen.
+  it('collapses .sim-rgpd .row to one column under 480px', () => {
+    const mediaBlocks = css.match(/@media \(max-width:\s*480px\)\s*\{[\s\S]*?\n\}/g) ?? [];
+    const hasRowFix = mediaBlocks.some(
+      (block) => block.includes('.sim-rgpd .row') && block.includes('grid-template-columns: 1fr')
+    );
+    expect(hasRowFix).toBe(true);
+  });
+
+  // Mobile overflow fix (2026-09-22): .sim-q-text must scale down instead
+  // of staying fixed at 32px, which overflowed narrow viewports.
+  it('scales .sim-q-text with clamp() instead of a fixed font-size', () => {
+    const match = css.match(/\.sim-q-text\s*\{[^}]*\}/);
+    expect(match).not.toBeNull();
+    expect(match?.[0]).toMatch(/font-size:\s*clamp\(/);
   });
 });
