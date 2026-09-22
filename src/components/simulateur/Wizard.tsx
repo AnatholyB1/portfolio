@@ -15,6 +15,7 @@ import { canSubmit, buildProspectPayload } from '@/lib/simulateur/submit';
 import { computeRecommendedServices, computeVisualScore, scoreBand } from '@/lib/simulateur/scoring';
 import { getServiceBySlug } from '@/data/services';
 import ScoreGauge from '@/components/simulateur/ScoreGauge';
+import { SIM_ICONS } from '@/components/simulateur/icons';
 
 // Same off-screen technique as .sim-honeypot (globals.css), but WITHOUT
 // aria-hidden — this text must be announced by assistive tech, so it
@@ -160,6 +161,11 @@ export default function Wizard() {
         ? Array.isArray(stored?.value) && stored.value.includes(optionValue)
         : stored?.value === optionValue;
 
+    const variant = question.variant ?? 'cards';
+    const selectedRangeIndex = Math.max(0, question.options.findIndex((o) => o.value === stored?.value));
+    const rangeCurrentLabel =
+      t.simulateur.questions[question.id].options[question.options[selectedRangeIndex].value];
+
     return (
       <div className="sim-wizard">
         {progressBar(progressRatio(answers))}
@@ -173,27 +179,68 @@ export default function Wizard() {
           {t.simulateur.questions[question.id].text}
         </h2>
         <p className="svc-body">{t.simulateur.questions[question.id].hint}</p>
-        <div
-          className="sim-options"
-          role={question.type === 'multi' ? 'group' : 'radiogroup'}
-          aria-labelledby={headingId}
-        >
-          {question.options.map((option) => {
-            const selected = isSelected(option.value);
-            return (
-              <button
-                key={option.value}
-                type="button"
-                role={question.type === 'multi' ? 'checkbox' : 'radio'}
-                aria-checked={selected}
-                className={'sim-option' + (selected ? ' selected' : '')}
-                onClick={() => toggleOption(option.value)}
-              >
-                {t.simulateur.questions[question.id].options[option.value]}
-              </button>
-            );
-          })}
-        </div>
+        {variant === 'range' ? (
+          <div className="sim-range-wrap">
+            <p className="sim-range-value">{rangeCurrentLabel}</p>
+            <input
+              type="range"
+              className="sim-range-input"
+              min={0}
+              max={question.options.length - 1}
+              step={1}
+              value={selectedRangeIndex}
+              aria-labelledby={headingId}
+              aria-valuetext={rangeCurrentLabel}
+              onChange={(e) =>
+                setAnswer(question.id)(question.options[Number(e.target.value)].value)
+              }
+            />
+          </div>
+        ) : variant === 'mood' ? (
+          <div className="sim-mood-row" role="radiogroup" aria-labelledby={headingId}>
+            {question.options.map((option) => {
+              const selected = isSelected(option.value);
+              const Icon = option.icon ? SIM_ICONS[option.icon] : null;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  className={'sim-mood-option' + (selected ? ' selected' : '')}
+                  onClick={() => toggleOption(option.value)}
+                >
+                  {Icon && <Icon className="sim-mood-icon" aria-hidden="true" />}
+                  <span>{t.simulateur.questions[question.id].options[option.value]}</span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div
+            className="sim-options"
+            role={question.type === 'multi' ? 'group' : 'radiogroup'}
+            aria-labelledby={headingId}
+          >
+            {question.options.map((option) => {
+              const selected = isSelected(option.value);
+              const Icon = option.icon ? SIM_ICONS[option.icon] : null;
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  role={question.type === 'multi' ? 'checkbox' : 'radio'}
+                  aria-checked={selected}
+                  className={'sim-option' + (selected ? ' selected' : '')}
+                  onClick={() => toggleOption(option.value)}
+                >
+                  {Icon && <Icon className="sim-option-icon" aria-hidden="true" />}
+                  {t.simulateur.questions[question.id].options[option.value]}
+                </button>
+              );
+            })}
+          </div>
+        )}
         <div className="sim-nav">
           {clampedStepIndex > 0 && (
             <button
