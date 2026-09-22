@@ -162,15 +162,31 @@ export default function Wizard() {
         : stored?.value === optionValue;
 
     const variant = question.variant ?? 'cards';
-    const selectedRangeIndex = Math.max(0, question.options.findIndex((o) => o.value === stored?.value));
-    // Before the visitor has touched the slider, `hasAnswer` is false even though a range
-    // input always has SOME numeric value (defaults to index 0) — showing that option's
-    // label as if selected would misrepresent an untouched control as an answered one, for
-    // both sighted users and screen readers (aria-valuetext). Show a neutral placeholder
-    // instead until there's a real stored answer.
+    // Untouched state parks the thumb at the midpoint rather than index 0. This matters
+    // beyond cosmetics: a controlled range input's `onChange` only fires when the value
+    // actually CHANGES. If the default sat on index 0 and the visitor's honest answer WAS
+    // index 0, they could click/tap the already-correctly-positioned thumb, or press Home
+    // on an already-leftmost slider, and no event would ever fire — no answer would ever be
+    // recorded, and "Next" would stay disabled forever with no visible reason. Parking at
+    // the midpoint means every one of the 4 stops requires an actual move to reach naturally
+    // — but see the onPointerUp/onKeyUp commit below, which is the real fix: it commits
+    // whatever value is currently showing on ANY interaction release, even a no-op one, so
+    // clicking-without-moving still records an answer no matter which index that lands on.
+    const rangeNeutralIndex = Math.floor((question.options.length - 1) / 2);
+    const selectedRangeIndex = hasAnswer
+      ? Math.max(0, question.options.findIndex((o) => o.value === stored?.value))
+      : rangeNeutralIndex;
+    // Before the visitor has interacted with the slider, `hasAnswer` is false even though a
+    // range input always has SOME numeric value — showing that option's label as if selected
+    // would misrepresent an untouched control as an answered one, for both sighted users and
+    // screen readers (aria-valuetext). Show a neutral placeholder instead until there's a
+    // real stored answer.
     const rangeCurrentLabel = hasAnswer
       ? t.simulateur.questions[question.id].options[question.options[selectedRangeIndex].value]
       : t.simulateur.rangePlaceholder;
+    const commitRangeValue = (index: number) => setAnswer(question.id)(question.options[index].value);
+    const rangeOptionIcon = question.options[selectedRangeIndex].icon;
+    const RangeIcon = rangeOptionIcon ? SIM_ICONS[rangeOptionIcon] : null;
 
     return (
       <div className="sim-wizard">
@@ -187,7 +203,10 @@ export default function Wizard() {
         <p className="svc-body">{t.simulateur.questions[question.id].hint}</p>
         {variant === 'range' ? (
           <div className="sim-range-wrap">
-            <p className="sim-range-value">{rangeCurrentLabel}</p>
+            <p className="sim-range-value">
+              {RangeIcon && <RangeIcon className="sim-option-icon" aria-hidden="true" />}
+              {rangeCurrentLabel}
+            </p>
             <input
               type="range"
               className="sim-range-input"
@@ -201,9 +220,15 @@ export default function Wizard() {
               // not just on blur/commit — this already gives the live drag feedback the
               // design spec asked for (it called for "onInput, not just onChange", written
               // with vanilla-DOM semantics in mind where the two differ; in React they don't).
-              onChange={(e) =>
-                setAnswer(question.id)(question.options[Number(e.target.value)].value)
-              }
+              // onChange alone is NOT enough to guarantee an answer gets recorded, though:
+              // if the visitor's very first interaction doesn't change the numeric value
+              // (e.g. clicking the thumb without dragging it, or a keypress that's a no-op at
+              // a boundary), onChange never fires at all. onPointerUp/onKeyUp commit whatever
+              // value is currently showing on release, regardless of whether it changed, so
+              // "I clicked where the thumb already was" still counts as a real answer.
+              onChange={(e) => commitRangeValue(Number(e.target.value))}
+              onPointerUp={(e) => commitRangeValue(Number(e.currentTarget.value))}
+              onKeyUp={(e) => commitRangeValue(Number(e.currentTarget.value))}
             />
           </div>
         ) : variant === 'mood' ? (

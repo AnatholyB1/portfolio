@@ -759,7 +759,8 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .sim-mood-icon { width: 28px; height: 28px; color: var(--ink-dim); }
 
 .sim-range-wrap { display: grid; gap: 16px; }
-.sim-range-value { font-family: var(--font-display), serif; font-weight: 500; font-size: 24px; text-align: center; color: var(--ink); margin: 0; }
+.sim-range-value { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-display), serif; font-weight: 500; font-size: 24px; text-align: center; color: var(--ink); margin: 0; }
+.sim-range-value .sim-option-icon { width: 24px; height: 24px; color: var(--acid); }
 .sim-range-input { width: 100%; height: 44px; accent-color: var(--acid); cursor: pointer; }
 .sim-range-input:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
 

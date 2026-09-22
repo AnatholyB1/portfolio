@@ -12,7 +12,7 @@ describe('SIM_ICONS', () => {
     }
   });
 
-  it('every icon referenced in SIM_ICONS is a function (a real Lucide component, not undefined)', () => {
+  it('every SIM_ICONS value is a defined component object (not undefined)', () => {
     for (const [name, Icon] of Object.entries(SIM_ICONS)) {
       expect(typeof Icon, `SIM_ICONS.${name}`).toBe('object');
     }
