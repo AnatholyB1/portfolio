@@ -28,7 +28,7 @@ describe('buildStepSequence', () => {
   it.each([
     ['empty answers', EMPTY_ANSWERS],
     ['full 6-question path', FULL_PATH_ANSWERS],
-    ['4-question skipped path', SKIPPED_PATH_ANSWERS],
+    ['5-question skipped path', SKIPPED_PATH_ANSWERS],
   ])('SIMU-04: %s contains exactly one contact step and one result step', (_label, answers) => {
     const sequence = buildStepSequence(answers);
     expect(sequence.filter((s) => s.kind === 'contact')).toHaveLength(1);
