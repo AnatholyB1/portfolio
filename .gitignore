@@ -44,3 +44,8 @@ graphify-out/
 
 # git worktrees (superpowers:using-git-worktrees)
 .worktrees/
+
+# local Claude Code / tooling state (agent worktrees, settings, caches)
+.claude/
+.superpowers/
+.graphify_uncached.txt
