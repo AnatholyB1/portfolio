@@ -48,11 +48,16 @@ export interface QuestionOption {
   value: string;
   weights: Partial<Record<ServiceSlug, number>>;
   severity?: number;
+  /** Lucide icon name (e.g. "Frown"), resolved in src/components/simulateur/icons.ts.
+   *  This file imports nothing from React/lucide on purpose — icons live here only as strings. */
+  icon?: string;
 }
 
 export interface Question {
   id: string;
   type: 'single' | 'multi';
+  /** Controls ONLY how Wizard.tsx renders the options — never scoring. Defaults to 'cards'. */
+  variant?: 'cards' | 'mood' | 'range';
   options: QuestionOption[];
   showIf?: (answers: Answer[]) => boolean;
 }
@@ -220,6 +225,42 @@ export const QUESTIONS: Question[] = [
         value: 'changer-d-image',
         severity: 50,
         weights: { branding: 4, 'rebranding-site-premium': 2 },
+      },
+    ],
+  },
+  {
+    // Budget-qualifying question, added 2026-09-22 (D-02 extended). No
+    // `severity` — like `secteur`, budget nudges service weight only, it
+    // never measures an unmet need (07-RESEARCH.md Pitfall 1 still applies:
+    // do not add a severity here later without re-reading that doc).
+    //
+    // Labels shown to the visitor MUST stay qualitative — never a number or
+    // currency symbol. translations.test.ts enforces this site-wide
+    // (SIMU-06/SIMU-08); the numbers below exist only in `value` (an
+    // internal id, never rendered).
+    id: 'budget',
+    type: 'single',
+    variant: 'range',
+    options: [
+      {
+        value: 'budget-0-500',
+        icon: 'Coins',
+        weights: { 'site-vitrine': 2, maintenance: 2 },
+      },
+      {
+        value: 'budget-500-1500',
+        icon: 'Wallet',
+        weights: { 'site-vitrine': 2, 'meta-ads': 1, 'community-management': 1 },
+      },
+      {
+        value: 'budget-1500-3000',
+        icon: 'CreditCard',
+        weights: { 'rebranding-site-premium': 2, 'google-ads': 1, branding: 1 },
+      },
+      {
+        value: 'budget-3000-plus',
+        icon: 'Landmark',
+        weights: { 'projet-sur-mesure': 3, 'rebranding-site-premium': 1 },
       },
     ],
   },

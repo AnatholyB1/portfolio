@@ -13,6 +13,7 @@ const LOCKED_QUESTION_IDS = [
   'site-fiabilite',
   'frictions',
   'priorite',
+  'budget',
 ] as const;
 
 const FULL_PATH_ANSWERS: Answer[] = [
@@ -21,6 +22,7 @@ const FULL_PATH_ANSWERS: Answer[] = [
   { questionId: 'site-fiabilite', value: 'quelques-alertes' },
   { questionId: 'frictions', value: ['appels-manques'] },
   { questionId: 'priorite', value: 'etre-trouve' },
+  { questionId: 'budget', value: 'budget-500-1500' },
 ];
 
 const SKIPPED_PATH_ANSWERS: Answer[] = [
@@ -28,6 +30,7 @@ const SKIPPED_PATH_ANSWERS: Answer[] = [
   { questionId: 'presence-en-ligne', value: 'inexistante' },
   { questionId: 'frictions', value: ['appels-manques'] },
   { questionId: 'priorite', value: 'etre-trouve' },
+  { questionId: 'budget', value: 'budget-500-1500' },
 ];
 
 describe('QUESTIONS', () => {
@@ -35,10 +38,14 @@ describe('QUESTIONS', () => {
     expect(QUESTIONS.map((q) => q.id)).toEqual([...LOCKED_QUESTION_IDS]);
   });
 
-  // D-02
-  it('D-02: has between 3 and 5 questions', () => {
+  // D-02, extended deliberately (2026-09-22): the diagnostic gained a 6th
+  // question (budget) by explicit product decision — see
+  // docs/superpowers/specs/2026-09-22-simulateur-gamification-design.md.
+  // The original Phase 7 cap was 5; this is a conscious one-time bump, not
+  // a regression.
+  it('D-02 (extended): has between 3 and 6 questions', () => {
     expect(QUESTIONS.length).toBeGreaterThanOrEqual(3);
-    expect(QUESTIONS.length).toBeLessThanOrEqual(5);
+    expect(QUESTIONS.length).toBeLessThanOrEqual(6);
   });
 
   it('every question id is unique', () => {
