@@ -10,6 +10,7 @@ const FULL_PATH_ANSWERS: Answer[] = [
   { questionId: 'site-fiabilite', value: 'quelques-alertes' },
   { questionId: 'frictions', value: ['appels-manques'] },
   { questionId: 'priorite', value: 'etre-trouve' },
+  { questionId: 'budget', value: 'budget-500-1500' },
 ];
 
 const SKIPPED_PATH_ANSWERS: Answer[] = [
@@ -17,6 +18,7 @@ const SKIPPED_PATH_ANSWERS: Answer[] = [
   { questionId: 'presence-en-ligne', value: 'inexistante' },
   { questionId: 'frictions', value: ['appels-manques'] },
   { questionId: 'priorite', value: 'etre-trouve' },
+  { questionId: 'budget', value: 'budget-500-1500' },
 ];
 
 const PARTIAL_ANSWERS: Answer[] = [{ questionId: 'secteur', value: 'commerce-local' }];
@@ -25,7 +27,7 @@ describe('buildStepSequence', () => {
   // SIMU-04
   it.each([
     ['empty answers', EMPTY_ANSWERS],
-    ['full 5-question path', FULL_PATH_ANSWERS],
+    ['full 6-question path', FULL_PATH_ANSWERS],
     ['4-question skipped path', SKIPPED_PATH_ANSWERS],
   ])('SIMU-04: %s contains exactly one contact step and one result step', (_label, answers) => {
     const sequence = buildStepSequence(answers);
