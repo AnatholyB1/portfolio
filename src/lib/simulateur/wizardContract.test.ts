@@ -108,4 +108,24 @@ describe('Wizard.tsx source contract (SIMU-03/04/05/06/07)', () => {
     expect(nameMatches.length).toBe(1);
     expect(SOURCE).toMatch(/aria-hidden/);
   });
+
+  // Variant rendering (added 2026-09-22): the mood row must expose a
+  // radiogroup/radio ARIA structure (a mood question is always
+  // type: 'single' today — see questions.ts — so this only needs to hold
+  // for that shape), and the range slider must announce its current
+  // qualitative label rather than the raw numeric index to assistive tech.
+  it('Variant rendering: mood row uses radiogroup/radio roles, range input exposes aria-valuetext', () => {
+    expect(SOURCE).toMatch(/className="sim-mood-row"[\s\S]{0,40}role="radiogroup"/);
+    expect(SOURCE).toMatch(/role="radio"/);
+    expect(SOURCE).toMatch(/type="range"/);
+    expect(SOURCE).toMatch(/aria-valuetext=\{rangeCurrentLabel\}/);
+  });
+
+  // Variant rendering: every icon lookup must go through SIM_ICONS, never
+  // a raw lucide-react import inline in this file — keeps the pure-data/
+  // React coupling confined to src/components/simulateur/icons.ts.
+  it('Variant rendering: icon lookups go through SIM_ICONS, no direct lucide-react import beyond the table', () => {
+    expect(SOURCE).toMatch(/import \{ SIM_ICONS \} from '@\/components\/simulateur\/icons';/);
+    expect(SOURCE).not.toMatch(/from 'lucide-react'/);
+  });
 });

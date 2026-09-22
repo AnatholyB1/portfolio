@@ -106,6 +106,24 @@ describe('computeRecommendedServices', () => {
     }
   });
 
+  // budget (added 2026-09-22, D-02 extended) must feed weights like every
+  // other question — proven by comparing two runs that differ only in
+  // which budget tier was selected.
+  it('budget: a higher-tier answer shifts weight toward higher-tier services', () => {
+    const base: Answer[] = [{ questionId: 'secteur', value: 'autre' }];
+    const lowBudget = computeRecommendedServices([
+      ...base,
+      { questionId: 'budget', value: 'budget-0-500' },
+    ]);
+    const highBudget = computeRecommendedServices([
+      ...base,
+      { questionId: 'budget', value: 'budget-3000-plus' },
+    ]);
+
+    expect(highBudget).toContain('projet-sur-mesure');
+    expect(lowBudget).not.toEqual(highBudget);
+  });
+
   // D-04: a multi-select `frictions` answer must contribute every
   // selected option's weights, not just the first entry of the array.
   it('D-04: a multi-select frictions answer contributes every selected option, not just the first', () => {
@@ -188,6 +206,17 @@ describe('computeVisualScore', () => {
     ]);
     const withoutSector = computeVisualScore([{ questionId: 'presence-en-ligne', value: 'solide' }]);
     expect(withSector).toBe(withoutSector);
+  });
+
+  // budget (added 2026-09-22, D-02 extended) has no severity, like secteur
+  // — same reasoning, same guard.
+  it('budget answers do not move the score', () => {
+    const withBudget = computeVisualScore([
+      { questionId: 'budget', value: 'budget-3000-plus' },
+      { questionId: 'presence-en-ligne', value: 'solide' },
+    ]);
+    const withoutBudget = computeVisualScore([{ questionId: 'presence-en-ligne', value: 'solide' }]);
+    expect(withBudget).toBe(withoutBudget);
   });
 
   it('returns 50 when no severity-bearing option is selected', () => {
