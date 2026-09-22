@@ -842,6 +842,16 @@ const fr: Translations = {
           'changer-d-image': "Changer d'image",
         },
       },
+      'budget': {
+        text: 'Quel budget avez-vous en tête pour ce projet ?',
+        hint: 'Une estimation suffit — elle nous aide à cadrer une recommandation réaliste.',
+        options: {
+          'budget-0-500': 'Budget serré, je découvre les options',
+          'budget-500-1500': 'Budget modéré, prêt à investir raisonnablement',
+          'budget-1500-3000': 'Budget confortable, je veux un vrai résultat',
+          'budget-3000-plus': 'Budget conséquent, sans limite stricte',
+        },
+      },
     },
     contact: {
       heading: 'Où vous envoyer votre diagnostic ?',
@@ -1596,6 +1606,16 @@ const en: Translations = {
           'changer-d-image': "Changing my image",
         },
       },
+      'budget': {
+        text: "What budget do you have in mind for this project?",
+        hint: "A rough estimate is enough — it helps us shape a realistic recommendation.",
+        options: {
+          'budget-0-500': "Tight budget, just exploring options",
+          'budget-500-1500': "Moderate budget, ready to invest reasonably",
+          'budget-1500-3000': "Comfortable budget, I want real results",
+          'budget-3000-plus': "Substantial budget, no strict ceiling",
+        },
+      },
     },
     contact: {
       heading: "Where should we send your diagnostic?",
@@ -2348,6 +2368,16 @@ const th: Translations = {
           'convertir-plus': "เปลี่ยนผู้เข้าชมให้เป็นลูกค้ามากขึ้น",
           'gagner-du-temps': "ประหยัดเวลาในแต่ละวัน",
           'changer-d-image': "เปลี่ยนภาพลักษณ์",
+        },
+      },
+      'budget': {
+        text: "คุณมีงบประมาณเท่าไหร่สำหรับโปรเจกต์นี้?",
+        hint: "ประมาณคร่าวๆ ก็เพียงพอ ช่วยให้เราเสนอแนะได้อย่างเหมาะสม",
+        options: {
+          'budget-0-500': "งบจำกัด กำลังสำรวจตัวเลือกอยู่",
+          'budget-500-1500': "งบปานกลาง พร้อมลงทุนตามความเหมาะสม",
+          'budget-1500-3000': "งบสบายๆ ต้องการผลลัพธ์ที่จับต้องได้จริง",
+          'budget-3000-plus': "งบสูง ไม่มีเพดานตายตัว",
         },
       },
     },
