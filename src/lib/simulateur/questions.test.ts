@@ -158,3 +158,42 @@ describe('isQuestionApplicable', () => {
     expect(isQuestionApplicable(siteFiabilite, answers)).toBe(true);
   });
 });
+
+describe('icon and variant metadata', () => {
+  it('presence-en-ligne and site-fiabilite are mood-variant Likert scales, priorite stays cards', () => {
+    const moodIds = ['presence-en-ligne', 'site-fiabilite'];
+    for (const id of moodIds) {
+      const q = QUESTIONS.find((question) => question.id === id);
+      expect(q?.variant, id).toBe('mood');
+    }
+    const priorite = QUESTIONS.find((question) => question.id === 'priorite');
+    expect(priorite?.variant ?? 'cards').toBe('cards');
+  });
+
+  it('every option on secteur, frictions, priorite, presence-en-ligne, site-fiabilite and budget declares an icon', () => {
+    const idsRequiringIcons = [
+      'secteur',
+      'frictions',
+      'priorite',
+      'presence-en-ligne',
+      'site-fiabilite',
+      'budget',
+    ];
+    for (const id of idsRequiringIcons) {
+      const q = QUESTIONS.find((question) => question.id === id);
+      expect(q, id).toBeDefined();
+      for (const option of q!.options) {
+        expect(option.icon, `${id}/${option.value}`).toBeTruthy();
+      }
+    }
+  });
+
+  it('budget has exactly 4 options and none declares a severity', () => {
+    const budget = QUESTIONS.find((q) => q.id === 'budget');
+    expect(budget).toBeDefined();
+    expect(budget!.options).toHaveLength(4);
+    for (const option of budget!.options) {
+      expect(option.severity, `budget/${option.value}`).toBeUndefined();
+    }
+  });
+});

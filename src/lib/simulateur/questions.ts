@@ -74,26 +74,32 @@ export const QUESTIONS: Question[] = [
     options: [
       {
         value: 'commerce-local',
+        icon: 'Store',
         weights: { 'site-vitrine': 1, 'meta-ads': 1, 'community-management': 1 },
       },
       {
         value: 'restauration-hotellerie',
+        icon: 'UtensilsCrossed',
         weights: { 'agent-vocal-ia': 2, 'site-vitrine': 1, 'community-management': 1 },
       },
       {
         value: 'artisan-btp',
+        icon: 'HardHat',
         weights: { 'site-vitrine': 1, 'google-ads': 2, 'agent-vocal-ia': 1 },
       },
       {
         value: 'services-pro',
+        icon: 'Briefcase',
         weights: { 'rebranding-site-premium': 1, 'google-ads': 1, branding: 1 },
       },
       {
         value: 'sante-bien-etre',
+        icon: 'HeartPulse',
         weights: { 'agent-vocal-ia': 2, 'site-vitrine': 1, maintenance: 1 },
       },
       {
         value: 'autre',
+        icon: 'MoreHorizontal',
         weights: { 'site-vitrine': 1, 'projet-sur-mesure': 1 },
       },
     ],
@@ -102,24 +108,29 @@ export const QUESTIONS: Question[] = [
     // D-03: Likert-style severity/satisfaction scale, not a yes/no gate.
     id: 'presence-en-ligne',
     type: 'single',
+    variant: 'mood',
     options: [
       {
         value: 'inexistante',
+        icon: 'Frown',
         severity: 95,
         weights: { 'site-vitrine': 4, branding: 2, 'google-ads': 1 },
       },
       {
         value: 'datee',
+        icon: 'Meh',
         severity: 75,
         weights: { 'rebranding-site-premium': 4, branding: 2, 'site-vitrine': 1 },
       },
       {
         value: 'correcte',
+        icon: 'Smile',
         severity: 45,
         weights: { 'meta-ads': 2, 'community-management': 2, maintenance: 1 },
       },
       {
         value: 'solide',
+        icon: 'PartyPopper',
         severity: 15,
         weights: { 'meta-ads': 2, 'google-ads': 2, 'projet-sur-mesure': 1 },
       },
@@ -133,6 +144,7 @@ export const QUESTIONS: Question[] = [
     // on `presence-en-ligne`.
     id: 'site-fiabilite',
     type: 'single',
+    variant: 'mood',
     showIf: (answers) => {
       const presence = answers.find((a) => a.questionId === 'presence-en-ligne');
       return presence?.value !== 'inexistante';
@@ -140,21 +152,25 @@ export const QUESTIONS: Question[] = [
     options: [
       {
         value: 'jamais-touche',
+        icon: 'Frown',
         severity: 90,
         weights: { maintenance: 4, 'rebranding-site-premium': 2 },
       },
       {
         value: 'bugs-frequents',
+        icon: 'Meh',
         severity: 80,
         weights: { maintenance: 4, 'projet-sur-mesure': 1 },
       },
       {
         value: 'quelques-alertes',
+        icon: 'Smile',
         severity: 50,
         weights: { maintenance: 3 },
       },
       {
         value: 'suivi-regulier',
+        icon: 'PartyPopper',
         severity: 15,
         weights: { 'projet-sur-mesure': 1 },
       },
@@ -167,36 +183,43 @@ export const QUESTIONS: Question[] = [
     options: [
       {
         value: 'appels-manques',
+        icon: 'PhoneMissed',
         severity: 80,
         weights: { 'agent-vocal-ia': 4 },
       },
       {
         value: 'pas-assez-de-demandes',
+        icon: 'TrendingDown',
         severity: 75,
         weights: { 'google-ads': 3, 'meta-ads': 3, 'site-vitrine': 1 },
       },
       {
         value: 'image-depassee',
+        icon: 'ImageOff',
         severity: 70,
         weights: { branding: 3, 'rebranding-site-premium': 3 },
       },
       {
         value: 'site-lent-ou-casse',
+        icon: 'Wrench',
         severity: 85,
         weights: { maintenance: 3, 'rebranding-site-premium': 2 },
       },
       {
         value: 'reseaux-inactifs',
+        icon: 'Users',
         severity: 45,
         weights: { 'community-management': 4 },
       },
       {
         value: 'taches-repetitives',
+        icon: 'Repeat',
         severity: 70,
         weights: { 'projet-sur-mesure': 3, 'agent-vocal-ia': 2 },
       },
       {
         value: 'rien-de-bloquant',
+        icon: 'CircleCheck',
         severity: 10,
         weights: { maintenance: 2, 'community-management': 1 },
       },
@@ -208,21 +231,25 @@ export const QUESTIONS: Question[] = [
     options: [
       {
         value: 'etre-trouve',
+        icon: 'Target',
         severity: 65,
         weights: { 'google-ads': 3, 'site-vitrine': 2, 'meta-ads': 1 },
       },
       {
         value: 'convertir-plus',
+        icon: 'TrendingUp',
         severity: 60,
         weights: { 'rebranding-site-premium': 3, 'site-vitrine': 2, 'meta-ads': 1 },
       },
       {
         value: 'gagner-du-temps',
+        icon: 'Clock',
         severity: 55,
         weights: { 'agent-vocal-ia': 3, 'projet-sur-mesure': 2, maintenance: 1 },
       },
       {
         value: 'changer-d-image',
+        icon: 'Palette',
         severity: 50,
         weights: { branding: 4, 'rebranding-site-premium': 2 },
       },
