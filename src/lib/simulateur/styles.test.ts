@@ -106,4 +106,15 @@ describe('globals.css simulateur layer', () => {
     expect(match).not.toBeNull();
     expect(match?.[0]).toMatch(/font-size:\s*clamp\(/);
   });
+
+  // Mood row density fix (2026-09-22): the 4 mood options keep their full
+  // existing sentence labels, so a 4-across row is too cramped under
+  // 480px — must switch to a 2x2 grid there instead.
+  it('lays the mood row out as a 2x2 grid under 480px', () => {
+    const mediaBlocks = css.match(/@media \(max-width:\s*480px\)\s*\{[\s\S]*?\n\}/g) ?? [];
+    const hasWrapFix = mediaBlocks.some((block) => block.includes('.sim-mood-row') && block.includes('flex-wrap: wrap'));
+    const hasBasisFix = mediaBlocks.some((block) => block.includes('.sim-mood-option') && block.includes('flex-basis:'));
+    expect(hasWrapFix).toBe(true);
+    expect(hasBasisFix).toBe(true);
+  });
 });

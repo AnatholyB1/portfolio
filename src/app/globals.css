@@ -800,6 +800,12 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 @media (max-width: 480px) {
   .sim-wizard { padding: 20px; }
   .sim-rgpd .row { grid-template-columns: 1fr; gap: 4px; }
+  /* The 4 mood options keep their full existing sentence labels (D-03/D-08
+     content, unchanged) — a 4-across row leaves too little width per
+     option on a narrow phone, so give them a 2x2 grid instead, doubling
+     the width each label wraps into. */
+  .sim-mood-row { flex-wrap: wrap; }
+  .sim-mood-option { flex-basis: calc(50% - 4px); }
 }
 
 .o-num { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); margin-bottom: 8px; }
