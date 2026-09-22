@@ -163,8 +163,14 @@ export default function Wizard() {
 
     const variant = question.variant ?? 'cards';
     const selectedRangeIndex = Math.max(0, question.options.findIndex((o) => o.value === stored?.value));
-    const rangeCurrentLabel =
-      t.simulateur.questions[question.id].options[question.options[selectedRangeIndex].value];
+    // Before the visitor has touched the slider, `hasAnswer` is false even though a range
+    // input always has SOME numeric value (defaults to index 0) — showing that option's
+    // label as if selected would misrepresent an untouched control as an answered one, for
+    // both sighted users and screen readers (aria-valuetext). Show a neutral placeholder
+    // instead until there's a real stored answer.
+    const rangeCurrentLabel = hasAnswer
+      ? t.simulateur.questions[question.id].options[question.options[selectedRangeIndex].value]
+      : t.simulateur.rangePlaceholder;
 
     return (
       <div className="sim-wizard">
@@ -191,6 +197,10 @@ export default function Wizard() {
               value={selectedRangeIndex}
               aria-labelledby={headingId}
               aria-valuetext={rangeCurrentLabel}
+              // React normalizes onChange on <input> to fire on every native "input" event,
+              // not just on blur/commit — this already gives the live drag feedback the
+              // design spec asked for (it called for "onInput, not just onChange", written
+              // with vanilla-DOM semantics in mind where the two differ; in React they don't).
               onChange={(e) =>
                 setAnswer(question.id)(question.options[Number(e.target.value)].value)
               }

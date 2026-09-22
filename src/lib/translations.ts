@@ -58,6 +58,9 @@ export interface SimulateurContent {
   next: string;
   nextFinal: string;
   back: string;
+  /** Shown above a `variant: 'range'` question's slider before the visitor has touched it —
+   *  prevents the slider from looking pre-answered with the first option's label. */
+  rangePlaceholder: string;
   questions: Record<string, { text: string; hint: string; options: Record<string, string> }>;
   contact: {
     heading: string;
@@ -786,6 +789,7 @@ const fr: Translations = {
     next: 'Suivant →',
     nextFinal: 'Voir ma recommandation →',
     back: '← Précédent',
+    rangePlaceholder: 'Faites glisser pour choisir',
     questions: {
       'secteur': {
         text: 'Dans quel secteur travaillez-vous ?',
@@ -1550,6 +1554,7 @@ const en: Translations = {
     next: "Next →",
     nextFinal: "See my recommendation →",
     back: "← Back",
+    rangePlaceholder: "Drag to choose",
     questions: {
       'secteur': {
         text: "Which sector do you work in?",
@@ -2314,6 +2319,7 @@ const th: Translations = {
     next: "ถัดไป →",
     nextFinal: "ดูคำแนะนำของฉัน →",
     back: "← ก่อนหน้า",
+    rangePlaceholder: "ลากเพื่อเลือก",
     questions: {
       'secteur': {
         text: "คุณทำธุรกิจในสาขาใด?",
