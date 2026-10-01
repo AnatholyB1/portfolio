@@ -1,183 +1,171 @@
-# Feature Research
+# Feature Landscape - v2.0 Plateforme Sevalys
 
-**Domain:** Lead-qualification diagnostic simulator + no-pricing marketing-agency service pages (B2B/local-service SMB agency, Sèvalys, Tours)
-**Researched:** 2026-09-20
-**Confidence:** MEDIUM — quiz-funnel mechanics and RGPD form rules are well-documented and cross-verified (MEDIUM-HIGH); no-pricing agency service-page structure is verified across multiple sources but genre-specific case studies for the exact 4 new services (Community Management, Branding, Meta Ads, Google Ads) were thin, so those specifics lean toward general agency-page best practice (MEDIUM). Codebase-dependency findings (below) are HIGH confidence — verified by direct code read.
+**Domain:** Small-agency client portal + lead back office (web and AI agency, Tours, SMB clients, solo/very small team)
+**Researched:** 2026-10-01
+**Overall confidence:** MEDIUM. Behaviors are common patterns from agency portals (Plutio, Dubsado, HoneyBook, Moxie, Productized-style portals), Stripe, and French and EU rules. No live web verification was done this session, so legal and platform items marked VERIFY need checking in the phase research. The v1.1 version of this file was replaced; its simulator findings are already shipped.
 
-## Codebase Reality Check (read before using this document)
+## Existing Assets This Milestone Builds On
 
-Direct code inspection changes two assumptions baked into `PROJECT.md` / the SEO addendum:
+| Existing | Used by |
+|----------|---------|
+| Supabase prospects table (insert-only RLS, spam guard) from /simulateur | Attribution, pipeline, funnel. It must be extended (first/last touch columns plus an immutable `lead_events` table), not replaced |
+| Resend (notification and confirmation email) | Mailing sequences, magic-link or OTP emails, signature OTP |
+| No-price policy plus vitest guards | Quotes and invoices live behind auth only. Guards must allow price content in the authenticated area and PDF templates, and keep forbidding it on public routes, sitemap, llms.txt and JSON-LD |
+| JSON-LD in the global layout, `llms.txt` | Review and AggregateRating markup. It must not add price keys |
+| fr/en/th LanguageContext | Portal and emails in FR first. Legal documents FR only (the contract language is FR) |
+| `/demo` CRM (bakery) | Unrelated. Do not reuse its tables or API routes (the CRM API is frozen) |
+| Next.js plus Supabase single project | Portal at `/espace-client`, admin at `/admin`, both noindex and excluded from the sitemap |
 
-1. **There is no existing "leads" or "prospects" table.** `src/lib/supabase.ts` only wraps a generic Supabase client used by `src/app/api/crm/{products,orders,stock}/route.ts` — this is the `/demo` **bakery inventory CRM** built for the Feuillette client pitch, not a sales pipeline. The milestone text ("réutiliser le CRM Supabase existant") is **not accurate as written** — there is no compatible schema to reuse today. This is a real open decision, not a given, and should be resolved explicitly in requirements/roadmap, not assumed.
-2. **The only existing prospect-capture flow is `src/app/api/contact/route.ts`**, which sends two transactional emails via Resend (confirmation to the prospect + notification to `contact@sevalys.com`). It writes **nothing to a database** — no persistence, no CRM record. This is the lowest-friction precedent to extend for the simulator.
-3. **`/calculateur-roi`** (`src/app/calculateur-roi/page.tsx`) is a 100%-client-side interactive tool (sliders/inputs, no backend) that already **shows a price** (`prixMensuel: 499`) as part of its ROI math for the existing AI voice agent offer. It's useful architectural precedent for "interactive tool as its own page" (matches the SEO doc's `/simulateur` pillar-page idea), but its price-revealing behavior is exactly what the new simulator must **not** copy.
+## Table Stakes
 
-## Feature Landscape
+Missing any of these makes the platform feel broken or legally weak.
 
-### Table Stakes (Users Expect These)
+### A. Client portal and auth
 
-#### Simulator / diagnostic
-
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Short, linear question flow (5–8 questions) | Industry data: completion drops ~5–10% per question past 8; below 5 the result feels generic (MEDIUM confidence, multiple quiz-funnel sources) | LOW | Fixed order is enough for v1; branching is a differentiator, not required |
-| Progress indicator (e.g. "3/6") | Standard multi-step form UX; sets expectation of a short commitment | LOW | Trivial with a controlled React state machine, no library needed |
-| One question per screen, mobile-first | Most agency-site traffic is mobile; matches existing site's clean single-focus sections | LOW | Consistent with existing design system patterns already in the codebase |
-| Lead-capture form placed **between last question and result**, not before | Documented best-converting placement — value exchange (get your recommendation) happens right when the ask is made | LOW-MEDIUM | Must not gate the quiz itself behind an email wall; only gate the *result* |
-| Personalized result referencing the visitor's actual answers (not a generic "you need everything") | Generic output "kills trust" per quiz-funnel sources; also matches milestone's own goal of narrowing to a *subset* of services | MEDIUM | Requires an answer → service-subset mapping table; depends on final service catalog |
-| RGPD-compliant consent block on the capture form | Legal requirement, not optional, for any French B2B/B2C site collecting contact data | LOW-MEDIUM | Unchecked box for secondary purpose only (no pre-ticked boxes), Art. 13 mention (identity of controller, purpose, legal basis, retention, rights), no phone-call consent implied unless explicitly opted in — relevant given the Aug 2026 cold-call consent tightening |
-| Single, unambiguous next action on the result screen | Multiple competing CTAs measurably reduce conversion (A/B-tested finding across sources) | LOW | Milestone wants "call OR email" — treat both as *one* action ("contactez-nous") presented as two channels, not two competing goals |
-| Never displays a price, price range, or price comparison at any step | Explicit, non-negotiable milestone constraint | LOW | This is the single hardest constraint to enforce by habit — flag in every result-copy review |
-
-#### Service pages (Community Management, Branding, Meta Ads, Google Ads)
-
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Problem/pain framing above the fold, before any feature list | Standard no-pricing agency page pattern; matches milestone's own stated ordering (problème → fonctionnement → enjeux) | LOW | Copy-driven, no new component pattern needed if services page components are reusable |
-| "How it works" process section (3–4 steps) | Substitutes for pricing transparency — sets expectations of engagement shape without a number | LOW-MEDIUM | Matches existing site convention (methodology-style section already exists for landing) |
-| "Stakes / why it matters" section (cost of inaction, framed in business terms) | Standard differentiation from feature-listing competitor pages; also matches milestone wording explicitly | LOW | Content-only |
-| At least one case study or testimonial per page | Universal agency-page trust signal | MEDIUM | **Real content gap today**: SEO doc confirms zero visible reviews and no artisan/service-vertical case study; Meta Ads/Google Ads/CM/Branding as *new* offers likely have **no existing client case study at all** — may need a shared testimonials block or "coming soon" framing rather than a fabricated case study |
-| FAQ block per page | Trust/objection-handling table stake; **also an explicit SEO/AEO requirement** (`FAQPage` schema per new page, per the SEO doc) | LOW-MEDIUM | Content-only, schema.org markup already established elsewhere on the site |
-| Dual end-of-page CTA: "Faire le diagnostic" (simulator) + "Appeler / Écrire" | Explicit milestone requirement, also standard no-pricing-page pattern (book-a-call in lieu of price) | LOW | Depends on simulator existing/being linkable |
-| Mobile-responsive, consistent with existing design system | Baseline for any new page on this site | LOW | Existing CSS-var design system and component patterns apply directly |
-
-#### Landing page (simplified)
-
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Ordering: problems solved → services overview → how it works → stakes → social proof → CTA | Explicit milestone requirement, also matches general landing-page best practice (problem before solution) | LOW-MEDIUM | Mostly a re-sequencing/content edit of existing sections, not new components |
-| Every CTA points to simulator or direct contact, never to pricing | Explicit milestone requirement | LOW | Requires an audit of current landing CTA hrefs — some likely point into `/services#pricing`-style anchors today and need re-pointing |
-| Social proof section reusing existing réalisations (Feuillette, Gecko Cabane, Les Folies Temps Danse) | Already built (`Realisations.tsx`), just needs to be surfaced as landing social proof rather than testimonials-heavy | LOW | Testimonials specifically are a **gap** — no visible reviews yet per SEO doc; can't fabricate them |
-
-### Differentiators (Competitive Advantage)
-
-| Feature | Value Proposition | Complexity | Notes |
+| Feature | Expected behavior | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Branching logic (skip irrelevant questions based on earlier answers, e.g. skip "avez-vous déjà un site" follow-ups if answered "non") | Feels more intelligent/tailored, mirrors what better-funded quiz tools do | MEDIUM-HIGH | Real complexity jump vs. linear v1 — worth deferring to v1.x once the linear version is validated |
-| Sector-aware question set (restaurant / commerce / école / artisan) tying into the SEO doc's planned `/secteurs/*` pages | Reinforces topical authority and reuses vertical proof points Sèvalys already has (3 of 4 verticals have real case studies) | MEDIUM | **Not required by this milestone's 3 explicit deliverables** — `/secteurs/*` pages are a separate SEO workstream mentioned only as future/adjacent in the addendum; don't scope-creep into building them here |
-| Direct-answer block (2–3 citable sentences) under each H1/H2 of every new service page | Explicit differentiator per SEO doc — **no local Tours competitor does GEO/AEO content today** (verified as a "blue ocean" in the SEO doc's competitive audit) | LOW | Pure content discipline, no new engineering; highest ROI-per-effort item in this entire feature set |
-| Explicit scope note distinguishing "Branding" (new standalone service) from "Rebranding + Site Premium" (existing bundled offer) | Prevents self-cannibalization/confusion for both humans and AI answer engines that will crawl both pages | LOW | One clear paragraph on the Branding page; a genuine differentiator only because the ambiguity is self-inflicted and easy to fix |
-| Local anchoring pattern in title/H1 ("[Service] à Tours · [bénéfice]") consistently across all 4 new pages | No local competitor (per SEO doc's competitive audit) has dedicated Meta Ads / CM pages at all — first-mover local SEO advantage | LOW | Pure content/metadata discipline |
-| Visual "maturity score" or progress-style result framing (e.g. a simple bar/percentage) rather than plain text recommendation | More memorable/shareable, reinforces the "diagnostic" framing already chosen for the feature name | MEDIUM | Nice-to-have; don't let this become a scoring/analytics system — keep it a single visual, not a stored metric |
-| The `/simulateur` page itself written as a citable, explanatory pillar page wrapping the interactive tool (not just a bare form) | Explicit SEO doc strategy: highly citable by ChatGPT/Perplexity/AI Overviews for "quels outils digitaux pour mon commerce" type queries | LOW-MEDIUM | Content architecture decision — the interactive quiz is one section of a larger static page, not the whole page |
+| Passwordless login | The client enters their email and gets a 6-digit code or a link. The session lasts about 30 days on a trusted device | Low-Med | Use Supabase Auth OTP. Email scanners prefetch magic links and burn them, so prefer a code or a confirm-button landing page. Only invited emails may sign in (no open signup). Rate-limit sends |
+| Invitation by admin | Admin creates the client and project, and the client receives an invite email. First login starts onboarding | Low | Client record and auth user are linked by email |
+| Row-level isolation | A client sees only their own project, files and documents | Med | Must be enforced by Supabase RLS, with tests. This is the biggest security risk |
+| Guided onboarding | A short checklist covers company info (SIRET, address, legal representative, which the contract needs), brand assets and access credentials, goals, and a CGV/RGPD acknowledgement. Progress is saved | Med | Data feeds document generation (contract and quote variables). Do not ask for passwords in plain fields; tell clients to use a password manager or share links |
+| Project progress by stages | A fixed template per service (for example Brief, Design, Build, Review, Delivery) with status per stage, a current-stage highlight, and a short admin comment. Stage change triggers an email | Med | Stage templates per offer. 9 services means 9 templates, so start with 2-3 generic ones |
+| Files and links | The client downloads deliverables and documents and sees important links (staging, Figma, repos). The client uploads assets (logo, photos) | Med | Private Supabase Storage bucket, signed URLs, size and type limits, virus-scan optional |
+| Document list | All quotes, contracts, invoices and PVs for the project, with status (to sign, signed, paid) and PDF download | Low | Single "Documents" tab |
+| Action-required inbox | A clear list of what the client must do now (sign, pay, upload, approve). Reminders are sent by email | Low-Med | This is the main retention feature of any portal |
+| Showcase-permission request | A dedicated request in the portal asks for authorization to present the project (portfolio, case study, social media, screenshots, logo). It has granular checkboxes, a date, and revocability. The answer is stored in the audit log | Low | Needed under RGPD and image/logo rights. Gate any public case study on it. It also feeds the "Realisations" section |
 
-### Anti-Features (Commonly Requested, Often Problematic)
+### B. Documents and signature
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|------------------|-------------|
-| Auto-quote / instant price estimate in the simulator result (mirroring `/calculateur-roi`'s existing pattern) | Feels natural since the codebase already has an interactive-calculator precedent that shows a number | Directly violates the milestone's core, explicit constraint ("jamais de prix"); `/calculateur-roi` shows a price for a *different, existing* offer and must not be treated as a template for the new tool | Show a recommended service subset + one clear CTA to talk to a human; price only ever discussed on a call/email |
-| Contact-info wall before the first question | Common in aggressive lead-gen funnels | Kills completion — visitor has no reason to trade an email before seeing any value; contradicts documented best-converting placement (info ask *after* questions, *before* result) | Ask for contact info only once, right before revealing the personalized result |
-| Generic "you need everything" recommendation regardless of answers | Tempting shortcut to avoid building a real mapping logic, and superficially maximizes upsell surface | Feels like a sales pitch, destroys the trust the diagnostic framing is trying to build; directly undermines the milestone's stated goal of recommending a *subset* | Build even a simple rule table (5–8 questions → 2–4 service recommendations max) rather than mapping everything to everything |
-| Full CRM lead-pipeline (stages, scoring persisted over time, lead routing, nurture sequences) | Seems like the "proper" way to handle new leads once you're capturing them | Massive scope creep for a single small-agency add-on feature; explicitly outside this milestone's "no functional changes to CRM or VAPI" constraint; no existing schema to build on (see Codebase Reality Check) | Extend the existing Resend-based `/api/contact` pattern (or a single new minimal Supabase table if persistence is truly wanted) — resolve as one explicit decision, not an assumption |
-| Conversational AI/chatbot instead of a structured quiz for qualification | Feels more "on-brand" for an AI-forward agency | Effectively a second VAPI-style build (NLU, prompt design, escalation handling) — far higher complexity than a form-based quiz for the same qualification outcome, and out of scope per the milestone's own constraints | Structured multi-step quiz; reserve conversational AI framing for the existing phone-agent demo, which already does this job |
-| Live/real-time ad-account dashboards or campaign-metrics widgets embedded on the Meta Ads / Google Ads service pages | Superficially demonstrates capability ("look, real data") | Requires real API integrations with Meta/Google Ads platforms per visitor or per client — huge complexity, security/OAuth surface, and totally unrequested; also conflicts with page's identity as a sales page, not a client tool (that's what `/demo` is for) | Static or lightly-animated illustrative graphics; save live dashboards for actual client-facing tooling if ever built |
-| Pricing table, "à partir de X€/mois," or side-by-side price comparison anywhere on the 4 new pages or landing | Visitors and even internal stakeholders may reflexively want a price anchor "for transparency" (note: several *local competitors* do publish prices and convert well on it, per the SEO doc) | Explicitly forbidden by this milestone regardless of competitor behavior; showing price on some pages (`/services`, unchanged) and not others is already the deliberate design — don't blur that by adding a price anywhere new | Push every pricing-curious visitor to the simulator or direct contact; `/services` remains the only page where existing offer pricing lives, and that page is explicitly out of scope for this milestone |
-| Turning the simplified landing page into a long-scroll page duplicating all 8 services' full content | Feels safer ("more information can't hurt") | Directly contradicts the milestone's explicit "simplified landing" principle; also duplicates content that should live once on each service page (SEO risk: near-duplicate content hurts both pages) | Landing shows short service *cards* linking out to each dedicated page; full explanation lives once, on the service page |
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| PDF from versioned templates | Quote, contract, specification (cahier des charges), PV de recette and invoice are generated from data. Each stores the template version, a generated-at timestamp, and an immutable stored copy | Med-High | Use a code template (React-PDF or HTML-to-PDF). Never regenerate a signed doc; store the file and its SHA-256 |
+| French legal mentions | Invoice: sequential gapless number, SIRET, TVA or the VAT-exempt mention (franchise en base) if it applies, payment terms, late penalties, and the 40 EUR recovery fee. Quote: validity period, deposit terms, withdrawal and consumer rules where relevant | Med | VERIFY with an accountant. This is a legal checklist, not a design choice |
+| Document lifecycle statuses | draft, sent, viewed, signed or accepted, expired, void | Low | Drives automations and the dashboard |
+| Simple e-signature (SES) | The signer receives an email OTP, sees the document, and ticks explicit consent. The system stores the document hash, timestamp, IP, user-agent, signer identity and OTP proof, then produces a sealed PDF with a certificate page or audit trail | Med-High | Valid in France as a simple electronic signature under eIDAS and art. 1367 Code civil, but the burden of proof rests on you. That is acceptable for B2B web service contracts of modest value. Make the audit trail exportable |
+| Quote acceptance flow | Quote to signed to triggers the first deposit invoice | Med | Chains A to B to C |
+
+### C. Payments (Stripe)
+
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Deposit per stage | Each stage can carry a payment (for example 30% at signature, 40% mid, 30% on delivery). The client sees "Paid / Due / Upcoming" and pays through Stripe Checkout (card, SEPA) | Med | One payment schedule per project. The invoice PDF is generated on payment |
+| Webhook-driven truth | Payment status is set only by verified webhooks (`checkout.session.completed` and the like). It is idempotent, and the client's browser redirect is not trusted | Med | Store the Stripe event IDs and replay safely |
+| Receipts and reminders | Automatic email on payment, plus a reminder before and after the due date | Low | Through the mailing engine |
+| Payment unlocks next step | A stage stays locked or "waiting for deposit" until the payment arrives | Low-Med | An agency norm that protects cash flow |
+
+### D. Prospect attribution and pipeline
+
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| UTM capture first-party | On landing, parse `utm_*`, `gclid`, `fbclid` and referrer, and persist for the session. On the simulator submit, attach the first-touch and last-touch values to the prospect | Med | Server-side attribution (a cookie or sessionStorage value forwarded in the submit) |
+| Frozen source | "Source" is computed once at creation and never rewritten. Later touches are added as events | Low-Med | Matches the Notion spec |
+| Immutable `lead_events` | Append-only log (created, status_changed, email_sent, appointment, quote_sent, won, lost). No UPDATE or DELETE through RLS | Med | Enforce with RLS and DB triggers. Every funnel stat derives from this log |
+| 9-month dedupe | The same email or phone within 9 months attaches to the existing prospect as a new event, instead of creating a duplicate. After 9 months it is a new lead cycle that keeps the history | Med | Define the normalization (lowercase, E.164 phone) before building |
+| Pipeline statuses | new, contacted, appointment, quote_sent, won, lost (with a lost reason) | Low | Status changes are events |
+| Funnel by source | Counts and conversion rates per source (organic, Google Ads, Meta Ads, direct and so on) across the stages | Med | Pure SQL views over `lead_events` |
+| Cost per appointment | Manual input of spend per source and period, divided by appointments per source | Low-Med | Do not auto-import ad spend in v2.0 |
+| RGPD retention and consent | Consent logged on the event, a purge or anonymization job, and a deletion-request path | Med | Cookie or consent banner design affects whether UTM persistence needs consent (CNIL). VERIFY |
+
+### E. Mailing automation
+
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Status or stage-triggered emails | Event X sends template Y once. Examples: simulator submitted (acknowledgement), appointment reminder, quote sent, signature reminder, payment received, stage completed, review request | Med | A simple rule table (event type, template, delay) plus a scheduled worker (Vercel cron or Supabase pg_cron). No visual builder |
+| Idempotency and logs | One send per trigger per entity. The send is logged as an event, and a failure is retried | Med | Resend webhooks for delivered, bounced, complained |
+| Unsubscribe separation | Transactional emails (signature, invoice, auth) are always sent. Prospect nurture sequences carry an unsubscribe link and suppression | Low-Med | Legal requirement for marketing email |
+
+### F. Admin dashboard
+
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Project list and detail | All projects with stage, next action, amounts due, and quick stage advance | Med | Admin-only role. Use a separate `admin` claim, not a client flag |
+| Prospect pipeline view | Kanban or table by status, with the event timeline and source badge | Med | |
+| Revenue and cash view | Signed amounts (booked), invoiced, paid, and outstanding, plus a monthly forecast from the payment schedules | Med | Forecast = scheduled unpaid instalments by due date |
+| Costs and margin | Manual cost entries per project (freelancers, tools, ads) and per month. Margin = paid or booked revenue minus costs | Med | Manual entry is acceptable. No accounting integration |
+
+### G. Reviews
+
+| Feature | Expected behavior | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Unique review link | A single-use tokenized link is sent to a delivered client. The client leaves a rating and text, and it is marked "verified client" | Med | Token is bound to a project that is paid and delivered |
+| Direct Google Business link | The same email, or the thank-you page, links to the Google review URL (`g.page/r/.../review`) | Low | Ask everyone. Do not filter by rating |
+| Publication | Admin moderates (no editing of content, only publish or reject with a reason) and shows reviews on the site | Low-Med | |
+
+## Differentiators
+
+Valued, not expected. Choose the cheap ones.
+
+| Feature | Value | Complexity | Notes |
+|---------|-------|------------|-------|
+| Public status page per project (read-only share link) | Client forwards progress to a partner | Low | Defer |
+| Per-stage "approve" button with comment (client approval of a stage) | Reduces scope disputes and creates an audit entry | Low-Med | Reuses the signature audit mechanism. Recommended inside the PV de recette |
+| Portal reflects live services, such as AI voice agent call stats | Shows value after delivery, and ties to the Sevalys AI positioning | High | Defer to a later milestone |
+| Revenue forecast with scenarios (pipeline-weighted: prospects at quote_sent times a win rate) | Real cash planning | Med | Build after the base forecast has real data |
+| Source-to-revenue attribution (revenue and margin by acquisition source, not just appointments) | Ties ads to cash, and proves ROI | Med | Cheap once `lead_events` and payments share a prospect-to-client key |
+| Meta Conversions API and Google Ads offline conversion upload (server events from won leads) | Better ad optimization | Med-High | Requires a consent-aware design and click IDs stored. VERIFY. The "preparation" in the brief says to design the data, not necessarily send |
+| Review rating shown with `Review` and `AggregateRating` schema | Trust and GEO signal | Low | See anti-feature caveat on rich-result eligibility |
+| Organic content kit (templates, UTM naming convention doc, post calendar) | Faster acquisition | Low | Documentation and assets, not code |
+| Versioned template changelog visible in the admin | Traceability of what a client signed | Low | Falls out of the template versioning |
+
+## Anti-Features
+
+| Anti-Feature | Why avoid | Instead |
+|--------------|-----------|---------|
+| Passwords, signup form, social login for clients | Support burden and no benefit for a few dozen clients | Email OTP with invite-only access |
+| Third-party e-signature SaaS or advanced/qualified signature | Decided out of scope, and cost and complexity are high | Own SES with a strong audit trail. State clearly in the contract that the parties accept electronic signature as proof |
+| Showing prices on public pages or in the sitemap, llms.txt, or JSON-LD (Offer price, `priceRange`) | Breaks PRIX-01, and the guards would fail | Prices only in the authenticated area and PDFs, with route-level checks |
+| Selective review solicitation (only asking happy clients) or an internal rating gate that routes only 4-5 stars to Google | Violates Google policy and the EU and French rules on fake or filtered reviews (Omnibus directive, DGCCRF) | Send the Google link to every client, and publish moderated reviews with a stated policy |
+| Counting on star rich results for self-served reviews of your own business | Google ignores `Review` and `AggregateRating` on a business's own site for LocalBusiness and Organization (self-serving reviews, since 2019). VERIFY | Still mark up for GEO and AI engines, accept no stars in search results, and push reviews on Google Business Profile |
+| Custom CMS or WYSIWYG document editor for templates | Large cost for a few templates | Templates in code, edited through pull requests, versioned |
+| Full CRM or marketing automation (visual flow builder, lead scoring, A/B in email) | Scope explosion | Rule table of status-to-email. Use a statuses pipeline |
+| Real-time chat, in-portal messaging, ticketing | Duplicates email and WhatsApp, with moderation burden | "Reply by email" links and a contact button |
+| Time tracking, Gantt, task boards for clients | Agency internal tooling, and not what the client wants | One stage list with comments |
+| Full accounting (ledger, VAT returns), bank sync | Out of scope and regulated | Manual cost entries and CSV export for the accountant |
+| Cross-site tracking, fingerprinting, third-party pixels without consent | CNIL and RGPD risk | First-party UTM only. Ad pixels loaded only after consent |
+| Editing or deleting `lead_events` or rewriting the frozen source | Destroys auditability and trust in the stats | Correction events (append a compensating event) |
+| Auto-importing ad spend through platform APIs | API approvals and maintenance | Manual monthly spend entries |
+| Subscriptions and recurring billing in the first iteration | Different model (the brief is for deposits per stage) | One-off Checkout per instalment. Add recurring later for maintenance contracts |
 
 ## Feature Dependencies
 
 ```
-[4 new service pages: copy finalized]
-    └──requires──> [Simulator: answer → service-subset recommendation mapping]
-                       └──requires──> [Simulator: linear question flow v1]
-
-[Simplified landing page: service overview cards]
-    └──requires──> [4 new service pages exist at stable routes]
-                       (existing 4 services already have stable routes on /services)
-
-[Simulator: lead capture at result step]
-    └──requires──> [Decision: extend /api/contact (Resend, no DB) vs. new Supabase leads table]
-                       (currently UNRESOLVED — see Codebase Reality Check)
-
-[FAQPage schema + direct-answer blocks per service page] ──enhances──> [SEO/AEO goals from strategie-seo-geo-llm doc]
-
-[Branching logic in simulator] ──enhances──> [Linear v1 simulator] (not required for it)
-
-[/secteurs/* sector pages] ──conflicts with scope of──> [This milestone's 3 explicit deliverables]
-    (mentioned in SEO addendum as adjacent future work, not one of the 3 targets — do not build under this milestone)
-
-[Auto price estimate in simulator result] ──conflicts──> [Milestone constraint: never show a price]
+Admin role + RLS isolation ──► everything in the portal
+Client invite ──► Passwordless login ──► Onboarding ──► (company data) ──► Document templates
+Document templates ──► Quote ──► Simple e-signature ──► Payment schedule ──► Stripe Checkout + webhooks
+                                         │                                   │
+                                         └──► Audit trail                    └──► Stage unlock + Invoice PDF
+Stage progress ──► PV de recette (sign) ──► Final payment ──► Review request ──► Verified review ──► Review schema
+Showcase-permission ──► (gate) public case studies on the site
+Prospect table (existing) ──► first/last touch + lead_events ──► Dedupe ──► Pipeline ──► Funnel by source ──► Cost per appointment
+Prospect won ──► Client record (conversion link) ──► Revenue attribution by source
+lead_events + stage events ──► Mailing triggers (Resend) ──► Resend webhooks logged back as events
+Payments + schedules + costs ──► Admin forecast, margin, cash
 ```
 
-### Dependency Notes
+Key critical path: RLS and roles, then documents and signature, then Stripe. Attribution and mailing can run in parallel to the portal, since they depend only on the existing prospect table.
 
-- **Service pages must exist before the simulator's recommendation logic is meaningful:** the simulator's whole value is "here are the 2–4 services that fit you" — those need stable page URLs and finalized positioning (especially Branding vs. the existing "Rebranding + Site Premium" offer) before the mapping table can be written with confidence.
-- **The lead-capture mechanism is a real, unresolved dependency, not a solved one:** both the simulator's result-step form and (implicitly) the new service pages' contact CTAs assume *some* persistence/notification path. Today only `/api/contact` (Resend email, no DB) exists. This should be decided once, early, and reused everywhere — not solved separately per feature.
-- **Landing simplification depends on the 4 service pages existing first** (or at least being scheduled in the same phase): the landing's "service overview" section is meant to link out to full pages rather than explain services itself, so sequencing landing after/alongside the service pages avoids a temporary broken/incomplete state.
-- **Branching logic and sector-aware question paths enhance but do not block the linear v1 simulator** — safe to defer without blocking launch.
-- **`/secteurs/*` pages and the auto-price-estimate pattern both conflict with this milestone's scope/constraints** — flagged explicitly so the roadmap doesn't accidentally absorb them.
+## MVP Recommendation (ordering for the roadmap)
 
-## MVP Definition
+1. Data foundation: roles, RLS, extended prospects, `lead_events` (immutable), the prospect-to-client link. All other features rely on it.
+2. Attribution and pipeline: UTM capture into the existing simulator, dedupe, statuses, funnel and cost per appointment. This is quick value and independent of the portal.
+3. Mailing engine (Resend rules, idempotency, logs), because the portal and payments reuse it.
+4. Portal core: invite, OTP login, onboarding, stage progress, files and links, action inbox, showcase permission.
+5. Documents and e-signature: templates, hash, OTP, audit trail, sealed PDF.
+6. Stripe: schedules, Checkout, webhooks, invoices, stage unlock.
+7. Admin dashboard: projects, revenue forecast, costs, margin, cash.
+8. Reviews: unique link, Google link, moderation, schema. Needs delivered clients, so it comes last.
+9. Acquisition prep (UTM convention doc, conversions design, content kit). Docs can be written early, and conversion sends wait for consent design.
 
-### Launch With (v1)
+Defer: Meta CAPI and Google offline conversion sending, scenario forecasts, public status pages, live service stats in the portal, recurring billing.
 
-- [ ] Linear 5–8 question simulator, single fixed path, result maps to 2–4 recommended services — validates the core "qualify without pricing" concept
-- [ ] Lead-capture form at result step, wired to whichever persistence decision is made (Resend extension is the lowest-effort default given existing precedent)
-- [ ] RGPD-compliant consent block on that form (unticked checkbox, Art. 13 mention, retention note)
-- [ ] 4 new service pages, each with: pain framing, how-it-works, stakes, at least placeholder/shared social proof, FAQ block with schema.org markup, dual end CTA — no pricing anywhere
-- [ ] Landing page re-sequenced to problems → services overview (cards linking out) → how it works → stakes → social proof → CTA to simulator/contact, all pricing-pointing CTAs re-routed
-- [ ] Direct-answer citable blocks under each new page's key headings (cheap, high SEO/AEO leverage — don't defer this)
+## Complexity and Risk Flags for the Roadmap
 
-### Add After Validation (v1.x)
-
-- [ ] Branching logic in the simulator (skip irrelevant questions) — add once linear version's completion/conversion data justifies the complexity
-- [ ] Sector-aware question variants tied to `/secteurs/*` pages — only once those pages exist (separate workstream)
-- [ ] Visual maturity-score framing on the result screen — cosmetic enhancement, not core to the qualification logic
-- [ ] Real per-service case studies for Community Management, Branding, Meta Ads, Google Ads as first clients are onboarded — replacing shared/placeholder social proof
-
-### Future Consideration (v2+)
-
-- [ ] Formal leads/CRM pipeline with stages and scoring, if lead volume from the simulator justifies moving beyond email notifications
-- [ ] A/B testing of simulator question wording/order and result-page CTA copy
-- [ ] Extending the diagnostic simulator into a documented `/secteurs/*` cross-linking strategy, per the SEO doc's medium-term plan
-
-## Feature Prioritization Matrix
-
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Linear simulator (5–8 Q, mapping to 2–4 services) | HIGH | MEDIUM | P1 |
-| Lead-capture + persistence decision | HIGH | LOW-MEDIUM (once decided) | P1 |
-| 4 no-pricing service pages (core sections) | HIGH | MEDIUM | P1 |
-| FAQPage schema + direct-answer blocks | HIGH (SEO/AEO) | LOW | P1 |
-| Landing re-sequencing + CTA re-routing | HIGH | LOW-MEDIUM | P1 |
-| RGPD consent block | HIGH (legal) | LOW | P1 |
-| Branching logic in simulator | MEDIUM | HIGH | P2 |
-| Sector-aware question paths | MEDIUM | MEDIUM-HIGH | P3 (blocked on `/secteurs/*`) |
-| Visual maturity-score result | LOW-MEDIUM | MEDIUM | P3 |
-| Real per-service case studies | HIGH (once available) | N/A (content, not code) | P2 (opportunistic) |
-| Formal CRM/leads pipeline | LOW at current scale | HIGH | P3 / defer |
-
-## Competitor Feature Analysis
-
-| Feature | Local Tours agencies (KBCOM, ConvertiLab, etc.) | National AI-voice competitors (Nerolia, AirAgent) | Our Approach |
-|---------|--------------------------------------------------|-----------------------------------------------------|--------------|
-| Published pricing | Yes — publish prices, converts well locally (per SEO doc) | Mixed (AirAgent self-serve pricing, others opaque) | Deliberately opposite: no price on landing/new service pages/simulator; price stays only on existing `/services` |
-| Interactive qualification tool | None identified locally | None identified with a diagnostic-quiz format | First-mover locally for a structured diagnostic simulator |
-| GEO/AEO content (FAQ schema, direct-answer blocks) | None identified | Strong generic content but no local anchoring | Combine both: local anchoring + AEO-formatted content per new page |
-| Community Management / Meta Ads as standalone offer pages | Not identified as dedicated pages | N/A (different vertical) | Dedicated pages per the SEO doc's addendum — genuine local gap |
-| Case studies / social proof | Google reviews present for some (KBCOM, ConvertiLab) | Active blogs, less local proof | Sèvalys has real named case studies (Feuillette, Gecko Cabane, Les Folies Temps Danse) but zero visible reviews — reviews collection flagged as a parallel, non-blocking SEO action item |
+- Highest risk: RLS isolation, e-signature evidentiary quality, Stripe webhook idempotency, invoice legal mentions. These deserve phase-level research.
+- Likely need deeper research: French invoicing rules including the e-invoicing reform timeline (VERIFY dates), CNIL position on first-party UTM storage and ad conversion APIs, and Google self-serving review markup eligibility.
+- Standard patterns, little research needed: stage progress UI, file uploads, mailing rules, funnel SQL views.
 
 ## Sources
 
-- [15 Best Quiz Funnel Examples & Templates](https://www.marquiz.io/blog/15-best-free-quiz-funnel-examples-templates) — MEDIUM
-- [How to Use Quizzes for Lead Generation: A High-Intent Strategy | Digioh](https://www.digioh.com/blog/lead-generation-quiz) — MEDIUM
-- [7 Types of Lead Generation Quizzes | landerlab.io](https://landerlab.io/blog/lead-generation-quizzes) — MEDIUM
-- [Best Quiz Funnel Software (2026) | Perspective](https://www.perspective.co/article/quiz-funnel-software) — MEDIUM (question count, results-page CTA, lead-form placement findings sourced here, cross-checked against other quiz-funnel guides)
-- [Quiz Funnel: The Ultimate B2B Lead Generation Guide | Pyrsonalize](https://pyrsonalize.com/blog/how-to-create-a-lead-generation-quiz-funnel/) — MEDIUM
-- [Comment qualifier ses prospects grâce au quiz marketing? | Skeepers](https://skeepers.io/fr/blog/qualifier-prospects-questionnaire-quiz/) — MEDIUM (10–12 question guidance for scoring-type quizzes; used to sanity-check against the 5–8 range for a *diagnostic*, not scoring, quiz)
-- [Google Ads Landing Page: Structure and Mistakes | Salestudia](https://www.salestudia.de/en/blogs/news/google-ads-landing-page-structure-common-mistakes) — MEDIUM (no-pricing "Book a Call" pattern for Google Ads agencies)
-- [Meta Ads for Service Based Business | AdStellar](https://www.adstellar.ai/blog/meta-ads-for-service-based-business) — MEDIUM
-- [How to Evaluate a Meta Ads Agency: 10 Buyer Questions | Opascope](https://opascope.com/insights/meta-ads-agency/) — MEDIUM (generic-selling-point trap: "senior team, custom strategy, transparent reporting" are undifferentiated — used to justify the direct-answer/local-anchoring differentiator)
-- [Agency Case Studies: How to Craft Client Stories That Sell Your Services | Instapage](https://instapage.com/blog/digital-agency-case-studies) — MEDIUM
-- [You can't handle the proof: brand case studies as social proof | Fabrik Brands](https://fabrikbrands.com/brand-case-studies/) — MEDIUM
-- [Mon Diag'Num | CCI Paris Ile-de-France](https://www.entreprises.cci-paris-idf.fr/offres/mon-diagnostic-de-maturite-numerique) — MEDIUM (French precedent for a free digital-maturity diagnostic tool aimed at TPE/PME)
-- [Diagnostic numérique | francenum.gouv.fr](https://www.francenum.gouv.fr/guides-et-conseils/strategie-numerique/diagnostic-numerique) — MEDIUM
-- [Formulaire contact RGPD : 7 mentions + modèle 2026 | donneespersonnelles.fr](https://www.donneespersonnelles.fr/formulaire-contact-rgpd) — MEDIUM-HIGH (Art. 13 mentions, consent-checkbox rules)
-- [RGPD en pratique | CNIL](https://www.cnil.fr/fr/rgpd-en-pratique-maitrisez-votre-relation-client) — HIGH (official regulator source)
-- [Prospection commerciale RGPD 2026 | donneespersonnelles.fr](https://www.donneespersonnelles.fr/prospection-commerciale-rgpd) — MEDIUM-HIGH (Aug 2026 cold-call consent tightening)
-- Direct codebase inspection: `src/app/api/contact/route.ts`, `src/lib/supabase.ts`, `src/app/api/crm/*/route.ts`, `src/app/calculateur-roi/page.tsx` — HIGH confidence, first-party verification
-- `.planning/PROJECT.md` and `docs/strategie-seo-geo-llm-2026-09.md` (section 9 addendum) — project source of truth for scope and SEO framing
-
----
-*Feature research for: Sèvalys v1.1 — diagnostic simulator, 4 new no-pricing service pages, simplified landing*
-*Researched: 2026-09-20*
+- Training-knowledge synthesis of common agency portal products and Stripe Checkout and webhook practice (MEDIUM). Not freshly verified.
+- Project context: `C:\portfolio\.planning\PROJECT.md` (HIGH).
+- Items marked VERIFY: eIDAS and art. 1367 Code civil evidentiary weight, French e-invoicing timeline, CNIL guidance on audience measurement and ad pixels, Google review-snippet policy for self-serving reviews, Google review-gating policy (LOW to MEDIUM until checked).
