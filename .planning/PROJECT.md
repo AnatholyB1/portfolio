@@ -14,9 +14,26 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 
 Live on `sevalys.com`: landing (hero with real client screenshots, manifesto, problems, services index, method, stakes, realisations, phone-agent teaser, contact), 9 service pages + index, `/simulateur`, `/calculateur-roi` (price-free), `/demo`, mobile menu with a sticky diagnostic bar. Sitemap submitted to Search Console; `llms.txt` and an `OfferCatalog` of 9 `Service` objects in the global JSON-LD.
 
-## Next Milestone Goals
+## Current Milestone: v2.0 Plateforme Sèvalys
 
-Not yet defined — start with `/gsd:new-milestone`. Candidates surfaced during v1.1:
+**Goal:** Transformer le site vitrine en plateforme complète : un prospect arrive avec sa source tracée, devient client, suit son projet, signe et paie en ligne, et l'admin pilote tout depuis un dashboard prévisionnel.
+
+**Target features:**
+- Espace client : connexion sans mot de passe, onboarding guidé, suivi d'avancement par étapes, fichiers et liens, demande d'accord pour présenter le projet
+- Documents PDF générés automatiquement depuis des modèles versionnés selon l'étape (devis, contrat, cahier des charges, PV de recette, facture)
+- Signature numérique simple eIDAS maison (OTP, hash, horodatage, IP, piste d'audit)
+- Paiements Stripe (acomptes par étape, état visible côté client)
+- Prospects : attribution UTM first-party (premier/dernier contact, source figée, journal `lead_events` immuable, dédoublonnage 9 mois), pipeline, stats d'entonnoir par source — modèle: spec Notion « Back office leads Grand Ouest Habitat »
+- Mailing automatique déclenché par statut/étape (Resend)
+- Admin : suivi de projets, stats prospects, dashboard prévisionnel (CA, coûts, marge, trésorerie)
+- Avis vérifiés (lien unique), canal direct vers Google Business, balisage `Review`/`AggregateRating`
+- Préparation acquisition : convention UTM, conversions Meta/Google, kit de contenu organique
+
+**Décisions de cadrage:** signature maison (pas de tiers), Stripe pour les paiements, PDF depuis modèles dans le code, tout dans un seul projet Next.js + Supabase. La politique « aucun prix » reste vraie pour les pages publiques ; devis/factures vivent dans l'espace client authentifié.
+
+## Next Milestone Goals (backlog hérité de v1.1)
+
+Candidates surfaced during v1.1 (some now absorbed by v2.0):
 
 - Refresh dated copy: "Disponible en mai 2026" (hero pill) and "Nouveaux projets dès juin 2026" (contact) are stale
 - Collect real Google reviews and set up Google Business Profile (SEO doc §5-§6; no reviews visible today)
@@ -117,4 +134,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after v1.1 milestone*
+*Last updated: 2026-10-01 — milestone v2.0 started*
