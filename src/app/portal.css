@@ -1,0 +1,487 @@
+/* Espaces privés (connexion, espace client, admin) — styles scopés `pt-*`.
+   Contrat : 10-UI-SPEC.md. Tokens existants uniquement (aucune nouvelle variable).
+   Sobriété back-office (D-11) : pas d'animation, seulement des transitions
+   couleur / bordure de 150-200ms, désactivées si prefers-reduced-motion. */
+
+.pt-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: auto;
+}
+.pt-root a,
+.pt-root button,
+.pt-root input,
+.pt-root label {
+  cursor: auto;
+}
+.pt-root button:not(:disabled),
+.pt-root a {
+  cursor: pointer;
+}
+
+/* ---------- Typographie ---------- */
+.pt-heading {
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.pt-display {
+  font-family: var(--font-display), sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.pt-label {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+}
+.pt-helper {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: 0;
+}
+
+/* ---------- Connexion : carte centrée ---------- */
+.pt-auth {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 48px;
+}
+@media (min-width: 768px) {
+  .pt-auth {
+    padding-top: 64px;
+  }
+}
+.pt-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.pt-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-main .pt-card {
+  max-width: none;
+}
+.pt-card-footer {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.pt-back {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pt-back:hover {
+  color: var(--ink);
+}
+
+/* ---------- Champs ---------- */
+.pt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--bg-3);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.pt-input::placeholder {
+  color: var(--ink-faint);
+}
+.pt-input[aria-invalid="true"] {
+  border-color: var(--warm);
+}
+
+/* ---------- Code à 6 chiffres : 6 cellules, un seul vrai input ---------- */
+.pt-otp {
+  position: relative;
+  display: flex;
+  gap: 4px;
+}
+.pt-otp-cell {
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-3);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font-family: var(--font-mono), monospace;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  transition: border-color 0.2s;
+}
+.pt-otp-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: transparent;
+  color: transparent;
+  border: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 32px;
+  letter-spacing: 4px;
+}
+.pt-otp:focus-within .pt-otp-cell {
+  border-color: var(--ink-dim);
+}
+.pt-otp:has(.pt-otp-input:focus-visible) {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------- Boutons ---------- */
+.pt-btn-primary,
+.pt-btn-text,
+.pt-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 24px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+}
+.pt-btn-primary {
+  width: 100%;
+  background: var(--acid);
+  color: #000;
+}
+.pt-btn-primary:hover:not(:disabled) {
+  background: var(--ink);
+}
+.pt-btn-text {
+  background: transparent;
+  color: var(--ink-dim);
+  padding: 8px 16px;
+}
+.pt-btn-text:hover:not(:disabled) {
+  color: var(--ink);
+}
+.pt-btn-ghost {
+  background: transparent;
+  color: var(--ink-dim);
+  border-color: var(--line-strong);
+  padding: 8px 16px;
+}
+.pt-btn-ghost:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--ink-dim);
+}
+.pt-btn-primary:disabled,
+.pt-btn-text:disabled,
+.pt-btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Messages ---------- */
+.pt-error,
+.pt-warning,
+.pt-success {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+}
+.pt-error {
+  color: var(--warm);
+}
+.pt-warning {
+  color: var(--warm);
+}
+.pt-success {
+  color: var(--ink);
+}
+.pt-status {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: 0;
+}
+
+/* ---------- En-tête ---------- */
+.pt-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  min-height: 64px;
+  padding: 8px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+}
+.pt-header-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pt-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  order: 3;
+  width: 100%;
+  overflow-x: auto;
+}
+.pt-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px;
+  white-space: nowrap;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.pt-nav-item[aria-current="page"] {
+  color: var(--ink);
+  border-bottom-color: var(--acid);
+}
+.pt-nav-item[aria-disabled="true"] {
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+@media (min-width: 768px) {
+  .pt-header {
+    flex-wrap: nowrap;
+    padding: 0 32px;
+    height: 64px;
+  }
+  .pt-header-title {
+    flex: 0 1 auto;
+    max-width: 40%;
+  }
+  .pt-nav {
+    order: 0;
+    width: auto;
+    flex: 1 1 auto;
+    overflow: visible;
+    margin-left: 16px;
+  }
+}
+
+/* ---------- Contenu et pied de page ---------- */
+.pt-main {
+  flex: 1;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.pt-main[data-width="client"] {
+  max-width: 960px;
+}
+.pt-main[data-width="admin"] {
+  max-width: 1120px;
+}
+@media (min-width: 768px) {
+  .pt-main {
+    padding: 48px 32px;
+  }
+}
+.pt-footer {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .pt-footer {
+    padding: 16px 32px;
+  }
+}
+.pt-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-empty a {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.pt-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .pt-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pt-readback {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+/* ---------- Tableau ---------- */
+.pt-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-2);
+  font-size: 16px;
+  font-weight: 400;
+}
+.pt-table th {
+  text-align: left;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+}
+.pt-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+.pt-table tbody tr {
+  transition: background-color 0.2s;
+}
+.pt-table tbody tr:hover {
+  background: var(--bg-3);
+}
+@media (max-width: 767px) {
+  .pt-table,
+  .pt-table tbody,
+  .pt-table tr,
+  .pt-table td {
+    display: block;
+    width: 100%;
+  }
+  .pt-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .pt-table tr {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    padding: 8px 0;
+  }
+  .pt-table td {
+    border-bottom: 0;
+    padding: 8px 16px;
+  }
+  .pt-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-mono), monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+  }
+}
+
+/* ---------- Focus clavier (accent réservé) ---------- */
+.pt-root a:focus-visible,
+.pt-root button:focus-visible,
+.pt-root input:focus-visible,
+.pt-root select:focus-visible,
+.pt-root textarea:focus-visible,
+.pt-root [tabindex]:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-otp-input:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-root *,
+  .pt-root *::before,
+  .pt-root *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
