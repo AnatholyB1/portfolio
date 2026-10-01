@@ -5,6 +5,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import ClientProviders from "@/components/ui/ClientProviders";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
 import Script from "next/script";
+import { buildServiceCatalogJsonLd } from "@/lib/serviceSchema";
+import { buildJsonLdScript } from "@/lib/serviceJsonLd";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-spacegrotesk",
@@ -168,6 +170,7 @@ export default function RootLayout({
       geoRadius: "50000",
     },
     openingHours: "Mo-Fr 09:00-18:00",
+    hasOfferCatalog: buildServiceCatalogJsonLd(SITE_URL),
   };
 
   const website = {
@@ -221,7 +224,7 @@ export default function RootLayout({
         <Script
           id="json-ld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: buildJsonLdScript(jsonLd) }}
           strategy="beforeInteractive"
         />
       </head>

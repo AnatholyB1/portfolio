@@ -18,3 +18,15 @@ describe('global JSON-LD (PRIX-01)', () => {
     expect(layoutSource).toContain('openingHours');
   });
 });
+
+describe('global JSON-LD Service catalog (SEO-02)', () => {
+  it('wires hasOfferCatalog from the pure builder', () => {
+    expect(layoutSource).toContain('hasOfferCatalog: buildServiceCatalogJsonLd(SITE_URL)');
+    expect(layoutSource).toContain('from "@/lib/serviceSchema"');
+  });
+
+  it('serializes with < escaping (T-09-03)', () => {
+    expect(layoutSource).toContain('buildJsonLdScript(jsonLd)');
+    expect(layoutSource).not.toContain('JSON.stringify(jsonLd)');
+  });
+});
