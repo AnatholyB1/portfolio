@@ -1,10 +1,11 @@
 ---
 phase: 10
 slug: foundation-auth-isolation
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-10-01
+reviewed_at: 2026-10-02
 ---
 
 # Phase 10 — UI Design Contract
@@ -106,7 +107,7 @@ Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-fai
 ### S3. `/espace-client` shell (D-13, D-14)
 - Header (`--bg-2`, bottom border `--line`, 64px high): left company name (Heading style, 24px truncated with ellipsis) from `sv_clients.name`; centre/left nav `Projet`, `Documents`, `Paiements` all disabled with `Bientôt` tag; right `Se déconnecter` (ghost text button, lucide `LogOut` 16px with text).
 - Mobile (< 768px): header wraps to two rows (name + logout, then nav as a horizontally scrollable row); no hamburger.
-- Main (max 960px): one card with Heading `Bienvenue, {entreprise}` and body line `Votre espace client est en cours de préparation. Vos documents, votre projet et vos paiements apparaîtront ici.` (empty state; see Copywriting).
+- Main (max 960px): one card (the focal point) using the client empty-state heading and body from the Copywriting Contract (`Votre espace est en préparation`); the company name already appears in the header. Note: accent on the code digits in the login email is a deliberate exception (on-screen input uses `--ink`); do not "fix" it.
 - Footer: 12px label row, `Retour au site` link only. No navbar, no social links.
 - User with a valid session but no `sv_client_members` row: render the "no access" state, no data.
 
