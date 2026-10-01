@@ -30,6 +30,12 @@ describe('llms.txt (SEO-01)', () => {
     }
   })
 
+  it('does not mention private routes (D-15)', () => {
+    for (const p of ['/espace-client', '/admin', '/connexion', '/auth/']) {
+      expect(llms).not.toContain(p)
+    }
+  })
+
   it('has no Différenciation section', () => {
     expect(llms).not.toContain('## Différenciation')
   })
