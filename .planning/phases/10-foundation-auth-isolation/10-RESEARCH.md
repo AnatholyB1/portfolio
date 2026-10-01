@@ -479,13 +479,18 @@ Inventory of existing guards (all verified by reading):
 | A9 | `supabase branches create` without GitHub integration applies `supabase/migrations/*` to the new branch | Validation | If not, `supabase link --project-ref <branch>` + `supabase db push`, or `db query -f` per file |
 | A10 | recherche-entreprises limit remains 7 req/s | SIRET | Low; admin-triggered, single call per invite |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Plan check (Supabase and Vercel).** Is the Supabase org on Pro (branching) and Vercel on Pro (cron/commercial use)? Vercel is only a STATE.md blocker for later phases (cron) but commercial-use terms apply now. Recommendation: first Wave 0 task = human check; `supabase branches create` is the empirical test; `get_cost`/`confirm_cost` is needed through the MCP route, and `create_branch` is uncallable in project-scoped MCP mode (supabase/mcp issue #285), so use the CLI. Prefer an ephemeral branch per test session (pennies) over a persistent one (~$9.70/month).
+   **RESOLVED:** plan 10-07 Task 3 step 1 (`supabase branches create` is the empirical test; if branching is unavailable it STOPS with a checkpoint:decision: enable branching/Pro, dedicated free scratch project, or pause; never a silent fallback). Vercel commercial-use terms are an existing STATE.md blocker for later phases, not a phase 10 gate.
 2. **Auth settings of the shared project** (signup enabled, confirm-email, OTP expiry, rate limits): read-only look in the dashboard by the owner; determines the "valable X" copy and Pitfall 1 severity.
+   **RESOLVED:** auth settings are read-only for this project and never patched. OTP expiry is read in plan 10-04 Task 1 (Management API `mailer_otp_exp`, else "unknown" and the email says "durée limitée"), confirmed by the owner in plan 10-13 Task 2 and set as `SV_OTP_EXPIRY_MINUTES`. Signup stays enabled on the shared project (Ziko/Gecko need it); plan 10-07 `selfsignup.rls.test.ts` proves a self-registered user has no role and reads zero sv_* rows, and login issuance never uses Supabase templates (D-06 amendment), so Pitfall 1 does not apply.
 3. **Who else sends as `@sevalys.com`** (Google Workspace, Brevo, Resend)? Needed before writing the root SPF.
+   **RESOLVED:** plan 10-03 Task 2 step 1 (owner lists the senders; the single root SPF keeps only those includes; DMARC edited in place keeping the Brevo rua).
 4. **Is `contact@sevalys.com` used as a Ziko/RH/Gecko login?** It exists in `auth.users` (not a Gecko admin). Making it an `sv_admin` is safe for isolation, but if that email has a password and is used elsewhere nothing changes for those apps. Confirm with owner.
+   **RESOLVED:** owner answers in plan 10-03 Task 2 (recorded in SUMMARY) and re-confirms at the prod DDL gate in plan 10-12 Task 2. Isolation does not depend on the answer: the admin seed (D-05) promotes only that existing account by explicit owner decision, while client invitations refuse any address that already exists in the shared `auth.users` (plan 10-09 `existing_account`, never reused or deleted).
 5. **Admin lockout/recovery**: only one admin. Recommendation: allow a second admin row via the same idempotent script; no UI.
+   **RESOLVED (user decision 2026-10-02):** plan 10-09 Task 3 ships `scripts/sv-add-admin.mjs` (service_role, idempotent, refuses client members per D-04, dry-run by default without `--yes`), documented as the admin recovery path; plan 10-12 Task 3 dry-runs it read-only against prod (expects `already_admin` for contact@sevalys.com).
 
 ## Environment Availability
 
