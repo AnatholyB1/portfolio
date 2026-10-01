@@ -23,7 +23,7 @@ Base technique déjà solide et rare : `llms.txt` existant, `robots.ts` autorisa
 - **Contenu i18n** : tout vit dans `src/lib/translations.ts` (fr/en/th). Toute nouvelle page de contenu long (blog, secteurs) devrait vivre **hors** de ce système pour ne pas devoir tout traduire en 3 langues.
 - **Déjà solide pour le GEO/AEO** : `public/llms.txt`, `robots.ts` autorise les crawlers IA, JSON-LD `Organization`/`ProfessionalService`/`WebSite`/`FAQPage` avec adresse Tours/Indre-et-Loire, `GeoCircle` 50 km, `areaServed`.
 - **Preuves clients réelles disponibles** (`translations.ts`, `Realisations.tsx`) : **Feuillette** (boulangerie, agent vocal + CRM), **Gecko Cabane** (restaurant, réservation), **Les Folies Temps Danse** (école de danse, inscriptions), Ghjulianu Codani, Selenium Studio. Couvre 3 des 4 verticaux ciblés — **il manque un cas "artisan/profession de service"**.
-- **Offres réelles** (pour caler les mots-clés commerciaux) : Landing Page (1200–2000€), Rebranding + Site Premium (2500–4400€), Projet sur-mesure (devis), **Agent Vocal IA dès 990€** (VAPI + Twilio + ElevenLabs + CRM via MCP), Maintenance (49/79/129€+ /mois).
+- **Offres réelles** (pour caler les mots-clés commerciaux) : Landing Page (1200–2000€), Rebranding + Site Premium (2500–4400€), Projet sur-mesure (devis), **Agent Vocal IA dès 990€** (VAPI + Twilio + ElevenLabs + CRM via MCP), Maintenance (49/79/129€+ /mois). *[Superseded 2026-10 — voir §9 / politique sans prix] : grille interne uniquement, ne jamais afficher publiquement (PRIX-01).*
 - **Google Search Console** : propriété `sc-domain:sevalys.com` vérifiée (siteOwner). **Sitemap non soumis** (`/sites/.../sitemaps` renvoie vide). **Zéro donnée de recherche** sur juin–sept. 2026 (site trop récent, normal).
 - **Ahrefs** : compte connecté mais **plan sans accès API** (même l'endpoint gratuit `domain-rating-free` renvoie "Insufficient plan") — pas de volumes de recherche mesurés disponibles pour cette mission. À réévaluer si l'add-on API est activé plus tard.
 
@@ -33,6 +33,8 @@ Base technique déjà solide et rare : `llms.txt` existant, `robots.ts` autorisa
 
 ### Concurrents locaux généralistes (Tours/37)
 KBCOM, Youlead Tours, Creatisweb, Addictic, Tribu & Co, Linkeo Tours, MGS Informatique, WEBUZ, ConvertiLab, MS France Concept — offres site+SEO classiques, **aucun ne propose d'agent vocal IA**. KBCOM et ConvertiLab affichent des prix publics et convertissent bien (avis Google) — la transparence tarifaire est un facteur de confiance prouvé localement.
+
+> **[Superseded 2026-10 — voir §9 / politique sans prix]** Recommandation inversée par §9 : compenser par la preuve sociale et le simulateur de diagnostic.
 
 **Vistalid** (national, basé à Bordeaux) déploie des pages programmatiques par ville (`/agence-web/tours`) — contenu générique, vulnérable à du vrai contenu local.
 
@@ -49,7 +51,7 @@ Depuis le 2 août 2026, l'**article 50 de l'AI Act** impose d'informer l'appelan
 1. Site + IA vocale + SEO/GEO en une offre unique → personne d'autre à Tours.
 2. GEO/AEO local → blue ocean total.
 3. Contenu éditorial des concurrents locaux très faible (pages statiques, peu/pas de blog) → dominer la longue traîne locale à faible coût.
-4. Transparence tarifaire → facteur de conversion prouvé, peu pratiqué par la majorité.
+4. Transparence tarifaire → facteur de conversion prouvé, peu pratiqué par la majorité. *[Superseded 2026-10 — voir §9 / politique sans prix] : lacune non exploitée, remplacée par preuve sociale + /simulateur.*
 5. Gestion active GMB/avis packagée dans la maintenance → différenciant, prouvé efficace localement (cas MS France Concept).
 6. Fenêtre de tir 12-18 mois avant que Nerolia/AirAgent ne déclinent localement.
 
@@ -66,7 +68,7 @@ Depuis le 2 août 2026, l'**article 50 de l'AI Act** impose d'informer l'appelan
 | Tête de mât | "agence web tours", "création site internet tours" | Forte (6+ agences + agrégateurs) | Long terme |
 | Web + IA (niche) | "agence web tours intelligence artificielle", "agence site internet et IA tours" | Quasi nulle | **Quick win** |
 | Refonte/rebranding | "refonte site internet tours", "moderniser mon site tours" | Moyenne | Moyen terme |
-| Devis/tarifs | "prix création site internet tours", "combien coûte un site internet pme" | Faible-moyenne | **Quick win** (grille de prix publique) |
+| Devis/tarifs | "prix création site internet tours", "combien coûte un site internet pme" | Faible-moyenne | **Quick win** (grille de prix publique) *[Superseded 2026-10 — voir §9 / politique sans prix] : pas de grille publique ; cibler ces requêtes vers le diagnostic /simulateur.* |
 | Villes satellites | "création site internet Joué-lès-Tours / Saint-Cyr-sur-Loire / Fondettes / Chambray-lès-Tours" | Très faible | **Quick win** |
 
 ### b) Par offre
@@ -91,6 +93,8 @@ Depuis le 2 août 2026, l'**article 50 de l'AI Act** impose d'informer l'appelan
 ### d) Longue traîne conversationnelle
 
 "comment ne plus rater d'appels clients dans mon restaurant", "l'IA au téléphone fait-elle peur aux clients ?", "combien coûte un agent vocal IA pour une petite entreprise" (→ lien `/calculateur-roi`), "dois-je prévenir mes clients qu'ils parlent à une IA au téléphone" — toutes **quick win**, quasi aucune concurrence FR.
+
+> **[Superseded 2026-10 — voir §9 / politique sans prix]** Répondre sans prix, rediriger vers le diagnostic /simulateur (en plus de /calculateur-roi) conformément à §9.
 
 ---
 
@@ -118,7 +122,7 @@ Home → `/services` → `/agent-vocal-ia` + `/secteurs/*` → `/realisations` �
 
 - **Google Business Profile** : créer/optimiser (catégorie *Agence de conception de sites Web*), zone Indre-et-Loire, publier régulièrement, **collecter des avis clients** (aucun avis visible actuellement — point faible à corriger en priorité).
 - **Citations locales** : CCI Touraine, Annuaire des Entreprises (data.gouv.fr), PagesJaunes/Google Maps (cohérence NAP stricte avec le JSON-LD), figurer dans les comparatifs déjà bien classés (Sortlist, Digital Unicorn, Findly) et dans les comparatifs nationaux IA vocale (Koino, Nerolia).
-- **Schema.org à renforcer** : `AggregateRating`/`Review` (dès avis réels), `Service` par offre avec `priceRange`, `BreadcrumbList` sur les nouvelles pages, FAQ étendue par page secteur.
+- **Schema.org à renforcer** : `AggregateRating`/`Review` (dès avis réels), `Service` par offre avec `priceRange`, `BreadcrumbList` sur les nouvelles pages, FAQ étendue par page secteur. *[Superseded 2026-10 — voir §9 / politique sans prix] : les `Service` par offre sont livrés SANS champ de prix, via `hasOfferCatalog` global (Phase 9, D-01/D-03).*
 - **Title/H1** : pattern `[Offre] à Tours · [bénéfice]` sur chaque nouvelle page.
 
 ---
