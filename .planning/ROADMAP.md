@@ -182,9 +182,17 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 09-01-PLAN.md — sitemap.ts + llms.txt register 9 service pages + /simulateur, drift-guard tests (SEO-01)
 - [ ] 09-02-PLAN.md — price-free OfferCatalog of 9 Service objects via hasOfferCatalog in root JSON-LD (SEO-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 09-03-PLAN.md — automated vitest link audit + SEO doc no-price annotations (SEO-03)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 09-04-PLAN.md — post-deploy GSC sitemap submission via gsc MCP, human-gated (D-10)
 
 ## Progress
