@@ -185,7 +185,7 @@ Plans:
 **Wave 1**
 
 - [x] 09-01-PLAN.md — sitemap.ts + llms.txt register 9 service pages + /simulateur, drift-guard tests (SEO-01)
-- [ ] 09-02-PLAN.md — price-free OfferCatalog of 9 Service objects via hasOfferCatalog in root JSON-LD (SEO-02)
+- [x] 09-02-PLAN.md — price-free OfferCatalog of 9 Service objects via hasOfferCatalog in root JSON-LD (SEO-02)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -211,4 +211,4 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete   | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete    | 2026-09-21 |
-| 9. SEO & Discovery Wiring | v1.1 | 1/4 | In Progress|  |
+| 9. SEO & Discovery Wiring | v1.1 | 2/4 | In Progress|  |
