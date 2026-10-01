@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: executing
-stopped_at: Phase 9 context gathered
-last_updated: "2026-10-01T10:42:47.567Z"
+status: milestone_complete
+stopped_at: Milestone complete (Phase 9 was final phase)
+last_updated: 2026-10-01T11:09:56.754Z
 last_activity: 2026-10-01
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 27
-  completed_plans: 26
+  completed_plans: 27
   percent: 80
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 9 — seo-discovery-wiring
+**Current focus:** Milestone complete
 
 ## Current Position
 
-Phase: 9 (seo-discovery-wiring) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
+Phase: 9
+Plan: Not started
+Status: Milestone complete
 Last activity: 2026-10-01
 
 Progress: [██████████] 96%
@@ -36,7 +36,7 @@ Progress: [██████████] 96%
 
 **Velocity:**
 
-- Total plans completed: 28 (v1.0 only)
+- Total plans completed: 32 (v1.0 only)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 
@@ -49,6 +49,7 @@ Progress: [██████████] 96%
 | 6 | 7 | - | - |
 | 07 | 6 | - | - |
 | 8 | 6 | - | - |
+| 9 | 4 | - | - |
 
 **Recent Trend:**
 
