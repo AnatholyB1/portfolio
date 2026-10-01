@@ -961,3 +961,4 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 }
 .sim-q-text { text-wrap: balance; }
 @media (max-width: 560px) { .hc-cap { display: none; } }
+@media (max-width: 480px) { .sim-layout .sim-options { grid-template-columns: minmax(0, 1fr); } }
