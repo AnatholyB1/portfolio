@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: Awaiting next milestone
-stopped_at: Phase 9 context gathered
+stopped_at: Milestone v1.1 closed — ready for /gsd:new-milestone
 last_updated: "2026-10-01T18:09:09.631Z"
 last_activity: 2026-10-01 — Milestone v1.1 completed and archived
 progress:
@@ -18,10 +18,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
+See: .planning/PROJECT.md (updated 2026-10-01 after v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Milestone complete
+**Current focus:** Planning next milestone
 
 ## Current Position
 
@@ -34,7 +34,7 @@ Last activity: 2026-10-01 — Milestone v1.1 completed and archived
 
 **Velocity:**
 
-- Total plans completed: 32 (v1.0 only)
+- Total plans completed: 48 (v1.0: 21, v1.1: 27)
 - Average duration: ~5 min
 - Total execution time: ~40 min
 

@@ -50,12 +50,63 @@
 
 ---
 
+## Milestone: v1.1 — Extension de l'offre & refonte commerciale
+
+**Shipped:** 2026-10-01
+**Phases:** 5 | **Plans:** 27 | **Tasks:** 67 | **Timeline:** 12 days (2026-09-20 → 2026-10-01)
+
+### What Was Built
+
+- Prospect capture backend: dedicated Supabase table, insert-only RLS, spam guard, Resend notification
+- 9 price-free service pages + index, each with FAQPage JSON-LD and a citable direct-answer block
+- Diagnostic simulator with branching, 2-4 service recommendation and RGPD-consented capture
+- Landing recomposed around PME problems, and a site-wide "no price" policy enforced by tests
+- SEO/GEO wiring: sitemap, `llms.txt`, `OfferCatalog` of 9 `Service` objects, automated link audit, sitemap submitted to Search Console
+- Post-delivery design overhaul and mobile pass (real client screenshots, one rhythm per section, burger menu, sticky diagnostic bar)
+
+### What Worked
+
+- **Policy as tests** — encoding "no price anywhere" and the CTA allowlist as vitest guards caught regressions during the later redesign instead of relying on memory
+- **Locked decisions in CONTEXT.md** — D-01..D-10 for Phase 9 let the planner and checker work without re-asking, and the decision-coverage gate forced every decision to be cited in a plan
+- **Checking the real thing** — measuring production (mobile length, EN/TH overflow, scroll overlap) found defects that tests and tsc could not: a sticky column covering text, a menu hidden below 900px with no replacement
+- **Human-gated last step** — making the Search Console submission a final, post-deploy checkpoint kept the code plans independent of an interactive OAuth flow
+
+### What Was Inefficient
+
+- **Design came after the build** — Phases 6-8 shipped a flat, generic look that needed a full overhaul after Phase 9; a design contract before building would have avoided the rework (and the `gsd-ui-phase` output was judged unusable)
+- **Google re-auth took many attempts** — typos in `--scopes`, PowerShell splitting the comma, concurrent runs causing CSRF errors; a ready-made runbook with the exact command would have saved time
+- **Tooling noise** — `graphify update` kept failing, and two GSD state commands (`record-metric`, `add-decision`) were called with wrong arguments, leaving the metrics table incomplete
+- **No milestone audit** — closed without `/gsd:audit-milestone` again (same lesson as v1.0)
+
+### Patterns Established
+
+- Real client screenshots in `public/work/` via a reusable `BrowserShot` frame, driven by `src/data/projects.ts`
+- One composition per section (index list, sticky side column, paper band, acid band) instead of repeating the same section template
+- Sticky columns live in a grid container that ends with the list they follow; text that follows goes outside the container
+- Mobile: collapse secondary content behind a "see more" button (content stays in the DOM) and keep a persistent diagnostic CTA
+- Capture-based review: a temporary `puppeteer-core` + local Chromium script to screenshot sections and check overflow per language
+
+### Key Lessons
+
+- **Run the design pass before shipping content pages** — or define `PRODUCT.md` early so every phase builds against it
+- **Test in the browser at the target width and language, not only in unit tests** — overlap, overflow and hidden navigation only show up rendered
+- **Quote PowerShell arguments that contain commas** (`--scopes="a,b"`) and run interactive OAuth in a regular terminal, not in a time-limited shell
+- **Update `STATE.md` metrics via the right CLI arguments** or skip them, rather than leaving half-recorded data
+
+### Cost Observations
+
+- Sessions: 1 long session for discuss, plan, execute, deploy, design overhaul and close, plus earlier sessions for Phases 5-8
+- Models: Sonnet for execution and research agents, Opus for the planner
+- Notable: the design overhaul and mobile pass took more interaction than Phase 9 itself
+
+---
+
 ## Cross-Milestone Trends
 
-| Metric | v0.1 (pre-GSD) | v1.0 |
-|--------|----------------|------|
-| Plans tracked | 0 | 21 |
-| Timeline | Unknown | 3 days |
-| Phases | Informal | 4 |
-| QA approach | Manual | Automated + browser verify |
-| Requirements coverage | None | 29/29 |
+| Metric | v0.1 (pre-GSD) | v1.0 | v1.1 |
+|--------|----------------|------|------|
+| Plans tracked | 0 | 21 | 27 |
+| Timeline | Unknown | 3 days | 12 days |
+| Phases | Informal | 4 | 5 |
+| QA approach | Manual | Automated + browser verify | Policy guards + production browser checks |
+| Requirements coverage | None | 29/29 | 26/26 |
