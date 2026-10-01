@@ -8,12 +8,17 @@
     "start": "next start",
     "lint": "eslint",
     "gen:assets": "node scripts/gen-brand-assets.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:rls": "vitest run -c vitest.rls.config.ts",
+    "rls:canary": "node scripts/rls-canary.mjs",
+    "verify:email-dns": "node scripts/verify-email-dns.mjs",
+    "sv:add-admin": "node scripts/sv-add-admin.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
-    "@supabase/supabase-js": "^2.104.1",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.47.0",
     "next": "16.1.6",
@@ -21,6 +26,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "resend": "^6.28.1",
+    "server-only": "^0.0.1",
     "three": "^0.183.2",
     "zod": "^4.6.5"
   },
