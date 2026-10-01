@@ -25,7 +25,17 @@ PME, commerces, restaurants, boulangeries, écoles et services locaux qui veulen
 ## Liens
 
 - Accueil : https://sevalys.com/
-- Services & tarifs : https://sevalys.com/services
+- Services : https://sevalys.com/services
+- Site Vitrine à Tours : https://sevalys.com/services/site-vitrine
+- Rebranding + Site Premium à Tours : https://sevalys.com/services/rebranding-site-premium
+- Branding à Tours : https://sevalys.com/services/branding
+- Projet Sur Mesure à Tours : https://sevalys.com/services/projet-sur-mesure
+- Agent Vocal IA à Tours : https://sevalys.com/services/agent-vocal-ia
+- Maintenance à Tours : https://sevalys.com/services/maintenance
+- Community Management à Tours : https://sevalys.com/services/community-management
+- Meta Ads à Tours : https://sevalys.com/services/meta-ads
+- Google Ads à Tours : https://sevalys.com/services/google-ads
+- Simulateur de diagnostic : https://sevalys.com/simulateur
 - Calculateur de ROI (agent vocal) : https://sevalys.com/calculateur-roi
 - Démo agent vocal : https://sevalys.com/demo
 - Mentions légales : https://sevalys.com/mentions-legales
