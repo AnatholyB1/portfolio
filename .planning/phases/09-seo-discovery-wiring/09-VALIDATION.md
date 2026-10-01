@@ -2,8 +2,8 @@
 phase: 9
 slug: seo-discovery-wiring
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-10-01
 ---
 
@@ -38,11 +38,15 @@ created: 2026-10-01
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 9-xx | TBD | TBD | SEO-01 | — | sitemap lists all 9 service slugs + /simulateur, no duplicates | unit | `npx vitest run src/app/sitemap.test.ts` | ❌ W0 | ⬜ pending |
-| 9-xx | TBD | TBD | SEO-01 | — | llms.txt links all 9 services + /simulateur, no "tarif" | unit (fs read) | `npx vitest run src/app/llms.test.ts` | ❌ W0 | ⬜ pending |
-| 9-xx | TBD | TBD | SEO-02 | T-9 JSON-LD injection | catalog built from static copy, serialized via buildJsonLdScript; no price keys | unit | `npx vitest run src/lib/serviceSchema.test.ts src/app/layout.test.ts` | ❌ W0 | ⬜ pending |
-| 9-xx | TBD | TBD | SEO-02 | — | `[slug]/layout.tsx` stays Service-free (D-01) | source read | `npx vitest run src/lib/serviceJsonLd.test.ts` | ✅ extend | ⬜ pending |
-| 9-xx | TBD | TBD | SEO-03 | — | every internal href/anchor resolves to a route and element id | static | `npx vitest run src/app/linkAudit.test.ts` | ❌ W0 | ⬜ pending |
+| 9-01-01 | 01 | 1 | SEO-01 | — | sitemap lists 9 service slugs + /simulateur, no duplicates | unit | `npx vitest run src/app/sitemap.test.ts` | ❌ W0 | ⬜ pending |
+| 9-01-02 | 01 | 1 | SEO-01 | — | llms.txt links 9 services + /simulateur, no "tarif" | unit (fs read) | `npx vitest run src/app/llms.test.ts` | ❌ W0 | ⬜ pending |
+| 9-02-01 | 02 | 1 | SEO-02 | T-9 JSON-LD injection | pure builder, no price keys, D-01 guard | unit | `npx vitest run src/lib/serviceSchema.test.ts src/lib/serviceJsonLd.test.ts` | ❌ W0 | ⬜ pending |
+| 9-02-02 | 02 | 1 | SEO-02 | T-9 JSON-LD injection | layout serialized via buildJsonLdScript, hasOfferCatalog wired, no priceRange | source read | `npx vitest run src/app/layout.test.ts` | ✅ extend | ⬜ pending |
+| 9-03-01 | 03 | 2 | SEO-03 | — | every internal href/anchor resolves to a route and id | static | `npx vitest run src/app/linkAudit.test.ts` | ❌ W0 | ⬜ pending |
+| 9-03-02 | 03 | 2 | SEO-02 | — | SEO doc stale price passages annotated, originals preserved | grep | greps in 09-03-PLAN.md Task 2 acceptance criteria | ✅ | ⬜ pending |
+| 9-04-01 | 04 | 3 | SEO-01 | — | full suite, typecheck and build green pre-deploy | suite | `npx vitest run && npx tsc --noEmit` | ✅ | ⬜ pending |
+| 9-04-02 | 04 | 3 | SEO-01 | gcloud write scope | human deploy + transient write-scope re-auth | manual-only | see Manual-Only table | n/a | ⬜ pending |
+| 9-04-03 | 04 | 3 | SEO-01 | gcloud write scope | submit_sitemap then list_sitemaps confirms | manual-only | proxy: `curl -s https://sevalys.com/sitemap.xml \| grep -c "<loc>"` returns 15 | n/a | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -50,10 +54,10 @@ created: 2026-10-01
 
 ## Wave 0 Requirements
 
-- [ ] `src/app/sitemap.test.ts` — SEO-01
-- [ ] `src/app/llms.test.ts` — SEO-01
-- [ ] `src/lib/serviceSchema.ts` + `src/lib/serviceSchema.test.ts` — SEO-02
-- [ ] `src/app/linkAudit.test.ts` — SEO-03
+- [x] `src/app/sitemap.test.ts` — SEO-01
+- [x] `src/app/llms.test.ts` — SEO-01
+- [x] `src/lib/serviceSchema.ts` + `src/lib/serviceSchema.test.ts` — SEO-02
+- [x] `src/app/linkAudit.test.ts` — SEO-03
 
 ---
 
@@ -69,11 +73,11 @@ created: 2026-10-01
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 60s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 60s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-10-01

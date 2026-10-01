@@ -268,10 +268,10 @@ Threat: XSS via JSON-LD `</script>` injection (Tampering) — static content, lo
 | A3 | Using `tagline` (uppercase) verbatim as Service `description` is acceptable | Pattern 1 | cosmetic; user may prefer sentence case/metaDescription |
 | A4 | sitemap priority/changefreq values (0.8 monthly) | Pattern 2 | negligible |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Uppercase tagline as description** — recommend verbatim per D-02; planner may surface to user at review.
-2. **Should the audit also cover the unused orphan components?** Recommendation: no (scope anchor table to composed pages); optionally list them as dead code in a note, out of scope for deletion.
+1. **Uppercase tagline as description** — recommend verbatim per D-02; planner may surface to user at review. RESOLVED: plan 09-02 uses the tagline verbatim per D-02.
+2. **Should the audit also cover the unused orphan components?** Recommendation: no (scope anchor table to composed pages); optionally list them as dead code in a note, out of scope for deletion. RESOLVED: plan 09-03 scopes anchor ids to composed pages only.
 
 ## Sources
 
