@@ -179,7 +179,13 @@ Plans:
   2. The site's `Organization`/`ProfessionalService` schema.org markup includes a distinct `Service` object per offer, linked via `hasOfferCatalog`
   3. A link audit confirms no broken internal anchors/links resulted from turning `/services` into an index page or from the landing re-sequencing
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — sitemap.ts + llms.txt register 9 service pages + /simulateur, drift-guard tests (SEO-01)
+- [ ] 09-02-PLAN.md — price-free OfferCatalog of 9 Service objects via hasOfferCatalog in root JSON-LD (SEO-02)
+- [ ] 09-03-PLAN.md — automated vitest link audit + SEO doc no-price annotations (SEO-03)
+- [ ] 09-04-PLAN.md — post-deploy GSC sitemap submission via gsc MCP, human-gated (D-10)
 
 ## Progress
 
