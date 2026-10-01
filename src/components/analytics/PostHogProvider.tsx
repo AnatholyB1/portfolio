@@ -10,6 +10,7 @@ import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
+import { isPrivatePath } from '@/lib/privateRoutes';
 
 const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
@@ -34,7 +35,16 @@ function PageviewTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!KEY || !initialized) return;
+    if (!KEY) return;
+    // Aucune donnée client ne doit atteindre PostHog : le portail affichera
+    // contrats et prix. On coupe toute capture sur les routes privées.
+    if (isPrivatePath(pathname)) {
+      if (initialized) posthog.opt_out_capturing();
+      return;
+    }
+    ensureInit();
+    if (!initialized) return;
+    if (posthog.has_opted_out_capturing()) posthog.opt_in_capturing();
     let url = window.origin + pathname;
     const qs = searchParams?.toString();
     if (qs) url += `?${qs}`;
@@ -46,6 +56,9 @@ function PageviewTracker() {
 
 export default function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Pas d'init (donc pas d'autocapture) sur un atterrissage direct privé ;
+    // PageviewTracker initialise paresseusement dès qu'une route publique est atteinte.
+    if (isPrivatePath(window.location.pathname)) return;
     ensureInit();
   }, []);
 
