@@ -845,7 +845,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .mband-cols p:last-child { margin-bottom: 0; color: rgba(10,11,12,0.74); }
 
 /* ─── Problèmes — liste éditoriale ────────────────── */
-.problems-wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 96px; row-gap: 88px; align-items: start; }
+.problems-wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 96px; align-items: start; }
 .problems-side { position: sticky; top: 120px; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .problems-side .sec-num { padding: 0; }
 .problems-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -853,7 +853,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .pl-n { color: var(--acid); font-size: 12px; letter-spacing: 0.12em; padding-top: 12px; }
 .problems-list h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(26px, 3vw, 40px); line-height: 1.05; letter-spacing: -0.03em; margin: 0 0 14px; }
 .problems-list p { color: var(--ink-dim); font-size: 16px; line-height: 1.6; max-width: 52ch; margin: 0; }
-.problems-good { grid-column: 1 / -1; font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(26px, 3.4vw, 48px); line-height: 1.12; letter-spacing: -0.025em; padding-right: 30%; text-wrap: balance; margin: 0; padding-top: 56px; border-top: 1px solid var(--line); }
+.problems-good { grid-column: 1 / -1; font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(26px, 3.4vw, 48px); line-height: 1.12; letter-spacing: -0.025em; padding-right: 30%; text-wrap: balance; margin: 88px 0 0; padding-top: 56px; border-top: 1px solid var(--line); }
 
 /* ─── Services — index typographique ──────────────── */
 .idx-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 56px; align-items: end; margin-bottom: 72px; }

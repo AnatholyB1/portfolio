@@ -31,6 +31,9 @@ export default function ProblemSection() {
           ))}
         </ol>
 
+      </div>
+
+      <div className="wrap">
         <p className="problems-good" data-reveal>{ts.good_news}</p>
       </div>
     </section>
