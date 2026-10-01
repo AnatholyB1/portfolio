@@ -149,5 +149,15 @@ describe('migration lint: sv_* hardening (FOUND-02, FOUND-03, D-06, D-18)', () =
     expect(lintMigration('ok.sql', fixture)).toEqual([]);
   });
 
-  it.todo('finds at least 4 sv_ tables');
+  it('finds at least 4 sv_ tables', () => {
+    const tables = new Set<string>();
+    for (const m of migrations) {
+      for (const t of stripComments(m.sql).matchAll(
+        /create\s+table\s+(?:if\s+not\s+exists\s+)?public\.(sv_\w+)/gi,
+      )) {
+        tables.add(t[1].toLowerCase());
+      }
+    }
+    expect(tables.size).toBeGreaterThanOrEqual(4);
+  });
 });
