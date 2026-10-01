@@ -2,9 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: ready_to_plan
-last_updated: "2026-10-01T19:00:00.000Z"
-last_activity: 2026-10-01
+status: planning
+stopped_at: Phase 10 context gathered
+last_updated: "2026-10-01T20:04:51.763Z"
+last_activity: 2026-10-01 — Roadmap v2.0 created (10 phases, 51/51 requirements mapped)
 progress:
   total_phases: 10
   completed_phases: 0
@@ -70,9 +71,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-01
-Stopped at: Roadmap v2.0 created
-Resume file: None
+Last session: 2026-10-01T20:04:51.755Z
+Stopped at: Phase 10 context gathered
+Resume file: .planning/phases/10-foundation-auth-isolation/10-CONTEXT.md
 
 ## Operator Next Steps
 
