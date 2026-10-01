@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
-status: milestone_complete
-stopped_at: Milestone complete (Phase 9 was final phase)
-last_updated: 2026-10-01T11:09:56.754Z
-last_activity: 2026-10-01
+status: Awaiting next milestone
+stopped_at: Phase 9 context gathered
+last_updated: "2026-10-01T18:09:09.631Z"
+last_activity: 2026-10-01 — Milestone v1.1 completed and archived
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 27
   completed_plans: 27
-  percent: 80
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,10 @@ See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-10-01
-
-Progress: [██████████] 96%
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-01 — Milestone v1.1 completed and archived
 
 ## Performance Metrics
 
@@ -85,8 +83,21 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 | i18n | Footer nav labels (Manifeste/Work/Services/Contact) hardcoded — not wired to t.nav.* | Deferred (not in v1.1 requirements) |
 | accessibility | CinemaIntro, CustomCursor, PhoneAgent, MethodologySection missing JS-level prefers-reduced-motion guards | Deferred (not in v1.1 requirements) |
 
+Items acknowledged and deferred at v1.1 milestone close on 2026-10-01:
+
+| Category | Item | Status |
+|----------|------|--------|
+| quick_task | 260919-rvg-diagnostiquer-et-resoudre-depuis-fin-aou | missing (no status metadata) |
+| quick_task | 260919-wig-n8n-resend-pour-le-formulaire-de-contact | missing (work shipped, no status metadata) |
+| quick_task | 260921-v9p-prot-ger-le-projet-supabase-portfolio-rl | missing (work shipped, no status metadata) |
+| uat_gap | 06-HUMAN-UAT.md | resolved (0 open scenarios, false positive) |
+
 ## Session Continuity
 
 Last session: 2026-10-01T10:42:47.557Z
 Stopped at: Phase 9 context gathered
 Resume file: None
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

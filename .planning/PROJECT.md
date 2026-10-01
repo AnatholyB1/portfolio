@@ -2,23 +2,27 @@
 
 ## What This Is
 
-Agency website for BRICON ANATHOLY, a web & AI agency based in Tours, France, targeting local SMBs (restaurants, shops, schools, service businesses). The site presents the Selenium Phase 02 agency brand — landing page, services page, phone agent demo — and includes a `/demo` CRM dashboard used for client demos. The freelance-era design has been fully replaced.
+Agency website for BRICON ANATHOLY (Sèvalys), a web & AI agency based in Tours, France, targeting local SMBs (restaurants, shops, schools, service businesses). The site presents 9 offers (each on its own price-free page), a diagnostic simulator that qualifies prospects into a dedicated Supabase table, a landing page built around proof (real client screenshots), and a `/demo` CRM dashboard used for client demos. No price is shown anywhere on the site.
 
 ## Core Value
 
 A patron de PME lands on the site and immediately understands what we do, trusts us, and knows how to contact us — in under 60 seconds.
 
-## Current Milestone: v1.1 Extension de l'offre & refonte commerciale
+## Current State
 
-**Goal:** Étendre le catalogue de services Sèvalys et refondre la présentation commerciale pour qualifier les prospects sans jamais afficher de prix, en intégrant la stratégie SEO/GEO/AEO.
+**v1.1 shipped 2026-10-01** — "Extension de l'offre & refonte commerciale" (Phases 5-9, 27 plans). Archived in `.planning/milestones/v1.1-ROADMAP.md` and `v1.1-REQUIREMENTS.md`. v1.0 (visual redesign, Phases 1-4) shipped 2026-05-18.
 
-**Target features:**
-- 4 nouveaux services : Community Management, Branding, Meta Ads, Google Ads (promu d'option upsell à offre à part entière)
-- Page de présentation dédiée par service (5 existants + 4 nouveaux) : problème résolu / fonctionnement / enjeux — texte concis, dans le système i18n existant (translations.ts, fr/en/th)
-- **Aucun prix affiché nulle part sur le site** — décision étendue à TOUTES les offres, existantes (Landing Page, Rebranding+Premium, Projet sur-mesure, Agent Vocal IA, Maintenance) et nouvelles. `/services` doit être revu en conséquence (retrait des prix affichés aujourd'hui).
-- Landing page simplifiée : problèmes résolus, présentation des services, fonctionnement, enjeux, preuve sociale (réalisations + témoignages) — CTA uniquement vers simulateur ou contact (email/téléphone)
-- Simulateur de diagnostic : qualification des besoins du visiteur → recommandation des services pertinents → capture du prospect dans une **nouvelle table Supabase dédiée** (le CRM existant ne contient que le schéma bakery-demo produits/stock/commandes, pas de table prospects — même projet Supabase, nouvelle table avec RLS insert-only) → incitation à appeler/contacter
-- Intégration de la stratégie SEO/GEO/AEO (`docs/strategie-seo-geo-llm-2026-09.md`) : nouvelles pages piliers par service, `/simulateur` comme page pilier transverse, extension du schema.org — **note : la doc recommandait la transparence tarifaire comme différenciateur local ; cette décision de masquer tous les prix inverse ce point, à documenter dans la doc SEO**
+Live on `sevalys.com`: landing (hero with real client screenshots, manifesto, problems, services index, method, stakes, realisations, phone-agent teaser, contact), 9 service pages + index, `/simulateur`, `/calculateur-roi` (price-free), `/demo`, mobile menu with a sticky diagnostic bar. Sitemap submitted to Search Console; `llms.txt` and an `OfferCatalog` of 9 `Service` objects in the global JSON-LD.
+
+## Next Milestone Goals
+
+Not yet defined — start with `/gsd:new-milestone`. Candidates surfaced during v1.1:
+
+- Refresh dated copy: "Disponible en mai 2026" (hero pill) and "Nouveaux projets dès juin 2026" (contact) are stale
+- Collect real Google reviews and set up Google Business Profile (SEO doc §5-§6; no reviews visible today)
+- Sector pages `/secteurs/*` and a blog (SEO doc §4; deferred from v1.1)
+- Real case studies for Community Management, Branding, Meta Ads, Google Ads once first clients are onboarded (SVC2-01)
+- Simulator v2: sector-adapted questions, A/B testing (SIMU2-01/02)
 
 ## Requirements
 
@@ -29,47 +33,52 @@ A patron de PME lands on the site and immediately understands what we do, trusts
 - ✓ /demo CRM dashboard with Supabase Realtime — Phase 0 (existing)
 - ✓ /demo/feuillette branded pitch page — Phase 0 (existing)
 - ✓ Mentions légales page — Phase 0 (existing)
-- ✓ Design system implemented (CSS vars, Bricolage Grotesque + Manrope + JetBrains Mono, custom cursor, scroll-reveal, cinema intro) — v1.0
+- ✓ Design system implemented (CSS vars, Space Grotesk + Manrope + JetBrains Mono, custom cursor, scroll-reveal, cinema intro) — v1.0
 - ✓ Landing page rebuilt with Selenium Phase 02 design system — v1.0
 - ✓ Services page rebuilt with 9 sections + new design system — v1.0
 - ✓ Mentions légales rethemed to new design system — v1.0
 - ✓ /demo CRM dashboard rethemed to new design system — v1.0
 - ✓ Remove freelance-era signals (bio, skills bars, StarkDisplay Iron Man, "Hire me") — v1.0
-- ✓ 9 dedicated price-free service pages (`/services/[slug]`) + index, FAQPage JSON-LD, icon-illustrated fonctionnement section — Phase 6, v1.1 (SVC-01 through SVC-06)
-- ✓ Diagnostic simulator (`/simulateur`): branching questionnaire → 2-4 service recommendation + visual gauge → RGPD-consented prospect capture → citable pillar page — Phase 7, v1.1 (SIMU-01 through SIMU-08)
-- ✓ Landing page rebuilt around PME pain points → services → fonctionnement → enjeux → preuve sociale, every CTA routing to `/simulateur` or `/services/agent-vocal-ia` (no CTA points to a price) — Phase 8, v1.1 (LANDING-01 through LANDING-03)
-- ✓ Site-wide "no price anywhere" enforced: `/calculateur-roi` reworked into a pure recovered-capacity/value calculator (no cost-vs-price comparison), global JSON-LD `priceRange` removed, orphaned price-carrying components deleted — Phase 8, v1.1 (PRIX-01, PRIX-02)
+- ✓ Prospect capture backend: dedicated Supabase table, insert-only RLS, spam guard, Resend notification — v1.1 (CRM-01 to CRM-04)
+- ✓ 9 dedicated price-free service pages (`/services/[slug]`) + index, FAQPage JSON-LD, citable direct-answer blocks — v1.1 (SVC-01 to SVC-06)
+- ✓ Diagnostic simulator (`/simulateur`): branching questionnaire, 2-4 service recommendation, RGPD-consented capture — v1.1 (SIMU-01 to SIMU-08)
+- ✓ Landing rebuilt around PME pain points → services → fonctionnement → enjeux → preuve sociale; every CTA routes to `/simulateur` or `/services/agent-vocal-ia` — v1.1 (LANDING-01 to LANDING-03)
+- ✓ Site-wide "no price anywhere" enforced by automated guards (`calculateur-roi` reworked, `priceRange` removed) — v1.1 (PRIX-01, PRIX-02)
+- ✓ SEO discovery wiring: sitemap + `llms.txt` for the 9 service pages and `/simulateur`, `OfferCatalog` of 9 price-free `Service` objects, automated internal-link audit, sitemap submitted to Search Console — v1.1 (SEO-01 to SEO-03)
 
 ### Active
 
-v1.1 in progress — see Current Milestone above. Requirements to be detailed in `.planning/REQUIREMENTS.md`.
+Next milestone not defined yet. Carried over from v1.0 (still pending):
 
-Carried over from v1.0 deferred work (not in v1.1 scope, still pending):
 - [ ] Footer nav labels wired to LanguageContext (t.nav.* keys — currently hardcoded)
 - [ ] JS-level prefers-reduced-motion guards in CinemaIntro, CustomCursor, PhoneAgent, MethodologySection
 
 ### Out of Scope
 
 - /demo/feuillette — branded client pitch, intentionally separate
-- Backend/API changes — no functional changes to CRM or VAPI
+- Backend/API changes to the existing CRM (products/orders/stock) or VAPI — no functional changes
 - New content languages — fr/en/th sufficient
+- Any price display, price range or price comparator — site-wide policy (PRIX-01)
+- Instant quote / auto-estimate in the simulator — violates the no-price policy
 
 ## Context
 
-- **Tech stack**: Next.js 14, TypeScript, Tailwind v4 (@theme inline), React, Three.js (canvas), GSAP (ScrollTrigger), Supabase
-- **Design system**: Acid `#C4F542`, bg `#0A0B0C`, ink `#ECEAE3`, warm `#E07856`, line `#1F1F1F`
-- **Fonts**: Bricolage Grotesque (display, variable), Manrope (body), JetBrains Mono (mono) — all via Google Fonts
-- **Current state**: v1.0 shipped — full agency rebrand complete. ~2,868 lines added, ~3,005 removed across 39 files. Clean codebase: no freelance-era components remain. Phase 7 (Diagnostic Simulator) complete — `/simulateur` live, un-404ing the CTAs Phase 6 shipped. Phase 8 (Landing Simplification & Pricing Policy) complete — landing rebuilt around problems→services→fonctionnement→enjeux→preuve sociale, zero price/tariff mentions site-wide (verified by automated guards in `translations.test.ts`, `layout.test.ts`, `calculateur-roi/page.test.ts`, `page.test.ts`). Only remaining pricing-policy loose end: the SEO strategy doc (`docs/strategie-seo-geo-llm-2026-09.md`) still recommends pricing transparency as a differentiator — reversing that note is Phase 9's job.
+- **Tech stack**: Next.js 16 (Turbopack), TypeScript, Tailwind v4 (@theme inline), React, GSAP (ScrollTrigger), Supabase, Resend, vitest
+- **Design system**: Acid `#C4F542`, bg `#0A0B0C`, ink `#ECEAE3`, warm `#E07856`, line `#1F1F1F`. Design brief in `PRODUCT.md` (register: brand)
+- **Fonts**: Space Grotesk (display), Manrope (body), JetBrains Mono (mono) — all via next/font/google
+- **Tests**: 332 vitest tests, including guards that encode policy (no price, CTA destinations, link audit, schema without price keys)
 - **ClientProviders pattern**: All ssr:false dynamic imports routed through `ClientProviders.tsx` ('use client' boundary) — required by Next.js Turbopack
 - **Nav hrefs**: Absolute (`/#manifeste`, `/#work`, `/#contact`) — relative hrefs fail from /services
+- **Tooling caveats**: `graphify update .` currently fails (NoneType error); gcloud ADC for Search Console still holds the write scope and should be reverted to read-only
 
 ## Constraints
 
 - **i18n**: Must preserve fr/en/th via existing LanguageContext — do not break language switching
 - **Demo pages**: /demo/feuillette must NOT be touched
 - **CRM API**: No changes to src/app/api/crm/* routes
-- **SSR/SSG**: Three.js and GSAP components require dynamic import with ssr:false via ClientProviders
+- **SSR/SSG**: GSAP components require dynamic import with ssr:false via ClientProviders
 - **Performance**: prefers-reduced-motion must be respected on all animations
+- **Pricing**: no price, range or tariff mention anywhere (enforced by tests)
 
 ## Key Decisions
 
@@ -78,14 +87,17 @@ Carried over from v1.0 deferred work (not in v1.1 scope, still pending):
 | Rebuild pages (not patch) | Mockup is React component-based, fundamentally different structure from current TSX | ✓ Good — clean result, no regression |
 | Keep LanguageContext | Already handles fr/en/th, mockup translations slot in as new keys | ✓ Good — zero breaking changes |
 | CSS vars for design tokens | Mockup uses :root CSS vars — matches Next.js globals.css approach | ✓ Good — consistent across all pages |
-| Dynamic import for 3D canvas | Three.js / canvas not SSR-safe | ✓ Good — Turbopack compatible |
 | ClientProviders.tsx pattern | ssr:false forbidden in Next.js Server Components (Turbopack) | ✓ Good — adopted for Methodology too |
 | Absolute hrefs in nav | Relative hrefs (#manifeste) fail when navigating from /services | ✓ Good — cross-page navigation works |
-| CSS-only services block | 171 lines using CSS vars only, no hex literals — scoped to .s-* classes | ✓ Good — no conflicts with Phase 2 classes |
 | Baseline 5f36fa0 for feuillette QA | Pre-Phase-1 planning commit, before any code changes | ✓ Good — clean integrity check |
 | Read honeypot field via ref, forward verbatim to payload (Phase 7) | Was rendered but never read; hardcoded `website: ''` made the server's spam check unreachable — caught by code review | ✓ Good — fixed pre-merge, regression test added |
-| LANDING-02's literal "every CTA → simulateur/contact" has two confirmed exceptions, both routing to `/services/agent-vocal-ia` (Phase 8) | The calculateur-ROI results CTA and the trimmed PhoneAgent teaser CTA are agent-vocal-specific; that page is itself price-free and carries its own simulateur/contact CTAs onward | ✓ Good — documented as D-11/D-12 in `08-CONTEXT.md`, encoded in `page.test.ts`'s CTA allowlist so it isn't re-flagged as a gap |
-| Human-verify checkpoint actually tested in a browser, not rubber-stamped (Phase 8) | Caught a real bug (hardcoded French "PROCHAINE ÉTAPE" label leaking into EN/TH) that all automated tests missed since it wasn't covered by any guard | ✓ Good — fixed same-session (`ca8de2e`), i18n'd via a new `bridge_eyebrow` key |
+| LANDING-02's literal "every CTA → simulateur/contact" has two confirmed exceptions, both to `/services/agent-vocal-ia` (Phase 8) | calculateur-ROI results CTA and the PhoneAgent teaser CTA are agent-vocal-specific; that page is price-free and carries its own onward CTAs | ✓ Good — encoded in `page.test.ts`'s allowlist |
+| Human-verify checkpoint actually tested in a browser (Phase 8) | Caught a hardcoded French label leaking into EN/TH that all automated tests missed | ✓ Good — fixed same session |
+| Service schema.org objects live in the global JSON-LD only, no price fields (Phase 9, D-01/D-03) | One source of truth, resolves the SEO doc's `priceRange` conflict with the no-price policy | ✓ Good — guarded by tests |
+| Link audit as a persistent vitest guard, not a one-off script (Phase 9, D-09) | Catches future broken anchors, including links to components not rendered on a page | ✓ Good |
+| Sitemap submitted via gsc MCP after deploy, human-gated (Phase 9, D-10) | Needed a transient write-scope re-auth; re-auth took several attempts (scope typos, PowerShell comma splitting, concurrent runs) | ⚠️ Revisit — revert ADC to read-only |
+| Post-delivery design overhaul: proof first (real client screenshots), one rhythm per section, key colors and fonts kept | v1.1 landing/service pages read as flat and generic; user feedback | ✓ Good — measured on production, tests unchanged |
+| Mobile: burger menu + sticky diagnostic bar + collapsed realisations/problems | Nav was hidden below 900px with no replacement (links and language switch unreachable); landing was 16 screens long | ✓ Good — 13.8 screens, tested EN/TH |
 
 ## Evolution
 
@@ -105,4 +117,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-21 — Phase 8 (Landing Simplification & Pricing Policy) complete*
+*Last updated: 2026-10-01 after v1.1 milestone*

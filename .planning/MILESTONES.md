@@ -1,11 +1,31 @@
 # Milestones
 
+## v1.1 Extension de l'offre & refonte commerciale (Shipped: 2026-10-01)
+
+**Phases completed:** 5 phases, 27 plans, 67 tasks
+
+**Key accomplishments:**
+
+- 9 pages de service dédiées, sans prix (`/services/[slug]`) et un index `/services`, chacune avec FAQPage JSON-LD et bloc de réponse citable
+- Simulateur de diagnostic (`/simulateur`) : questionnaire à branchement, recommandation de 2 à 4 services, jauge visuelle, capture de prospect avec consentement RGPD
+- Backend prospects : table Supabase dédiée, RLS insert-only, protection anti-spam, notification email Resend
+- Landing recomposée (problèmes, services, méthode, enjeux, preuve sociale) et politique « aucun prix nulle part » appliquée au site entier, calculateur ROI compris
+- Découverte SEO/GEO : sitemap et `llms.txt` complétés, `OfferCatalog` schema.org (9 `Service`), audit de liens automatisé, sitemap soumis à Search Console
+- Refonte du design après livraison : vraies captures clients, un rythme par section, simulateur avant l'explication, menu mobile et barre diagnostic
+
+**Timeline:** 12 jours (2026-09-20 → 2026-10-01)
+
+Known deferred items at close: 4 (see STATE.md Deferred Items)
+
+---
+
 ## v0.1 — Foundation (existing codebase, pre-GSD)
 
 **Shipped:** Before 2026-05-15
 **Phases:** Not formally tracked
 
 What was built:
+
 - Next.js portfolio with i18n (fr/en/th)
 - Hero, About, Projects (StarkDisplay), Services, Partners, Contact, Footer sections
 - Three.js visual layer (FloatingShapes, Scene)
