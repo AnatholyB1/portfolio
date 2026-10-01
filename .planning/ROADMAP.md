@@ -58,7 +58,20 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
   3. Les tests automatisés d'isolation (client A vs client B, anonyme, utilisateur Gecko) passent et échouent si une politique est affaiblie
   4. `/espace-client` et `/admin` s'affichent sans intro cinéma, curseur ni GSAP, en `noindex`, absents du sitemap et de `llms.txt`
   5. Les gardes « aucun prix » restent actifs sur le site public tout en autorisant les prix dans le portail, l'admin et les modèles ; les e-mails de connexion arrivent en boîte de réception (SPF, DKIM, DMARC vérifiés)
-**Plans**: TBD
+**Plans**: 12 plans
+Plans:
+- [ ] 10-01-PLAN.md — Deps (@supabase/ssr, server-only), env key-mode assertion, Supabase server/admin/proxy clients, private route constants
+- [ ] 10-02-PLAN.md — sv_* migration (roles en tables, RLS, helpers, triggers d'exclusivité, RPC service_role, seed admin) + lint de migrations + sync dérive prod
+- [ ] 10-03-PLAN.md — FOUND-07 : script de vérification DNS/Resend, édition SPF/DMARC, test Gmail (D-20)
+- [ ] 10-04-PLAN.md — Émission du code de connexion : schémas, e-mail FR, throttle, gate sv_login_allowed
+- [ ] 10-05-PLAN.md — proxy.ts, DAL requireAdmin/requireClient, plafond de session 30 jours, déconnexion
+- [ ] 10-06-PLAN.md — Providers route-aware (cinéma/curseur/PostHog), robots/headers/sitemap/llms, zones de prix et gardes d'import
+- [ ] 10-07-PLAN.md — Suite RLS sur branche Supabase (A vs B, anon, Gecko, auto-inscription), canary, advisor, spike auth
+- [ ] 10-08-PLAN.md — Layouts privés noindex, portal.css, composants de coquille
+- [ ] 10-09-PLAN.md — Invitation : recherche SIRET, orchestration invite (anti-prise de compte), e-mail d'invitation
+- [ ] 10-10-PLAN.md — Page /connexion (e-mail → code), actions verifyOtp, interstitiel /auth/confirm
+- [ ] 10-11-PLAN.md — Coquilles /espace-client et /admin, formulaire d'invitation, actions admin
+- [ ] 10-12-PLAN.md — Application prod du schéma, env Vercel + drapeau de login, vérification de bout en bout
 **UI hint**: yes
 
 ### Phase 11: Lead attribution, pipeline & consent
