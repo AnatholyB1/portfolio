@@ -36,7 +36,9 @@ describe('auth spike (A1, A2)', () => {
     const first = await svc().auth.admin.generateLink({ type: 'magiclink', email: member.email });
     expect(first.error).toBeNull();
     const props = first.data.properties;
-    expect(props?.email_otp).toMatch(/^\d{6}$/);
+    // Spike finding (plan 10-07): the OTP length is a project auth setting (6 historically, 8 on
+    // the fresh branch). Accept 6-10 digits and record the observed length below.
+    expect(props?.email_otp).toMatch(/^\d{6,10}$/);
     expect(props?.hashed_token).toBeTruthy();
     console.info(`[spike] email_otp length=${props?.email_otp.length}`);
 

@@ -32,7 +32,9 @@ if ([SV_TEST_SUPABASE_URL, SV_TEST_PROJECT_REF, SV_TEST_DB_URL].some((v) => v.in
 const isWin = process.platform === 'win32';
 
 function sql(statement) {
-  const r = spawnSync('supabase', ['db', 'query', '--db-url', SV_TEST_DB_URL, statement], {
+  // With shell:true on Windows, args are joined unquoted: quote them (statements hold no double quotes).
+  const q = (s) => (isWin ? `"${s}"` : s);
+  const r = spawnSync('supabase', ['db', 'query', '--db-url', q(SV_TEST_DB_URL), q(statement)], {
     stdio: 'inherit',
     shell: isWin,
   });
