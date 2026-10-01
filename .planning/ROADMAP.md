@@ -27,7 +27,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 - [x] **Phase 6: Service Pages (Template + Content)** - 9 dedicated, price-free, citable service pages replacing the current pricing-heavy `/services` (completed 2026-09-20)
 - [x] **Phase 7: Diagnostic Simulator** - Branching qualification quiz → 2-4 service recommendations → RGPD-compliant prospect capture → single dual-channel CTA (completed 2026-09-20)
 - [x] **Phase 8: Landing Simplification & Pricing Policy** - Landing re-sequenced and re-CTA'd, all pricing removed site-wide (service pages, landing, simulator, calculateur-roi) (completed 2026-09-21)
-- [ ] **Phase 9: SEO & Discovery Wiring** - Sitemap/llms.txt entries, per-offer schema.org Service objects, and a broken-link audit for the new route structure
+- [x] **Phase 9: SEO & Discovery Wiring** - Sitemap/llms.txt entries, per-offer schema.org Service objects, and a broken-link audit for the new route structure (completed 2026-10-01)
 
 ## Phase Details
 
@@ -193,7 +193,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 09-04-PLAN.md — post-deploy GSC sitemap submission via gsc MCP, human-gated (D-10)
+- [x] 09-04-PLAN.md — post-deploy GSC sitemap submission via gsc MCP, human-gated (D-10)
 
 ## Progress
 
@@ -211,4 +211,4 @@ Phases execute in numeric order: 5 → 6 → 7 → 8 → 9
 | 6. Service Pages (Template + Content) | v1.1 | 7/7 | Complete    | 2026-09-20 |
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete   | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete    | 2026-09-21 |
-| 9. SEO & Discovery Wiring | v1.1 | 3/4 | In Progress|  |
+| 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete   | 2026-10-01 |
