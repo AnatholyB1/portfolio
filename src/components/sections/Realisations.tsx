@@ -1,10 +1,14 @@
 'use client';
+import { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { projects } from '@/data/projects';
 import BrowserShot from '@/components/ui/BrowserShot';
 
+const MORE: Record<string, string> = { fr: 'Voir les autres réalisations', en: 'See the other projects', th: 'ดูผลงานอื่น ๆ' };
+
 export default function Realisations() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const [more, setMore] = useState(false);
   const w = t.landing.work;
 
   return (
@@ -20,12 +24,12 @@ export default function Realisations() {
           <p className="sec-intro">{w.intro}</p>
         </div>
 
-        <div className="rz-list">
+        <div className={`rz-list${more ? ' is-expanded' : ''}`}>
           {projects.map((project, i) => {
             const item = w.items[project.index];
             const isExternal = project.href?.startsWith('http');
             return (
-              <article key={project.name} className={`rz${i % 2 ? ' rz-flip' : ''}`} data-reveal>
+              <article key={project.name} className={`rz${i % 2 ? ' rz-flip' : ''}${i >= 2 ? ' rz-extra' : ''}`} data-reveal>
                 <div className="rz-media">
                   <BrowserShot
                     src={project.image}
@@ -58,6 +62,12 @@ export default function Realisations() {
             );
           })}
         </div>
+
+        {!more && (
+          <button type="button" className="more-btn" onClick={() => setMore(true)} aria-expanded={false}>
+            {MORE[lang]} <span aria-hidden="true">↓</span>
+          </button>
+        )}
 
         <a href="/simulateur" className="work-bridge" data-reveal>
           <div>
