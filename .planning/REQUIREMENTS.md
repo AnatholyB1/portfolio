@@ -127,17 +127,65 @@
 
 ## Traceability
 
-Remplie par la création de la roadmap.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (en attente) | — | Pending |
+| FOUND-01 | Phase 10 | Pending |
+| FOUND-02 | Phase 10 | Pending |
+| FOUND-03 | Phase 10 | Pending |
+| FOUND-04 | Phase 10 | Pending |
+| FOUND-05 | Phase 10 | Pending |
+| FOUND-06 | Phase 10 | Pending |
+| FOUND-07 | Phase 10 | Pending |
+| LEAD-01 | Phase 11 | Pending |
+| LEAD-02 | Phase 11 | Pending |
+| LEAD-03 | Phase 11 | Pending |
+| LEAD-04 | Phase 11 | Pending |
+| LEAD-05 | Phase 11 | Pending |
+| LEAD-06 | Phase 11 | Pending |
+| LEAD-07 | Phase 11 | Pending |
+| LEAD-08 | Phase 11 | Pending |
+| LEAD-09 | Phase 11 | Pending |
+| PORTAL-01 | Phase 12 | Pending |
+| PORTAL-02 | Phase 12 | Pending |
+| PORTAL-03 | Phase 12 | Pending |
+| PORTAL-04 | Phase 12 | Pending |
+| PORTAL-05 | Phase 12 | Pending |
+| PORTAL-06 | Phase 12 | Pending |
+| MAIL-01 | Phase 12 | Pending |
+| MAIL-02 | Phase 12 | Pending |
+| ADM-01 | Phase 12 | Pending |
+| DOC-01 | Phase 13 | Pending |
+| DOC-02 | Phase 13 | Pending |
+| DOC-03 | Phase 13 | Pending |
+| DOC-04 | Phase 13 | Pending |
+| SIGN-01 | Phase 14 | Pending |
+| SIGN-02 | Phase 14 | Pending |
+| SIGN-03 | Phase 14 | Pending |
+| SIGN-04 | Phase 14 | Pending |
+| SIGN-05 | Phase 14 | Pending |
+| PAY-01 | Phase 15 | Pending |
+| PAY-02 | Phase 15 | Pending |
+| PAY-03 | Phase 15 | Pending |
+| PAY-04 | Phase 15 | Pending |
+| PAY-05 | Phase 15 | Pending |
+| MAIL-03 | Phase 16 | Pending |
+| MAIL-04 | Phase 16 | Pending |
+| ADM-02 | Phase 17 | Pending |
+| ADM-03 | Phase 17 | Pending |
+| ADM-04 | Phase 17 | Pending |
+| ADM-05 | Phase 17 | Pending |
+| REV-01 | Phase 18 | Pending |
+| REV-02 | Phase 18 | Pending |
+| REV-03 | Phase 18 | Pending |
+| REV-04 | Phase 18 | Pending |
+| ADS-01 | Phase 19 | Pending |
+| ADS-02 | Phase 19 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 51 total
-- Mapped to phases: 0 (en attente de la roadmap)
-- Unmapped: 51
+- Mapped to phases: 51
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-01*
-*Last updated: 2026-10-01 after initial definition*
+*Last updated: 2026-10-01 after roadmap creation (traceability filled)*
