@@ -2,7 +2,7 @@
 // Pas d'import `server-only` : le helper du proxy utilise les getters publics.
 // Les messages d'erreur nomment la variable fautive, jamais sa valeur.
 
-type Env = NodeJS.ProcessEnv;
+type Env = Record<string, string | undefined>;
 
 function required(name: string, value: string | undefined): string {
   if (!value) throw new Error(`[supabase/env] variable manquante : ${name}`);

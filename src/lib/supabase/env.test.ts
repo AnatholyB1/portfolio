@@ -13,8 +13,8 @@ function jwt(role: string): string {
 
 const URL_ = 'https://example.supabase.co';
 
-function env(vars: Record<string, string | undefined>): NodeJS.ProcessEnv {
-  return { NEXT_PUBLIC_SUPABASE_URL: URL_, ...vars } as NodeJS.ProcessEnv;
+function env(vars: Record<string, string | undefined>): Record<string, string | undefined> {
+  return { NEXT_PUBLIC_SUPABASE_URL: URL_, ...vars };
 }
 
 describe('assertSupabaseKeyMode', () => {
@@ -89,7 +89,7 @@ describe('assertSupabaseKeyMode', () => {
       assertSupabaseKeyMode({
         NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_abc',
         SUPABASE_SECRET_KEY: 'sb_secret_abc',
-      } as NodeJS.ProcessEnv),
+      }),
     ).toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
   });
 
@@ -109,16 +109,16 @@ describe('assertSupabaseKeyMode', () => {
 
 describe('isLoginEnabled', () => {
   it('true uniquement pour la chaine exacte "true"', () => {
-    expect(isLoginEnabled({ SV_LOGIN_ENABLED: 'true' } as NodeJS.ProcessEnv)).toBe(true);
-    expect(isLoginEnabled({ SV_LOGIN_ENABLED: 'TRUE' } as NodeJS.ProcessEnv)).toBe(false);
-    expect(isLoginEnabled({ SV_LOGIN_ENABLED: '1' } as NodeJS.ProcessEnv)).toBe(false);
-    expect(isLoginEnabled({} as NodeJS.ProcessEnv)).toBe(false);
+    expect(isLoginEnabled({ SV_LOGIN_ENABLED: 'true' })).toBe(true);
+    expect(isLoginEnabled({ SV_LOGIN_ENABLED: 'TRUE' })).toBe(false);
+    expect(isLoginEnabled({ SV_LOGIN_ENABLED: '1' })).toBe(false);
+    expect(isLoginEnabled({})).toBe(false);
   });
 });
 
 describe('getOtpExpiryMinutes', () => {
   it('parse un entier positif, sinon null', () => {
-    const e = (v?: string) => ({ SV_OTP_EXPIRY_MINUTES: v }) as NodeJS.ProcessEnv;
+    const e = (v?: string) => ({ SV_OTP_EXPIRY_MINUTES: v });
     expect(getOtpExpiryMinutes(e('60'))).toBe(60);
     expect(getOtpExpiryMinutes(e(''))).toBeNull();
     expect(getOtpExpiryMinutes(e('abc'))).toBeNull();
@@ -129,9 +129,9 @@ describe('getOtpExpiryMinutes', () => {
 
 describe('getSiteUrl', () => {
   it('retire le slash final et a un defaut', () => {
-    expect(getSiteUrl({ NEXT_PUBLIC_SITE_URL: 'https://x.test/' } as NodeJS.ProcessEnv)).toBe(
+    expect(getSiteUrl({ NEXT_PUBLIC_SITE_URL: 'https://x.test/' })).toBe(
       'https://x.test',
     );
-    expect(getSiteUrl({} as NodeJS.ProcessEnv)).toBe('https://sevalys.com');
+    expect(getSiteUrl({})).toBe('https://sevalys.com');
   });
 });
