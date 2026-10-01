@@ -78,6 +78,11 @@ revoke all on public.sv_tenants, public.sv_admins, public.sv_clients,
 
 grant select on public.sv_admins, public.sv_clients, public.sv_client_members to authenticated;
 
+-- service_role : ne pas dépendre des default privileges (absents pour les tables
+-- créées par `postgres` sur une branche/projet neuf, constaté en plan 10-07).
+grant select, insert, update, delete on public.sv_tenants, public.sv_admins,
+  public.sv_clients, public.sv_client_members, public.sv_throttle to service_role;
+
 -- ---------------------------------------------------------------------------
 -- Helpers privés (schéma sv_private, non exposé par PostgREST)
 -- ---------------------------------------------------------------------------
