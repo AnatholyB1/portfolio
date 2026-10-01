@@ -4,13 +4,13 @@ milestone: v1.1
 milestone_name: Extension de l'offre & refonte commerciale
 status: executing
 stopped_at: Phase 9 context gathered
-last_updated: "2026-10-01T10:33:38.172Z"
-last_activity: 2026-10-01 -- Phase 9 planning complete
+last_updated: "2026-10-01T10:37:52.587Z"
+last_activity: 2026-10-01
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 27
-  completed_plans: 23
+  completed_plans: 24
   percent: 80
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-20 — started v1.1 milestone)
 
 **Core value:** Patron de PME lands on the site and immediately understands, trusts, and knows how to contact us in under 60 seconds.
-**Current focus:** Phase 9 — seo & discovery wiring
+**Current focus:** Phase 9 — seo-discovery-wiring
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
+Phase: 9 (seo-discovery-wiring) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-10-01 -- Phase 9 planning complete
+Last activity: 2026-10-01
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
@@ -86,6 +86,6 @@ Items acknowledged at v1.0 milestone close (2026-05-18), still pending — not i
 
 ## Session Continuity
 
-Last session: 2026-10-01T10:18:34.145Z
+Last session: 2026-10-01T10:37:52.577Z
 Stopped at: Phase 9 context gathered
-Resume file: .planning/phases/09-seo-discovery-wiring/09-CONTEXT.md
+Resume file: None

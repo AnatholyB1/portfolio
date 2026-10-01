@@ -45,7 +45,7 @@
 
 ### SEO (intégration stratégie SEO/GEO/AEO)
 
-- [ ] **SEO-01**: Chaque nouvelle page (9 pages de service + `/simulateur`) est ajoutée à `sitemap.ts`, référencée dans `llms.txt`, et suit le pattern title/H1 "[Service] à Tours · [bénéfice]"
+- [x] **SEO-01**: Chaque nouvelle page (9 pages de service + `/simulateur`) est ajoutée à `sitemap.ts`, référencée dans `llms.txt`, et suit le pattern title/H1 "[Service] à Tours · [bénéfice]"
 - [ ] **SEO-02**: Le schema.org global (`Organization`/`ProfessionalService`) est étendu avec un objet `Service` distinct par offre, relié via `hasOfferCatalog`
 - [ ] **SEO-03**: Un audit des ancres/liens internes est effectué pour vérifier qu'aucun lien cassé n'est introduit par la restructuration de `/services` en page d'index
 
@@ -107,7 +107,7 @@ Différenciants identifiés par la recherche, reportés après validation du v1 
 | LANDING-01 | Phase 8 | Complete |
 | LANDING-02 | Phase 8 | Complete |
 | LANDING-03 | Phase 8 | Complete |
-| SEO-01 | Phase 9 | Pending |
+| SEO-01 | Phase 9 | Complete |
 | SEO-02 | Phase 9 | Pending |
 | SEO-03 | Phase 9 | Pending |
 
