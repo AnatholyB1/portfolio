@@ -49,7 +49,7 @@ export default function FonctionnementSection() {
     <section className="sec border-t" id="fonctionnement">
       <div className="wrap">
         <div className="sec-head" data-reveal>
-          <div className="sec-num">{ts.num}</div>
+          <span className="sec-num">{ts.num}</span>
           <h2 className="sec-title">
             {ts.title_l1}
             <br />

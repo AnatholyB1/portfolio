@@ -30,48 +30,23 @@ export default function ServicesPage() {
 
         <section className="svc-sec">
           <div className="wrap">
-            <div className="sec-head" data-reveal>
-              <div className="sec-num">{p.index.num}</div>
-              <h2 className="sec-title">
-                {p.index.title_l1}<br /><em className="it">{p.index.title_l2_it}</em>
-              </h2>
-              <p className="sec-intro">{p.index.intro}</p>
-            </div>
+            <p className="svc-body" data-reveal style={{ marginBottom: 56 }}>{p.index.intro}</p>
 
-            <div className="offers-grid">
+            <ol className="idx">
               {services.map((s, i) => {
                 const copy = p.items[s.index];
                 return (
-                  <a
-                    key={s.slug}
-                    href={`/services/${s.slug}`}
-                    className="offer"
-                    data-reveal
-                    data-reveal-delay={String(i % 4)}
-                  >
-                    <div className="o-num">{String(i + 1).padStart(2, '0')}</div>
-                    <div className="o-name">{copy.name}</div>
-                    <div className="o-tag">{copy.tagline}</div>
-                    <div className="o-problems">
-                      {copy.problems.slice(0, 2).map((item, k) => (
-                        <div className="o-problem" key={k}>
-                          <span className="o-pn">{item.n}</span>
-                          <span>{item.title}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <ul className="o-feats">
-                      {copy.features.slice(0, 3).map((f, j) => (
-                        <li className="o-feat" key={j}>
-                          <span className="c">✓</span>{f}
-                        </li>
-                      ))}
-                    </ul>
-                    <span className="o-cta">{p.index.cardCta}</span>
-                  </a>
+                  <li key={s.slug} data-reveal>
+                    <a href={`/services/${s.slug}`} className="idx-row">
+                      <span className="idx-n mono">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="idx-name">{copy.name}</span>
+                      <span className="idx-tag mono">{copy.tagline}</span>
+                      <span className="idx-go" aria-hidden="true">→</span>
+                    </a>
+                  </li>
                 );
               })}
-            </div>
+            </ol>
           </div>
         </section>
 

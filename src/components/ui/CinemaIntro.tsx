@@ -22,7 +22,7 @@ export default function CinemaIntro({ onDone, force = false }: CinemaIntroProps)
       setGone(true);
       localStorage.setItem('sv_intro_seen', '1');
       onDone?.();
-    }, 1700);
+    }, 1100);
     return () => clearTimeout(t);
   }, [force]);
 

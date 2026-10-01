@@ -133,7 +133,7 @@ describe('landing CTA destinations (LANDING-02)', () => {
   it('LANDING-03 non-regression: Realisations.tsx still renders the case-study list', () => {
     const source = readIfExists('../components/sections/Realisations.tsx');
     expect(source).toContain('projects.map(');
-    expect(source).toContain('work-item');
+    expect(source).toContain('rz-list');
   });
 });
 

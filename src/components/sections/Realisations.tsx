@@ -1,6 +1,7 @@
 'use client';
 import { useLanguage } from '@/context/LanguageContext';
 import { projects } from '@/data/projects';
+import BrowserShot from '@/components/ui/BrowserShot';
 
 export default function Realisations() {
   const { t } = useLanguage();
@@ -9,42 +10,51 @@ export default function Realisations() {
   return (
     <section className="sec border-t" id="work">
       <div className="wrap">
-        <div className="sec-head" data-reveal>
-          <div className="sec-num">{w.num}</div>
-          <h2 className="sec-title">
-            {w.title_l1}<br /><em className="it">{w.title_l2_it}</em>
-          </h2>
+        <div className="idx-head" data-reveal>
+          <div>
+            <span className="sec-num">{w.num}</span>
+            <h2 className="sec-title">
+              {w.title_l1}<br /><em className="it">{w.title_l2_it}</em>
+            </h2>
+          </div>
           <p className="sec-intro">{w.intro}</p>
         </div>
 
-        <div className="work-list" data-reveal>
-          {projects.map((project) => {
+        <div className="rz-list">
+          {projects.map((project, i) => {
             const item = w.items[project.index];
-            const Wrapper = project.href ? 'a' : 'div';
             const isExternal = project.href?.startsWith('http');
-            const wrapperProps = project.href
-              ? { href: project.href, className: 'work-item', ...(isExternal && { target: '_blank', rel: 'noopener noreferrer' }) }
-              : { className: 'work-item' };
             return (
-              <Wrapper key={project.name} {...wrapperProps}>
-                <span className="work-num">{String(project.index + 1).padStart(2, '0')}</span>
-                <div>
-                  <div className="work-name">{project.name}</div>
-                  <span
-                    className="mono"
-                    style={{ fontSize: 11, color: 'var(--ink-faint)', letterSpacing: '0.1em' }}
-                  >
-                    —— {project.year}
-                  </span>
+              <article key={project.name} className={`rz${i % 2 ? ' rz-flip' : ''}`} data-reveal>
+                <div className="rz-media">
+                  <BrowserShot
+                    src={project.image}
+                    alt={project.name}
+                    host={project.host}
+                    height={project.imageHeight}
+                    sizes="(max-width: 900px) 100vw, 760px"
+                  />
                 </div>
-                <p className="work-desc">{item.desc}</p>
-                <div className="work-tags">
-                  {item.tags.map((tag) => (
-                    <span key={tag} className="tg">{tag}</span>
-                  ))}
+                <div className="rz-info">
+                  <span className="rz-n mono">{String(project.index + 1).padStart(2, '0')} · {project.year}</span>
+                  <h3 className="rz-name">{project.name}</h3>
+                  <p className="rz-desc">{item.desc}</p>
+                  <div className="work-tags rz-tags">
+                    {item.tags.map((tag) => (
+                      <span key={tag} className="tg">{tag}</span>
+                    ))}
+                  </div>
+                  {project.href && (
+                    <a
+                      className="rz-link mono"
+                      href={project.href}
+                      {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
+                    >
+                      {project.host} <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
                 </div>
-                <span className="work-go">→</span>
-              </Wrapper>
+              </article>
             );
           })}
         </div>

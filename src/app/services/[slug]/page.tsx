@@ -10,6 +10,7 @@ import { projects } from '@/data/projects';
 import { getFeatureIcon } from '@/lib/serviceIcons';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import BrowserShot from '@/components/ui/BrowserShot';
 
 export default function ServiceSlugPage({
   params,
@@ -31,13 +32,17 @@ export default function ServiceSlugPage({
         <section className="svc-hero">
           <div className="wrap">
             <a href="/services" className="crumb-back">{p.back}</a>
-            <h1 className="svc-h1">
-              {copy.h1Lead} <em className="it">{copy.h1Benefit}</em>
-            </h1>
-            <p className="svc-sub">{copy.sub}</p>
-            <div className="svc-answer" data-reveal>
-              <span className="label">{p.answerLabel}</span>
-              <p>{copy.directAnswer}</p>
+            <div className="svc-hero-grid">
+              <div>
+                <h1 className="svc-h1">
+                  {copy.h1Lead} <em className="it">{copy.h1Benefit}</em>
+                </h1>
+                <p className="svc-sub">{copy.sub}</p>
+              </div>
+              <div className="svc-answer" data-reveal>
+                <span className="label">{p.answerLabel}</span>
+                <p>{copy.directAnswer}</p>
+              </div>
             </div>
             <div className="svc-ctas">
               {/* /simulateur ships in Phase 7 — temporary 404 accepted per 06-UI-SPEC.md Copywriting Contract (Option A) */}
@@ -64,6 +69,7 @@ export default function ServiceSlugPage({
 
         <section className="svc-sec">
           <div className="wrap">
+            <div className="svc-split">
             <h2 className="svc-h2">{p.headings.fonctionnement}</h2>
             <div className="feat-grid">
               {copy.features.map((f, j) => {
@@ -76,15 +82,20 @@ export default function ServiceSlugPage({
                 );
               })}
             </div>
+            </div>
           </div>
         </section>
 
-        <section className="svc-sec">
+        <section className="svc-sec svc-paper">
           <div className="wrap">
-            <h2 className="svc-h2">{p.headings.enjeux}</h2>
-            {copy.enjeux.map((e, i) => (
-              <p className="svc-body" key={i}>{e}</p>
-            ))}
+            <div className="svc-split">
+              <h2 className="svc-h2">{p.headings.enjeux}</h2>
+              <div>
+                {copy.enjeux.map((e, i) => (
+                  <p className="svc-body" key={i}>{e}</p>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -102,13 +113,22 @@ export default function ServiceSlugPage({
                 if (!project) return null;
                 return (
                   <div className="svc-case" data-reveal>
-                    <p className="svc-case-q">« {copy.caseQuote} »</p>
-                    <div className="svc-case-src">
-                      {project.href !== null ? (
-                        <a href={project.href}>{p.caseLabel} — {project.name}, {project.year}</a>
-                      ) : (
-                        <>{p.caseLabel} — {project.name}, {project.year}</>
-                      )}
+                    <BrowserShot
+                      src={project.image}
+                      alt={project.name}
+                      host={project.host}
+                      height={project.imageHeight}
+                      sizes="(max-width: 900px) 100vw, 640px"
+                    />
+                    <div>
+                      <p className="svc-case-q">« {copy.caseQuote} »</p>
+                      <div className="svc-case-src">
+                        {project.href !== null ? (
+                          <a href={project.href}>{p.caseLabel} — {project.name}, {project.year}</a>
+                        ) : (
+                          <>{p.caseLabel} — {project.name}, {project.year}</>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -134,14 +154,16 @@ export default function ServiceSlugPage({
 
         <section className="svc-sec">
           <div className="wrap">
-            <h2 className="svc-h2">{p.headings.faq}</h2>
-            <div className="faq-list">
-              {copy.faq.map((item, i) => (
-                <details className="faq-item" key={i} data-reveal data-reveal-delay={String(i % 3)}>
-                  <summary className="faq-q">{item.q}</summary>
-                  <p className="faq-a">{item.a}</p>
-                </details>
-              ))}
+            <div className="svc-split">
+              <h2 className="svc-h2">{p.headings.faq}</h2>
+              <div className="faq-list">
+                {copy.faq.map((item, i) => (
+                  <details className="faq-item" key={i} data-reveal data-reveal-delay={String(i % 3)}>
+                    <summary className="faq-q">{item.q}</summary>
+                    <p className="faq-a">{item.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
           </div>
         </section>

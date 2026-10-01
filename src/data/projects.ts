@@ -11,6 +11,11 @@ export interface Project {
   year: string;
   /** Optional URL for the project — null if no public link */
   href: string | null;
+  /** Real screenshot under public/work, 1440 wide */
+  image: string;
+  imageHeight: number;
+  /** Host shown in the browser-frame chrome */
+  host: string;
 }
 
 export const projects: Project[] = [
@@ -19,23 +24,35 @@ export const projects: Project[] = [
     name: 'Feuillette',
     year: '2025',
     href: '/demo/feuillette',
+    image: '/work/feuillette.webp',
+    imageHeight: 812,
+    host: 'sevalys.com/demo/feuillette',
   },
   {
     index: 1,
     name: 'Gecko Cabane',
     year: '2024',
     href: 'https://geckocabanerestaurant.com',
+    image: '/work/gecko-cabane.webp',
+    imageHeight: 900,
+    host: 'geckocabanerestaurant.com',
   },
   {
     index: 2,
     name: 'Les Folies Temps Danse',
     year: '2024',
     href: 'https://lesfoliestempsdanse.com',
+    image: '/work/folies-temps-danse.webp',
+    imageHeight: 900,
+    host: 'lesfoliestempsdanse.com',
   },
   {
     index: 3,
     name: 'Ghjulianu Codani',
     year: '2025',
     href: 'https://ghjulianu-codani.com',
+    image: '/work/ghjulianu-codani.webp',
+    imageHeight: 900,
+    host: 'ghjulianu-codani.com',
   },
 ];

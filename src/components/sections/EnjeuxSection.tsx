@@ -6,32 +6,25 @@ export default function EnjeuxSection() {
   const ts = t.landing.enjeux;
 
   return (
-    <section className="sec border-t">
+    <section className="paper" id="enjeux">
       <div className="wrap">
-        <div className="sec-head" data-reveal>
-          <div className="sec-num">{ts.num}</div>
-          <h2 className="sec-title">
-            {ts.title_l1}<br /><em className="it">{ts.title_l2_it}</em>
+        <div className="paper-head" data-reveal>
+          <span className="paper-num mono">{ts.num}</span>
+          <h2 className="paper-title">
+            {ts.title_l1} <mark>{ts.title_l2_it}</mark>
           </h2>
-          <p className="sec-intro">{ts.intro}</p>
+          <p className="paper-intro">{ts.intro}</p>
         </div>
 
-        <div className="reassure-grid">
+        <ol className="paper-points">
           {ts.points.map((p, i) => (
-            <div
-              className="reassure"
-              key={i}
-              data-reveal
-              data-reveal-delay={String(i % 2)}
-            >
-              <span className="rn">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h4>{p.t}</h4>
-                <p>{p.d}</p>
-              </div>
-            </div>
+            <li key={i} data-reveal data-reveal-delay={String(i % 4)}>
+              <span className="pp-n mono">{String(i + 1).padStart(2, '0')}</span>
+              <h4>{p.t}</h4>
+              <p>{p.d}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

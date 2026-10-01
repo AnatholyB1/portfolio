@@ -9,32 +9,31 @@ export default function ServicesPreview() {
   return (
     <section className="sec border-t" id="services-preview">
       <div className="wrap">
-        <div className="sec-head" data-reveal>
-          <div className="sec-num">{ts.num}</div>
-          <h2 className="sec-title">
-            {ts.title_l1}<br /><em className="it">{ts.title_l2_it}</em>
-          </h2>
+        <div className="idx-head" data-reveal>
+          <div>
+            <span className="sec-num">{ts.num}</span>
+            <h2 className="sec-title">
+              {ts.title_l1}<br /><em className="it">{ts.title_l2_it}</em>
+            </h2>
+          </div>
           <p className="sec-intro">{ts.intro}</p>
         </div>
 
-        <div className="svc-preview-grid">
+        <ol className="idx">
           {services.map((s, i) => {
             const copy = t.services.pages.items[s.index];
             return (
-              <a
-                key={s.slug}
-                href={`/services/${s.slug}`}
-                className="upsell-card"
-                data-reveal
-                data-reveal-delay={String(i % 3)}
-              >
-                <div className="un">{String(i + 1).padStart(2, '0')}</div>
-                <h4>{copy.name}</h4>
-                <p>{copy.tagline}</p>
-              </a>
+              <li key={s.slug} data-reveal>
+                <a href={`/services/${s.slug}`} className="idx-row">
+                  <span className="idx-n mono">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="idx-name">{copy.name}</span>
+                  <span className="idx-tag mono">{copy.tagline}</span>
+                  <span className="idx-go" aria-hidden="true">→</span>
+                </a>
+              </li>
             );
           })}
-        </div>
+        </ol>
       </div>
     </section>
   );
