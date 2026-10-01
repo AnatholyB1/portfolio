@@ -1,0 +1,96 @@
+import { randomUUID } from 'node:crypto';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+
+const url = () => process.env.SV_TEST_SUPABASE_URL as string;
+const pub = () => process.env.SV_TEST_PUBLISHABLE_KEY as string;
+const secret = () => process.env.SV_TEST_SECRET_KEY as string;
+
+const noSession = { auth: { persistSession: false, autoRefreshToken: false } };
+
+export const PASSWORD = 'Rls-test-pass-0123!';
+
+export interface TestUser {
+  id: string;
+  email: string;
+  client: SupabaseClient;
+}
+
+const createdUsers: string[] = [];
+const createdClients: string[] = [];
+
+let svcInstance: SupabaseClient | null = null;
+export function svc(): SupabaseClient {
+  svcInstance ??= createClient(url(), secret(), noSession);
+  return svcInstance;
+}
+
+export function anonClient(): SupabaseClient {
+  return createClient(url(), pub(), noSession);
+}
+
+export function randomSiret(): string {
+  let s = '';
+  for (let i = 0; i < 14; i++) s += Math.floor(Math.random() * 10);
+  return s;
+}
+
+/** Create a confirmed user with a password (throwaway branch only) and sign in. */
+export async function makeUser(
+  label: string,
+  opts: { password?: boolean; metadata?: { user_metadata?: object; app_metadata?: object } } = {},
+): Promise<TestUser> {
+  const email = `rls-${label}-${randomUUID()}@example.test`;
+  const withPassword = opts.password !== false;
+  const { data, error } = await svc().auth.admin.createUser({
+    email,
+    ...(withPassword ? { password: PASSWORD } : {}),
+    email_confirm: true,
+    ...(opts.metadata ?? {}),
+  });
+  if (error || !data.user) throw new Error(`createUser failed: ${error?.message}`);
+  createdUsers.push(data.user.id);
+  const client = anonClient();
+  if (withPassword) {
+    const res = await client.auth.signInWithPassword({ email, password: PASSWORD });
+    if (res.error) throw new Error(`signIn failed: ${res.error.message}`);
+  }
+  return { id: data.user.id, email, client };
+}
+
+export async function makeClient(name: string, siret: string = randomSiret()): Promise<{ id: string; siret: string }> {
+  const { data, error } = await svc().from('sv_clients').insert({ name, siret }).select('id').single();
+  if (error || !data) throw new Error(`makeClient failed: ${error?.message}`);
+  createdClients.push(data.id);
+  return { id: data.id, siret };
+}
+
+export async function addMember(clientId: string, user: TestUser) {
+  const { error } = await svc()
+    .from('sv_client_members')
+    .insert({ client_id: clientId, user_id: user.id, invited_email: user.email });
+  if (error) throw new Error(`addMember failed: ${error.message}`);
+}
+
+export async function makeAdmin(user: TestUser) {
+  const { error } = await svc().from('sv_admins').insert({ user_id: user.id, email: user.email });
+  if (error) throw new Error(`makeAdmin failed: ${error.message}`);
+}
+
+export async function makeGeckoAdmin(user: TestUser) {
+  const { error } = await svc().from('gecko_admins').insert({ id: user.id, email: user.email });
+  if (error) throw new Error(`makeGeckoAdmin failed: ${error.message}`);
+}
+
+/** Track a user created outside makeUser (e.g. via public signUp) for cleanup. */
+export function trackUser(id: string) {
+  createdUsers.push(id);
+}
+
+export async function cleanup() {
+  for (const id of createdClients.splice(0)) {
+    await svc().from('sv_clients').delete().eq('id', id);
+  }
+  for (const id of createdUsers.splice(0)) {
+    await svc().auth.admin.deleteUser(id);
+  }
+}
