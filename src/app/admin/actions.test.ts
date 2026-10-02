@@ -7,14 +7,20 @@ const lookupSiret = vi.fn();
 vi.mock('@/lib/server/clients/siret', () => ({ lookupSiret: (s: string) => lookupSiret(s) }));
 
 const inviteClient = vi.fn();
+const resendInvitation = vi.fn();
+const hitThrottle = vi.fn();
+vi.mock('@/lib/server/auth/throttle', () => ({
+  hitThrottle: (...a: unknown[]) => hitThrottle(...a),
+}));
 vi.mock('@/lib/server/clients/invite', () => ({
   inviteClient: (input: unknown, actor: unknown) => inviteClient(input, actor),
+  resendInvitation: (id: unknown) => resendInvitation(id),
 }));
 
 const revalidatePath = vi.fn();
 vi.mock('next/cache', () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
 
-const { lookupSiretAction, inviteClientAction } = await import('./actions');
+const { lookupSiretAction, inviteClientAction, resendInvitationAction } = await import('./actions');
 const { INVITE_COPY } = await import('@/lib/admin/inviteSchema');
 
 const idle = { status: 'idle' as const };
@@ -30,6 +36,7 @@ const base = { name: 'Acme', email: 'Client@Acme.fr', siret: '123 456 789 01234'
 beforeEach(() => {
   vi.clearAllMocks();
   requireAdmin.mockResolvedValue({ user: { id: 'admin-1' } });
+  hitThrottle.mockResolvedValue(true);
 });
 
 describe('lookupSiretAction', () => {
@@ -135,5 +142,39 @@ describe('inviteClientAction', () => {
     );
     const company = inviteClient.mock.calls[0][0].company;
     expect(company).toEqual({ nom: 'Saisie' });
+  });
+});
+
+describe('resendInvitationAction', () => {
+  const CID = '11111111-1111-1111-1111-111111111111';
+
+  it('does nothing when requireAdmin throws', async () => {
+    requireAdmin.mockRejectedValue(new Error('NOT_FOUND'));
+    await expect(resendInvitationAction(CID)).rejects.toThrow('NOT_FOUND');
+    expect(hitThrottle).not.toHaveBeenCalled();
+    expect(resendInvitation).not.toHaveBeenCalled();
+  });
+
+  it('is rate limited before sending', async () => {
+    hitThrottle.mockResolvedValueOnce(false);
+    const res = await resendInvitationAction(CID);
+    expect(res).toEqual({ status: 'error', message: INVITE_COPY.resendRateLimited });
+    expect(resendInvitation).not.toHaveBeenCalled();
+  });
+
+  it('re-sends and reports success without creating a client', async () => {
+    resendInvitation.mockResolvedValue({ ok: true, email: 'client@acme.fr' });
+    const res = await resendInvitationAction(CID);
+    expect(res).toEqual({ status: 'success', message: 'Invitation renvoyée à client@acme.fr.' });
+    expect(resendInvitation).toHaveBeenCalledWith(CID);
+    expect(inviteClient).not.toHaveBeenCalled();
+  });
+
+  it('maps failures to French messages', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    resendInvitation.mockResolvedValue({ ok: false, code: 'not_found' });
+    expect((await resendInvitationAction(CID)).message).toBe(INVITE_COPY.resendNotFound);
+    resendInvitation.mockResolvedValue({ ok: false, code: 'mail_failed' });
+    expect((await resendInvitationAction(CID)).message).toBe(INVITE_COPY.generic);
   });
 });

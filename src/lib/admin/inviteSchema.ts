@@ -42,5 +42,8 @@ export const INVITE_COPY = {
   existingAccount:
     "Cette adresse correspond déjà à un compte d'une autre application. Invitation bloquée par sécurité : utilisez une autre adresse.",
   success: (email: string) => `Invitation envoyée à ${email}.`,
+  resendSuccess: (email: string) => `Invitation renvoyée à ${email}.`,
+  resendRateLimited: 'Trop de renvois pour ce client. Réessayez dans quelques minutes.',
+  resendNotFound: 'Invitation introuvable pour ce client.',
   generic: 'Une erreur est survenue. Réessayez dans un instant ou écrivez à contact@sevalys.com.',
 } as const;

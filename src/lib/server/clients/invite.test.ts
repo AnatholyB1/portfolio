@@ -44,7 +44,7 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
-import { inviteClient } from './invite';
+import { inviteClient, resendInvitation } from './invite';
 
 const valid = {
   name: 'Acme',
@@ -156,7 +156,7 @@ describe('inviteClient', () => {
     const mail = mocks.send.mock.calls[0][0];
     expect(mail.from).toBe('Sevalys <connexion@sevalys.com>');
     expect(mail.to).toBe('client@example.com');
-    expect(mail.html).toContain('https://sevalys.com/connexion');
+    expect(mail.html).toContain('https://sevalys.com/connexion?email=client%40example.com');
   });
 
   it('reuses an existing client for the same SIRET (D-03)', async () => {
@@ -209,5 +209,62 @@ describe('inviteClient', () => {
   it('keeps rows when Resend throws', async () => {
     state.sendThrows = true;
     expect(await inviteClient(valid, actor)).toMatchObject({ ok: true, mailSent: false });
+  });
+});
+
+describe('resendInvitation', () => {
+  const CID = '11111111-1111-1111-1111-111111111111';
+  let memberData: unknown[];
+  let clientData: unknown;
+
+  beforeEach(() => {
+    memberData = [{ invited_email: 'client@example.com' }];
+    clientData = { name: 'Acme' };
+    mocks.from.mockImplementation((table: string) => {
+      if (table === 'sv_client_members') {
+        return {
+          select: () => ({
+            eq: () => ({ order: () => ({ limit: async () => ({ data: memberData, error: null }) }) }),
+          }),
+        };
+      }
+      if (table === 'sv_clients') {
+        return {
+          select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: clientData, error: null }) }) }),
+        };
+      }
+      throw new Error(`unexpected table ${table}`);
+    });
+  });
+
+  it('rejects a malformed id with no DB call', async () => {
+    expect(await resendInvitation('x')).toEqual({ ok: false, code: 'invalid' });
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
+
+  it('returns mail_disabled when login is off', async () => {
+    state.loginEnabled = false;
+    expect(await resendInvitation(CID)).toEqual({ ok: false, code: 'mail_disabled' });
+  });
+
+  it('re-sends the email with the prefilled login link and creates nothing', async () => {
+    expect(await resendInvitation(CID)).toEqual({ ok: true, email: 'client@example.com' });
+    expect(mocks.send).toHaveBeenCalledTimes(1);
+    expect(mocks.send.mock.calls[0][0].to).toBe('client@example.com');
+    expect(mocks.send.mock.calls[0][0].html).toContain('connexion?email=client%40example.com');
+    expect(mocks.createUser).not.toHaveBeenCalled();
+    expect(mocks.clientInsert).not.toHaveBeenCalled();
+    expect(mocks.memberInsert).not.toHaveBeenCalled();
+  });
+
+  it('returns not_found when no member exists', async () => {
+    memberData = [];
+    expect(await resendInvitation(CID)).toEqual({ ok: false, code: 'not_found' });
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  it('returns mail_failed when Resend errors', async () => {
+    state.sendResult = { error: { message: 'bad' } };
+    expect(await resendInvitation(CID)).toEqual({ ok: false, code: 'mail_failed' });
   });
 });
