@@ -137,6 +137,9 @@ describe('server-only boundary (D-18)', () => {
     /^@\/lib\/supabase\/admin/,
     /^@\/lib\/supabase\/server/,
     /^@\/lib\/server\//,
+    /^@\/lib\/leads\/(ingest|ipHash|requestAttribution|visits)/,
+    /^@\/lib\/throttle/,
+    /^@\/lib\/consent\/serverLog/,
     /^server-only$/,
   ];
   const isUseClient = (src: string) =>
