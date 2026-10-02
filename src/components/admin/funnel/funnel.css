@@ -1,0 +1,214 @@
+/* Entonnoir admin (UI-SPEC A3). Classes nouvelles scopées sous .pt-admin. */
+
+.pt-admin .pt-funnel-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .pt-admin .pt-funnel-kpis {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.pt-admin .pt-funnel-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin .pt-funnel-kpi-label {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-funnel-kpi-value {
+  font-family: var(--font-mono), monospace;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.pt-admin .pt-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  gap: 8px;
+}
+.pt-admin .pt-seg legend {
+  margin-bottom: 4px;
+  padding: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-seg label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pt-admin .pt-seg input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+.pt-admin .pt-seg label:has(input:checked) {
+  border-left: 2px solid var(--acid);
+  background: var(--bg-2);
+}
+.pt-admin .pt-seg label:has(input:focus-visible) {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-funnel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin .pt-funnel-controls label.pt-lead-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-funnel-controls input[type="month"] {
+  min-height: 44px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-funnel-controls input[type="month"]:focus-visible,
+.pt-admin .pt-funnel-scroll:focus-visible,
+.pt-admin .pt-funnel-cost-editor input:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+.pt-admin .pt-funnel-scroll {
+  overflow-x: auto;
+}
+.pt-admin .pt-funnel-table {
+  min-width: 960px;
+  width: 100%;
+}
+.pt-admin .pt-funnel-table th,
+.pt-admin .pt-funnel-table td {
+  padding: 16px;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.pt-admin .pt-funnel-table th.pt-funnel-num,
+.pt-admin .pt-funnel-table td.pt-funnel-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-funnel-table tbody th,
+.pt-admin .pt-funnel-table tfoot th {
+  font-weight: 500;
+}
+.pt-admin .pt-funnel-table tbody th[scope="row"],
+.pt-admin .pt-funnel-table tfoot th[scope="row"] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-2);
+}
+.pt-admin .pt-funnel-total th,
+.pt-admin .pt-funnel-total td {
+  font-weight: 500;
+  border-top: 1px solid var(--pt-border-strong, #6f6b64);
+}
+.pt-admin .pt-funnel-rate {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-funnel-cost-editor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.pt-admin .pt-funnel-cost-editor .pt-lead-panel {
+  right: 0;
+  left: auto;
+  text-align: left;
+  white-space: normal;
+}
+.pt-admin .pt-funnel-cost-editor .pt-lead-panel input[type="text"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-funnel-cost-editor p:empty {
+  display: none;
+}
+
+/* Le tableau entonnoir ne se replie pas en cartes sous 768px. */
+@media (max-width: 767px) {
+  .pt-admin .pt-funnel-table {
+    display: table;
+  }
+  .pt-admin .pt-funnel-table thead {
+    display: table-header-group;
+    position: static;
+    clip: auto;
+    width: auto;
+    height: auto;
+  }
+  .pt-admin .pt-funnel-table tbody {
+    display: table-row-group;
+  }
+  .pt-admin .pt-funnel-table tfoot {
+    display: table-footer-group;
+  }
+  .pt-admin .pt-funnel-table tr {
+    display: table-row;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .pt-admin .pt-funnel-table th,
+  .pt-admin .pt-funnel-table td {
+    display: table-cell;
+    width: auto;
+  }
+  .pt-admin .pt-funnel-table td::before {
+    content: none;
+  }
+  .pt-admin .pt-funnel-cost-editor .pt-lead-panel {
+    position: static;
+    width: auto;
+  }
+}
