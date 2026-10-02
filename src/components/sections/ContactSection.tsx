@@ -1,5 +1,5 @@
 'use client';
-import { useState, FormEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function ContactSection() {
@@ -12,8 +12,14 @@ export default function ContactSection() {
     email: '',
     projectType: '',
     message: '',
+    website: '',
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const formRenderedAt = useRef<number>(0);
+
+  useEffect(() => {
+    formRenderedAt.current = Date.now();
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,6 +33,8 @@ export default function ContactSection() {
           email: formData.email,
           projectType: formData.projectType,
           message: formData.message,
+          website: formData.website,
+          formRenderedAt: formRenderedAt.current,
         }),
       });
       setStatus(response.ok ? 'sent' : 'error');
@@ -98,6 +106,16 @@ export default function ContactSection() {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 required
+              />
+            </div>
+            <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={formData.website}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               />
             </div>
             <div className="form-foot">
