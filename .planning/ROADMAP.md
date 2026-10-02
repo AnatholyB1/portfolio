@@ -67,7 +67,7 @@ Plans:
 
 - [x] 10-01-PLAN.md — Deps (@supabase/ssr, server-only), env key-mode assertion, Supabase server/admin/proxy clients, private route constants
 - [x] 10-02-PLAN.md — sv_* migration (roles en tables, RLS, helpers, triggers d'exclusivité, RPC service_role, seed admin) + lint de migrations + sync dérive prod
-- [ ] 10-03-PLAN.md — FOUND-07 : script de vérification DNS/Resend, édition SPF/DMARC, test Gmail (D-20)
+- [x] 10-03-PLAN.md — FOUND-07 : script de vérification DNS/Resend, édition SPF/DMARC, test Gmail (D-20)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -242,7 +242,7 @@ Plans:
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
-| 10. Foundation, auth & isolation | v2.0 | 10/13 | In Progress|  |
+| 10. Foundation, auth & isolation | v2.0 | 11/13 | In Progress|  |
 | 11. Lead attribution, pipeline & consent | v2.0 | 0/TBD | Not started | - |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
