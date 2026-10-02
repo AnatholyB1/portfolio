@@ -136,7 +136,7 @@ Plans:
 **Wave 4** *(blocked on Wave 3 completion)*
 
 - [x] 11-14-PLAN.md — Suites RLS consentement/entonnoir/rétention, canary, advisor
-- [ ] 11-15-PLAN.md — /admin/leads/[id] : attribution, contacts, journal en lecture seule, correction de source, effacement
+- [x] 11-15-PLAN.md — /admin/leads/[id] : attribution, contacts, journal en lecture seule, correction de source, effacement
 - [ ] 11-16-PLAN.md — /admin/entonnoir : entonnoir par source/campagne/mois, coût par RDV saisi à la main
 
 **Wave 5** *(blocked on Wave 4 completion)*
@@ -279,7 +279,7 @@ Plans:
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
-| 11. Lead attribution, pipeline & consent | v2.0 | 14/18 | In Progress|  |
+| 11. Lead attribution, pipeline & consent | v2.0 | 15/18 | In Progress|  |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
