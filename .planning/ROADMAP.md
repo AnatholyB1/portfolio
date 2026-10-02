@@ -88,7 +88,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 10-12-PLAN.md — Prod DB : pré-vérification lecture seule, validation humaine avant DDL, application du schéma sv_*, advisor, test à blanc du script de récupération admin
+- [x] 10-12-PLAN.md — Prod DB : pré-vérification lecture seule, validation humaine avant DDL, application du schéma sv_*, advisor, test à blanc du script de récupération admin
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
@@ -242,7 +242,7 @@ Plans:
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
-| 10. Foundation, auth & isolation | v2.0 | 11/13 | In Progress|  |
+| 10. Foundation, auth & isolation | v2.0 | 12/13 | In Progress|  |
 | 11. Lead attribution, pipeline & consent | v2.0 | 0/TBD | Not started | - |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
