@@ -27,7 +27,7 @@ Un client invité accède à un espace privé sécurisé (`/espace-client`), un 
 - **D-07:** Une seule page `/connexion` ; redirection selon le rôle après vérification (admin → `/admin`, client → `/espace-client`).
 - **D-08:** Session de **30 jours pour tous** (admin compris).
 - **D-09:** Anti-énumération : réponse identique (« Si cette adresse est invitée, un code vient d'être envoyé ») quelle que soit l'adresse ; aucun e-mail envoyé aux non-invités ; limitation de débit.
-- **D-10:** E-mail du code en français, expéditeur `Sevalys <connexion@sevalys.com>`, code à 6 chiffres bien visible, lien de secours, mention d'expiration. Le code est le chemin principal (les scanners d'e-mails brûlent les liens).
+- **D-10:** E-mail du code en français, expéditeur `Sevalys <connexion@sevalys.com>`, code à 8 chiffres bien visible (amendement 2026-10-02 : le projet Supabase partagé émet 8 chiffres ; valeur unique OTP_LENGTH), lien de secours, mention d'expiration. Le code est le chemin principal (les scanners d'e-mails brûlent les liens).
 
 ### Coquilles /espace-client et /admin
 - **D-11:** Thème = tokens/variables CSS et polices du design system existant, version sobre type back-office ; **sans** intro cinéma, curseur custom ni GSAP (providers conditionnés par route).

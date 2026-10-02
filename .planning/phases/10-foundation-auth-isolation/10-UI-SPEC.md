@@ -62,7 +62,7 @@ Exactly 4 sizes and 2 weights (400 regular, 500 medium). Site headings use 500, 
 | Body | 16px (Manrope) | 400 | 1.5 |
 | Label | 12px (JetBrains Mono, uppercase, letter-spacing 0.12em, colour `--ink-faint`) | 400 | 1.5 |
 | Heading | 24px (Space Grotesk, letter-spacing -0.02em) | 500 | 1.2 |
-| Display | 32px (JetBrains Mono for the 6-digit code, tabular figures; Space Grotesk for page titles on `/connexion`) | 500 | 1.2 |
+| Display | 32px (JetBrains Mono for the 8-digit code, tabular figures; Space Grotesk for page titles on `/connexion`) | 500 | 1.2 |
 
 Notes:
 - Buttons and table text use Body (16px) at weight 500 for buttons, 400 for cells. Helper and error text use Body 16px (no extra sizes); secondary tone via `--ink-dim`.
@@ -95,7 +95,7 @@ Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-fai
 ### S1. `/connexion` (D-07, D-09, D-10)
 - Centered card (max 400px, `--bg-2`, 1px `--line` border, card radius 12px; inputs radius 8px; buttons keep site pill radius 100px), 24px padding, top offset 64px desktop / 32px mobile. No navbar (D-14). Wordmark `SevalysMark` + "Sèvalys" above the card.
 - Step 1 (email): label `Adresse e-mail`, input `type=email`, `autocomplete=email`, `inputmode=email`, autofocus. Primary button full width. While pending: button disabled, label `Envoi en cours...`.
-- Step 2 (code): replaces step 1 in place (no navigation). Single input `inputmode=numeric`, `autocomplete=one-time-code`, `maxlength=6`, pattern `[0-9]{6}`, rendered as 6 visual cells (44px min height, mono 32px, 4px gap) but ONE real input underneath (paste and iOS/Android autofill must work). Auto-submit on the 6th digit. Secondary text button `Renvoyer le code` disabled for 60s with visible countdown (`Renvoyer le code (42 s)`), and `Changer d'adresse e-mail`.
+- Step 2 (code): replaces step 1 in place (no navigation). Single input `inputmode=numeric`, `autocomplete=one-time-code`, `maxlength=OTP_LENGTH (8)`, pattern `[0-9]{OTP_LENGTH}`, rendered as OTP_LENGTH (8) visual cells (44px min height, mono 32px, 4px gap) but ONE real input underneath (paste and iOS/Android autofill must work). Auto-submit on the last digit. Secondary text button `Renvoyer le code` disabled for 60s with visible countdown (`Renvoyer le code (42 s)`), and `Changer d'adresse e-mail`.
 - Step 1 response is identical for any address (D-09): always advance to step 2 with the same message. Never reveal whether the address is invited.
 - Errors in an `aria-live="polite"` region under the field, `--warm` text with a lucide `AlertCircle` icon (never colour alone).
 - After success: redirect by role (admin to `/admin`, client to `/espace-client`, `next` honoured only for relative paths beginning `/espace-client` or `/admin`).
@@ -144,7 +144,7 @@ Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-fai
 | Primary CTA (admin) | `Inviter le client` |
 | Login step 1 heading / helper | `Connexion` / `Saisissez l'adresse e-mail avec laquelle vous avez été invité.` |
 | Identical response message (D-09) | `Si cette adresse est invitée, un code vient d'être envoyé.` |
-| Login step 2 heading / helper | `Saisissez votre code` / `Code à 6 chiffres reçu par e-mail. Pensez à vérifier vos courriers indésirables.` |
+| Login step 2 heading / helper | `Saisissez votre code` / `Code à 8 chiffres reçu par e-mail. Pensez à vérifier vos courriers indésirables.` |
 | Empty state heading (client) | `Votre espace est en préparation` |
 | Empty state body (client) | `Vos documents, votre projet et vos paiements apparaîtront ici dès qu'ils seront disponibles. Une question ? Écrivez-nous à contact@sevalys.com.` |
 | Empty state heading (admin table) | `Aucun client invité` |

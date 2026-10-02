@@ -55,7 +55,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 **Requirements**: FOUND-01, FOUND-02, FOUND-03, FOUND-04, FOUND-05, FOUND-06, FOUND-07
 **Success Criteria** (what must be TRUE):
 
-  1. Un client invité se connecte avec un code à 6 chiffres reçu par e-mail (lien en secours) et reste connecté ; une adresse non invitée ne peut pas créer de compte
+  1. Un client invité se connecte avec un code à 8 chiffres reçu par e-mail (lien en secours) et reste connecté ; une adresse non invitée ne peut pas créer de compte
   2. Un admin accède à `/admin` ; un client ou un utilisateur Gecko authentifié y est refusé et ne voit aucune donnée admin
   3. Les tests automatisés d'isolation (client A vs client B, anonyme, utilisateur Gecko) passent et échouent si une politique est affaiblie
   4. `/espace-client` et `/admin` s'affichent sans intro cinéma, curseur ni GSAP, en `noindex`, absents du sitemap et de `llms.txt`

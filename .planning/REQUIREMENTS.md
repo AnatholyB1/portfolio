@@ -8,7 +8,7 @@
 
 ### Fondations & accès (FOUND)
 
-- [ ] **FOUND-01**: Un client invité peut se connecter sans mot de passe avec un code à 6 chiffres reçu par e-mail (lien en secours)
+- [ ] **FOUND-01**: Un client invité peut se connecter sans mot de passe avec un code à 8 chiffres reçu par e-mail (lien en secours)
 - [ ] **FOUND-02**: Aucun compte ne peut être créé librement : l'accès se fait uniquement sur invitation d'un admin
 - [ ] **FOUND-03**: Les rôles admin et client sont portés par des tables dédiées, jamais déduits du simple statut « authentifié » (le projet Supabase est partagé avec Gecko)
 - [ ] **FOUND-04**: Un client ne peut lire aucune donnée d'un autre client ; des tests automatisés prouvent l'isolation (client A vs client B, anonyme, utilisateur Gecko)
