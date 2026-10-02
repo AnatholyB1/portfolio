@@ -8,7 +8,7 @@ export const INVITE_EMAIL_REPLY_TO = 'contact@sevalys.com';
 // Contrastes sur la carte #111213 : #9A9690 ≈ 6,4:1, #ECEAE3 ≈ 14:1 (≥ 4,5:1).
 export const INVITE_FOOTNOTE_COLOR = '#9A9690';
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
