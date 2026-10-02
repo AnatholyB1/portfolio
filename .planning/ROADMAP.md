@@ -65,26 +65,26 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 Plans:
 **Wave 1**
 
-- [ ] 10-01-PLAN.md — Deps (@supabase/ssr, server-only), env key-mode assertion, Supabase server/admin/proxy clients, private route constants
-- [ ] 10-02-PLAN.md — sv_* migration (roles en tables, RLS, helpers, triggers d'exclusivité, RPC service_role, seed admin) + lint de migrations + sync dérive prod
+- [x] 10-01-PLAN.md — Deps (@supabase/ssr, server-only), env key-mode assertion, Supabase server/admin/proxy clients, private route constants
+- [x] 10-02-PLAN.md — sv_* migration (roles en tables, RLS, helpers, triggers d'exclusivité, RPC service_role, seed admin) + lint de migrations + sync dérive prod
 - [ ] 10-03-PLAN.md — FOUND-07 : script de vérification DNS/Resend, édition SPF/DMARC, test Gmail (D-20)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 10-04-PLAN.md — Émission du code de connexion : schémas, e-mail FR, throttle, gate sv_login_allowed
-- [ ] 10-06-PLAN.md — Providers route-aware (cinéma/curseur/PostHog), robots/headers/sitemap/llms, zones de prix et gardes d'import
-- [ ] 10-07-PLAN.md — Suite RLS sur branche Supabase (A vs B, anon, Gecko, auto-inscription), canary, advisor, spike auth
-- [ ] 10-08-PLAN.md — Layouts privés noindex, portal.css, composants de coquille
-- [ ] 10-09-PLAN.md — Invitation : recherche SIRET, orchestration invite (anti-prise de compte), e-mail d'invitation, script de récupération admin (second admin)
+- [x] 10-04-PLAN.md — Émission du code de connexion : schémas, e-mail FR, throttle, gate sv_login_allowed
+- [x] 10-06-PLAN.md — Providers route-aware (cinéma/curseur/PostHog), robots/headers/sitemap/llms, zones de prix et gardes d'import
+- [x] 10-07-PLAN.md — Suite RLS sur branche Supabase (A vs B, anon, Gecko, auto-inscription), canary, advisor, spike auth
+- [x] 10-08-PLAN.md — Layouts privés noindex, portal.css, composants de coquille
+- [x] 10-09-PLAN.md — Invitation : recherche SIRET, orchestration invite (anti-prise de compte), e-mail d'invitation, script de récupération admin (second admin)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 10-05-PLAN.md — proxy.ts, DAL requireAdmin/requireClient, plafond de session 30 jours, déconnexion
+- [x] 10-05-PLAN.md — proxy.ts, DAL requireAdmin/requireClient, plafond de session 30 jours, déconnexion
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 10-10-PLAN.md — Page /connexion (e-mail → code), actions verifyOtp, interstitiel /auth/confirm
-- [ ] 10-11-PLAN.md — Coquilles /espace-client et /admin, formulaire d'invitation, actions admin
+- [x] 10-10-PLAN.md — Page /connexion (e-mail → code), actions verifyOtp, interstitiel /auth/confirm
+- [x] 10-11-PLAN.md — Coquilles /espace-client et /admin, formulaire d'invitation, actions admin
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -242,7 +242,7 @@ Plans:
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
-| 10. Foundation, auth & isolation | v2.0 | 0/TBD | Not started | - |
+| 10. Foundation, auth & isolation | v2.0 | 10/13 | In Progress|  |
 | 11. Lead attribution, pipeline & consent | v2.0 | 0/TBD | Not started | - |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
