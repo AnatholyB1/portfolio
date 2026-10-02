@@ -18,7 +18,7 @@
 
 ### Prospects, attribution & consentement (LEAD)
 
-- [ ] **LEAD-01**: Chaque arrivée avec paramètres enregistre côté serveur UTM, identifiants de clic (si consentement), page d'atterrissage et référent, en deux jeux : premier contact et dernier contact
+- [x] **LEAD-01**: Chaque arrivée avec paramètres enregistre côté serveur UTM, identifiants de clic (si consentement), page d'atterrissage et référent, en deux jeux : premier contact et dernier contact
 - [ ] **LEAD-02**: La source d'un lead est figée à sa création ; seul un admin peut la corriger, avec un motif obligatoire journalisé
 - [ ] **LEAD-03**: Le journal `lead_events` est en ajout seul (aucune mise à jour ni suppression) et permet l'anonymisation d'un lead pour le droit à l'effacement
 - [ ] **LEAD-04**: Un même prospect (e-mail ou téléphone normalisés) revenu dans les 9 mois ajoute un contact au lead existant sans changer sa source
@@ -136,7 +136,7 @@
 | FOUND-05 | Phase 10 | Complete |
 | FOUND-06 | Phase 10 | Complete |
 | FOUND-07 | Phase 10 | Complete |
-| LEAD-01 | Phase 11 | Pending |
+| LEAD-01 | Phase 11 | Complete |
 | LEAD-02 | Phase 11 | Pending |
 | LEAD-03 | Phase 11 | Pending |
 | LEAD-04 | Phase 11 | Pending |
