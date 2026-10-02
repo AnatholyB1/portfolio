@@ -22,6 +22,8 @@ const mocks = vi.hoisted(() => ({
   memberInsert: vi.fn(),
   clientDelete: vi.fn(),
   send: vi.fn(),
+  enqueue: vi.fn(),
+  outboxCount: vi.fn(),
   from: vi.fn(),
 }));
 
@@ -30,10 +32,8 @@ vi.mock('@/lib/supabase/env', () => ({
   getSiteUrl: () => 'https://sevalys.com',
 }));
 
-vi.mock('resend', () => ({
-  Resend: class {
-    emails = { send: mocks.send };
-  },
+vi.mock('@/lib/server/mail/outbox', () => ({
+  enqueueAndSend: mocks.enqueue,
 }));
 
 vi.mock('@/lib/supabase/admin', () => ({
@@ -78,10 +78,11 @@ beforeEach(() => {
   }));
   mocks.memberInsert.mockImplementation(async () => state.memberInsert);
   mocks.clientDelete.mockReturnValue({ eq: async () => ({ error: null }) });
-  mocks.send.mockImplementation(async () => {
-    if (state.sendThrows) throw new Error('boom');
-    return state.sendResult;
+  mocks.enqueue.mockImplementation(async () => {
+    if (state.sendThrows) return 'failed';
+    return state.sendResult.error ? 'failed' : 'sent';
   });
+  mocks.outboxCount.mockImplementation(async () => ({ count: 1, error: null }));
   mocks.from.mockImplementation((table: string) => {
     if (table === 'sv_admins') {
       return { select: () => ({ eq: () => ({ limit: async () => ({ data: state.admins, error: null }) }) }) };
@@ -153,10 +154,16 @@ describe('inviteClient', () => {
       user_id: 'new-user',
       invited_email: 'client@example.com',
     });
-    const mail = mocks.send.mock.calls[0][0];
-    expect(mail.from).toBe('"Sèvalys" <connexion@sevalys.com>');
-    expect(mail.to).toBe('client@example.com');
-    expect(mail.html).toContain('https://sevalys.com/connexion?email=client%40example.com');
+    expect(mocks.enqueue).toHaveBeenCalledTimes(1);
+    expect(mocks.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'client_invited',
+        recipientEmail: 'client@example.com',
+        dedupeKey: 'client_invited:new-client:client@example.com',
+        payload: { clientName: 'Acme' },
+      }),
+    );
+    expect(mocks.send).not.toHaveBeenCalled();
   });
 
   it('reuses an existing client for the same SIRET (D-03)', async () => {
@@ -196,17 +203,14 @@ describe('inviteClient', () => {
     expect(mocks.memberInsert).not.toHaveBeenCalled();
   });
 
-  it('keeps rows when Resend fails and logs without the email', async () => {
+  it('keeps rows when the outbox send fails', async () => {
     state.sendResult = { error: { message: 'bad' } };
     const r = await inviteClient(valid, actor);
     expect(r).toMatchObject({ ok: true, mailSent: false });
     expect(mocks.deleteUser).not.toHaveBeenCalled();
-    const logged = JSON.stringify((console.error as any).mock.calls);
-    expect(logged).toContain('[admin/invite]');
-    expect(logged).not.toContain('client@example.com');
   });
 
-  it('keeps rows when Resend throws', async () => {
+  it('keeps rows when the outbox reports failure', async () => {
     state.sendThrows = true;
     expect(await inviteClient(valid, actor)).toMatchObject({ ok: true, mailSent: false });
   });
@@ -227,6 +231,9 @@ describe('resendInvitation', () => {
             eq: () => ({ order: () => ({ limit: async () => ({ data: memberData, error: null }) }) }),
           }),
         };
+      }
+      if (table === 'sv_mail_outbox') {
+        return { select: () => ({ like: mocks.outboxCount }) };
       }
       if (table === 'sv_clients') {
         return {
@@ -249,9 +256,13 @@ describe('resendInvitation', () => {
 
   it('re-sends the email with the prefilled login link and creates nothing', async () => {
     expect(await resendInvitation(CID)).toEqual({ ok: true, email: 'client@example.com' });
-    expect(mocks.send).toHaveBeenCalledTimes(1);
-    expect(mocks.send.mock.calls[0][0].to).toBe('client@example.com');
-    expect(mocks.send.mock.calls[0][0].html).toContain('connexion?email=client%40example.com');
+    expect(mocks.enqueue).toHaveBeenCalledTimes(1);
+    expect(mocks.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recipientEmail: 'client@example.com',
+        dedupeKey: 'client_invited:11111111-1111-1111-1111-111111111111:client@example.com:resend:1',
+      }),
+    );
     expect(mocks.createUser).not.toHaveBeenCalled();
     expect(mocks.clientInsert).not.toHaveBeenCalled();
     expect(mocks.memberInsert).not.toHaveBeenCalled();
@@ -260,10 +271,10 @@ describe('resendInvitation', () => {
   it('returns not_found when no member exists', async () => {
     memberData = [];
     expect(await resendInvitation(CID)).toEqual({ ok: false, code: 'not_found' });
-    expect(mocks.send).not.toHaveBeenCalled();
+    expect(mocks.enqueue).not.toHaveBeenCalled();
   });
 
-  it('returns mail_failed when Resend errors', async () => {
+  it('returns mail_failed when the outbox does not send', async () => {
     state.sendResult = { error: { message: 'bad' } };
     expect(await resendInvitation(CID)).toEqual({ ok: false, code: 'mail_failed' });
   });

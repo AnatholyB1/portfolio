@@ -1,13 +1,12 @@
 import 'server-only';
-import { Resend } from 'resend';
 import { inviteSchema } from '@/lib/admin/inviteSchema';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { getSiteUrl, isLoginEnabled } from '@/lib/supabase/env';
-import {
-  buildInviteEmail,
-  INVITE_EMAIL_FROM,
-  INVITE_EMAIL_REPLY_TO,
-} from '@/lib/server/mail/inviteEmail';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { isLoginEnabled } from '@/lib/supabase/env';
+import { enqueueAndSend } from '@/lib/server/mail/outbox';
+import { dedupeKey } from '@/lib/server/mail/rules';
+
+export { buildLoginUrl } from '@/lib/server/mail/urls';
 
 export type InviteResult =
   | { ok: true; clientId: string; email: string; mailSent: boolean }
@@ -44,25 +43,10 @@ export async function inviteClient(
 
   const admin = createSupabaseAdminClient();
 
-  // 1. Exclusivité des rôles : adresse déjà admin / déjà membre.
-  const adminRow = await admin.from('sv_admins').select('user_id').eq('email', email).limit(1);
-  if (adminRow.error) return fail('lookup_admin');
-  if (adminRow.data && adminRow.data.length > 0) return { ok: false, code: 'role_conflict' };
-
-  const memberRow = await admin
-    .from('sv_client_members')
-    .select('user_id')
-    .eq('invited_email', email)
-    .limit(1);
-  if (memberRow.error) return fail('lookup_member');
-  if (memberRow.data && memberRow.data.length > 0) return { ok: false, code: 'already_member' };
-
-  // 2. Compte existant sur le projet partagé : jamais réutilisé.
-  const existing = await admin.rpc('sv_find_auth_user', { p_email: email });
-  if (existing.error) return fail('lookup_auth');
-  if (Array.isArray(existing.data) ? existing.data.length > 0 : Boolean(existing.data)) {
-    return { ok: false, code: 'existing_account' };
-  }
+  // 1-2. Exclusivité des rôles et compte partagé existant (D-02).
+  const check = await checkInviteeEmail(admin, email);
+  if (check === 'error') return { ok: false, code: 'error' };
+  if (check !== 'ok') return { ok: false, code: check };
 
   // 3. Création de l'utilisateur : sans mot de passe, e-mail confirmé.
   const created = await admin.auth.admin.createUser({ email, email_confirm: true });
@@ -124,7 +108,14 @@ export async function inviteClient(
   }
 
   // 5. E-mail d'invitation : un échec n'annule pas les lignes créées.
-  const mailSent = await sendInvitationEmail(email, name);
+  const mailSent =
+    (await enqueueAndSend({
+      event: 'client_invited',
+      recipientEmail: email,
+      dedupeKey: dedupeKey.clientInvited(clientId, email),
+      payload: { clientName: name },
+      clientId,
+    })) === 'sent';
 
   return { ok: true, clientId, email, mailSent };
 }
@@ -134,29 +125,40 @@ function fail(step: string): { ok: false; code: 'error' } {
   return { ok: false, code: 'error' };
 }
 
-/** Lien de connexion avec l'e-mail prérempli. */
-export function buildLoginUrl(email: string): string {
-  return `${getSiteUrl()}/connexion?email=${encodeURIComponent(email)}`;
-}
+export type InviteeCheck = 'ok' | 'role_conflict' | 'already_member' | 'existing_account' | 'error';
 
-async function sendInvitationEmail(email: string, clientName: string): Promise<boolean> {
-  try {
-    const mail = buildInviteEmail({ clientName, loginUrl: buildLoginUrl(email) });
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const result = await resend.emails.send({
-      from: INVITE_EMAIL_FROM,
-      to: email,
-      replyTo: INVITE_EMAIL_REPLY_TO,
-      subject: mail.subject,
-      html: mail.html,
-      text: mail.text,
-    });
-    if (result.error) console.error('[admin/invite] mail send failed');
-    return !result.error;
-  } catch {
-    console.error('[admin/invite] mail send failed');
-    return false;
+/** Contrôles d'adresse partagés avec la conversion (D-02). */
+export async function checkInviteeEmail(
+  admin: SupabaseClient,
+  email: string,
+): Promise<InviteeCheck> {
+  const adminRow = await admin.from('sv_admins').select('user_id').eq('email', email).limit(1);
+  if (adminRow.error) {
+    fail('lookup_admin');
+    return 'error';
   }
+  if (adminRow.data && adminRow.data.length > 0) return 'role_conflict';
+
+  const memberRow = await admin
+    .from('sv_client_members')
+    .select('user_id')
+    .eq('invited_email', email)
+    .limit(1);
+  if (memberRow.error) {
+    fail('lookup_member');
+    return 'error';
+  }
+  if (memberRow.data && memberRow.data.length > 0) return 'already_member';
+
+  const existing = await admin.rpc('sv_find_auth_user', { p_email: email });
+  if (existing.error) {
+    fail('lookup_auth');
+    return 'error';
+  }
+  if (Array.isArray(existing.data) ? existing.data.length > 0 : Boolean(existing.data)) {
+    return 'existing_account';
+  }
+  return 'ok';
 }
 
 export type ResendResult =
@@ -189,6 +191,19 @@ export async function resendInvitation(clientId: unknown): Promise<ResendResult>
   const name = (client.data as { name?: string } | null)?.name;
   if (!name) return { ok: false, code: 'not_found' };
 
-  const sent = await sendInvitationEmail(email, name);
-  return sent ? { ok: true, email } : { ok: false, code: 'mail_failed' };
+  const prefix = dedupeKey.clientInvited(clientId, email);
+  const prior = await admin
+    .from('sv_mail_outbox')
+    .select('id', { count: 'exact', head: true })
+    .like('dedupe_key', `${prefix}%`);
+  if (prior.error) return fail('resend_count');
+
+  const outcome = await enqueueAndSend({
+    event: 'client_invited',
+    recipientEmail: email,
+    dedupeKey: dedupeKey.clientInvited(clientId, email, prior.count ?? 0),
+    payload: { clientName: name },
+    clientId,
+  });
+  return outcome === 'sent' ? { ok: true, email } : { ok: false, code: 'mail_failed' };
 }
