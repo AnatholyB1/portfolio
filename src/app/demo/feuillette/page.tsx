@@ -42,7 +42,27 @@ export default function FeuilletteDemo() {
   const [products, setProducts] = useState<Product[]>([])
   const [newOrderId, setNewOrderId] = useState<string | null>(null)
 
+  async function fetchOrders() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const { data } = await supabase
+      .from('orders')
+      .select('*')
+      .gte('created_at', today.toISOString())
+      .order('created_at', { ascending: false })
+    if (data) setOrders(data)
+  }
+
+  async function fetchProducts() {
+    const { data } = await supabase
+      .from('products')
+      .select('*')
+      .order('category')
+    if (data) setProducts(data)
+  }
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async initial data fetch; setState runs after await
     fetchOrders()
     fetchProducts()
 
@@ -80,25 +100,6 @@ export default function FeuilletteDemo() {
       supabase.removeChannel(productsChannel)
     }
   }, [])
-
-  async function fetchOrders() {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const { data } = await supabase
-      .from('orders')
-      .select('*')
-      .gte('created_at', today.toISOString())
-      .order('created_at', { ascending: false })
-    if (data) setOrders(data)
-  }
-
-  async function fetchProducts() {
-    const { data } = await supabase
-      .from('products')
-      .select('*')
-      .order('category')
-    if (data) setProducts(data)
-  }
 
   const stockColor = (qty: number) =>
     qty === 0 ? 'text-red-600' : qty <= 5 ? 'text-amber-600' : 'text-emerald-700'
