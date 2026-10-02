@@ -35,7 +35,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 
 ### 🚧 v2.0 — Plateforme Sèvalys (Phases 10-19)
 
-- [ ] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests
+- [x] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests (completed 2026-10-02)
 - [ ] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement
 - [ ] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin
 - [ ] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client
@@ -92,7 +92,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 10-13-PLAN.md — Env Vercel + drapeau de login, Preview auto-référencée (bypass protection), vérification de bout en bout, mise en prod sous validation humaine, graphify update
+- [x] 10-13-PLAN.md — Env Vercel + drapeau de login, Preview auto-référencée (bypass protection), vérification de bout en bout, mise en prod sous validation humaine, graphify update
 
 **UI hint**: yes
 
@@ -242,7 +242,7 @@ Plans:
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
-| 10. Foundation, auth & isolation | v2.0 | 12/13 | In Progress|  |
+| 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete   | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 0/TBD | Not started | - |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
