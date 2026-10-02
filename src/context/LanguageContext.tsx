@@ -25,6 +25,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('portfolio-lang') as Lang | null;
     if (stored && (stored === 'fr' || stored === 'en' || stored === 'th')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: localStorage is only readable after mount
       setLangState(stored);
     } else {
       setLangState(detectBrowserLang());

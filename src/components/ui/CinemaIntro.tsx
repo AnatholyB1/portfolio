@@ -14,6 +14,7 @@ export default function CinemaIntro({ onDone, force = false }: CinemaIntroProps)
   useEffect(() => {
     const seen = localStorage.getItem('sv_intro_seen');
     if (seen === '1' && !force) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is only readable after mount (SSR-safe)
       setGone(true);
       onDone?.();
       return;

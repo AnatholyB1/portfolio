@@ -15,6 +15,7 @@ function useCountUp(target: number): number {
     // Respect reduced motion: jump straight to the final value, no tween
     // (hard PROJECT.md constraint, mirrors useReveals()'s branch shape).
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reduced-motion: jump to final value on mount
       setValue(target);
       return;
     }
