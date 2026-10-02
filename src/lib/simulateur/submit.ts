@@ -1,8 +1,9 @@
 // src/lib/simulateur/submit.ts
 //
 // This module is the single integration seam between all new Phase 7
-// frontend code and the already-shipped, unmodifiable Phase 5 backend
-// (src/app/api/simulateur/route.ts). It must never hand-type a second
+// frontend code and the simulator backend (src/app/api/simulateur/route.ts),
+// which since phase 11 writes to sv_leads via the sv_ingest_lead RPC (attribution
+// comes from cookies server-side, never from this payload). It must never hand-type a second
 // payload interface — ProspectSubmission from src/lib/prospects-schema.ts
 // is the only type allowed to describe the request body, because a
 // duplicate would silently drift from the server's .min(2)/.max(4) and
