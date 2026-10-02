@@ -156,12 +156,72 @@ export async function backdateLead(leadId: string, months: number) {
   if (error) throw new Error(`backdateLead failed: ${error.message}`);
 }
 
+/** Create a project through the sv_create_project RPC (service role). Returns the project id. */
+export async function makeProject(
+  clientId: string,
+  opts: { title?: string; offer?: string; actor?: string | null } = {},
+): Promise<string> {
+  const { data, error } = await svc().rpc('sv_create_project', {
+    p_client_id: clientId,
+    p_actor: opts.actor ?? null,
+    p_title: opts.title ?? 'Projet RLS',
+    p_offer: opts.offer ?? 'site-vitrine',
+  });
+  if (error) throw new Error(`sv_create_project failed: ${error.message}`);
+  return (data as { project_id: string }).project_id;
+}
+
+export interface PostFactOpts {
+  actorKind?: string;
+  actorId?: string | null;
+  targetFactId?: number | null;
+  reason?: string | null;
+}
+
+/** Append a project fact through the sv_post_project_fact RPC (service role). */
+export async function postFact(
+  projectId: string,
+  type: string,
+  opts: PostFactOpts = {},
+): Promise<{ fact_id: number; changed: boolean }> {
+  const { data, error } = await svc().rpc('sv_post_project_fact', {
+    p_project_id: projectId,
+    p_type: type,
+    p_actor_kind: opts.actorKind ?? 'system',
+    p_actor_id: opts.actorId ?? null,
+    p_target_fact_id: opts.targetFactId ?? null,
+    p_reason: opts.reason ?? null,
+  });
+  if (error) throw new Error(`sv_post_project_fact failed: ${error.message}`);
+  return data as { fact_id: number; changed: boolean };
+}
+
+/** A lead moved to a convertible status (default 'qualified') through sv_set_lead_status. */
+export async function makeConvertibleLead(status = 'qualified', opts: LeadRpcOpts = {}): Promise<LeadRpcResult> {
+  const lead = await makeLeadViaRpc(opts);
+  const { error } = await svc().rpc('sv_set_lead_status', {
+    p_lead_id: lead.lead_id,
+    p_status: status,
+    p_actor: null,
+    p_lost_reason: null,
+    p_note: null,
+  });
+  if (error) throw new Error(`sv_set_lead_status failed: ${error.message}`);
+  return lead;
+}
+
 // NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
 // immutable (deny triggers) and leads are tombstoned only. The branch is
 // throwaway; tests must always use uniqueEmail() so runs never collide.
+// Clients are deleted by tracked id only, never by name or SIRET.
 export async function cleanup() {
   for (const id of createdClients.splice(0)) {
-    await svc().from('sv_clients').delete().eq('id', id);
+    const { error } = await svc().from('sv_clients').delete().eq('id', id);
+    // RESEARCH Pitfall 1: a client referenced by projects/facts (immutable) can no
+    // longer be deleted; tolerate it, the branch is throwaway.
+    if (error && !/violates foreign key|sv_immutable_table/.test(error.message)) {
+      throw new Error(`cleanup client failed: ${error.message}`);
+    }
   }
   for (const id of createdUsers.splice(0)) {
     await svc().auth.admin.deleteUser(id);

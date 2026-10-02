@@ -169,7 +169,9 @@ describe('LEAD-03 journal immutable + erase', () => {
         out = `${e.stdout ?? ''}${e.stderr ?? ''}`;
       }
       // The CLI may report the SQL error on stdout with exit 0; either way the error text must show.
-      expect(out, `${table}: ${out}`).toContain('sv_immutable_table');
+      // Since phase 12 sv_leads is referenced by projects, Postgres rejects the TRUNCATE on the
+      // FK before the deny trigger fires; either way the truncate is denied.
+      expect(out, `${table}: ${out}`).toMatch(/sv_immutable_table|cannot truncate a table referenced in a foreign key/);
       expect(failed || out.includes('Error') || out.includes('error')).toBe(true);
     }
   });
