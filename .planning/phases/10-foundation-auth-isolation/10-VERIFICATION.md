@@ -36,8 +36,8 @@ Goal: client invité -> espace privé, admin -> zone distincte, aucune fuite ent
 FOUND-01 satisfied (client step human), FOUND-02 satisfied, FOUND-03 satisfied, FOUND-04 satisfied (suite run reported), FOUND-05 satisfied, FOUND-06 satisfied, FOUND-07 satisfied. REQUIREMENTS.md still marks all "Pending": update checkboxes/traceability.
 
 ## Non-blocking notes
-- Test client "Test E2E Sèvalys" left in prod `sv_clients`; delete on request.
-- Vercel automation-bypass token created; revoke if unneeded.
+- Test client "Test E2E Sèvalys" in prod `sv_clients` is a PERMANENT fixture (owner decision 2026-10-02, PROJECT.md "Permanent test fixtures"); keep it.
+- Vercel automation-bypass token: owner decided to keep it (2026-10-02).
 - Possible hydration timing issue losing first keystrokes on /connexion email field (not human-reproduced).
 - Preview emails link to sevalys.com (runtime env); fine on Production.
 - `graphify update .` not yet run.

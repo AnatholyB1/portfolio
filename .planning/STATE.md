@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: executing
-stopped_at: Phase 10 UI-SPEC approved
-last_updated: "2026-10-01T22:37:25.332Z"
+status: ready_to_plan
+stopped_at: Phase 10 complete (13/13) — ready to discuss Phase 11
+last_updated: 2026-10-02T12:02:10.455Z
 last_activity: 2026-10-01 -- Phase 10 execution started
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 13
-  completed_plans: 0
+  completed_plans: 13
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 10 — foundation-auth-isolation
+**Current focus:** Phase 11 — lead attribution, pipeline & consent
 
 ## Current Position
 
-Phase: 10 (foundation-auth-isolation) — EXECUTING
-Plan: 1 of 13
-Status: Executing Phase 10
-Last activity: 2026-10-01 -- Phase 10 execution started
+Phase: 11
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-02
 
 Progress: [░░░░░░░░░░] 0% (0/10 phases in v2.0)
 
@@ -36,7 +36,7 @@ Progress: [░░░░░░░░░░] 0% (0/10 phases in v2.0)
 
 **Velocity:**
 
-- Total plans completed: 48 (v1.0: 21, v1.1: 27)
+- Total plans completed: 61 (v1.0: 21, v1.1: 27)
 - v2.0: 0 plans executed
 
 *Updated after each plan completion*
@@ -52,6 +52,8 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - Attribution en phase 11 (données non rattrapables) ; bandeau de consentement avec elle
 - ADM-01 (vue projets admin) rattaché à la phase 12 avec le moteur d'étapes ; MAIL-01/02 (squelette) en phase 12, MAIL-03/04 en phase 16
 - Politique « aucun prix » inchangée sur le public ; prix autorisés uniquement dans portail, admin et modèles
+- Client de test permanent en production (décision propriétaire 2026-10-02) : « Test E2E Sèvalys », SIRET 90098846000011, `anatholyb+sv-test@gmail.com`, à réutiliser pour tous les tests des phases et milestones suivants ; ne pas le supprimer ni le signaler comme donnée résiduelle. Le jeton de contournement Vercel reste en place. Détails : PROJECT.md « Permanent test fixtures »
+- Code de connexion à 8 chiffres (réglage du projet Supabase partagé, constante `OTP_LENGTH`) ; l'adresse `anatholyb@gmail.com` seule ne peut pas être invitée (compte existant d'une autre application), utiliser le plus-address
 
 ### Pending Todos
 

@@ -115,6 +115,24 @@ Next milestone not defined yet. Carried over from v1.0 (still pending):
 | Sitemap submitted via gsc MCP after deploy, human-gated (Phase 9, D-10) | Needed a transient write-scope re-auth; re-auth took several attempts (scope typos, PowerShell comma splitting, concurrent runs) | ⚠️ Revisit — revert ADC to read-only |
 | Post-delivery design overhaul: proof first (real client screenshots), one rhythm per section, key colors and fonts kept | v1.1 landing/service pages read as flat and generic; user feedback | ✓ Good — measured on production, tests unchanged |
 | Mobile: burger menu + sticky diagnostic bar + collapsed realisations/problems | Nav was hidden below 900px with no replacement (links and language switch unreachable); landing was 16 screens long | ✓ Good — 13.8 screens, tested EN/TH |
+| One permanent test client lives in production and is the fixture for all future v2.0 end-to-end tests (Phase 10, owner decision 2026-10-02) | Re-creating test data per phase is slow, and the invite flow refuses addresses that already have an account in the shared Supabase project | — Pending — see "Permanent test fixtures" below |
+
+## Permanent test fixtures (production)
+
+Owner decision, 2026-10-02: these exist in production on purpose. **Do not delete, rename or "clean up" them**, and do not flag them as leftover test data in reviews or verifications. Every later phase and milestone tests its flows on them, in production.
+
+| Fixture | Value | Used for |
+|---------|-------|----------|
+| Test client (`sv_clients`) | "Test E2E Sèvalys", SIRET `90098846000011` (the owner's own company, ANATHOLY BRICON), invited 2026-10-02 | The client in every end-to-end test: client login, project and steps, documents, signature, payment, reviews |
+| Test client login address | `anatholyb+sv-test@gmail.com` (plus-address, same inbox as the owner's Gmail) | Receives the invitation, login codes and any later client emails |
+| Admin account | `contact@sevalys.com` (seeded in `sv_admins`) | Admin side of every test; its inbox is readable in the owner's Chrome profile (Gmail `u/1`) |
+| Vercel deployment-protection bypass token | Created 2026-10-02 by `vercel curl` | Smoke checks against protected Preview deployments; kept, not revoked |
+
+Rules for future phases:
+- Plain `anatholyb@gmail.com` cannot be invited as a client: it already has an account from another app in the shared Supabase project, and the invite flow refuses such addresses by design. Use the plus-address.
+- Login codes are one-time credentials: an agent may read the emails but the owner types the codes.
+- Anything involving money (Phase 15) must still be confirmed with the owner before a real charge; whether the test client uses Stripe test mode or live mode is to be decided in the Phase 15 discussion.
+- Test runs create rows for this client only. If a phase needs a clean slate, add a reset script that targets this client's rows; never delete the client itself.
 
 ## Evolution
 

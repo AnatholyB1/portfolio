@@ -40,6 +40,5 @@ completed: 2026-10-02
 - The client-side steps (code entry as the invited client, `/espace-client` rendering, `/admin` 404 as client, Gecko admin app check) require typing one-time codes, which the orchestrator may not do; they were left to the owner. The owner's single "approved" reply covered the checkpoint; no per-step result for these was reported in chat.
 - Preview emails link to `sevalys.com` (NEXT_PUBLIC_SITE_URL is read at runtime); correct on Production.
 - First keystrokes typed into the `/connexion` email field right after page load were lost in browser automation twice (input empty on submit → validation error). Likely hydration timing; not reproduced by a human. Candidate follow-up.
-- The invite wrote a test client "Test E2E Sèvalys" to the production `sv_clients` table; to be deleted on request.
-- A deployment-protection automation-bypass token was created on the Vercel project by `vercel curl`; revoke in Vercel → Deployment Protection if not needed.
-- `graphify update .` still to be run for the knowledge graph (project CLAUDE.md).
+- The invite wrote the test client "Test E2E Sèvalys" to the production `sv_clients` table; it is a PERMANENT test fixture (owner decision 2026-10-02) and must be kept.
+- A deployment-protection automation-bypass token was created by `vercel curl`; the owner decided to keep it (2026-10-02).
