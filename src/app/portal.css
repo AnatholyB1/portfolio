@@ -146,14 +146,15 @@
   border-color: var(--warm);
 }
 
-/* ---------- Code à 6 chiffres : 6 cellules, un seul vrai input ---------- */
+/* ---------- Code de connexion : OTP_LENGTH cellules (--pt-otp-length), un seul vrai input ---------- */
 .pt-otp {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--pt-otp-length, 8), minmax(0, 1fr));
   gap: 4px;
 }
 .pt-otp-cell {
-  flex: 1;
+  min-width: 0;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -162,7 +163,7 @@
   border: 1px solid var(--line-strong);
   border-radius: 8px;
   font-family: var(--font-mono), monospace;
-  font-size: 32px;
+  font-size: clamp(22px, 7vw, 32px);
   font-weight: 500;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;

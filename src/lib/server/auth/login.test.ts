@@ -51,7 +51,7 @@ beforeEach(() => {
     return { data: null, error: { message: 'unknown rpc' } };
   });
   generateLinkMock.mockResolvedValue({
-    data: { properties: { email_otp: '123456', hashed_token: 'hash_abc' } },
+    data: { properties: { email_otp: '12345678', hashed_token: 'hash_abc' } },
     error: null,
   });
   sendMock.mockResolvedValue({ data: { id: 'x' }, error: null });
@@ -84,7 +84,7 @@ describe('requestLoginCode', () => {
     expect(payload.from).toBe(LOGIN_EMAIL_FROM);
     expect(payload.replyTo).toBe(LOGIN_EMAIL_REPLY_TO);
     expect(payload.to).toBe('jean@example.com');
-    expect(payload.html).toContain('123456');
+    expect(payload.html).toContain('12345678');
     expect(payload.html).toContain(
       `https://sevalys.com/auth/confirm?token_hash=hash_abc&amp;type=${LOGIN_VERIFY_TYPES.link}`,
     );
@@ -159,12 +159,12 @@ describe('issueLoginCode resilience', () => {
     await expect(issueLoginCode('jean@example.com')).resolves.toBeUndefined();
     const logged = JSON.stringify((console.error as unknown as ReturnType<typeof vi.fn>).mock.calls);
     expect(logged).toContain('[auth/login]');
-    expect(logged).not.toContain('123456');
+    expect(logged).not.toContain('12345678');
     expect(logged).not.toContain('hash_abc');
     expect(logged).not.toContain('jean@example.com');
   });
 
-  it('aborts silently when email_otp is not 6 digits', async () => {
+  it('aborts silently when email_otp is not 8 digits', async () => {
     generateLinkMock.mockResolvedValue({
       data: { properties: { email_otp: 'abc', hashed_token: 'h' } },
       error: null,

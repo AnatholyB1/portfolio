@@ -15,34 +15,34 @@ describe('buildLoginCodeEmail', () => {
   });
 
   it('has the French subject', () => {
-    expect(buildLoginCodeEmail({ code: '123456', link, expiryMinutes: 60 }).subject).toBe(
+    expect(buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: 60 }).subject).toBe(
       'Votre code de connexion Sèvalys',
     );
   });
 
   it('shows the code in the styled monospace block', () => {
-    const { html } = buildLoginCodeEmail({ code: '123456', link, expiryMinutes: 60 });
-    expect(html).toMatch(/<[^>]*color:#C4F542[^>]*>\s*123456\s*</);
+    const { html } = buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: 60 });
+    expect(html).toMatch(/<[^>]*color:#C4F542[^>]*>\s*12345678\s*</);
     expect(html).toContain('font-size:32px');
     expect(html).toContain('letter-spacing:0.3em');
     expect(html).toContain('monospace');
   });
 
   it('includes the fallback link in html and text', () => {
-    const { html, text } = buildLoginCodeEmail({ code: '123456', link, expiryMinutes: 60 });
+    const { html, text } = buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: 60 });
     expect(html).toContain('Ou ouvrez ce lien de connexion');
-    expect(text).toContain('123456');
+    expect(text).toContain('12345678');
     expect(text).toContain(link);
   });
 
   it('mentions the configured expiry', () => {
-    const { html, text } = buildLoginCodeEmail({ code: '123456', link, expiryMinutes: 60 });
+    const { html, text } = buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: 60 });
     expect(html).toContain('valable 60 minutes');
     expect(text).toContain('valable 60 minutes');
   });
 
   it('falls back to a limited-duration mention when expiry is unknown', () => {
-    const { html, text } = buildLoginCodeEmail({ code: '123456', link, expiryMinutes: null });
+    const { html, text } = buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: null });
     expect(html).toContain('durée limitée');
     expect(text).toContain('durée limitée');
     expect(html).not.toMatch(/\d+ minutes/);
@@ -50,13 +50,13 @@ describe('buildLoginCodeEmail', () => {
   });
 
   it('escapes a hostile link', () => {
-    const { html } = buildLoginCodeEmail({ code: '123456', link: '"><script>alert(1)</script>', expiryMinutes: 60 });
+    const { html } = buildLoginCodeEmail({ code: '12345678', link: '"><script>alert(1)</script>', expiryMinutes: 60 });
     expect(html).not.toContain('<script>');
     expect(html).toContain('&lt;script&gt;');
   });
 
   it('contains no price wording, images or tracking', () => {
-    const { html } = buildLoginCodeEmail({ code: '123456', link, expiryMinutes: 60 });
+    const { html } = buildLoginCodeEmail({ code: '12345678', link, expiryMinutes: 60 });
     expect(html).not.toContain('€');
     expect(html.toLowerCase()).not.toContain('prix');
     expect(html.toLowerCase()).not.toContain('tarif');

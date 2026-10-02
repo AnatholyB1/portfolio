@@ -32,7 +32,7 @@ async function tryVerify(
 }
 
 describe('auth spike (A1, A2)', () => {
-  it('generateLink returns a 6-digit email_otp and verifyOtp works for code and token_hash', async () => {
+  it('generateLink returns a numeric email_otp and verifyOtp works for code and token_hash', async () => {
     const first = await svc().auth.admin.generateLink({ type: 'magiclink', email: member.email });
     expect(first.error).toBeNull();
     const props = first.data.properties;

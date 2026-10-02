@@ -8,9 +8,12 @@ const emailField = z.string().trim().toLowerCase().max(254).pipe(z.email());
 
 export const loginEmailSchema = z.object({ email: emailField });
 
+// Longueur du code de connexion : 8 chiffres (projet Supabase partagé). Source unique.
+export const OTP_LENGTH = 8;
+
 export const otpCodeSchema = z.object({
   email: emailField,
-  code: z.string().trim().regex(/^\d{6}$/),
+  code: z.string().trim().regex(new RegExp(`^[0-9]{${OTP_LENGTH}}$`)),
 });
 
 export type LoginEmailInput = z.infer<typeof loginEmailSchema>;

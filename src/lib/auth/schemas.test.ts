@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOGIN_COPY, loginEmailSchema, otpCodeSchema } from './schemas';
+import { LOGIN_COPY, OTP_LENGTH, loginEmailSchema, otpCodeSchema } from './schemas';
 
 describe('loginEmailSchema', () => {
   it('trims and lowercases', () => {
@@ -18,18 +18,22 @@ describe('loginEmailSchema', () => {
 });
 
 describe('otpCodeSchema', () => {
-  it('accepts 6 digits, with surrounding spaces', () => {
-    expect(otpCodeSchema.safeParse({ email: 'a@b.co', code: '123456' }).success).toBe(true);
-    const r = otpCodeSchema.safeParse({ email: 'a@b.co', code: ' 123456 ' });
+  it('accepts OTP_LENGTH (8) digits, with surrounding spaces', () => {
+    expect(otpCodeSchema.safeParse({ email: 'a@b.co', code: '12345678' }).success).toBe(true);
+    const r = otpCodeSchema.safeParse({ email: 'a@b.co', code: ' 12345678 ' });
     expect(r.success).toBe(true);
-    if (r.success) expect(r.data.code).toBe('123456');
+    if (r.success) expect(r.data.code).toBe('12345678');
   });
 
   it('rejects wrong length or non-digits', () => {
-    for (const code of ['12345', '1234567', '12a456']) {
+    for (const code of ['1234567', '123456789', '123456', '1234a678']) {
       expect(otpCodeSchema.safeParse({ email: 'a@b.co', code }).success).toBe(false);
     }
   });
+});
+
+it('OTP_LENGTH is 8', () => {
+  expect(OTP_LENGTH).toBe(8);
 });
 
 describe('LOGIN_COPY', () => {
