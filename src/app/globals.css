@@ -346,7 +346,7 @@ body {
 footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
 .foot-brand { display: flex; align-items: center; gap: 12px; font-family: var(--font-display), serif; font-weight: 700; font-size: 18px; }
-.foot-links { display: flex; gap: 24px; }
+.foot-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
 .foot-links a { color: var(--ink-faint); font-size: 12px; text-decoration: none; transition: color .2s; }
 .foot-links a:hover { color: var(--acid); }
 .foot-links button { background: none; border: 0; font-family: inherit; cursor: pointer; font-size: 14px; font-weight: 400; color: var(--ink-dim); min-height: 44px; padding: 0 4px; }
