@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
-stopped_at: Phase 11 planned (18 plans, verified)
-last_updated: "2026-10-02T19:12:24.186Z"
+stopped_at: Phase 11 deployed to production; awaiting owner manual verification (11-18 task 4)
+last_updated: "2026-10-02T19:49:34.617Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 31
-  completed_plans: 29
-  percent: 10
+  completed_plans: 31
+  percent: 20
 ---
 
 # Project State
@@ -82,9 +82,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-02T19:12:24.170Z
-Stopped at: Phase 11 planned (18 plans, verified)
-Resume file: None
+Last session: 2026-10-02T19:49:34.591Z
+Stopped at: Phase 11 deployed to production; awaiting owner manual verification (11-18 task 4)
+Resume file: .planning/phases/11-lead-attribution-pipeline-consent/11-18-SUMMARY.md
 
 ## Operator Next Steps
 
