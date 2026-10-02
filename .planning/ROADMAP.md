@@ -115,7 +115,7 @@ Plans:
 
 - [ ] 11-01-PLAN.md — Wave 0 : branche Supabase de test (accord propriétaire), .env.test.local, helpers RLS et squelettes de tests
 - [x] 11-02-PLAN.md — Module d'attribution pur : liste blanche, référent, arrivée/canal, premier/dernier contact, cookies sv_attr_ft/lt
-- [ ] 11-03-PLAN.md — Module de consentement pur : constantes (ATTR_COOKIE_BEFORE_CONSENT), cookie sv_consent, config PostHog, textes FR/EN/TH
+- [x] 11-03-PLAN.md — Module de consentement pur : constantes (ATTR_COOKIE_BEFORE_CONSENT), cookie sv_consent, config PostHog, textes FR/EN/TH
 - [ ] 11-04-PLAN.md — Migration cœur : sv_leads, contacts, sv_lead_events immuable, notes, RPC ingest/statut/correction/effacement, vue admin + règle de lint
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -279,7 +279,7 @@ Plans:
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
-| 11. Lead attribution, pipeline & consent | v2.0 | 1/18 | In Progress|  |
+| 11. Lead attribution, pipeline & consent | v2.0 | 2/18 | In Progress|  |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |

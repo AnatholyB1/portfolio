@@ -26,7 +26,7 @@
 - [ ] **LEAD-06**: Les `prospects` existants sont migrés et la purge de 12 mois est réécrite pour épargner les clients convertis et les données comptables
 - [ ] **LEAD-07**: L'admin voit la liste des leads, le pipeline par statut et change un statut en un geste, avec motif de perte
 - [ ] **LEAD-08**: L'admin voit l'entonnoir par source et campagne (visites, simulations, leads, qualifiés, RDV, signés) et saisit à la main le coût par RDV
-- [ ] **LEAD-09**: Un bandeau de consentement propose Accepter et Refuser à égalité, journalise chaque choix (date, texte, version) et bloque toute balise publicitaire avant accord
+- [x] **LEAD-09**: Un bandeau de consentement propose Accepter et Refuser à égalité, journalise chaque choix (date, texte, version) et bloque toute balise publicitaire avant accord
 
 ### Espace client & suivi de projet (PORTAL)
 
@@ -144,7 +144,7 @@
 | LEAD-06 | Phase 11 | Pending |
 | LEAD-07 | Phase 11 | Pending |
 | LEAD-08 | Phase 11 | Pending |
-| LEAD-09 | Phase 11 | Pending |
+| LEAD-09 | Phase 11 | Complete |
 | PORTAL-01 | Phase 12 | Pending |
 | PORTAL-02 | Phase 12 | Pending |
 | PORTAL-03 | Phase 12 | Pending |
