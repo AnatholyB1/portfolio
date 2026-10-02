@@ -25,6 +25,7 @@ Chaque prospect arrive avec sa source tracée et figée côté serveur ; l'admin
 - **D-07:** **UTM seuls et référent avant accord**, au titre de donnée de fonctionnement du lead écrite côté serveur ; les identifiants de clic ne sont ajoutés qu'avec consentement. Tension à noter : D-02 impose le choix avant navigation, mais l'attribution doit rester correcte si le visiteur arrive, choisit, puis soumet.
 - **D-08:** Premier contact = **écriture unique** (jamais écrasé). Dernier contact = remplacé à **chaque arrivée avec UTM ou référent externe** (ni direct, ni navigation interne), organique compris.
 - **D-09:** Validation par **liste blanche** : `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid`, `fbclid`, `ttclid` ; longueur max 200 caractères ; normalisation en minuscules ; toute autre clé rejetée. Prépare la convention UTM de la phase 19.
+  - *Note (révision des plans, 2026-10-02) :* les identifiants de clic (`gclid`, `fbclid`, `ttclid`) sont sensibles à la casse ; ils ne sont **pas** mis en minuscules, seuls les `utm_*` le sont. Écart délibéré et documenté par rapport à la lettre de D-09 (plan 11-02) : les mettre en minuscules casserait le rapprochement des conversions publicitaires (phase 19).
 - **D-10:** Page d'atterrissage et référent sont stockés avec chaque jeu (premier / dernier contact).
 
 ### Leads, doublons, effacement

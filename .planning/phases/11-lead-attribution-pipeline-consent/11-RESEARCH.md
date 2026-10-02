@@ -181,11 +181,13 @@ src/
 │   ├── state.ts                     # parse/serialise sv_consent, needsPrompt() (pure)
 │   ├── posthogConfig.ts             # buildPostHogConfig(choice) (pure)
 │   └── text.ts                      # versioned banner copy (fr; en/th via translations if chosen)
-├── lib/server/leads/
+├── lib/leads/                       # outside src/lib/server: imported by proxy and /api routes (priceScope rule b)
 │   ├── ingest.ts                    # server-only: normalise + rpc('sv_ingest_lead')
 │   ├── normalise.ts                 # normaliseEmail, normalisePhone (pure, tested)
-│   ├── admin.ts                     # server-only: status/source/erase/cost RPC wrappers
+│   ├── visits.ts                    # server-only: rpc('sv_record_visit')
 │   └── ipHash.ts                    # HMAC IP hash (server-only)
+├── lib/throttle.ts                  # server-only throttle core (re-exported by lib/server/auth/throttle.ts)
+├── lib/server/leads/admin.ts        # server-only: status/source/erase/cost RPC wrappers (imported from src/app/admin only)
 ├── app/api/consent/route.ts
 ├── app/api/simulateur/route.ts      # integration (order preserved)
 ├── app/api/contact/route.ts         # integration
@@ -499,17 +501,23 @@ The same logic must exist in SQL only if backfill needs it; prefer computing key
 | A9 | PostHog project setting can discard client IPs | Pitfall 8 | Mentions-légales text could stay inaccurate |
 | A10 | Sole traders may need opt-in for email prospecting | Pitfall 10 | Phase 16 wording scope |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Pre-consent attribution cookie (A1)**
    - Known: D-07 locked; research finds it outside CNIL exemption; project PITFALLS recommended post-consent first-touch cookie.
    - Unclear: owner's risk appetite.
    - Recommendation: plan implements the switch; add an explicit owner confirmation checkpoint in the plan (non-blocking, default = D-07).
+   - RESOLVED: default = D-07, `ATTR_COOKIE_BEFORE_CONSENT = true` behind a switch (11-03 constants), strict variant tested in 11-07 and honoured by 11-12; owner confirms the default at the 11-17 Task 2 checkpoint.
 2. **Banner i18n.** Site is fr/en/th. Recommend FR + EN + TH strings through `translations.ts` with `locale` in the log, or FR-only for a French-targeted audience. Needs owner choice; the legal text must be reviewed either way.
+   - RESOLVED: FR + EN + TH copy in `src/lib/consent/text.ts` with `CONSENT_LOCALES = ['fr','en','th']` (11-03), seeded per locale in `sv_consent_versions` (11-05), locale logged by `/api/consent` (11-12); legal review flagged in the 11-12 SUMMARY.
 3. **"Coût par RDV saisi à la main" semantics.** Literal reading: admin types a cost-per-RDV per source/campaign/month. Alternative: type monthly spend and derive cost per RDV. Recommendation: store `cost_per_rdv_cents` literally (D-20), display alongside RDV count; trivial to add `spend_cents` later.
+   - RESOLVED: literal cost per RDV in cents per source/campaign/month via `sv_upsert_acquisition_cost` (11-05), entered and shown in `/admin/entonnoir` (11-09 action, 11-16 page); no `spend_cents` in this phase; confirmed by the owner at 11-17 Task 2.
 4. **Should `lead_events` be renamed `sv_lead_events`?** Recommendation yes (namespace on shared DB, linter coverage); requirement text names `lead_events`, note the deviation in the plan.
+   - RESOLVED: named `sv_lead_events` (11-04), naming deviation documented in the 20261003000000 migration header.
 5. **Migration of existing `prospects`:** one lead per row (no merge of duplicates). Confirm acceptable given low volume.
+   - RESOLVED: one lead per row, no merge, idempotent via `legacy_prospect_id` in `sv_private.backfill_legacy_prospects()` (11-05), re-run after the production deploy (11-18); owner confirms at 11-17 Task 2.
 6. **Lost-lead reason list beyond the six examples:** use the six in D-19 plus none; add later via migration.
+   - RESOLVED: closed list of the six D-19 reasons enforced by `sv_set_lead_status` (11-04) and mirrored by `LOST_REASONS` in `src/lib/admin/leadLabels.ts` (11-09, guarded against the migration); extensions only via a later migration.
 
 ## Environment Availability
 
@@ -535,7 +543,7 @@ The same logic must exist in SQL only if backfill needs it; prefer computing key
 |----------|-------|
 | Framework | Vitest ^4.1.11 (node env) |
 | Config file | `vitest.config.ts` (unit, `src/**/*.test.ts`); `vitest.rls.config.ts` (`tests/rls/**/*.rls.test.ts`, real Supabase branch) |
-| Quick run command | `npx vitest run src/lib/attribution src/lib/consent src/lib/server/leads src/proxy.test.ts src/app/api` |
+| Quick run command | `npx vitest run src/lib/attribution src/lib/consent src/lib/leads src/proxy.test.ts src/app/api src/lib/priceScope.test.ts` |
 | Full suite command | `npm test` and `npm run test:rls` (branch) |
 
 No DOM test library is installed; UI contracts (equal buttons, dialog attributes, no `cookies()` in layout) are enforced with source-guard tests, the project's established pattern (`layout.test.ts`, `privateShells.test.ts`, `wizardContract.test.ts`), plus extracted pure logic. A manual checklist covers focus trap/keyboard/LCP.

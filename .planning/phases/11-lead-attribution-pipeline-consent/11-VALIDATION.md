@@ -2,7 +2,7 @@
 phase: 11
 slug: lead-attribution-pipeline-consent
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-10-02
 ---
@@ -19,7 +19,7 @@ created: 2026-10-02
 |----------|-------|
 | **Framework** | Vitest ^4.1.11 (node env) |
 | **Config file** | `vitest.config.ts` (unit, `src/**/*.test.ts`); `vitest.rls.config.ts` (`tests/rls/**/*.rls.test.ts`, real Supabase test branch) |
-| **Quick run command** | `npx vitest run src/lib/attribution src/lib/consent src/lib/server/leads src/proxy.test.ts src/app/api` |
+| **Quick run command** | `npx vitest run src/lib/attribution src/lib/consent src/lib/leads src/proxy.test.ts src/app/api src/lib/priceScope.test.ts` |
 | **Full suite command** | `npm test` and `npm run test:rls` (branch) |
 | **Estimated runtime** | ~30 s quick, longer for RLS suite |
 

@@ -121,7 +121,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [ ] 11-05-PLAN.md — Migrations consentement/visites/coûts/entonnoir + reprise des prospects, purge réécrite, table de rétention
-- [ ] 11-06-PLAN.md — Bibliothèque serveur leads : normalisation, hachage IP HMAC, lecture d'attribution, ingest RPC
+- [ ] 11-06-PLAN.md — Bibliothèque serveur leads (src/lib/leads, hors zone prix) : normalisation, hachage IP HMAC, lecture d'attribution, ingest RPC, throttle déplacé
 - [ ] 11-07-PLAN.md — proxy.ts : branche publique d'attribution + compteur de visites, test du proxy réécrit
 - [ ] 11-08-PLAN.md — Modale de consentement (dialog natif), lien « Gérer les cookies », séquence après l'intro
 - [ ] 11-09-PLAN.md — Actions admin (statut, perte, correction, effacement, coût) gardées par requireAdmin
@@ -145,7 +145,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 11-18-PLAN.md — Secret Vercel, mise en prod sous validation, vérification de bout en bout avec les fixtures permanentes
+- [ ] 11-18-PLAN.md — Validation propriétaire des commandes distantes, secret Vercel, preview, mise en prod, rattrapage du backfill, vérification de bout en bout (lead frais par exécution)
 **UI hint**: yes
 
 ### Phase 12: Conversion, projects & step engine
