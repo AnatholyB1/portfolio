@@ -73,7 +73,7 @@ None.
 - Confirmer le plan Vercel (Hobby vs Pro) : fréquence des crons et droits commerciaux (phase 10)
 - Relecture juridique (CGV, contrat, clause de convention de preuve) avant la phase 14 ; relecture comptable (mentions de facture, TVA) avant la phase 13
 - Vérifier les politiques `gecko_*` actives sur le projet Supabase partagé (phase 10)
-- Table de rétention unique à fixer : purge prospects 12 mois, dédoublonnage 9 mois, factures 10 ans, effacement (phase 11)
+- Résolu en phase 11 : table de rétention dans supabase/migrations/20261003020000_sv_leads_backfill_purge.sql
 - Spike React-PDF sur Turbopack et polices locales en premier plan de la phase 13
 
 ## Deferred Items
