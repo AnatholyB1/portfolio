@@ -53,7 +53,7 @@ Declared values (multiples of 4):
 Exceptions:
 - Touch/click targets `min-height: 44px` (buttons, inputs, nav, pills, table row actions, checkbox label rows).
 - Timeline marker 24px circle with 2px connector line (visual primitives, not layout spacing).
-- 12px (multiple of 4, already used in `pt-lead-pill-menu`) allowed only for menu item horizontal padding and OTP-style grouping; do not introduce elsewhere.
+- 12px exists only in the already-shipped `pt-lead-pill-menu` rule, which is left untouched; no new rule may use 12px (use 8px or 16px).
 - Layout widths: client content `max-width: 960px` (`ShellMain width="client"`), admin `1120px` (`width="admin"`), conversion dialog `560px`.
 
 ---
@@ -213,7 +213,7 @@ Back link `pt-back` "‹ Projets". Header row: H1 = client company name; sub-lin
   - Status Qualifié, RDV, Devis envoyé, Signé and not converted: button enabled.
   - Status Nouveau or Perdu: button shown disabled (`aria-disabled`, not removed) with helper text adjacent: "Convertible à partir de « Qualifié »." For Perdu: "Rouvrez d'abord le lead pour le convertir."
   - Already converted: replace button by a neutral badge "Client converti" + link "Voir le projet" (to `/admin/projets/[id]`); no second conversion.
-- **Dialog**: native `<dialog>` opened with `showModal()`, `aria-labelledby` = title, backdrop `rgba(10,11,12,.8)`, panel `--bg-2`, 1px `--line-strong` border, radius 12px, padding 24px, `max-width: 560px`, full width minus 32px on mobile, internal scroll if taller than viewport. Esc and "Annuler" close; focus moves to first field on open and returns to the trigger on close; backdrop click does not close while submitting.
+- **Dialog**: native `<dialog>` opened with `showModal()`, `aria-labelledby` = title, backdrop `rgba(10,11,12,.8)`, panel `--bg-2`, 1px `--line-strong` border, radius 12px, padding 24px, `max-width: 560px`, full width minus 32px on mobile, internal scroll if taller than viewport. Esc and "Annuler la conversion" close; focus moves to first field on open and returns to the trigger on close; backdrop click does not close while submitting.
 - **Title** (Heading 24px): "Convertir en client". Helper: "Cela crée le client, son premier projet et envoie l'invitation à son espace."
 - **Fields** (reuse existing invite form lookup + `readback` components `InviteForm`, no duplicate implementation): Nom du contact* (prefilled from most recent contact), E-mail* (prefilled, editable), SIRET* with "Rechercher l'entreprise" ghost button and `pt-lookup-status`, company fieldset (raison sociale, adresse, forme juridique, auto-filled from lookup, `pt-company`), Offre* (`<select>` of existing offers, preselected from the lead's interest when known), Titre du projet* (default "Projet {raison sociale}", max 80).
 - **Inline notices** (`pt-warn`): existing SIRET: "Ce SIRET correspond à un client existant. Il sera réutilisé et un nouveau projet y sera ajouté." ; e-mail already admin/member: blocking `pt-error` (see Copywriting).
