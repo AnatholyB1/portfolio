@@ -346,12 +346,12 @@ Non applicable (phase d'ajout, pas de renommage). Seule exception : `sv_lead_eve
 | A6 | `info`/`list` de Storage permet de confirmer l'existence d'un objet après upload | Pattern 5 | Sinon faire confiance au client et rendre la ligne `ready` à la première génération de lien |
 | A7 | Qui attend à chaque étape (1 client, 2 admin, 3 client...) | Pattern 2 | Libellés des mails/frise ; à valider par l'utilisateur |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Plan Vercel (Hobby/Pro)** — blocker STATE.md. Ce plan reste valide sur Hobby (cron quotidien). Si Hobby, la vérification des droits commerciaux de Hobby est un sujet séparé hors phase.
-2. **Texte de l'accord de présentation** — relecture juridique à prévoir ; livrer un texte provisoire marqué.
-3. **« Fichier demandé non fourni »** (D-21) — aucune demande de fichier n'est modélisée ; recommandation : ne pas l'implémenter en phase 12.
-4. **Statut du client permanent de test** — la conversion e2e doit s'exécuter sur un nouveau lead ; le client « Test E2E Sèvalys » est réutilisé pour les parcours portail (créer son projet via RPC admin/seed, sans le supprimer).
+1. **(RESOLVED: cron quotidien `0 6 * * *`, valide sur Hobby et Pro, voir plan 12-06)** **Plan Vercel (Hobby/Pro)** — blocker STATE.md. Ce plan reste valide sur Hobby (cron quotidien). Si Hobby, la vérification des droits commerciaux de Hobby est un sujet séparé hors phase.
+2. **(RESOLVED: texte provisoire `provisional: true` + décision propriétaire au plan 12-21)** **Texte de l'accord de présentation** — relecture juridique à prévoir ; livrer un texte provisoire marqué.
+3. **(RESOLVED: écart assumé D-21, non modélisé en phase 12, voir CONTEXT.md Deferred Ideas)** **« Fichier demandé non fourni »** (D-21) — aucune demande de fichier n'est modélisée ; recommandation : ne pas l'implémenter en phase 12.
+4. **(RESOLVED: réutilisation du client permanent par SIRET, plan 12-22)** **Statut du client permanent de test** — la conversion e2e doit s'exécuter sur un nouveau lead ; le client « Test E2E Sèvalys » est réutilisé pour les parcours portail (créer son projet via RPC admin/seed, sans le supprimer).
 
 ## Environment Availability
 

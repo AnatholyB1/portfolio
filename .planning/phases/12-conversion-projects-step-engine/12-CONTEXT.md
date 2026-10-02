@@ -131,6 +131,7 @@ Hors périmètre : génération de documents (phase 13), signature (14), paiemen
 - Éditeur de règles de mail dans l'admin — non retenu ; règles en code.
 - Ajout d'un membre client par le client lui-même — déjà différé en phase 10.
 - Accord de présentation par usage (site, réseaux, cas d'étude) — non retenu ; une seule portée.
+- « Fichier demandé non fourni » comme cas de blocage « attend le client » (exemple de D-21) — aucune demande de fichier n'est modélisée en phase 12 ; à reconsidérer avec une fonction de demande de documents.
 
 </deferred>
 
