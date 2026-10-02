@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 11 planned (18 plans, verified)
-last_updated: "2026-10-02T17:48:21.579Z"
+last_updated: "2026-10-02T17:48:32.481Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
@@ -57,6 +57,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 11]: 11-02: click ids keep case (D-09 deviation); sv_attr split into sv_attr_ft/sv_attr_lt (D-06 deviation)
 - [Phase 11]: [11-03] CLICK_ID_KEYS imported from attribution/params; before_send strips click ids only for pending/refused
 - [Phase ?]: 11-04: table named sv_lead_events; lost_at cleared on leaving lost; phone lock key prefixed sv_lead_phone
+- [Phase 11]: [11-01] RLS branch sv-rls-p11 (ref ywdfkwysihglnogazybs) owner-approved; delete in 11-17; push sv_leads migration to it before lead suites
 
 ### Pending Todos
 
