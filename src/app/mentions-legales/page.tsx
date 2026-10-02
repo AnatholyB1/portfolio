@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="mb-10">
+const Section = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => (
+  <div className="mb-10" id={id}>
     <h2 className="text-xl font-bold text-[var(--ink)] mb-4 pb-2 border-b border-[var(--line)]">
       {title}
     </h2>
@@ -129,7 +129,7 @@ export default function MentionsLegalesPage() {
           </Section>
 
           {/* 5 – Cookies */}
-          <Section title="5. Cookies">
+          <Section title="5. Cookies" id="cookies">
             <p>
               Ce site n&apos;utilise pas de cookies à des fins publicitaires ni de revente de données.
             </p>
@@ -137,7 +137,20 @@ export default function MentionsLegalesPage() {
               Des cookies techniques strictement nécessaires au bon fonctionnement du site (comme la préférence de langue) peuvent être utilisés. Ces derniers ne nécessitent pas de consentement préalable conformément à l&apos;article 82 de la loi Informatique et Libertés.
             </p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Mesure d&apos;audience :</span> le site utilise PostHog pour mesurer l&apos;audience et améliorer l&apos;expérience (pages vues, provenance du trafic, interactions). Cet outil est configuré de façon respectueuse de la vie privée : pas de publicité, pas de revente, adresse IP anonymisée et respect du signal « Do Not Track » de votre navigateur.
+              <span className="text-[var(--ink)] font-medium">Bandeau et choix :</span> à votre première visite, un bandeau vous propose d&apos;accepter ou de refuser la mesure d&apos;audience et le suivi de l&apos;origine des visites. Votre choix est enregistré (date, choix, version du texte, langue, identifiant anonyme et empreinte chiffrée de votre adresse IP) afin de pouvoir en justifier. Vous pouvez le modifier à tout moment via le lien « Gérer les cookies » en pied de page.
+            </p>
+            <p>
+              <span className="text-[var(--ink)] font-medium">Mesure d&apos;audience :</span> le site utilise PostHog (pages vues, provenance du trafic, interactions). Avant votre choix et en cas de refus, PostHog fonctionne sans cookie ni stockage local et sans collecte de votre adresse IP. Après acceptation, il utilise des cookies et un stockage local propres au site pour une durée maximale de 13 mois. Le signal « Do Not Track » de votre navigateur est respecté. Aucune publicité, aucune revente de données.
+            </p>
+            <p>
+              <span className="text-[var(--ink)] font-medium">Cookies déposés par Sèvalys :</span>
+            </p>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>sv_consent : mémorise votre choix (13 mois).</li>
+              <li>sv_attr_ft et sv_attr_lt : origine de votre visite (paramètres de campagne et site référent), 30 jours. Ils sont actuellement déposés dès l&apos;arrivée sur le site, avant votre choix.</li>
+            </ul>
+            <p>
+              Les identifiants publicitaires de clic (gclid, fbclid, ttclid) ne sont conservés qu&apos;après votre acceptation ; un refus les supprime des cookies existants.
             </p>
           </Section>
 
