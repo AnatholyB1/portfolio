@@ -86,6 +86,79 @@ export function trackUser(id: string) {
   createdUsers.push(id);
 }
 
+/** Unique e-mail per call: the dedupe window is 9 months, never reuse an address across runs. */
+export function uniqueEmail(label: string): string {
+  return `rls-lead-${label}-${randomUUID()}@example.test`;
+}
+
+export interface LeadRpcResult {
+  lead_id: string;
+  contact_id: string;
+  is_return: boolean;
+  previous_lead_id: string | null;
+}
+
+export type LeadRpcOpts = Partial<{
+  p_channel: string;
+  p_nom: string;
+  p_email: string;
+  p_email_norm: string;
+  p_phone: string | null;
+  p_phone_norm: string | null;
+  p_payload: object;
+  p_consent_rgpd: boolean;
+  p_source: object;
+  p_first_touch: object;
+  p_last_touch: object;
+  p_ip_hash: string | null;
+  p_consent: object | null;
+}>;
+
+/** Create a lead through the sv_ingest_lead RPC (service role). Throws on RPC error. */
+export async function makeLeadViaRpc(opts: LeadRpcOpts = {}): Promise<LeadRpcResult> {
+  const email = opts.p_email ?? opts.p_email_norm ?? uniqueEmail('x');
+  const touch = {
+    params: { utm_source: 'google', utm_medium: 'cpc', utm_campaign: 'test' },
+    landing: '/',
+    referrer: null,
+    at: Date.now(),
+  };
+  const args = {
+    p_channel: 'simulateur',
+    p_nom: 'Test Lead',
+    p_email: email,
+    p_email_norm: opts.p_email_norm ?? email,
+    p_phone: null,
+    p_phone_norm: null,
+    p_payload: {},
+    p_consent_rgpd: true,
+    p_source: { source: 'google', medium: 'cpc', campaign: 'test', kind: 'touch' },
+    p_first_touch: touch,
+    p_last_touch: touch,
+    p_ip_hash: null,
+    p_consent: null,
+    ...opts,
+  };
+  args.p_email = email;
+  const { data, error } = await svc().rpc('sv_ingest_lead', args);
+  if (error) throw new Error(`sv_ingest_lead failed: ${error.message}`);
+  return data as LeadRpcResult;
+}
+
+/**
+ * Time travel for dedupe/purge/retention tests. Only touches last_contact_at:
+ * the creation timestamp is frozen by the protect_lead_source trigger (sv_source_frozen).
+ */
+export async function backdateLead(leadId: string, months: number) {
+  const d = new Date();
+  d.setMonth(d.getMonth() - months);
+  const { error } = await svc().from('sv_leads').update({ last_contact_at: d.toISOString() }).eq('id', leadId);
+  if (error) throw new Error(`backdateLead failed: ${error.message}`);
+}
+
+// NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
+// immutable (deny triggers) and leads are tombstoned only. The branch is
+// throwaway; tests must always use uniqueEmail() so runs never collide.
 export async function cleanup() {
   for (const id of createdClients.splice(0)) {
     await svc().from('sv_clients').delete().eq('id', id);
