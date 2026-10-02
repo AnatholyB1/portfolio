@@ -129,7 +129,7 @@ Plans:
 **Wave 3** *(blocked on Wave 2 completion)*
 
 - [x] 11-10-PLAN.md — Push des migrations sur la branche + suite RLS leads (source figée, journal immuable, dédoublonnage 9 mois)
-- [ ] 11-11-PLAN.md — Routes simulateur et contact branchées sur le pipeline (ordre anti-spam conservé, gardes ajoutées au contact)
+- [x] 11-11-PLAN.md — Routes simulateur et contact branchées sur le pipeline (ordre anti-spam conservé, gardes ajoutées au contact)
 - [ ] 11-12-PLAN.md — /api/consent et journal, PostHog conditionné au consentement, mentions légales alignées
 - [ ] 11-13-PLAN.md — /admin/leads : tableau filtrable, pastille de statut en un geste, motif de perte, navigation admin
 
@@ -279,7 +279,7 @@ Plans:
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
-| 11. Lead attribution, pipeline & consent | v2.0 | 10/18 | In Progress|  |
+| 11. Lead attribution, pipeline & consent | v2.0 | 11/18 | In Progress|  |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
