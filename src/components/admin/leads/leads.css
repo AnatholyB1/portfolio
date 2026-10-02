@@ -1,0 +1,245 @@
+/* Admin leads : classes nouvelles, scopées sous .pt-admin (UI-SPEC A1). */
+
+.pt-admin .pt-admin-nav ul {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-admin-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.pt-admin .pt-admin-nav a:hover {
+  color: var(--ink);
+}
+.pt-admin .pt-admin-nav a.pt-admin-nav-active {
+  color: var(--ink);
+  border-bottom-color: var(--acid);
+}
+.pt-admin .pt-admin-nav a:focus-visible,
+.pt-admin .pt-lead-pill:focus-visible,
+.pt-admin .pt-lead-pill-menu button:focus-visible,
+.pt-admin .pt-lead-filters select:focus-visible,
+.pt-admin .pt-lead-filters input:focus-visible,
+.pt-admin .pt-lead-panel input:focus-visible,
+.pt-admin .pt-lead-panel textarea:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+.pt-admin .pt-lead-pill-wrap {
+  position: relative;
+  display: inline-block;
+}
+.pt-admin .pt-lead-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 100px;
+  cursor: pointer;
+}
+.pt-admin .pt-lead-pill:disabled {
+  cursor: default;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-lead-dim {
+  color: var(--ink-dim);
+}
+.pt-admin .pt-lead-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--acid);
+}
+.pt-admin .pt-lead-pill-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 4px;
+  background: var(--bg-2);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin .pt-lead-pill-menu form {
+  display: contents;
+}
+.pt-admin .pt-lead-pill-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pt-admin .pt-lead-pill-menu button:hover {
+  background: var(--bg-3);
+}
+
+.pt-admin .pt-lead-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 100px;
+}
+
+.pt-admin .pt-lead-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-left: 2px solid var(--acid);
+  border-radius: 4px;
+}
+.pt-admin .pt-lead-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pt-admin .pt-lead-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin .pt-lead-filters label,
+.pt-admin .pt-lead-label,
+.pt-admin .pt-lead-panel legend {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-lead-filters select {
+  min-height: 44px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-lead-filters .pt-lead-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  color: var(--ink);
+}
+
+.pt-admin .pt-lead-panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: min(360px, calc(100vw - 48px));
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin .pt-lead-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 16px;
+  color: var(--ink);
+}
+.pt-admin .pt-lead-panel textarea {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-lead-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pt-admin .pt-lead-sub {
+  display: block;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-lead-pager {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+@media (max-width: 767px) {
+  .pt-admin .pt-lead-panel {
+    position: static;
+    width: auto;
+    margin-top: 8px;
+  }
+}
+
+@media (min-width: 768px) {
+  .pt-admin .pt-admin-table td[data-label="Arrivé le"],
+  .pt-admin .pt-admin-table td[data-label="Dernier contact"],
+  .pt-admin .pt-admin-table td[data-label="Retour"] {
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-admin .pt-lead-pill,
+  .pt-admin .pt-lead-pill-menu button,
+  .pt-admin .pt-admin-nav a {
+    transition: none;
+  }
+}

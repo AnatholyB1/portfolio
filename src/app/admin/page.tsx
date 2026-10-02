@@ -1,4 +1,5 @@
-import InviteForm from '@/components/admin/InviteForm';
+import AdminNav from '@/components/admin/AdminNav';
+import InviteForm from'@/components/admin/InviteForm';
 import ClientsTable, { type ClientRow } from '@/components/admin/ClientsTable';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -60,6 +61,7 @@ export default async function AdminPage() {
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
         <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+          <AdminNav current="clients" />
           <section className="pt-card" aria-labelledby="invite-title">
             <h1 id="invite-title" className="pt-heading" style={{ marginBottom: 24 }}>
               Inviter un client
