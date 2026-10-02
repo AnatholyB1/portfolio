@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: executing
-stopped_at: Phase 11 deployed to production; awaiting owner manual verification (11-18 task 4)
-last_updated: "2026-10-02T19:49:34.617Z"
+status: planning
+stopped_at: Phase 11 complete (verified, human_needed items accepted)
+last_updated: "2026-10-02T20:26:06.315Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 11 — Lead attribution, pipeline & consent
+**Current focus:** Phase 12 — conversion, projects & step engine
 
 ## Current Position
 
-Phase: 11 (Lead attribution, pipeline & consent) — EXECUTING
-Plan: 17 of 18
-Status: Ready to execute
+Phase: 12
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-10-02
 
 Progress: [█████████░] 94%
@@ -36,7 +36,7 @@ Progress: [█████████░] 94%
 
 **Velocity:**
 
-- Total plans completed: 61 (v1.0: 21, v1.1: 27)
+- Total plans completed: 79 (v1.0: 21, v1.1: 27)
 - v2.0: 0 plans executed
 
 *Updated after each plan completion*
@@ -82,9 +82,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-02T19:49:34.591Z
-Stopped at: Phase 11 deployed to production; awaiting owner manual verification (11-18 task 4)
-Resume file: .planning/phases/11-lead-attribution-pipeline-consent/11-18-SUMMARY.md
+Last session: 2026-10-02T20:26:06.299Z
+Stopped at: Phase 11 complete (verified, human_needed items accepted)
+Resume file: None
 
 ## Operator Next Steps
 

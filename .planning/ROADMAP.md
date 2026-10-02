@@ -36,7 +36,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 ### 🚧 v2.0 — Plateforme Sèvalys (Phases 10-19)
 
 - [x] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests (completed 2026-10-02)
-- [ ] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement
+- [x] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement (completed 2026-10-02)
 - [ ] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin
 - [ ] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client
 - [ ] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette
@@ -141,11 +141,11 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 11-17-PLAN.md — Prod DB : pré-vérification, validation propriétaire, application des migrations, advisor, suppression de la branche
+- [x] 11-17-PLAN.md — Prod DB : pré-vérification, validation propriétaire, application des migrations, advisor, suppression de la branche
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 11-18-PLAN.md — Validation propriétaire des commandes distantes, secret Vercel, preview, mise en prod, rattrapage du backfill, vérification de bout en bout (lead frais par exécution)
+- [x] 11-18-PLAN.md — Validation propriétaire des commandes distantes, secret Vercel, preview, mise en prod, rattrapage du backfill, vérification de bout en bout (lead frais par exécution)
 **UI hint**: yes
 
 ### Phase 12: Conversion, projects & step engine
@@ -279,7 +279,7 @@ Plans:
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
-| 11. Lead attribution, pipeline & consent | v2.0 | 16/18 | In Progress|  |
+| 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
