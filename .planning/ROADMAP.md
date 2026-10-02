@@ -109,7 +109,43 @@ Plans:
   4. L'admin voit la liste des leads, change un statut en un geste (motif de perte demandé), et consulte l'entonnoir par source et campagne avec un coût par RDV saisi à la main
   5. Le bandeau propose Accepter et Refuser à égalité, journalise chaque choix, et aucune balise publicitaire ni identifiant de clic n'est chargé avant accord
 
-**Plans**: TBD
+**Plans**: 18 plans
+Plans:
+**Wave 1**
+
+- [ ] 11-01-PLAN.md — Wave 0 : branche Supabase de test (accord propriétaire), .env.test.local, helpers RLS et squelettes de tests
+- [ ] 11-02-PLAN.md — Module d'attribution pur : liste blanche, référent, arrivée/canal, premier/dernier contact, cookies sv_attr_ft/lt
+- [ ] 11-03-PLAN.md — Module de consentement pur : constantes (ATTR_COOKIE_BEFORE_CONSENT), cookie sv_consent, config PostHog, textes FR/EN/TH
+- [ ] 11-04-PLAN.md — Migration cœur : sv_leads, contacts, sv_lead_events immuable, notes, RPC ingest/statut/correction/effacement, vue admin + règle de lint
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 11-05-PLAN.md — Migrations consentement/visites/coûts/entonnoir + reprise des prospects, purge réécrite, table de rétention
+- [ ] 11-06-PLAN.md — Bibliothèque serveur leads : normalisation, hachage IP HMAC, lecture d'attribution, ingest RPC
+- [ ] 11-07-PLAN.md — proxy.ts : branche publique d'attribution + compteur de visites, test du proxy réécrit
+- [ ] 11-08-PLAN.md — Modale de consentement (dialog natif), lien « Gérer les cookies », séquence après l'intro
+- [ ] 11-09-PLAN.md — Actions admin (statut, perte, correction, effacement, coût) gardées par requireAdmin
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 11-10-PLAN.md — Push des migrations sur la branche + suite RLS leads (source figée, journal immuable, dédoublonnage 9 mois)
+- [ ] 11-11-PLAN.md — Routes simulateur et contact branchées sur le pipeline (ordre anti-spam conservé, gardes ajoutées au contact)
+- [ ] 11-12-PLAN.md — /api/consent et journal, PostHog conditionné au consentement, mentions légales alignées
+- [ ] 11-13-PLAN.md — /admin/leads : tableau filtrable, pastille de statut en un geste, motif de perte, navigation admin
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 11-14-PLAN.md — Suites RLS consentement/entonnoir/rétention, canary, advisor
+- [ ] 11-15-PLAN.md — /admin/leads/[id] : attribution, contacts, journal en lecture seule, correction de source, effacement
+- [ ] 11-16-PLAN.md — /admin/entonnoir : entonnoir par source/campagne/mois, coût par RDV saisi à la main
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 11-17-PLAN.md — Prod DB : pré-vérification, validation propriétaire, application des migrations, advisor, suppression de la branche
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
+- [ ] 11-18-PLAN.md — Secret Vercel, mise en prod sous validation, vérification de bout en bout avec les fixtures permanentes
 **UI hint**: yes
 
 ### Phase 12: Conversion, projects & step engine
