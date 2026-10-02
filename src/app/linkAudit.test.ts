@@ -78,7 +78,12 @@ function buildRouteTable(): RouteTable {
 
 const ROUTES = buildRouteTable();
 
-const ALLOWED_TEMPLATES = ['`/services/${s.slug}`', '`/services/${copy.crossLink.slug}`'];
+const ALLOWED_TEMPLATES = [
+  '`/services/${s.slug}`',
+  '`/services/${copy.crossLink.slug}`',
+  // Admin lead detail: previous lead link, resolved by /admin/leads/[id].
+  '`/admin/leads/${lead.previous_lead_id}`',
+];
 
 function resolveHref(href: string, fromRoute: string): { ok: boolean; reason: string } {
   if (/^(https?:|mailto:|tel:)/.test(href)) return { ok: true, reason: 'external' };
@@ -97,6 +102,9 @@ function resolveHref(href: string, fromRoute: string): { ok: boolean; reason: st
     path = idx === -1 ? href : href.slice(0, idx);
     hash = idx === -1 ? '' : href.slice(idx + 1);
   }
+  // Query strings do not change the route being resolved.
+  const queryIdx = path.indexOf('?');
+  if (queryIdx !== -1) path = path.slice(0, queryIdx);
   if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
   const ids = ROUTES.get(path);
   if (!ids) return { ok: false, reason: `no route ${path}` };
