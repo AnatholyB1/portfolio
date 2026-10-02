@@ -3,7 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { INVITE_COPY } from '@/lib/admin/inviteSchema';
 import { requireAdmin } from '@/lib/server/auth/dal';
-import { inviteClient } from '@/lib/server/clients/invite';
+import { createHash } from 'node:crypto';
+import { hitThrottle } from '@/lib/server/auth/throttle';
+import { inviteClient, resendInvitation } from '@/lib/server/clients/invite';
 import { lookupSiret, type SiretLookupResult } from '@/lib/server/clients/siret';
 
 export type InviteState = { status: 'idle' | 'success' | 'error'; message?: string };
@@ -87,4 +89,36 @@ export async function inviteClientAction(
       console.error(`[admin/invite] ${result.code}`);
       return { status: 'error', message: INVITE_COPY.generic };
   }
+}
+
+const RESEND_WINDOW_SECONDS = 600;
+const RESEND_CLIENT_MAX = 3;
+const RESEND_ADMIN_MAX = 20;
+
+function throttleKey(kind: string, value: string): string {
+  return `${kind}:${createHash('sha256').update(value).digest('hex')}`;
+}
+
+// Renvoi de l'invitation existante : jamais de nouveau client ni utilisateur.
+export async function resendInvitationAction(clientId: string): Promise<InviteState> {
+  const { user } = await requireAdmin();
+  const id = String(clientId ?? '');
+
+  const clientOk = await hitThrottle(
+    throttleKey('invite-resend-client', id),
+    RESEND_WINDOW_SECONDS,
+    RESEND_CLIENT_MAX,
+  );
+  const adminOk = await hitThrottle(
+    throttleKey('invite-resend-admin', user.id),
+    RESEND_WINDOW_SECONDS,
+    RESEND_ADMIN_MAX,
+  );
+  if (!clientOk || !adminOk) return { status: 'error', message: INVITE_COPY.resendRateLimited };
+
+  const result = await resendInvitation(id);
+  if (result.ok) return { status: 'success', message: INVITE_COPY.resendSuccess(result.email) };
+  if (result.code === 'not_found') return { status: 'error', message: INVITE_COPY.resendNotFound };
+  if (result.code !== 'invalid') console.error(`[admin/resend] ${result.code}`);
+  return { status: 'error', message: INVITE_COPY.generic };
 }

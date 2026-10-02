@@ -124,9 +124,24 @@ export async function inviteClient(
   }
 
   // 5. E-mail d'invitation : un échec n'annule pas les lignes créées.
-  let mailSent = false;
+  const mailSent = await sendInvitationEmail(email, name);
+
+  return { ok: true, clientId, email, mailSent };
+}
+
+function fail(step: string): { ok: false; code: 'error' } {
+  console.error(`[admin/invite] ${step} failed`);
+  return { ok: false, code: 'error' };
+}
+
+/** Lien de connexion avec l'e-mail prérempli. */
+export function buildLoginUrl(email: string): string {
+  return `${getSiteUrl()}/connexion?email=${encodeURIComponent(email)}`;
+}
+
+async function sendInvitationEmail(email: string, clientName: string): Promise<boolean> {
   try {
-    const mail = buildInviteEmail({ clientName: name, loginUrl: `${getSiteUrl()}/connexion` });
+    const mail = buildInviteEmail({ clientName, loginUrl: buildLoginUrl(email) });
     const resend = new Resend(process.env.RESEND_API_KEY);
     const result = await resend.emails.send({
       from: INVITE_EMAIL_FROM,
@@ -136,16 +151,44 @@ export async function inviteClient(
       html: mail.html,
       text: mail.text,
     });
-    mailSent = !result.error;
     if (result.error) console.error('[admin/invite] mail send failed');
+    return !result.error;
   } catch {
     console.error('[admin/invite] mail send failed');
+    return false;
   }
-
-  return { ok: true, clientId, email, mailSent };
 }
 
-function fail(step: string): InviteResult {
-  console.error(`[admin/invite] ${step} failed`);
-  return { ok: false, code: 'error' };
+export type ResendResult =
+  | { ok: true; email: string }
+  | { ok: false; code: 'invalid' | 'not_found' | 'mail_disabled' | 'mail_failed' | 'error' };
+
+/**
+ * Renvoi de l'invitation existante. PRÉCONDITION : requireAdmin() déjà exécuté.
+ * Ne crée jamais de client ni d'utilisateur : lecture seule puis envoi.
+ */
+export async function resendInvitation(clientId: unknown): Promise<ResendResult> {
+  if (typeof clientId !== 'string' || !/^[0-9a-f-]{36}$/i.test(clientId)) {
+    return { ok: false, code: 'invalid' };
+  }
+  if (!isLoginEnabled()) return { ok: false, code: 'mail_disabled' };
+
+  const admin = createSupabaseAdminClient();
+  const member = await admin
+    .from('sv_client_members')
+    .select('invited_email')
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: true })
+    .limit(1);
+  if (member.error) return fail('resend_member');
+  const email = (member.data?.[0] as { invited_email?: string | null } | undefined)?.invited_email;
+  if (!email) return { ok: false, code: 'not_found' };
+
+  const client = await admin.from('sv_clients').select('name').eq('id', clientId).maybeSingle();
+  if (client.error) return fail('resend_client');
+  const name = (client.data as { name?: string } | null)?.name;
+  if (!name) return { ok: false, code: 'not_found' };
+
+  const sent = await sendInvitationEmail(email, name);
+  return sent ? { ok: true, email } : { ok: false, code: 'mail_failed' };
 }
