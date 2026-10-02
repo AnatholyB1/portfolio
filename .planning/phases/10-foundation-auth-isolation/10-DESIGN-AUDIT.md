@@ -97,12 +97,12 @@ Verified in a real browser:
 - `/connexion` and `/auth/confirm` at 1440px, 390px and 320px (true device width via an iframe wrapper) on a local build.
 - The live `/admin` page with the owner's session on sevalys.com: SIRET first, readable labels, visible field borders, auto-width button, Statut column, "Renvoyer l'invitation", short table columns on one line.
 
-Not yet verified by a human or in a browser:
-- The code step (8 cells grouped 4+4, resend behaviour).
-- The client home `/espace-client` and the NoAccess screen.
-- Both emails rendered in a real mail client.
+Verified later the same day in Chrome with the owner logged in as the test client (live production):
+- `/espace-client` at desktop and in same-origin frames at 390px and 320px: no horizontal scroll, header truncates the company name with an ellipsis (at 320px it shrinks to "Tes…", a minor point), logout stays visible and 44px, one `h1`, header/main/footer landmarks, mailto and tel links correct, `noindex`, no cinema/canvas/PostHog, no console errors.
+- `/admin` requested as the client returns 404 and the page contains no admin text.
+- The owner validated the whole result ("I validate everything").
 
-The owner logs in as the test client next to check the first two.
+Still not verified in a browser: the NoAccess screen, the code step interactions (resend countdown, 4+4 grouping), and both emails rendered in a real mail client.
 
 Notes:
 - `--pt-border-strong` is an approved exception to the no-new-tokens rule (UI-SPEC amended).
