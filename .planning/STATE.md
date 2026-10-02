@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 11 planned (18 plans, verified)
-last_updated: "2026-10-02T18:36:12.218Z"
+last_updated: "2026-10-02T18:36:27.054Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
@@ -61,6 +61,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 11]: 11-06: lead/throttle modules in src/lib/leads and src/lib/throttle.ts, server-only, guarded by priceScope rule (d)
 - [Phase 11]: 11-07: public proxy branch is string-only, private branch unchanged; one static public matcher entry
 - [Phase 11]: 11-09: closed lists guarded by test parsing migration SQL; Perdu only via markLostAction
+- [Phase ?]: 11-11: contact ingest best-effort, simulator ingest fatal
 
 ### Pending Todos
 
