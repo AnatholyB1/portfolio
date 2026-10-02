@@ -47,3 +47,6 @@ next-env.d.ts
 # local Claude Code / tooling state (agent worktrees, settings, caches)
 .claude/
 .superpowers/
+
+# Supabase CLI local link state
+supabase/.temp/
