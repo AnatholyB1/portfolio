@@ -65,7 +65,11 @@ function attributionBranch(request: NextRequest, event: NextFetchEvent) {
     params,
     referrer,
   });
-  if (verdict === 'skip') return NextResponse.next();
+  if (verdict === 'skip') {
+    const skipped = NextResponse.next();
+    if (request.nextUrl.searchParams.has('_attrdebug')) skipped.headers.set('x-attr-debug', 'skip:' + request.nextUrl.hostname + ':' + canonicalHost);
+    return skipped;
+  }
 
   const touch: Touch = {
     params,
@@ -74,6 +78,7 @@ function attributionBranch(request: NextRequest, event: NextFetchEvent) {
     at: Date.now(),
   };
   const response = NextResponse.next();
+  if (request.nextUrl.searchParams.has('_attrdebug')) response.headers.set('x-attr-debug', 'arrival:' + request.nextUrl.hostname);
 
   if (ATTR_COOKIE_BEFORE_CONSENT || accepted) {
     const existingFt = decodeTouch(request.cookies.get(ATTR_FT_COOKIE)?.value, {
