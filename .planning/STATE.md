@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 11 planned (18 plans, verified)
-last_updated: "2026-10-02T17:25:35.636Z"
+last_updated: "2026-10-02T17:25:46.982Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
@@ -54,6 +54,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - Politique « aucun prix » inchangée sur le public ; prix autorisés uniquement dans portail, admin et modèles
 - Client de test permanent en production (décision propriétaire 2026-10-02) : « Test E2E Sèvalys », SIRET 90098846000011, `anatholyb+sv-test@gmail.com`, à réutiliser pour tous les tests des phases et milestones suivants ; ne pas le supprimer ni le signaler comme donnée résiduelle. Le jeton de contournement Vercel reste en place. Détails : PROJECT.md « Permanent test fixtures »
 - Code de connexion à 8 chiffres (réglage du projet Supabase partagé, constante `OTP_LENGTH`) ; l'adresse `anatholyb@gmail.com` seule ne peut pas être invitée (compte existant d'une autre application), utiliser le plus-address
+- [Phase 11]: 11-02: click ids keep case (D-09 deviation); sv_attr split into sv_attr_ft/sv_attr_lt (D-06 deviation)
 
 ### Pending Todos
 
