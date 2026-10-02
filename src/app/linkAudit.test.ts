@@ -83,6 +83,8 @@ const ALLOWED_TEMPLATES = [
   '`/services/${copy.crossLink.slug}`',
   // Admin lead detail: previous lead link, resolved by /admin/leads/[id].
   '`/admin/leads/${lead.previous_lead_id}`',
+  // Admin leads table: row link to the same detail route.
+  '`/admin/leads/${r.id}`',
 ];
 
 function resolveHref(href: string, fromRoute: string): { ok: boolean; reason: string } {
