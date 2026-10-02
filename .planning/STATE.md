@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: planning
-stopped_at: Phase 11 context gathered
-last_updated: "2026-10-02T16:14:41.803Z"
+stopped_at: Phase 11 planned (18 plans, verified)
+last_updated: "2026-10-02T17:20:40.607Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 13
+  total_plans: 31
   completed_plans: 13
   percent: 10
 ---
@@ -73,9 +73,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-02T16:14:41.794Z
-Stopped at: Phase 11 context gathered
-Resume file: .planning/phases/11-lead-attribution-pipeline-consent/11-CONTEXT.md
+Last session: 2026-10-02T17:20:40.593Z
+Stopped at: Phase 11 planned (18 plans, verified)
+Resume file: .planning/phases/11-lead-attribution-pipeline-consent/11-01-PLAN.md
 
 ## Operator Next Steps
 
