@@ -84,7 +84,8 @@ describe('requestLoginCode', () => {
     expect(payload.from).toBe(LOGIN_EMAIL_FROM);
     expect(payload.replyTo).toBe(LOGIN_EMAIL_REPLY_TO);
     expect(payload.to).toBe('jean@example.com');
-    expect(payload.html).toContain('12345678');
+    expect(payload.html).toContain('>1234<');
+    expect(payload.html).toContain('>5678<');
     expect(payload.html).toContain(
       `https://sevalys.com/auth/confirm?token_hash=hash_abc&amp;type=${LOGIN_VERIFY_TYPES.link}`,
     );

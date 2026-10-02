@@ -1,0 +1,120 @@
+/* Styles propres à l'espace client et à l'en-tête partagé (implémenteur C).
+   Jetons existants uniquement ; --pt-border-strong est défini dans portal.css. */
+
+/* ---------- En-tête : une ligne de 320px à 1100px+, nom tronqué, déconnexion visible ---------- */
+.pt-header.pt-header-bar {
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding: 8px 16px;
+}
+.pt-header-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--ink);
+}
+.pt-header-mark {
+  flex: none;
+}
+.pt-header-bar .pt-header-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pt-header-bar[data-variant="admin"] .pt-header-title {
+  flex: 1 1 auto;
+}
+.pt-header-actions {
+  flex: none;
+}
+.pt-header-actions .pt-btn-ghost {
+  min-height: 44px;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .pt-header.pt-header-bar {
+    padding: 0 32px;
+  }
+  .pt-header-bar .pt-header-title {
+    max-width: none;
+  }
+}
+
+/* ---------- Accueil client ---------- */
+.pt-main .pt-card.pt-client {
+  max-width: 560px;
+  gap: 24px;
+}
+.pt-client h2 {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-client p {
+  margin: 0;
+}
+.pt-client-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--pt-border-strong, #6F6B64);
+}
+.pt-client-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink-dim);
+}
+.pt-client-list strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.pt-client a,
+.pt-noaccess a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  display: inline-block;
+  min-height: 24px;
+}
+.pt-client-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+/* ---------- Accès non autorisé ---------- */
+.pt-main .pt-card.pt-noaccess {
+  max-width: 400px;
+  margin: 0 auto;
+  gap: 16px;
+}
+.pt-noaccess .pt-brand {
+  margin-bottom: 0;
+}
+.pt-noaccess-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.pt-noaccess-actions .pt-btn-ghost {
+  min-height: 44px;
+}
+.pt-noaccess .pt-back {
+  color: var(--ink-dim);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
