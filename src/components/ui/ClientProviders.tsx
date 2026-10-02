@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { isPrivatePath } from '@/lib/privateRoutes';
+import { markIntroDone } from '@/lib/consent/store';
 
 const CustomCursor = dynamic(() => import('@/components/ui/CustomCursor'), { ssr: false });
 const CinemaIntro = dynamic(() => import('@/components/ui/CinemaIntro'), { ssr: false });
@@ -19,7 +20,7 @@ export default function ClientProviders() {
   return (
     <>
       <CustomCursor />
-      <CinemaIntro />
+      <CinemaIntro onDone={markIntroDone} />
     </>
   );
 }

@@ -2,6 +2,7 @@
 import { useLanguage } from '@/context/LanguageContext';
 import { SevalysWordmark } from '@/components/ui/SevalysMark';
 import Link from 'next/link';
+import { openConsent } from '@/lib/consent/store';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -34,6 +35,7 @@ export default function Footer() {
             <Link href="/services">Services</Link>
             <Link href="/#contact">Contact</Link>
             <a href="/mentions-legales">{f.legal}</a>
+            <button type="button" onClick={openConsent}>{f.manageCookies}</button>
           </div>
         </div>
       </footer>

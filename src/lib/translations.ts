@@ -277,6 +277,7 @@ export interface Translations {
     footer: {
       built: string;
       legal: string;
+      manageCookies: string;
       rights: string;
     };
   };
@@ -1049,6 +1050,7 @@ const fr: Translations = {
     footer: {
       built: 'Conçu et codé à Tours.',
       legal: 'Mentions légales',
+      manageCookies: 'Gérer les cookies',
       rights: 'Tous droits réservés.',
     },
   },
@@ -1814,6 +1816,7 @@ const en: Translations = {
     footer: {
       built: 'Designed and coded in Tours.',
       legal: 'Legal notice',
+      manageCookies: 'Manage cookies',
       rights: 'All rights reserved.',
     },
   },
@@ -2579,6 +2582,7 @@ const th: Translations = {
     footer: {
       built: 'ออกแบบและเขียนโค้ดที่ตูร์',
       legal: 'ข้อกำหนดทางกฎหมาย',
+      manageCookies: 'จัดการคุกกี้',
       rights: 'สงวนลิขสิทธิ์',
     },
   },

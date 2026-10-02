@@ -349,6 +349,9 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .foot-links { display: flex; gap: 24px; }
 .foot-links a { color: var(--ink-faint); font-size: 12px; text-decoration: none; transition: color .2s; }
 .foot-links a:hover { color: var(--acid); }
+.foot-links button { background: none; border: 0; font-family: inherit; cursor: pointer; font-size: 14px; font-weight: 400; color: var(--ink-dim); min-height: 44px; padding: 0 4px; }
+.foot-links button:hover, .foot-links button:focus-visible { text-decoration: underline; color: var(--ink); }
+.foot-links button:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
 
 /* ─── Responsive 900px — Landing ─────────────────── */
 @media (max-width: 900px) {

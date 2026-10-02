@@ -3,6 +3,7 @@ import { Space_Grotesk, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import ClientProviders from "@/components/ui/ClientProviders";
+import ConsentDialog from "@/components/consent/ConsentDialog";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
 import Script from "next/script";
 import { buildServiceCatalogJsonLd } from "@/lib/serviceSchema";
@@ -232,6 +233,7 @@ export default function RootLayout({
         <PostHogProvider>
           <LanguageProvider>
             {children}
+            <ConsentDialog />
           </LanguageProvider>
         </PostHogProvider>
         <ClientProviders />
