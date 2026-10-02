@@ -1,9 +1,11 @@
 /* Espaces privés (connexion, espace client, admin) — styles scopés `pt-*`.
-   Contrat : 10-UI-SPEC.md. Tokens existants uniquement (aucune nouvelle variable).
+   Contrat : 10-UI-SPEC.md. Tokens existants, plus une seule exception scopée :
+   --pt-border-strong (bordures de champs, 3:1 sur fond sombre).
    Sobriété back-office (D-11) : pas d'animation, seulement des transitions
    couleur / bordure de 150-200ms, désactivées si prefers-reduced-motion. */
 
 .pt-root {
+  --pt-border-strong: #6f6b64;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -47,13 +49,11 @@
 }
 .pt-label {
   display: block;
-  font-family: var(--font-mono), monospace;
-  font-size: 12px;
-  font-weight: 400;
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.5;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
 }
 .pt-helper {
   font-size: 16px;
@@ -66,15 +66,35 @@
 /* ---------- Connexion : carte centrée ---------- */
 .pt-auth {
   flex: 1;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 16px 48px;
+  justify-content: center;
+  padding: 32px 16px;
 }
-@media (min-width: 768px) {
-  .pt-auth {
-    padding-top: 64px;
-  }
+.pt-auth-notes {
+  width: 100%;
+  max-width: 440px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.pt-auth-notes p {
+  margin: 0;
+}
+.pt-auth-notes a {
+  color: var(--ink-dim);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.pt-auth-notes a:hover {
+  color: var(--ink);
 }
 .pt-brand {
   display: flex;
@@ -89,7 +109,7 @@
 }
 .pt-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -101,17 +121,24 @@
 .pt-main .pt-card {
   max-width: none;
 }
+/* Le gap vit sur la carte ; le <form> intermédiaire doit lui aussi être une colonne. */
+.pt-auth .pt-card > form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 .pt-card-footer {
   margin-top: 8px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
 }
 .pt-back {
-  font-family: var(--font-mono), monospace;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-right: 16px;
+  font-size: 14px;
+  color: var(--ink-dim);
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -131,7 +158,7 @@
   padding: 8px 16px;
   background: var(--bg-3);
   color: var(--ink);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--pt-border-strong);
   border-radius: 8px;
   font-family: var(--font-body), sans-serif;
   font-size: 16px;
@@ -140,27 +167,27 @@
   transition: border-color 0.2s, background-color 0.2s;
 }
 .pt-input::placeholder {
-  color: var(--ink-faint);
+  color: var(--ink-dim);
 }
 .pt-input[aria-invalid="true"] {
   border-color: var(--warm);
 }
 
-/* ---------- Code de connexion : OTP_LENGTH cellules (--pt-otp-length), un seul vrai input ---------- */
+/* ---------- Code de connexion : OTP_LENGTH cellules, groupées par moitié, un seul vrai input ---------- */
 .pt-otp {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(var(--pt-otp-length, 8), minmax(0, 1fr));
+  display: flex;
   gap: 4px;
 }
 .pt-otp-cell {
+  flex: 1 1 0;
   min-width: 0;
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-3);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--pt-border-strong);
   border-radius: 8px;
   font-family: var(--font-mono), monospace;
   font-size: clamp(22px, 7vw, 32px);
@@ -169,6 +196,15 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   transition: border-color 0.2s;
+}
+.pt-otp-cell[data-group-end] {
+  margin-right: 12px;
+}
+.pt-otp-cell[data-active] {
+  border-color: var(--ink);
+}
+.pt-otp[data-pending] {
+  opacity: 0.6;
 }
 .pt-otp-input {
   position: absolute;
@@ -182,9 +218,6 @@
   font-family: var(--font-mono), monospace;
   font-size: 32px;
   letter-spacing: 4px;
-}
-.pt-otp:focus-within .pt-otp-cell {
-  border-color: var(--ink-dim);
 }
 .pt-otp:has(.pt-otp-input:focus-visible) {
   outline: 2px solid var(--acid);
@@ -212,9 +245,11 @@
   transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 }
 .pt-btn-primary {
-  width: 100%;
   background: var(--acid);
   color: #000;
+}
+.pt-auth .pt-card .pt-btn-primary {
+  width: 100%;
 }
 .pt-btn-primary:hover:not(:disabled) {
   background: var(--ink);
@@ -230,7 +265,7 @@
 .pt-btn-ghost {
   background: transparent;
   color: var(--ink-dim);
-  border-color: var(--line-strong);
+  border-color: var(--pt-border-strong);
   padding: 8px 16px;
 }
 .pt-btn-ghost:hover:not(:disabled) {
@@ -239,14 +274,19 @@
 }
 .pt-btn-primary:disabled,
 .pt-btn-text:disabled,
-.pt-btn-ghost:disabled {
+.pt-btn-ghost:disabled,
+.pt-btn-text[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.pt-btn-text[aria-disabled="true"]:hover {
+  color: var(--ink-dim);
 }
 
 /* ---------- Messages ---------- */
 .pt-error,
 .pt-warning,
+.pt-warn,
 .pt-success {
   display: flex;
   align-items: flex-start;
@@ -258,11 +298,24 @@
 .pt-error {
   color: var(--warm);
 }
-.pt-warning {
-  color: var(--warm);
+/* Avertissement (non bloquant) : distinct d'une erreur — texte --ink-dim, filet gauche
+   en teinte d'accent atténuée (pas --warm, réservé aux erreurs). */
+.pt-warning,
+.pt-warn {
+  color: var(--ink-dim);
+  padding-left: 12px;
+  border-left: 2px solid color-mix(in srgb, var(--acid) 45%, var(--bg));
 }
 .pt-success {
   color: var(--ink);
+}
+.pt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 .pt-status {
   font-size: 16px;
@@ -411,11 +464,11 @@
   padding: 16px;
   border-bottom: 1px solid var(--line);
   font-family: var(--font-mono), monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
 }
 .pt-table td {
   padding: 16px;
@@ -457,10 +510,10 @@
     content: attr(data-label);
     display: block;
     font-family: var(--font-mono), monospace;
-    font-size: 12px;
+    font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
   }
 }
 
