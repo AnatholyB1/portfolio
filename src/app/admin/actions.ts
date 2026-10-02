@@ -6,6 +6,7 @@ import { requireAdmin } from '@/lib/server/auth/dal';
 import { createHash } from 'node:crypto';
 import { hitThrottle } from '@/lib/server/auth/throttle';
 import { inviteClient, resendInvitation } from '@/lib/server/clients/invite';
+import { buildCompany, field } from '@/lib/admin/companyForm';
 import { lookupSiret, type SiretLookupResult } from '@/lib/server/clients/siret';
 
 export type InviteState = { status: 'idle' | 'success' | 'error'; message?: string };
@@ -14,34 +15,6 @@ export type InviteState = { status: 'idle' | 'success' | 'error'; message?: stri
 export async function lookupSiretAction(siret: string): Promise<SiretLookupResult> {
   await requireAdmin();
   return lookupSiret(String(siret ?? ''));
-}
-
-const COMPANY_FIELDS = [
-  'nom',
-  'adresse',
-  'code_postal',
-  'commune',
-  'naf',
-  'siren',
-  'forme_juridique_code',
-  'etat_administratif',
-  'categorie_entreprise',
-  'date_creation',
-  'tva_intracom',
-] as const;
-
-function field(fd: FormData, key: string): string {
-  const v = fd.get(key);
-  return typeof v === 'string' ? v.trim() : '';
-}
-
-function buildCompany(fd: FormData): Record<string, string> | null {
-  const company: Record<string, string> = {};
-  for (const key of COMPANY_FIELDS) {
-    const v = field(fd, `company_${key}`);
-    if (v) company[key] = v;
-  }
-  return company.nom ? company : null;
 }
 
 export async function inviteClientAction(
