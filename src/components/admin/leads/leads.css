@@ -220,6 +220,102 @@
   margin-top: 16px;
 }
 
+/* Détail du lead (UI-SPEC A2). */
+.pt-admin .pt-lead-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .pt-admin .pt-lead-grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.pt-admin .pt-lead-main,
+.pt-admin .pt-lead-side {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-width: 0;
+}
+.pt-admin .pt-lead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-lead-item p {
+  margin: 0 0 4px;
+}
+.pt-admin .pt-lead-answers {
+  margin: 0 0 4px;
+  padding-left: 20px;
+}
+.pt-admin .pt-lead-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-lead-subhead {
+  margin: 16px 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-lead-trunc {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pt-admin .pt-lead-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.pt-admin .pt-lead-disclosure summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+.pt-admin .pt-lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+.pt-admin .pt-lead-form input[type="text"],
+.pt-admin .pt-lead-form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-lead-form input:focus-visible,
+.pt-admin .pt-lead-form textarea:focus-visible,
+.pt-admin .pt-lead-disclosure summary:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-lead-danger {
+  color: var(--warm);
+  border: 1px solid var(--warm);
+}
+.pt-admin .pt-lead-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 767px) {
   .pt-admin .pt-lead-panel {
     position: static;
