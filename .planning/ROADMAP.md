@@ -166,7 +166,7 @@ Plans:
 - [x] 12-01-PLAN.md — Migration sv_projects_engine (tables, RLS, faits en ajout seul, RPC, bucket privé) + gardes statiques
 - [x] 12-02-PLAN.md — Moteur d'étapes pur (faits -> étape, qui attend) et blocages/tri/filtres (TDD)
 - [x] 12-03-PLAN.md — Schémas onboarding/actions, règles fichiers, texte d'accord, offres, textes FR
-- [ ] 12-04-PLAN.md — Moteur de mails : règles en code, modèles, outbox idempotente
+- [x] 12-04-PLAN.md — Moteur de mails : règles en code, modèles, outbox idempotente
 - [ ] 12-05-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
 - [ ] 12-06-PLAN.md — Invitation via l'outbox, contrôles partagés, cron quotidien /api/cron/mail
 - [ ] 12-07-PLAN.md — Service de conversion lead -> client (compensation) + action admin
@@ -303,7 +303,7 @@ Plans:
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
-| 12. Conversion, projects & step engine | v2.0 | 3/22 | In Progress|  |
+| 12. Conversion, projects & step engine | v2.0 | 4/22 | In Progress|  |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |

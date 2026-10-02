@@ -62,7 +62,7 @@
 
 ### Mailing automatique (MAIL)
 
-- [ ] **MAIL-01**: Un moteur de règles envoie un e-mail à partir d'un événement (statut, étape, document, paiement) avec un modèle et un délai
+- [x] **MAIL-01**: Un moteur de règles envoie un e-mail à partir d'un événement (statut, étape, document, paiement) avec un modèle et un délai
 - [x] **MAIL-02**: Chaque envoi est idempotent (aucun doublon par événement et destinataire) et journalisé
 - [ ] **MAIL-03**: Des relances automatiques partent pour document non signé, acompte impayé et demande d'avis
 - [ ] **MAIL-04**: Les rebonds et plaintes Resend alimentent une liste de suppression ; chaque e-mail marketing a un lien de désinscription ; flux transactionnel et marketing sont séparés
@@ -151,7 +151,7 @@
 | PORTAL-04 | Phase 12 | Complete |
 | PORTAL-05 | Phase 12 | Complete |
 | PORTAL-06 | Phase 12 | Complete |
-| MAIL-01 | Phase 12 | Pending |
+| MAIL-01 | Phase 12 | Complete |
 | MAIL-02 | Phase 12 | Complete |
 | ADM-01 | Phase 12 | Complete |
 | DOC-01 | Phase 13 | Pending |
