@@ -1,0 +1,141 @@
+/* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
+
+.pt-admin .pt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pt-admin fieldset.pt-plain {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  border: 0;
+}
+
+.pt-admin .pt-intro {
+  margin: -12px 0 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+/* Avertissement : icône + texte atténué (repli si .pt-warn n'est pas défini ailleurs). */
+.pt-admin .pt-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.pt-admin .pt-lookup-status {
+  min-height: 0;
+}
+.pt-admin .pt-lookup-status .pt-status {
+  margin-top: 8px;
+}
+
+.pt-admin .pt-field-help {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+/* Entreprise : fieldset sans cadre natif. */
+.pt-admin fieldset.pt-company {
+  margin: 16px 0 0;
+  padding: 16px;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 8px;
+}
+.pt-admin fieldset.pt-company > legend {
+  padding: 0 8px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+.pt-admin .pt-company-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.pt-admin .pt-company-grid .pt-span-full {
+  grid-column: 1 / -1;
+}
+@media (min-width: 768px) {
+  .pt-admin .pt-company-grid {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Résumé en lecture seule. */
+.pt-admin .pt-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 24px;
+  margin: 0;
+}
+.pt-admin .pt-summary dt {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-summary dd {
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+@media (min-width: 768px) {
+  .pt-admin .pt-summary {
+    grid-template-columns: max-content 1fr;
+  }
+  .pt-admin .pt-summary dd {
+    margin: 0;
+  }
+}
+.pt-admin .pt-summary-actions {
+  margin-top: 8px;
+}
+.pt-admin .pt-form-actions .pt-btn-primary {
+  width: auto;
+}
+
+/* Tableau. */
+.pt-admin .pt-admin-table a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-admin-table td {
+  vertical-align: top;
+}
+.pt-admin .pt-resend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.pt-admin .pt-resend .pt-btn-text {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: left;
+}
+.pt-admin .pt-resend-msg {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-resend-error {
+  color: var(--warm);
+}
