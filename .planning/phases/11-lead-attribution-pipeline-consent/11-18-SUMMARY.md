@@ -1,9 +1,9 @@
 ---
 phase: 11-lead-attribution-pipeline-consent
 plan: 18
-status: awaiting-manual-verification
-completed_tasks: [1, 2, 3]
-pending_tasks: [4]
+status: complete
+completed_tasks: [1, 2, 3, 4]
+pending_tasks: []
 requirements: [LEAD-01, LEAD-05, LEAD-06, LEAD-07, LEAD-08, LEAD-09]
 ---
 
@@ -38,8 +38,20 @@ A first check showed no cookie on the UTM request. Cause: the test used `curl -I
 
 Note: `git checkout` on Windows rewrote `src/proxy.ts` with CRLF locally, which breaks the proxy static-contract tests; normalised to LF locally (content identical to the committed blob).
 
-## Task 4 — manual verification on production (pending, owner)
+## Task 4 — manual verification on production
 
-Checklist: see 11-18-PLAN.md Task 4 (steps 1-7). Not yet performed; results to be recorded here.
+Owner reply (2026-10-02): **"Aproved, si il y a quelque chose a vérifier fais le toi meme"** — approved; the assistant ran every check feasible without the owner's login codes, in the owner's Chrome profile.
+
+| Step | Result |
+|------|--------|
+| 1. Modal on  after intro; buttons identical | PASS. Dialog open, Refuser and Accepter both 211×44, same background/border/colour. Escape ignored. |
+| 1. No ph_* storage before choice | PASS. After deleting the old ph_* key and reloading, localStorage held only sv_intro_seen with the modal open (cookies unreadable by the tool; PostHog runs in memory mode). |
+| 2. Refuser, footer link, Accepter | PASS. Refuser closes the modal, no ph_*; footer 'Gérer les cookies' reopens; Accepter makes the ph_* key appear. Both choices journaled in sv_consent_log (refused id 1, accepted id 2: same anon_id, version 2026-10-v1, locale fr, hashed IP). |
+| 3. Mobile 390px, TH; /mentions-legales | PASS after a fix. Modal fits (13-371px), buttons stacked 308×44. /mentions-legales shows no modal and has #cookies. FOUND AND FIXED: the footer links row (flex nowrap) overflowed to 405px with the new button; now wraps (commit b22bc12), re-measured FR/EN/TH at 390px: no overflow (384px). |
+| 4. LCP/CLS | CLS 0, DOMContentLoaded 341 ms on ; LCP not exposed in an iframe, no Lighthouse run. |
+| 5-6. Admin leads list, detail, funnel | Not run by the assistant (needs the owner's login codes); approved by the owner. Data side verified: the verification lead exists with source verif11/test/phase11. |
+| 7. E-mails received | Covered by the owner's approval. |
+
+No erase or delete was performed on production. The owner's localStorage key sv_intro_seen was removed once for the LCP probe (the intro replays once).
 
 The verification lead is not a permanent fixture (12-month tombstone purge); later runs must use a fresh plus-addressed address.
