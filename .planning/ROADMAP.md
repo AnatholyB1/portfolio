@@ -122,7 +122,7 @@ Plans:
 
 - [x] 11-05-PLAN.md — Migrations consentement/visites/coûts/entonnoir + reprise des prospects, purge réécrite, table de rétention
 - [x] 11-06-PLAN.md — Bibliothèque serveur leads (src/lib/leads, hors zone prix) : normalisation, hachage IP HMAC, lecture d'attribution, ingest RPC, throttle déplacé
-- [ ] 11-07-PLAN.md — proxy.ts : branche publique d'attribution + compteur de visites, test du proxy réécrit
+- [x] 11-07-PLAN.md — proxy.ts : branche publique d'attribution + compteur de visites, test du proxy réécrit
 - [ ] 11-08-PLAN.md — Modale de consentement (dialog natif), lien « Gérer les cookies », séquence après l'intro
 - [ ] 11-09-PLAN.md — Actions admin (statut, perte, correction, effacement, coût) gardées par requireAdmin
 
@@ -279,7 +279,7 @@ Plans:
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
-| 11. Lead attribution, pipeline & consent | v2.0 | 6/18 | In Progress|  |
+| 11. Lead attribution, pipeline & consent | v2.0 | 7/18 | In Progress|  |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
