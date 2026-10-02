@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- test mocks */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { lookupSiret } from './siret';
 
