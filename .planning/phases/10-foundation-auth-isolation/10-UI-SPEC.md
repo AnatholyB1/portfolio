@@ -25,7 +25,7 @@ reviewed_at: 2026-10-02
 | Icon library | lucide-react (already installed, ^1.47.0) |
 | Font | Display: Space Grotesk (`--font-display`), Body: Manrope (`--font-body`), Mono: JetBrains Mono (`--font-mono`). Source: existing `globals.css` (D-11) |
 
-Reuse existing tokens only (`--bg`, `--bg-2`, `--bg-3`, `--acid`, `--ink`, `--ink-dim`, `--ink-faint`, `--line`, `--line-strong`, `--warm`). Reuse existing classes where they fit: `.label`, `.mono`, `.btn`, `.field`, `.submit`, `.tg`, `.crumb-back`. Do not introduce new tokens.
+Reuse existing tokens (`--bg`, `--bg-2`, `--bg-3`, `--acid`, `--ink`, `--ink-dim`, `--ink-faint`, `--line`, `--line-strong`, `--warm`). Reuse existing classes where they fit: `.label`, `.mono`, `.btn`, `.field`, `.submit`, `.tg`, `.crumb-back`. One scoped exception, approved by the owner (audit 2026-10-02): `--pt-border-strong: #6F6B64`, defined on `.pt-root`, used for resting borders of inputs, OTP cells and ghost buttons (about 3.4:1 on the card, WCAG 1.4.11). No other new token.
 
 Back-office restraint (D-11): no CinemaIntro, no CustomCursor, no GSAP/three, no hero-scale display type, no scroll or reveal animations. Only 150-200ms colour/border transitions and a focus ring. Honour `prefers-reduced-motion` (no transitions).
 
@@ -55,12 +55,14 @@ Exceptions:
 
 ## Typography
 
+Exactly 4 sizes (16, 14, 24, 32) and 2 weights. The 14px Label step replaces the former 12px mono label, which failed contrast and legibility (audit 2026-10-02); no 12px text remains in the shells.
+
 Exactly 4 sizes and 2 weights (400 regular, 500 medium). Site headings use 500, so no 700 in the shells.
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 16px (Manrope) | 400 | 1.5 |
-| Label | 12px (JetBrains Mono, uppercase, letter-spacing 0.12em, colour `--ink-faint`) | 400 | 1.5 |
+| Label | 14px (Manrope, sentence case, no letter-spacing, colour `--ink-dim`, 6.4:1). Also used for table headers (JetBrains Mono uppercase, letter-spacing 0.08em, `--ink-dim`), reassurance lines and the back link | 500 (labels), 400 (table headers, notes) | 1.5 |
 | Heading | 24px (Space Grotesk, letter-spacing -0.02em) | 500 | 1.2 |
 | Display | 32px (JetBrains Mono for the 8-digit code, tabular figures; Space Grotesk for page titles on `/connexion`) | 500 | 1.2 |
 
@@ -77,7 +79,7 @@ Notes:
 | Dominant (60%) | `#0A0B0C` (`--bg`) | Page background of all shells |
 | Secondary (30%) | `#111213` (`--bg-2`) cards/header/table, `#16181a` (`--bg-3`) hover rows and inputs, borders `#1F1F1F` (`--line`) / `#2a2a2a` (`--line-strong`) | Header bar, login card, client and admin cards, table, input background |
 | Accent (10%) | `#C4F542` (`--acid`) | See reserved list below |
-| Destructive / error | `#E07856` (`--warm`) | Error messages and invalid-field border only. No destructive actions exist in phase 10 |
+| Destructive / error | `#E07856` (`--warm`) | Error messages and invalid-field border only. Warnings are NOT errors: class `.pt-warn` = lucide icon + `--ink-dim` text with a 2px left border in a muted accent tone (`color-mix` of `--acid` and `--bg`), never `--warm`. No destructive actions exist in phase 10 |
 | Text | `#ECEAE3` (`--ink`), `#9A9690` (`--ink-dim`), `#5A5751` (`--ink-faint`) | Primary, secondary, labels/disabled |
 
 Accent reserved for (and nothing else):
@@ -86,23 +88,25 @@ Accent reserved for (and nothing else):
 3. The active nav item indicator (2px underline) in the client header
 4. The login code digits inside the email only (the on-screen code input uses `--ink`)
 
-Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-faint` is for labels and disabled text only (never for essential copy). Disabled nav items: `--ink-faint`, `cursor: not-allowed`, `aria-disabled="true"`, with a `Bientôt` tag (`.tg` style).
+Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-faint` is for purely decorative or disabled text only (disabled nav items). Labels, links, helper text, placeholders and table headers use `--ink-dim`; interactive or essential text never uses `--ink-faint`. Disabled nav items: `--ink-faint`, `cursor: not-allowed`, `aria-disabled="true"`, with a `Bientôt` tag (`.tg` style).
 
 ---
 
 ## Screens and Interaction Contract
 
 ### S1. `/connexion` (D-07, D-09, D-10)
-- Centered card (max 400px, `--bg-2`, 1px `--line` border, card radius 12px; inputs radius 8px; buttons keep site pill radius 100px), 24px padding, top offset 64px desktop / 32px mobile. No navbar (D-14). Wordmark `SevalysMark` + "Sèvalys" above the card.
+- Card centred horizontally and vertically (`min-height: 100dvh`, flex centre), max 440px, `--bg-2`, 1px `--line` border, card radius 12px; inputs radius 8px; buttons keep site pill radius 100px), 24px padding. Inside the card the `<form>` is a flex column with 16px gap (the gap lives on the card AND the form; the form must not be a bare block). Primary buttons are full width only inside the auth card; everywhere else they are auto width. No navbar (D-14). Under the card, two 14px `--ink-dim` centred lines: `Pas de mot de passe : un code à usage unique vous est envoyé par e-mail.` and `Un souci pour vous connecter ? contact@sevalys.com` (mailto). Wordmark `SevalysMark` + "Sèvalys" above the card.
+- Optional `?email=` search param pre-fills the email field when it passes the email schema (ignored otherwise). The email input is uncontrolled (`defaultValue`), so keystrokes made before hydration are never lost.
+- One `<h1>` per step: step 1 `Connexion` + helper; step 2 `Saisissez votre code` + status line `Code envoyé à {email}. Il arrive en général en moins d'une minute. Pensez à vérifier vos courriers indésirables.` (step 1 helper is not shown on step 2).
 - Step 1 (email): label `Adresse e-mail`, input `type=email`, `autocomplete=email`, `inputmode=email`, autofocus. Primary button full width. While pending: button disabled, label `Envoi en cours...`.
-- Step 2 (code): replaces step 1 in place (no navigation). Single input `inputmode=numeric`, `autocomplete=one-time-code`, `maxlength=OTP_LENGTH (8)`, pattern `[0-9]{OTP_LENGTH}`, rendered as OTP_LENGTH (8) visual cells (44px min height, mono 32px, 4px gap) but ONE real input underneath (paste and iOS/Android autofill must work). Auto-submit on the last digit. Secondary text button `Renvoyer le code` disabled for 60s with visible countdown (`Renvoyer le code (42 s)`), and `Changer d'adresse e-mail`.
+- Step 2 (code): replaces step 1 in place (no navigation). Single input `inputmode=numeric`, `autocomplete=one-time-code`, `maxlength=OTP_LENGTH (8)`, pattern `[0-9]{OTP_LENGTH}`, rendered as OTP_LENGTH cells in two groups (4+4: 4px gap inside a group, 12px between groups), flex cells with `min-width: 0` so they fit at 320px, active cell highlighted, visible label `Code à 8 chiffres` tied to the real input, ONE real input underneath (paste and iOS/Android autofill must work). The input stays mounted while verifying (read-only, never unmounted, so focus and digits survive). Auto-submit on the last digit. Below: `Renvoyer le code` and `Changer d'adresse e-mail` as stacked, centred text buttons (44px). The resend button uses `aria-disabled` (still focusable) for 60s; the visible countdown (`Renvoyer le code (42 s)`) is `aria-hidden`, and a polite live region announces only `Vous pouvez renvoyer le code.` when available again and `Un nouveau code a été envoyé.` after a resend.
 - Step 1 response is identical for any address (D-09): always advance to step 2 with the same message. Never reveal whether the address is invited.
 - Errors in an `aria-live="polite"` region under the field, `--warm` text with a lucide `AlertCircle` icon (never colour alone).
 - After success: redirect by role (admin to `/admin`, client to `/espace-client`, `next` honoured only for relative paths beginning `/espace-client` or `/admin`).
-- Footer of the card: discreet `Retour au site` link (`.crumb-back` style) to `/`.
+- Footer of the card: `Retour au site` link to `/` (14px `--ink-dim`, 44px hit area).
 
 ### S2. `/auth/confirm` (fallback link interstitial)
-- Same card. Heading `Confirmer la connexion`, one button `Me connecter`. The page load must not consume the token; only the button POST does. On failed/expired token show the error state with a link `Demander un nouveau code` to `/connexion`.
+- Same card. Heading `Confirmer la connexion`, helper `Pour votre sécurité, confirmez la connexion en un clic.`, one button `Me connecter`. When the `token_hash` is missing, the error state is shown directly (`Ce lien n'est plus valide.` + `Demander un nouveau code` to `/connexion`) instead of the button. The page load must not consume the token; only the button POST does. On failed/expired token show the error state with a link `Demander un nouveau code` to `/connexion`.
 
 ### S3. `/espace-client` shell (D-13, D-14)
 - Header (`--bg-2`, bottom border `--line`, 64px high): left company name (Heading style, 24px truncated with ellipsis) from `sv_clients.name`; centre/left nav `Projet`, `Documents`, `Paiements` all disabled with `Bientôt` tag; right `Se déconnecter` (ghost text button, lucide `LogOut` 16px with text).
@@ -127,6 +131,8 @@ Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-fai
 ---
 
 ## Accessibility Contract
+- Resend button during the countdown stays focusable (`aria-disabled`, clicks ignored); the countdown is not re-announced every second.
+- Resting border of every field/cell/ghost button >= 3:1 (`--pt-border-strong`).
 - Every input has a visible `<label>` (Label style) linked by `htmlFor`; placeholders are never the only label.
 - Visible focus ring on all interactive elements; logical tab order; Enter submits forms.
 - Errors announced via `aria-live`; invalid field sets `aria-invalid="true"` and `aria-describedby`.
@@ -144,7 +150,9 @@ Contrast: `--ink` on `--bg` and `#000` on `--acid` both exceed 4.5:1. `--ink-fai
 | Primary CTA (admin) | `Inviter le client` |
 | Login step 1 heading / helper | `Connexion` / `Saisissez l'adresse e-mail avec laquelle vous avez été invité.` |
 | Identical response message (D-09) | `Si cette adresse est invitée, un code vient d'être envoyé.` |
-| Login step 2 heading / helper | `Saisissez votre code` / `Code à 8 chiffres reçu par e-mail. Pensez à vérifier vos courriers indésirables.` |
+| Login step 2 heading / status | `Saisissez votre code` / `Code envoyé à {email}. Il arrive en général en moins d'une minute. Pensez à vérifier vos courriers indésirables.` (echoing the typed address is allowed: the server response stays identical for every address) |
+| Login reassurance (under card) | `Pas de mot de passe : un code à usage unique vous est envoyé par e-mail.` / `Un souci pour vous connecter ? contact@sevalys.com` |
+| Confirm helper / invalid link | `Pour votre sécurité, confirmez la connexion en un clic.` / `Ce lien n'est plus valide.` |
 | Empty state heading (client) | `Votre espace est en préparation` |
 | Empty state body (client) | `Vos documents, votre projet et vos paiements apparaîtront ici dès qu'ils seront disponibles. Une question ? Écrivez-nous à contact@sevalys.com.` |
 | Empty state heading (admin table) | `Aucun client invité` |
@@ -197,3 +205,9 @@ Tone: vouvoiement, short, no jargon, no exclamation marks, no prices anywhere in
 - [ ] Dimension 6 Registry Safety: PASS
 
 **Approval:** pending
+
+---
+
+## Verification
+
+New screens must be checked in a real browser at phone width (320 to 390px) before sign-off: spacing inside forms, code cells fitting on one row, tap targets of 44px, and contrast of every text token. A headless desktop capture is not enough.

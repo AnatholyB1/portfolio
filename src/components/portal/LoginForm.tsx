@@ -7,7 +7,6 @@ import {
   verifyCodeAction,
   type LoginState,
 } from '@/app/connexion/actions';
-import { OTP_LENGTH } from '@/lib/auth/schemas';
 import OtpInput from './OtpInput';
 
 const INITIAL: LoginState = { step: 'email' };
@@ -15,6 +14,10 @@ const RESEND_SECONDS = 60;
 
 interface LoginFormProps {
   next?: string;
+  /** Adresse pré-remplie (paramètre ?email=, déjà validé côté serveur). */
+  initialEmail?: string;
+  /** Message d'information affiché sous le titre (ex. session expirée). */
+  notice?: string;
 }
 
 function ErrorMessage({ id, error }: { id: string; error?: string }) {
@@ -30,13 +33,27 @@ function ErrorMessage({ id, error }: { id: string; error?: string }) {
   );
 }
 
-export default function LoginForm({ next }: LoginFormProps) {
+export default function LoginForm({ next, initialEmail = '', notice }: LoginFormProps) {
   const [reqState, reqAction, reqPending] = useActionState(requestCodeAction, INITIAL);
   const [verState, verAction, verPending] = useActionState(verifyCodeAction, INITIAL);
-  const [email, setEmail] = useState('');
+  // Champ e-mail NON contrôlé : la valeur vit dans le DOM (une frappe faite avant
+  // l'hydratation n'est jamais écrasée). `lastEmail` ne sert qu'à `defaultValue`, pour que la
+  // réinitialisation du formulaire après une action (React 19) restitue la saisie.
+  const [lastEmail, setLastEmail] = useState(initialEmail);
   // L'état de demande auquel l'utilisateur a renoncé via « Changer d'adresse e-mail ».
   const [dismissed, setDismissed] = useState<LoginState | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [resent, setResent] = useState(false);
+  // Remonte la saisie du code après chaque réponse (erreur, nouvel envoi), jamais pendant l'attente.
+  const [seen, setSeen] = useState<{ ver: LoginState; req: LoginState }>({
+    ver: verState,
+    req: reqState,
+  });
+  const [attempt, setAttempt] = useState(0);
+  if (seen.ver !== verState || seen.req !== reqState) {
+    setSeen({ ver: verState, req: reqState });
+    setAttempt((a) => a + 1);
+  }
 
   const inCode = reqState.step === 'code' && dismissed !== reqState;
   const resendAt = inCode ? reqState.resendAt : undefined;
@@ -53,66 +70,115 @@ export default function LoginForm({ next }: LoginFormProps) {
 
   if (!inCode) {
     return (
-      <form action={reqAction} noValidate>
-        <input type="hidden" name="next" value={next ?? ''} />
-        <div className="pt-field">
-          <label className="pt-label" htmlFor="pt-email">
-            Adresse e-mail
-          </label>
-          <input
-            id="pt-email"
-            className="pt-input"
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            inputMode="email"
-            autoFocus
-            required
-            aria-invalid={reqState.error ? 'true' : undefined}
-            aria-describedby="pt-email-error"
-          />
-        </div>
-        <ErrorMessage id="pt-email-error" error={reqState.error} />
-        <button type="submit" className="pt-btn-primary" disabled={reqPending}>
-          {reqPending ? 'Envoi en cours...' : 'Recevoir mon code'}
-        </button>
-      </form>
+      <>
+        <h1 id="pt-auth-title" className="pt-heading">
+          Connexion
+        </h1>
+        <p className="pt-helper">Saisissez l&apos;adresse e-mail avec laquelle vous avez été invité.</p>
+        {notice ? (
+          <p className="pt-status" role="status">
+            {notice}
+          </p>
+        ) : null}
+        <form
+          action={reqAction}
+          noValidate
+          onSubmit={(e) => {
+            const v = new FormData(e.currentTarget).get('email');
+            if (typeof v === 'string') setLastEmail(v);
+          }}
+        >
+          <input type="hidden" name="next" value={next ?? ''} />
+          <div className="pt-field">
+            <label className="pt-label" htmlFor="pt-email">
+              Adresse e-mail
+            </label>
+            <input
+              id="pt-email"
+              className="pt-input"
+              type="email"
+              name="email"
+              defaultValue={lastEmail}
+              onChange={(e) => setLastEmail(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
+              autoFocus
+              required
+              aria-invalid={reqState.error ? 'true' : undefined}
+              aria-describedby="pt-email-error"
+            />
+          </div>
+          <ErrorMessage id="pt-email-error" error={reqState.error} />
+          <button type="submit" className="pt-btn-primary" disabled={reqPending}>
+            {reqPending ? 'Envoi en cours...' : 'Recevoir mon code'}
+          </button>
+        </form>
+      </>
     );
   }
 
-  const codeEmail = reqState.email ?? email;
+  const codeEmail = reqState.email ?? lastEmail;
   const error = verState.step === 'code' ? verState.error : undefined;
+  const canResend = remaining === 0 && !reqPending && !verPending;
+  let announcement = '';
+  if (remaining === 0) announcement = 'Vous pouvez renvoyer le code.';
+  else if (resent) announcement = 'Un nouveau code a été envoyé.';
 
   return (
-    <form action={verAction}>
-      <input type="hidden" name="next" value={next ?? ''} />
-      <input type="hidden" name="email" value={codeEmail} />
-      <h2 className="pt-heading">Saisissez votre code</h2>
+    <>
+      <h1 id="pt-auth-title" className="pt-heading">
+        Saisissez votre code
+      </h1>
       <p className="pt-helper">
-        {`Code à ${OTP_LENGTH} chiffres reçu par e-mail. Pensez à vérifier vos courriers indésirables.`}
+        {'Code envoyé à '}
+        <span style={{ color: 'var(--ink)', fontWeight: 500, overflowWrap: 'anywhere' }}>
+          {codeEmail}
+        </span>
+        {'. Il arrive en général en moins d’une minute. Pensez à vérifier vos courriers indésirables.'}
       </p>
-      <p className="pt-status">{reqState.message}</p>
-      <div className="pt-field">
-        <OtpInput key={`${verPending}-${verState.error ?? ''}`} invalid={Boolean(error)} describedBy="pt-code-error" />
-      </div>
-      <ErrorMessage id="pt-code-error" error={error} />
-      <button type="submit" className="pt-btn-primary" disabled={verPending}>
-        {verPending ? 'Vérification...' : 'Se connecter'}
-      </button>
-      <button
-        type="submit"
-        className="pt-btn-text"
-        formAction={reqAction}
-        formNoValidate
-        disabled={remaining > 0 || reqPending || verPending}
-      >
-        {remaining > 0 ? `Renvoyer le code (${remaining} s)` : 'Renvoyer le code'}
-      </button>
-      <button type="button" className="pt-btn-text" onClick={() => setDismissed(reqState)}>
-        Changer d&apos;adresse e-mail
-      </button>
-    </form>
+      <form action={verAction}>
+        <input type="hidden" name="next" value={next ?? ''} />
+        <input type="hidden" name="email" value={codeEmail} />
+        <OtpInput
+          key={attempt}
+          invalid={Boolean(error)}
+          describedBy="pt-code-error"
+          pending={verPending}
+        />
+        <ErrorMessage id="pt-code-error" error={error} />
+        <button type="submit" className="pt-btn-primary" disabled={verPending}>
+          {verPending ? 'Vérification...' : 'Se connecter'}
+        </button>
+        <button
+          type="submit"
+          className="pt-btn-text"
+          formAction={reqAction}
+          formNoValidate
+          aria-disabled={canResend ? undefined : 'true'}
+          onClick={(e) => {
+            if (!canResend) e.preventDefault();
+            else setResent(true);
+          }}
+        >
+          <span aria-hidden="true">
+            {remaining > 0 ? `Renvoyer le code (${remaining} s)` : 'Renvoyer le code'}
+          </span>
+          <span className="pt-sr-only">Renvoyer le code</span>
+        </button>
+        <p className="pt-sr-only" role="status" aria-live="polite">
+          {announcement}
+        </p>
+        <button
+          type="button"
+          className="pt-btn-text"
+          onClick={() => {
+            setResent(false);
+            setDismissed(reqState);
+          }}
+        >
+          Changer d&apos;adresse e-mail
+        </button>
+      </form>
+    </>
   );
 }
