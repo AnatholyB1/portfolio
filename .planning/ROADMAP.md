@@ -161,7 +161,30 @@ Plans:
   4. Le client dépose et télécharge des fichiers (stockage privé, liens signés courts) et consulte des liens utiles ; il accorde ou révoque le droit de présenter son projet, avec date et texte conservés
   5. Un changement de statut ou d'étape déclenche un e-mail via une règle (modèle, délai) sans doublon par événement et destinataire, journalisé ; l'admin voit tous les projets, leur étape et leurs blocages
 
-**Plans**: TBD
+**Plans**: 22 plans
+Plans:
+- [ ] 12-01-PLAN.md — Migration sv_projects_engine (tables, RLS, faits en ajout seul, RPC, bucket privé) + gardes statiques
+- [ ] 12-02-PLAN.md — Moteur d'étapes pur (faits -> étape, qui attend) et blocages/tri/filtres (TDD)
+- [ ] 12-03-PLAN.md — Schémas onboarding/actions, règles fichiers, texte d'accord, offres, textes FR
+- [ ] 12-04-PLAN.md — Moteur de mails : règles en code, modèles, outbox idempotente
+- [ ] 12-05-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
+- [ ] 12-06-PLAN.md — Invitation via l'outbox, contrôles partagés, cron quotidien /api/cron/mail
+- [ ] 12-07-PLAN.md — Service de conversion lead -> client (compensation) + action admin
+- [ ] 12-08-PLAN.md — Services faits (mail de changement d'étape) et onboarding (fait système + mail admin)
+- [ ] 12-09-PLAN.md — Services fichiers (URL signées), liens utiles, accord de présentation
+- [ ] 12-10-PLAN.md — Couche de lecture RLS (portail, liste et fiche admin, activité)
+- [ ] 12-11-PLAN.md — Tests RLS : projets, faits, accords, outbox
+- [ ] 12-12-PLAN.md — Tests RLS : stockage privé, conversion atomique
+- [ ] 12-13-PLAN.md — UI partagée : frise, panneau fichiers, styles projet
+- [ ] 12-14-PLAN.md — Dialogue de conversion sur la fiche lead
+- [ ] 12-15-PLAN.md — Tableau admin /admin/projets (filtres étape/blocage, tri)
+- [ ] 12-16-PLAN.md — Actions admin projet (poser/annuler un fait, liens, fichiers)
+- [ ] 12-17-PLAN.md — Fiche projet admin /admin/projets/[id]
+- [ ] 12-18-PLAN.md — Actions portail + cartes onboarding et accord
+- [ ] 12-19-PLAN.md — Page portail /espace-client (héros, qui attend, frise, cartes)
+- [ ] 12-20-PLAN.md — Application en production de la migration (accord propriétaire)
+- [ ] 12-21-PLAN.md — Texte d'accord (décision propriétaire), CRON_SECRET, preview et déploiement
+- [ ] 12-22-PLAN.md — Vérification de bout en bout en production (fixtures permanentes)
 **UI hint**: yes
 
 ### Phase 13: Document generation
