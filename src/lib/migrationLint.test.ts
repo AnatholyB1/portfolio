@@ -99,8 +99,18 @@ export function lintMigration(file: string, rawSql: string): string[] {
 
   // Rule 6: every public.sv_*_events table is an immutable journal: row-level
   // (update/delete) and truncate deny triggers calling sv_private.deny_mutation.
+  // Phase 12 adds append-only tables that are not named *_events.
+  const APPEND_ONLY_TABLES = ['sv_project_facts', 'sv_project_fact_notes', 'sv_project_consents'];
+  const immutable = new Set<string>();
   for (const m of sql.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?public\.(sv_\w+_events)\b/gi)) {
-    const t = m[1];
+    immutable.add(m[1]);
+  }
+  for (const t of APPEND_ONLY_TABLES) {
+    if (new RegExp(`create\\s+table\\s+(?:if\\s+not\\s+exists\\s+)?public\\.${t}\\b`, 'i').test(sql)) {
+      immutable.add(t);
+    }
+  }
+  for (const t of immutable) {
     const rowRe = new RegExp(
       `before\\s+update\\s+or\\s+delete\\s+on\\s+public\\.${t}\\b[^;]*execute\\s+function\\s+sv_private\\.deny_mutation`,
       'i',
@@ -177,6 +187,29 @@ describe('migration lint: sv_* hardening (FOUND-02, FOUND-03, D-06, D-18)', () =
         for each statement execute function sv_private.deny_mutation();
     `;
     expect(lintMigration('events-ok.sql', fixture)).toEqual([]);
+  });
+
+  it('rule 6: an append-only sv_project_consents table without deny triggers is reported', () => {
+    const fixture = `
+      create table if not exists public.sv_project_consents (id bigint primary key);
+      alter table public.sv_project_consents enable row level security;
+      revoke all on public.sv_project_consents from anon, authenticated;
+    `;
+    const v = lintMigration('consents.sql', fixture);
+    expect(v.some((x) => /lacks immutability triggers/.test(x))).toBe(true);
+  });
+
+  it('rule 6: a compliant sv_project_consents table passes', () => {
+    const fixture = `
+      create table if not exists public.sv_project_consents (id bigint primary key);
+      alter table public.sv_project_consents enable row level security;
+      revoke all on public.sv_project_consents from anon, authenticated;
+      create trigger a before update or delete on public.sv_project_consents
+        for each row execute function sv_private.deny_mutation();
+      create trigger b before truncate on public.sv_project_consents
+        for each statement execute function sv_private.deny_mutation();
+    `;
+    expect(lintMigration('consents-ok.sql', fixture)).toEqual([]);
   });
 
   it('a compliant fixture passes', () => {
