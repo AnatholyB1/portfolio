@@ -64,6 +64,7 @@ export default function Wizard() {
   const clampedStepIndex = Math.min(stepIndex, steps.length - 1);
   useEffect(() => {
     if (clampedStepIndex !== stepIndex) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reconcile of state with clamped render value
       setStepIndex(clampedStepIndex);
     }
   }, [clampedStepIndex, stepIndex]);

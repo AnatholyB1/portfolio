@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function PhoneAgent() {
@@ -18,9 +19,9 @@ export default function PhoneAgent() {
         </div>
         <div data-reveal data-reveal-delay="1">
           <p className="sec-intro">{pa.sub}</p>
-          <a href="/services/agent-vocal-ia" className="btn btn-primary">
+          <Link href="/services/agent-vocal-ia" className="btn btn-primary">
             {pa.cta_roi} <span className="ar">→</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

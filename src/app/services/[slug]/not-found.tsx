@@ -2,6 +2,7 @@
 // layout.tsx means any slug outside the fixed 9 hits this Server Component).
 // French hardcoded — outside the i18n items array, never crawled for keywords.
 
+import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -13,7 +14,7 @@ export default function ServiceSlugNotFound() {
         <div className="wrap">
           <h1 className="svc-h1">Cette page n&apos;existe pas</h1>
           <p className="svc-sub">Ce service n&apos;est pas (ou plus) référencé.</p>
-          <a href="/services" className="btn btn-ghost">Voir tous nos services →</a>
+          <Link href="/services" className="btn btn-ghost">Voir tous nos services →</Link>
         </div>
       </section>
       <Footer />
