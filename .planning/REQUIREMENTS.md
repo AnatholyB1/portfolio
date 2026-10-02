@@ -32,7 +32,7 @@
 
 - [x] **PORTAL-01**: Un admin convertit un lead en client en un clic, ce qui envoie l'invitation
 - [x] **PORTAL-02**: Le client remplit un onboarding guidé (informations société) dont les données alimentent ses documents
-- [ ] **PORTAL-03**: Le client voit son projet en frise d'étapes, l'étape en cours et les actions qu'on attend de lui
+- [x] **PORTAL-03**: Le client voit son projet en frise d'étapes, l'étape en cours et les actions qu'on attend de lui
 - [x] **PORTAL-04**: Une étape se débloque selon les faits enregistrés (document signé, paiement reçu), pas selon une saisie manuelle
 - [x] **PORTAL-05**: Le client dépose et télécharge des fichiers et consulte des liens utiles ; stockage privé, dépôt direct, URLs signées courtes
 - [x] **PORTAL-06**: Le client peut accorder ou révoquer le droit de présenter son projet (portfolio, réseaux), avec date et texte accepté conservés
@@ -147,7 +147,7 @@
 | LEAD-09 | Phase 11 | Complete |
 | PORTAL-01 | Phase 12 | Complete |
 | PORTAL-02 | Phase 12 | Complete |
-| PORTAL-03 | Phase 12 | Pending |
+| PORTAL-03 | Phase 12 | Complete |
 | PORTAL-04 | Phase 12 | Complete |
 | PORTAL-05 | Phase 12 | Complete |
 | PORTAL-06 | Phase 12 | Complete |
