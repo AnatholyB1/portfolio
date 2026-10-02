@@ -67,7 +67,7 @@ function attributionBranch(request: NextRequest, event: NextFetchEvent) {
   });
   if (verdict === 'skip') {
     const skipped = NextResponse.next();
-    if (request.nextUrl.searchParams.has('_attrdebug')) skipped.headers.set('x-attr-debug', 'skip:' + request.nextUrl.hostname + ':' + canonicalHost);
+    if (request.nextUrl.searchParams.has('_attrdebug')) skipped.headers.set('x-attr-debug', ['skip', request.method, request.headers.get('sec-fetch-dest'), request.headers.get('sec-fetch-mode'), request.headers.get('user-agent')?.slice(0, 30), hasAuthCookie, Object.keys(params).join('+'), request.nextUrl.search, request.url.slice(0, 80)].join('|'));
     return skipped;
   }
 
