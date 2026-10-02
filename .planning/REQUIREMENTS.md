@@ -19,12 +19,12 @@
 ### Prospects, attribution & consentement (LEAD)
 
 - [x] **LEAD-01**: Chaque arrivée avec paramètres enregistre côté serveur UTM, identifiants de clic (si consentement), page d'atterrissage et référent, en deux jeux : premier contact et dernier contact
-- [ ] **LEAD-02**: La source d'un lead est figée à sa création ; seul un admin peut la corriger, avec un motif obligatoire journalisé
-- [ ] **LEAD-03**: Le journal `lead_events` est en ajout seul (aucune mise à jour ni suppression) et permet l'anonymisation d'un lead pour le droit à l'effacement
-- [ ] **LEAD-04**: Un même prospect (e-mail ou téléphone normalisés) revenu dans les 9 mois ajoute un contact au lead existant sans changer sa source
+- [x] **LEAD-02**: La source d'un lead est figée à sa création ; seul un admin peut la corriger, avec un motif obligatoire journalisé
+- [x] **LEAD-03**: Le journal `lead_events` est en ajout seul (aucune mise à jour ni suppression) et permet l'anonymisation d'un lead pour le droit à l'effacement
+- [x] **LEAD-04**: Un même prospect (e-mail ou téléphone normalisés) revenu dans les 9 mois ajoute un contact au lead existant sans changer sa source
 - [ ] **LEAD-05**: Le simulateur et le formulaire de contact alimentent le pipeline de leads, sans casser l'ordre actuel des protections anti-spam
 - [ ] **LEAD-06**: Les `prospects` existants sont migrés et la purge de 12 mois est réécrite pour épargner les clients convertis et les données comptables
-- [ ] **LEAD-07**: L'admin voit la liste des leads, le pipeline par statut et change un statut en un geste, avec motif de perte
+- [x] **LEAD-07**: L'admin voit la liste des leads, le pipeline par statut et change un statut en un geste, avec motif de perte
 - [ ] **LEAD-08**: L'admin voit l'entonnoir par source et campagne (visites, simulations, leads, qualifiés, RDV, signés) et saisit à la main le coût par RDV
 - [x] **LEAD-09**: Un bandeau de consentement propose Accepter et Refuser à égalité, journalise chaque choix (date, texte, version) et bloque toute balise publicitaire avant accord
 
@@ -137,12 +137,12 @@
 | FOUND-06 | Phase 10 | Complete |
 | FOUND-07 | Phase 10 | Complete |
 | LEAD-01 | Phase 11 | Complete |
-| LEAD-02 | Phase 11 | Pending |
-| LEAD-03 | Phase 11 | Pending |
-| LEAD-04 | Phase 11 | Pending |
+| LEAD-02 | Phase 11 | Complete |
+| LEAD-03 | Phase 11 | Complete |
+| LEAD-04 | Phase 11 | Complete |
 | LEAD-05 | Phase 11 | Pending |
 | LEAD-06 | Phase 11 | Pending |
-| LEAD-07 | Phase 11 | Pending |
+| LEAD-07 | Phase 11 | Complete |
 | LEAD-08 | Phase 11 | Pending |
 | LEAD-09 | Phase 11 | Complete |
 | PORTAL-01 | Phase 12 | Pending |

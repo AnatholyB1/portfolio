@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 11 planned (18 plans, verified)
-last_updated: "2026-10-02T17:30:22.751Z"
+last_updated: "2026-10-02T17:34:12.691Z"
 last_activity: 2026-10-02
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 31
-  completed_plans: 15
+  completed_plans: 16
   percent: 10
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 11 (Lead attribution, pipeline & consent) — EXECUTING
-Plan: 3 of 18
+Plan: 4 of 18
 Status: Ready to execute
 Last activity: 2026-10-02
 
-Progress: [█████░░░░░] 48%
+Progress: [█████░░░░░] 52%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - Code de connexion à 8 chiffres (réglage du projet Supabase partagé, constante `OTP_LENGTH`) ; l'adresse `anatholyb@gmail.com` seule ne peut pas être invitée (compte existant d'une autre application), utiliser le plus-address
 - [Phase 11]: 11-02: click ids keep case (D-09 deviation); sv_attr split into sv_attr_ft/sv_attr_lt (D-06 deviation)
 - [Phase 11]: [11-03] CLICK_ID_KEYS imported from attribution/params; before_send strips click ids only for pending/refused
+- [Phase ?]: 11-04: table named sv_lead_events; lost_at cleared on leaving lost; phone lock key prefixed sv_lead_phone
 
 ### Pending Todos
 
@@ -75,7 +76,7 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-02T17:30:11.208Z
+Last session: 2026-10-02T17:34:02.265Z
 Stopped at: Phase 11 planned (18 plans, verified)
 Resume file: None
 
