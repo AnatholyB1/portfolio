@@ -97,6 +97,23 @@ export function lintMigration(file: string, rawSql: string): string[] {
     }
   }
 
+  // Rule 6: every public.sv_*_events table is an immutable journal: row-level
+  // (update/delete) and truncate deny triggers calling sv_private.deny_mutation.
+  for (const m of sql.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?public\.(sv_\w+_events)\b/gi)) {
+    const t = m[1];
+    const rowRe = new RegExp(
+      `before\\s+update\\s+or\\s+delete\\s+on\\s+public\\.${t}\\b[^;]*execute\\s+function\\s+sv_private\\.deny_mutation`,
+      'i',
+    );
+    const truncRe = new RegExp(
+      `before\\s+truncate\\s+on\\s+public\\.${t}\\b[^;]*execute\\s+function\\s+sv_private\\.deny_mutation`,
+      'i',
+    );
+    if (!rowRe.test(sql) || !truncRe.test(sql)) {
+      violations.push(`${file}: public.${t} lacks immutability triggers (deny_mutation on update/delete and truncate)`);
+    }
+  }
+
   return violations;
 }
 
@@ -137,6 +154,29 @@ describe('migration lint: sv_* hardening (FOUND-02, FOUND-03, D-06, D-18)', () =
     expect(v.some((x) => /user_metadata/.test(x))).toBe(true);
     expect(v.some((x) => /view without security_invoker/.test(x))).toBe(true);
     expect(v.some((x) => /write grant/.test(x))).toBe(true);
+  });
+
+  it('rule 6: an sv_*_events table without deny triggers is reported', () => {
+    const fixture = `
+      create table if not exists public.sv_demo_events (id bigint primary key);
+      alter table public.sv_demo_events enable row level security;
+      revoke all on public.sv_demo_events from anon, authenticated;
+    `;
+    const v = lintMigration('events.sql', fixture);
+    expect(v.some((x) => /lacks immutability triggers/.test(x))).toBe(true);
+  });
+
+  it('rule 6: an sv_*_events table with both deny triggers passes', () => {
+    const fixture = `
+      create table if not exists public.sv_demo_events (id bigint primary key);
+      alter table public.sv_demo_events enable row level security;
+      revoke all on public.sv_demo_events from anon, authenticated;
+      create trigger a before update or delete on public.sv_demo_events
+        for each row execute function sv_private.deny_mutation();
+      create trigger b before truncate on public.sv_demo_events
+        for each statement execute function sv_private.deny_mutation();
+    `;
+    expect(lintMigration('events-ok.sql', fixture)).toEqual([]);
   });
 
   it('a compliant fixture passes', () => {
