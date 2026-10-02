@@ -242,7 +242,7 @@ Plans:
 | 7. Diagnostic Simulator | v1.1 | 6/6 | Complete | 2026-09-20 |
 | 8. Landing Simplification & Pricing Policy | v1.1 | 6/6 | Complete | 2026-09-21 |
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
-| 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete   | 2026-10-02 |
+| 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 0/TBD | Not started | - |
 | 12. Conversion, projects & step engine | v2.0 | 0/TBD | Not started | - |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |

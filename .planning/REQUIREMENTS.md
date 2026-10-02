@@ -8,13 +8,13 @@
 
 ### Fondations & accès (FOUND)
 
-- [ ] **FOUND-01**: Un client invité peut se connecter sans mot de passe avec un code à 8 chiffres reçu par e-mail (lien en secours)
-- [ ] **FOUND-02**: Aucun compte ne peut être créé librement : l'accès se fait uniquement sur invitation d'un admin
-- [ ] **FOUND-03**: Les rôles admin et client sont portés par des tables dédiées, jamais déduits du simple statut « authentifié » (le projet Supabase est partagé avec Gecko)
-- [ ] **FOUND-04**: Un client ne peut lire aucune donnée d'un autre client ; des tests automatisés prouvent l'isolation (client A vs client B, anonyme, utilisateur Gecko)
-- [ ] **FOUND-05**: `/espace-client` et `/admin` existent comme coquilles `noindex`, hors sitemap et `llms.txt`, sans intro cinéma, curseur ni GSAP
-- [ ] **FOUND-06**: Les gardes de politique « aucun prix » restent actifs sur le site public et autorisent explicitement les prix dans le portail, l'admin et les modèles de documents
-- [ ] **FOUND-07**: SPF, DKIM et DMARC sont configurés et vérifiés pour le domaine d'envoi avant que le login par e-mail en dépende
+- [x] **FOUND-01**: Un client invité peut se connecter sans mot de passe avec un code à 8 chiffres reçu par e-mail (lien en secours)
+- [x] **FOUND-02**: Aucun compte ne peut être créé librement : l'accès se fait uniquement sur invitation d'un admin
+- [x] **FOUND-03**: Les rôles admin et client sont portés par des tables dédiées, jamais déduits du simple statut « authentifié » (le projet Supabase est partagé avec Gecko)
+- [x] **FOUND-04**: Un client ne peut lire aucune donnée d'un autre client ; des tests automatisés prouvent l'isolation (client A vs client B, anonyme, utilisateur Gecko)
+- [x] **FOUND-05**: `/espace-client` et `/admin` existent comme coquilles `noindex`, hors sitemap et `llms.txt`, sans intro cinéma, curseur ni GSAP
+- [x] **FOUND-06**: Les gardes de politique « aucun prix » restent actifs sur le site public et autorisent explicitement les prix dans le portail, l'admin et les modèles de documents
+- [x] **FOUND-07**: SPF, DKIM et DMARC sont configurés et vérifiés pour le domaine d'envoi avant que le login par e-mail en dépende
 
 ### Prospects, attribution & consentement (LEAD)
 
@@ -129,13 +129,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 10 | Pending |
-| FOUND-02 | Phase 10 | Pending |
-| FOUND-03 | Phase 10 | Pending |
-| FOUND-04 | Phase 10 | Pending |
-| FOUND-05 | Phase 10 | Pending |
-| FOUND-06 | Phase 10 | Pending |
-| FOUND-07 | Phase 10 | Pending |
+| FOUND-01 | Phase 10 | Complete |
+| FOUND-02 | Phase 10 | Complete |
+| FOUND-03 | Phase 10 | Complete |
+| FOUND-04 | Phase 10 | Complete |
+| FOUND-05 | Phase 10 | Complete |
+| FOUND-06 | Phase 10 | Complete |
+| FOUND-07 | Phase 10 | Complete |
 | LEAD-01 | Phase 11 | Pending |
 | LEAD-02 | Phase 11 | Pending |
 | LEAD-03 | Phase 11 | Pending |

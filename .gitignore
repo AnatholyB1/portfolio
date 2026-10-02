@@ -40,7 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-graphify-out/
 
 # git worktrees (superpowers:using-git-worktrees)
 .worktrees/
@@ -48,4 +47,3 @@ graphify-out/
 # local Claude Code / tooling state (agent worktrees, settings, caches)
 .claude/
 .superpowers/
-.graphify_uncached.txt

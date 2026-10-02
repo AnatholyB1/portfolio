@@ -154,7 +154,7 @@ describe('inviteClient', () => {
       invited_email: 'client@example.com',
     });
     const mail = mocks.send.mock.calls[0][0];
-    expect(mail.from).toBe('Sevalys <connexion@sevalys.com>');
+    expect(mail.from).toBe('"Sèvalys" <connexion@sevalys.com>');
     expect(mail.to).toBe('client@example.com');
     expect(mail.html).toContain('https://sevalys.com/connexion?email=client%40example.com');
   });
