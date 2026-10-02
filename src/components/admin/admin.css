@@ -139,3 +139,17 @@
 .pt-admin .pt-resend-error {
   color: var(--warm);
 }
+
+/* Bureau : les colonnes courtes restent sur une ligne, l'e-mail ne se coupe qu'en dernier recours. */
+@media (min-width: 768px) {
+  .pt-admin .pt-admin-table th,
+  .pt-admin .pt-admin-table td[data-label="SIRET"],
+  .pt-admin .pt-admin-table td[data-label="Invité le"],
+  .pt-admin .pt-admin-table td[data-label="Statut"],
+  .pt-admin .pt-admin-table td[data-label="Action"] {
+    white-space: nowrap;
+  }
+  .pt-admin .pt-admin-table a {
+    overflow-wrap: break-word;
+  }
+}
