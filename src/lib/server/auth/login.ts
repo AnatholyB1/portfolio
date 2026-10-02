@@ -1,7 +1,7 @@
 import 'server-only';
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { loginEmailSchema } from '@/lib/auth/schemas';
+import { OTP_LENGTH, loginEmailSchema } from '@/lib/auth/schemas';
 import {
   LOGIN_EMAIL_FROM,
   LOGIN_EMAIL_REPLY_TO,
@@ -56,7 +56,7 @@ export async function issueLoginCode(email: string): Promise<void> {
       return;
     }
     const { email_otp: code, hashed_token: tokenHash } = link.data.properties;
-    if (typeof code !== 'string' || !/^\d{6}$/.test(code) || !tokenHash) {
+    if (typeof code !== 'string' || !new RegExp(`^[0-9]{${OTP_LENGTH}}$`).test(code) || !tokenHash) {
       console.error('[auth/login] unexpected link payload');
       return;
     }

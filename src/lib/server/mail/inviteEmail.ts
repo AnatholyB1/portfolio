@@ -36,7 +36,7 @@ export function buildInviteEmail({
               <td style="padding:24px;font-family:${font};color:#ECEAE3;font-size:16px;line-height:1.5;">
                 <h1 style="margin:0 0 16px;font-size:24px;font-weight:500;color:#ECEAE3;">Votre espace client Sèvalys est prêt</h1>
                 <p style="margin:0 0 16px;">Bonjour, l'espace de <strong>${name}</strong> a été créé.</p>
-                <p style="margin:0 0 24px;color:#9A9690;">Connectez-vous avec cette adresse e-mail : vous recevrez un code à 6 chiffres, sans mot de passe à retenir.</p>
+                <p style="margin:0 0 24px;color:#9A9690;">Connectez-vous avec cette adresse e-mail : vous recevrez un code de connexion, sans mot de passe à retenir.</p>
                 <p style="margin:0 0 24px;">
                   <a href="${url}" style="display:inline-block;padding:12px 24px;background:#C4F542;color:#000000;text-decoration:none;border-radius:100px;font-weight:500;">Accéder à mon espace</a>
                 </p>
@@ -54,7 +54,7 @@ export function buildInviteEmail({
     'Votre espace client Sèvalys est prêt',
     '',
     `L'espace de ${clientName} a été créé.`,
-    'Connectez-vous avec cette adresse e-mail : vous recevrez un code à 6 chiffres, sans mot de passe.',
+    'Connectez-vous avec cette adresse e-mail : vous recevrez un code de connexion, sans mot de passe.',
     '',
     `Accéder à mon espace : ${loginUrl}`,
     '',
