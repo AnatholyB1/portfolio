@@ -1,6 +1,7 @@
 'use client';
 import { useLanguage } from '@/context/LanguageContext';
 import { SevalysWordmark } from '@/components/ui/SevalysMark';
+import Link from 'next/link';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -9,7 +10,7 @@ export default function Footer() {
   return (
     <>
       {/* Wordmark block — links to /services */}
-      <a href="/services" className="wordmark wordmark-link">
+      <Link href="/services" className="wordmark wordmark-link">
         <div className="wrap">
           <div className="wordmark-row">
             <span>Sèvalys</span>
@@ -19,7 +20,7 @@ export default function Footer() {
             <span>2026</span>
           </div>
         </div>
-      </a>
+      </Link>
 
       <footer>
         <div className="wrap foot">
@@ -28,10 +29,10 @@ export default function Footer() {
           </div>
           <span className="label">{f.built}</span>
           <div className="foot-links">
-            <a href="/#manifeste">Manifeste</a>
-            <a href="/#work">Work</a>
-            <a href="/services">Services</a>
-            <a href="/#contact">Contact</a>
+            <Link href="/#manifeste">Manifeste</Link>
+            <Link href="/#work">Work</Link>
+            <Link href="/services">Services</Link>
+            <Link href="/#contact">Contact</Link>
             <a href="/mentions-legales">{f.legal}</a>
           </div>
         </div>

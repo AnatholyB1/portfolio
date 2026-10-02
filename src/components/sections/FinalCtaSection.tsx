@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function FinalCtaSection() {
@@ -16,12 +17,12 @@ export default function FinalCtaSection() {
         </h2>
         <p className="final-desc" data-reveal data-reveal-delay="1">{ts.desc}</p>
         <div className="final-buttons" data-reveal data-reveal-delay="2">
-          <a href="/#contact" className="btn btn-primary">
+          <Link href="/#contact" className="btn btn-primary">
             {ts.cta} <span className="ar">→</span>
-          </a>
-          <a href="/#contact" className="btn btn-ghost">
+          </Link>
+          <Link href="/#contact" className="btn btn-ghost">
             {ts.email}
-          </a>
+          </Link>
         </div>
         <div className="final-note" data-reveal data-reveal-delay="3">{ts.note}</div>
       </div>

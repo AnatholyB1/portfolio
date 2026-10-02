@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import type { Lang } from '@/lib/translations';
@@ -46,6 +47,7 @@ export default function Navbar() {
 
   // Section detection — only on landing page
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset active section when leaving the landing page
     if (pathname !== '/') { setActiveSection(null); return; }
 
     const observers: IntersectionObserver[] = [];
@@ -83,9 +85,9 @@ export default function Navbar() {
   return (
     <>
     <nav className={`nav ${scrolled ? 'scrolled' : ''}${open ? ' menu-open' : ''}`}>
-      <a href="/#top" className="nav-brand" aria-label="Sèvalys — accueil">
+      <Link href="/#top" className="nav-brand" aria-label="Sèvalys — accueil">
         <SevalysWordmark />
-      </a>
+      </Link>
 
       <button
         ref={burgerRef}
@@ -100,10 +102,10 @@ export default function Navbar() {
       </button>
 
       <div className="nav-links">
-        <a href="/#manifeste" className={activeSection === 'manifeste' ? 'active' : ''}>{t.nav.manifeste}</a>
-        <a href="/#work"      className={activeSection === 'work'      ? 'active' : ''}>{t.nav.work}</a>
-        <a href="/services"   className={isServices                    ? 'active' : ''}>{t.nav.services}</a>
-        <a href="/#contact"   className={activeSection === 'contact'   ? 'active' : ''}>{t.nav.contact}</a>
+        <Link href="/#manifeste" className={activeSection === 'manifeste' ? 'active' : ''}>{t.nav.manifeste}</Link>
+        <Link href="/#work"      className={activeSection === 'work'      ? 'active' : ''}>{t.nav.work}</Link>
+        <Link href="/services"   className={isServices                    ? 'active' : ''}>{t.nav.services}</Link>
+        <Link href="/#contact"   className={activeSection === 'contact'   ? 'active' : ''}>{t.nav.contact}</Link>
 
         <div className="lang-switch">
           {LANGS.map((l) => (

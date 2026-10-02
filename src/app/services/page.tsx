@@ -2,6 +2,7 @@
 // page.tsx must be 'use client' because useReveals() calls IntersectionObserver (browser API)
 // Metadata lives in src/app/services/layout.tsx — do NOT add it here
 
+import Link from 'next/link';
 import { useReveals } from '@/hooks/useReveals';
 import { useLanguage } from '@/context/LanguageContext';
 import Navbar from '@/components/layout/Navbar';
@@ -58,8 +59,8 @@ export default function ServicesPage() {
             <p className="svc-body">{p.ctaSub}</p>
             <div className="svc-ctas">
               {/* /simulateur ships in Phase 7 — linking it now is the decision locked in 06-UI-SPEC.md's Copywriting Contract */}
-              <a href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</a>
-              <a href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</a>
+              <Link href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</Link>
+              <Link href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</Link>
             </div>
           </div>
         </section>

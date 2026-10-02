@@ -2,6 +2,7 @@
 // page.tsx must be 'use client' because useReveals() calls IntersectionObserver (browser API)
 // Metadata + FAQPage JSON-LD live in src/app/services/[slug]/layout.tsx — do NOT add them here
 
+import Link from 'next/link';
 import { use } from 'react';
 import { useReveals } from '@/hooks/useReveals';
 import { useLanguage } from '@/context/LanguageContext';
@@ -31,7 +32,7 @@ export default function ServiceSlugPage({
       <main>
         <section className="svc-hero">
           <div className="wrap">
-            <a href="/services" className="crumb-back">{p.back}</a>
+            <Link href="/services" className="crumb-back">{p.back}</Link>
             <div className="svc-hero-grid">
               <div>
                 <h1 className="svc-h1">
@@ -46,8 +47,8 @@ export default function ServiceSlugPage({
             </div>
             <div className="svc-ctas">
               {/* /simulateur ships in Phase 7 — temporary 404 accepted per 06-UI-SPEC.md Copywriting Contract (Option A) */}
-              <a href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</a>
-              <a href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</a>
+              <Link href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</Link>
+              <Link href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</Link>
             </div>
           </div>
         </section>
@@ -176,8 +177,8 @@ export default function ServiceSlugPage({
             <p className="svc-body">{p.ctaSub}</p>
             <div className="svc-ctas">
               {/* /simulateur ships in Phase 7 — temporary 404 accepted per 06-UI-SPEC.md Copywriting Contract (Option A) */}
-              <a href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</a>
-              <a href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</a>
+              <Link href="/simulateur" className="btn btn-primary">{p.ctaPrimary}</Link>
+              <Link href="/#contact" className="btn btn-ghost">{p.ctaSecondary}</Link>
             </div>
           </div>
         </section>

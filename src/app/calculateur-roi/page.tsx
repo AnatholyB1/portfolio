@@ -4,6 +4,7 @@
 // Moteur "ROI v2" : un SOCLE mesuré (temps d'équipe récupéré) qui porte seul
 // l'argument de rentabilité, + un UPSIDE optionnel (CA récupéré) en bonus additif.
 
+import Link from 'next/link';
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 
@@ -104,7 +105,7 @@ export default function CalculateurRoiPage() {
         <div className="wrap">
           {/* ── En-tête ── */}
           <div className="roi-head">
-            <a href="/services" className="crumb-back">← Retour aux services</a>
+            <Link href="/services" className="crumb-back">← Retour aux services</Link>
             <h1 className="roi-title">
               Calculateur de <em className="it">ROI</em>
             </h1>
@@ -258,9 +259,9 @@ export default function CalculateurRoiPage() {
                   : "Estimation basée sur le seul temps d'équipe récupéré — donnée mesurée. Le CA récupéré sur les appels manqués est un bonus en plus : activez l'option si la boutique prend des commandes par téléphone."}
               </p>
 
-              <a href="/services/agent-vocal-ia" className="btn btn-primary">
+              <Link href="/services/agent-vocal-ia" className="btn btn-primary">
                 Découvrir l&apos;agent vocal IA <span className="ar">→</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
