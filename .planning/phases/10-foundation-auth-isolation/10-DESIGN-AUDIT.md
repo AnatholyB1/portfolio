@@ -89,5 +89,22 @@ The approved Phase 10 spec caused part of the problem, so the next ones should a
 7. A "first impression" line for each client-facing page: who is the human, what happens next.
 8. Verify new screens in a real browser at phone width before sign-off, since the headless capture here was misleading.
 
-## Decision needed
-Implement the P0 group (items 1 to 4 plus the input border) now as one small change, then P1 as a second pass? Estimated 45 minutes and roughly two hours.
+## Status — implemented 2026-10-02
+
+All P0 and P1 items and most P2 items were implemented by three parallel implementers (login and shared styles; admin; client home and emails), merged and deployed (commits 6112328 and 7b132f7). Checks: tsc clean, 561 tests pass, eslint 0 errors.
+
+Verified in a real browser:
+- `/connexion` and `/auth/confirm` at 1440px, 390px and 320px (true device width via an iframe wrapper) on a local build.
+- The live `/admin` page with the owner's session on sevalys.com: SIRET first, readable labels, visible field borders, auto-width button, Statut column, "Renvoyer l'invitation", short table columns on one line.
+
+Not yet verified by a human or in a browser:
+- The code step (8 cells grouped 4+4, resend behaviour).
+- The client home `/espace-client` and the NoAccess screen.
+- Both emails rendered in a real mail client.
+
+The owner logs in as the test client next to check the first two.
+
+Notes:
+- `--pt-border-strong` is an approved exception to the no-new-tokens rule (UI-SPEC amended).
+- The UI-SPEC now requires phone-width verification in a real browser for new screens.
+- The Statut "Connecté le 02/10/2026" for the test client was cross-checked against `auth.users.last_sign_in_at` (11:42 UTC, two minutes after the invite).
