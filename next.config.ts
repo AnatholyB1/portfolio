@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // Rendu PDF côté serveur Node uniquement (phase 13)
+  serverExternalPackages: ['@react-pdf/renderer'],
   // D-15 : zones privées jamais indexées (en plus de robots.txt).
   // Sources littérales, couvertes par un test contre PRIVATE_PREFIXES.
   async headers() {

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "gen:assets": "node scripts/gen-brand-assets.mjs",
+    "gen:pdf-fonts": "node scripts/gen-pdf-fonts.mjs",
     "test": "vitest run",
     "test:rls": "vitest run -c vitest.rls.config.ts",
     "rls:canary": "node scripts/rls-canary.mjs",
@@ -15,6 +16,7 @@
     "sv:add-admin": "node scripts/sv-add-admin.mjs"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.9.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@supabase/ssr": "^0.12.7",
@@ -42,6 +44,7 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "unpdf": "^1.8.1",
     "vitest": "^4.1.11"
   }
 }
