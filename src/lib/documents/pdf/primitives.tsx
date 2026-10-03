@@ -1,6 +1,7 @@
 // Primitives PDF partagées (UI-SPEC Surface C). Pures : aucune lecture DB, aucun new Date().
 import { Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
+import { formatAddress, formatSiretPrint } from "../addressFormat";
 import { formatDateLongFr } from "../dates";
 import { formatEuros } from "../money";
 import {
@@ -125,20 +126,7 @@ const s = StyleSheet.create({
 
 export const pdfStyles = s;
 
-/** "123 456 789 00012" ; renvoie l'entrée telle quelle si ce n'est pas 14 chiffres. */
-export function formatSiretPrint(siret: string): string {
-  if (!/^\d{14}$/.test(siret)) return siret;
-  return `${siret.slice(0, 3)} ${siret.slice(3, 6)} ${siret.slice(6, 9)} ${siret.slice(9)}`;
-}
-
-export function formatAddress(a: PostalAddress | null): string {
-  if (!a) return "";
-  const tail = `${a.postalCode} ${a.city}`.trim();
-  const line = a.line.trim();
-  if (line === "") return tail;
-  if (tail !== "" && line.endsWith(tail)) return line;
-  return tail === "" ? line : `${line}, ${tail}`;
-}
+export { formatAddress, formatSiretPrint };
 
 export function DocPage({
   reference,

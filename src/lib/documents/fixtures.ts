@@ -48,7 +48,7 @@ export function sampleClient(opts?: {
 }
 
 const SAMPLE_LINES_INPUT: { designation: string; quantity: number; unitPriceCents: number }[] = [
-  { designation: "Conception de l'identité visuelle et de la maquette d'œuvre", quantity: 1, unitPriceCents: 120000 },
+  { designation: "Maquette de l'œuvre et identité visuelle", quantity: 1, unitPriceCents: 120000 },
   { designation: "Développement du site vitrine (5 pages)", quantity: 5, unitPriceCents: 45000 },
   { designation: "Recette, mise en ligne et formation", quantity: 2, unitPriceCents: 17550 },
 ];
