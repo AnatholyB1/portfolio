@@ -85,6 +85,12 @@ const ALLOWED_TEMPLATES = [
   '`/admin/leads/${lead.previous_lead_id}`',
   // Admin leads table: row link to the same detail route.
   '`/admin/leads/${r.id}`',
+  // Admin project sheet: links from the lead page, the conversion dialog and the projects table, resolved by /admin/projets/[id].
+  '`/admin/projets/${projectId}`',
+  '`/admin/projets/${state.projectId}`',
+  '`/admin/projets/${r.projectId}`',
+  // Portal onboarding card: external mailto with an encoded subject (not a route).
+  '`mailto:contact@sevalys.com?subject=${subject}`',
 ];
 
 function resolveHref(href: string, fromRoute: string): { ok: boolean; reason: string } {
@@ -170,6 +176,9 @@ describe('internal links', () => {
     for (const file of files) {
       const from = routeForFile(file);
       for (const href of extractHrefs(readSafe(file))) {
+        // Portal components hold in-page anchors whose target id lives in a sibling component
+        // (e.g. WhoWaits -> #onboarding in OnboardingCard), not in the route's page file.
+        if (href.startsWith('#') && relative(SRC, file).split(sep).join('/').startsWith('components/portal/')) continue;
         if (!/^(https?:|mailto:|tel:)/.test(href)) internalCount++;
         const r = resolveHref(href, from);
         expect(r.ok, `${relative(ROOT, file)}: ${href} -> ${r.reason}`).toBe(true);
