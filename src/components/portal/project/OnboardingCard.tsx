@@ -83,15 +83,15 @@ function BlockForm(props: {
 }) {
   const uid = useId();
   const formRef = useRef<HTMLFormElement>(null);
-  const dirty = useRef(false);
+  const [dirty, setDirty] = useState(false);
   const [state, formAction, pending] = useActionState(saveOnboardingAction, INITIAL);
 
   const markDirty = () => {
-    dirty.current = true;
+    setDirty(true);
   };
   const flush = () => {
-    if (!dirty.current) return;
-    dirty.current = false;
+    if (!dirty) return;
+    setDirty(false);
     formRef.current?.requestSubmit();
   };
 
