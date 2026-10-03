@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
-import { loadActiveSnapshot, loadDocumentSnapshot, loadDocumentsForProjects, loadProjectDocuments } from './read';
+import { DocumentsLoadError, loadActiveSnapshot, loadDocumentSnapshot, loadDocumentsForProjects, loadProjectDocuments } from './read';
 
 const row = (o: Record<string, unknown>) => ({
   id: 'q1',
@@ -49,10 +49,10 @@ describe('loadProjectDocuments', () => {
     expect(calls[0].select).not.toContain('storage_path');
     expect(docs[0]).toMatchObject({ id: 'q1', projectId: 'p1', sizeBytes: 10, replacesDocumentId: null });
   });
-  it('returns [] on error', async () => {
+  it('throws DocumentsLoadError on error instead of returning [] (WR-06)', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const { client } = fake({ sv_project_documents: { error: { message: 'x' } } });
-    expect(await loadProjectDocuments(client, 'p1')).toEqual([]);
+    await expect(loadProjectDocuments(client, 'p1')).rejects.toBeInstanceOf(DocumentsLoadError);
   });
 });
 

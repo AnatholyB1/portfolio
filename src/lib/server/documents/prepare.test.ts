@@ -8,7 +8,9 @@ vi.mock('@/lib/server/projects/read', () => ({ loadProjectBundle: (...a: unknown
 
 const loadProjectDocuments = vi.fn();
 const loadActiveSnapshot = vi.fn();
+class DocumentsLoadError extends Error {}
 vi.mock('./read', () => ({
+  DocumentsLoadError,
   loadProjectDocuments: (...a: unknown[]) => loadProjectDocuments(...a),
   loadActiveSnapshot: (...a: unknown[]) => loadActiveSnapshot(...a),
 }));
@@ -53,6 +55,23 @@ describe('prepareDocument', () => {
   it('returns not_found when the bundle is missing', async () => {
     loadProjectBundle.mockResolvedValue(null);
     expect(await prepareDocument(rls, input('quote'), 'issue', now)).toEqual({ ok: false, code: 'not_found' });
+  });
+
+  it('returns load_failed instead of deciding on an empty list when the documents read fails (WR-06)', async () => {
+    loadProjectDocuments.mockRejectedValue(new DocumentsLoadError());
+    expect(await prepareDocument(rls, input('quote'), 'issue', now)).toEqual({ ok: false, code: 'load_failed' });
+    expect(checkIssuable).not.toHaveBeenCalled();
+    expect(buildSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('returns load_failed when the prerequisite snapshot read fails', async () => {
+    loadActiveSnapshot.mockRejectedValue(new DocumentsLoadError());
+    expect(await prepareDocument(rls, input('contract'), 'issue', now)).toMatchObject({ ok: false });
+  });
+
+  it('rethrows unexpected errors', async () => {
+    loadProjectDocuments.mockRejectedValue(new Error('boom'));
+    await expect(prepareDocument(rls, input('quote'), 'issue', now)).rejects.toThrow('boom');
   });
 
   it('uses checkIssuable for issue and checkPreviewable for preview', async () => {

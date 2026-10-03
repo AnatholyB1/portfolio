@@ -36,22 +36,32 @@ function toDocument(r: Row): DocumentRow {
   };
 }
 
+/** Échec de lecture de la liste des documents d'un projet : jamais confondu avec une liste vide (WR-06). */
+export class DocumentsLoadError extends Error {
+  constructor() {
+    super('documents_load_failed');
+    this.name = 'DocumentsLoadError';
+  }
+}
+
+/** Lève DocumentsLoadError si la lecture échoue : l'appelant ne doit pas décider sur une liste vide. */
 export async function loadProjectDocuments(rls: SupabaseClient, projectId: string): Promise<DocumentRow[]> {
+  let res;
   try {
-    const res = await rls
+    res = await rls
       .from('sv_project_documents')
       .select(DOCUMENT_COLS)
       .eq('project_id', projectId)
       .order('issued_at', { ascending: true });
-    if (res.error) {
-      console.error('[documents/read] list failed');
-      return [];
-    }
-    return ((res.data ?? []) as Row[]).map(toDocument);
   } catch {
     console.error('[documents/read] list failed');
-    return [];
+    throw new DocumentsLoadError();
   }
+  if (res.error) {
+    console.error('[documents/read] list failed');
+    throw new DocumentsLoadError();
+  }
+  return ((res.data ?? []) as Row[]).map(toDocument);
 }
 
 export async function loadDocumentsForProjects(rls: SupabaseClient, projectIds: string[]): Promise<DocumentRow[]> {

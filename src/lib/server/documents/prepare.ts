@@ -10,11 +10,11 @@ import { buildSnapshot } from '@/lib/documents/snapshot';
 import { checkIssuable, checkPreviewable, DOC_PREREQUISITE, type IssueCheckCode } from '@/lib/documents/steps';
 import type { DocumentSnapshot, QuoteSnapshot, SpecSnapshot } from '@/lib/documents/types';
 import { loadProjectBundle } from '@/lib/server/projects/read';
-import { loadActiveSnapshot, loadProjectDocuments } from './read';
+import { DocumentsLoadError, loadActiveSnapshot, loadProjectDocuments } from './read';
 
 export type PrepareResult =
   | { ok: true; snapshot: DocumentSnapshot; replaces: string | null }
-  | { ok: false; code: 'not_found' | IssueCheckCode };
+  | { ok: false; code: 'not_found' | 'load_failed' | IssueCheckCode };
 
 export async function prepareDocument(
   rls: SupabaseClient,
@@ -25,21 +25,33 @@ export async function prepareDocument(
   const bundle = await loadProjectBundle(rls, input.projectId, now);
   if (!bundle) return { ok: false, code: 'not_found' };
 
-  const docs = await loadProjectDocuments(rls, input.projectId);
+  // Une lecture en échec n'est jamais traitée comme « aucun document » (WR-06).
+  let docs;
+  try {
+    docs = await loadProjectDocuments(rls, input.projectId);
+  } catch (e) {
+    if (e instanceof DocumentsLoadError) return { ok: false, code: 'load_failed' };
+    throw e;
+  }
   const args = { docType: input.docType, facts: bundle.facts, startedAt: bundle.project.startedAt, docs };
   const check = mode === 'issue' ? checkIssuable(args) : checkPreviewable(args);
   if (!check.ok) return { ok: false, code: check.code };
 
   const prereq: { quote?: QuoteSnapshot; spec?: SpecSnapshot } = {};
   const need = DOC_PREREQUISITE[input.docType];
-  if (need === 'quote') {
-    const q = await loadActiveSnapshot(rls, input.projectId, 'quote');
-    if (!q) return { ok: false, code: 'missing_quote' };
-    prereq.quote = q.snapshot as QuoteSnapshot;
-  } else if (need === 'spec') {
-    const s = await loadActiveSnapshot(rls, input.projectId, 'spec');
-    if (!s) return { ok: false, code: 'missing_spec' };
-    prereq.spec = s.snapshot as SpecSnapshot;
+  try {
+    if (need === 'quote') {
+      const q = await loadActiveSnapshot(rls, input.projectId, 'quote');
+      if (!q) return { ok: false, code: 'missing_quote' };
+      prereq.quote = q.snapshot as QuoteSnapshot;
+    } else if (need === 'spec') {
+      const s = await loadActiveSnapshot(rls, input.projectId, 'spec');
+      if (!s) return { ok: false, code: 'missing_spec' };
+      prereq.spec = s.snapshot as SpecSnapshot;
+    }
+  } catch (e) {
+    if (e instanceof DocumentsLoadError) return { ok: false, code: 'load_failed' };
+    throw e;
   }
 
   const snapshot = buildSnapshot(
