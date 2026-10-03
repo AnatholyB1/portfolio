@@ -467,27 +467,33 @@ Caveat: the `template` check does not contain the substring `client_invited` (it
 | A7 | Quote mention list (validity, payment/delivery conditions, 293 B) is correct for a B2B quote | Mentions | Minor: quotes in B2B are not legally prescribed beyond contract law |
 | A8 | `pdf-lib` is not needed this phase | Standard Stack | None; phase 14 decides |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Replacement rule after a signing fact exists**
    - What we know: D-03/D-05 say a new document replaces the active one; D-14 derives "signé" from project-level facts.
    - What's unclear: whether replacement is allowed once `quote_accepted`/`contract_signed`/`acceptance_signed` is effective, and whether issuing is allowed only while the guard step is current.
    - Recommendation: first issue only when `currentStep === guardStep`; replacement only while the signing fact is not effective (admin revokes the fact first). Ask the owner during planning.
+   - RESOLVED: planning adopts this recommendation as the default (plan 13-04, `signed_no_replace`). The owner has not been asked; revisable before execution.
 
 2. **Seller identity values (D-12)**
    - Needed: legal form (EI?), name as printed, SIRET, address, RM/RCS number or "dispensé d'immatriculation", IBAN/BIC, payment term (days), penalty rate wording, deposit default, bank details policy. Not in the repo. Planner must include a human step to collect them; the constant `SELLER_V1` and the test fixtures depend on them.
+   - RESOLVED: plan 13-11 collects them from the owner; issuing is refused until then (placeholders in `SELLER_V1`).
 
 3. **Invoice in the type list**
    - Recommendation: keep `'invoice'` out of the DB check list in phase 13 (nothing is issued); phase 15 extends the closed list. The template, preview action and mention test still ship with a `PROFORMA` number.
+   - RESOLVED: plan 13-02 (type list excludes `invoice`).
 
 4. **Accountant and lawyer reviews**
    - STATE.md blocker: accountant review of invoice mentions and TVA before phase 13 completes production use; legal review of the contract text before production. Plan a non-blocking review checkpoint and ship documents behind admin-only issuance until done.
+   - RESOLVED: plan 13-20 Task 3 (non-blocking owner decision).
 
 5. **Node version on Vercel**
    - Local Node is 26.4; the Vercel project Node setting was not verified. React-PDF 4.9 and unpdf 1.8.1 are plain JS; confirm in the preview deploy.
+   - RESOLVED: plan 13-19 (preview deploy on Linux).
 
 6. **RLS test branch**
    - D-17 requires RLS tests on a dedicated Supabase branch; the 11-01 branch was to be deleted in 11-17 and phase 12 created its own. Confirm which branch is live before the `documents.rls.test.ts` plan.
+   - RESOLVED: plan 13-07 (new branch `sv-rls-p13`, owner-approved).
 
 ## Environment Availability
 

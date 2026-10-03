@@ -146,6 +146,7 @@ Plans:
 **Wave 6** *(blocked on Wave 5 completion)*
 
 - [x] 11-18-PLAN.md — Validation propriétaire des commandes distantes, secret Vercel, preview, mise en prod, rattrapage du backfill, vérification de bout en bout (lead frais par exécution)
+
 **UI hint**: yes
 
 ### Phase 12: Conversion, projects & step engine
@@ -163,6 +164,7 @@ Plans:
 
 **Plans**: 22 plans
 Plans:
+
 - [x] 12-01-PLAN.md — Migration sv_projects_engine (tables, RLS, faits en ajout seul, RPC, bucket privé) + gardes statiques
 - [x] 12-02-PLAN.md — Moteur d'étapes pur (faits -> étape, qui attend) et blocages/tri/filtres (TDD)
 - [x] 12-03-PLAN.md — Schémas onboarding/actions, règles fichiers, texte d'accord, offres, textes FR
@@ -185,6 +187,7 @@ Plans:
 - [x] 12-20-PLAN.md — Application en production de la migration (accord propriétaire)
 - [x] 12-21-PLAN.md — Texte d'accord (décision propriétaire), CRON_SECRET, preview et déploiement
 - [x] 12-22-PLAN.md — Vérification de bout en bout en production (fixtures permanentes)
+
 **UI hint**: yes
 
 ### Phase 13: Document generation
@@ -201,26 +204,50 @@ Plans:
 
 **Plans**: 20 plans
 Plans:
+**Wave 1**
+
 - [ ] 13-01-PLAN.md — Socle React-PDF (dépendances, polices embarquées, césure désactivée, montants en centimes, test rendu + extraction)
 - [ ] 13-02-PLAN.md — Migration sv_documents (documents en ajout seul, instantanés admin, bucket privé, RPC d'émission, outbox) + gardes statiques
 - [ ] 13-03-PLAN.md — Contrats de domaine : types et instantanés, identité vendeur gardée, schémas zod, textes FR
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 13-04-PLAN.md — Garde par étape et statut déduit des faits (TDD) + liste fermée SQL
 - [ ] 13-05-PLAN.md — Modèles devis et facture (PROFORMA) + test des mentions légales sur texte extrait (DOC-04)
 - [ ] 13-06-PLAN.md — Règle de mail « document émis » (modèle, clé d'unicité, listes fermées)
 - [ ] 13-07-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 13-08-PLAN.md — Modèles contrat, cahier des charges, PV de recette + registre versionné + test de rendu
 - [ ] 13-09-PLAN.md — Tests RLS : isolation, ajout seul, stockage en écriture unique, chaîne de remplacement, outbox
 - [ ] 13-10-PLAN.md — Lecture RLS des documents, instantané admin, lien signé et vérification d'empreinte
 - [ ] 13-11-PLAN.md — Identité du vendeur fournie par le propriétaire (déblocage de l'émission)
 - [ ] 13-12-PLAN.md — Composants admin : aperçu puis émission, liste des émis, instantané en lecture seule
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 13-13-PLAN.md — Instantané, rendu et service d'émission (téléversement upsert:false, SHA-256, RPC, mails)
 - [ ] 13-14-PLAN.md — Onglet Documents du portail client (statuts, remplacés en retrait, téléchargement signé)
 - [ ] 13-15-PLAN.md — Formulaires admin devis, cahier des charges, aperçu de facture
 - [ ] 13-16-PLAN.md — Application en production de la migration (accord propriétaire)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 13-17-PLAN.md — Actions admin : aperçu, émission, téléchargement, empreinte, instantané
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
 - [ ] 13-18-PLAN.md — Formulaires contrat et PV, section Documents dans la fiche projet admin
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
 - [ ] 13-19-PLAN.md — Porte locale, preview Vercel (rendu PDF Linux) et déploiement (accord propriétaire)
+
+**Wave 8** *(blocked on Wave 7 completion)*
+
 - [ ] 13-20-PLAN.md — Vérification de bout en bout en production (fixture permanente) + statut des relectures
+
 **UI hint**: yes
 
 ### Phase 14: Electronic signature
