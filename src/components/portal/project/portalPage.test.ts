@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 // Garde source de la page /espace-client (D-10, D-12, D-22).
 const read = (rel: string) => readFileSync(new URL(rel, import.meta.url), 'utf8');
 const page = read('../../../app/espace-client/page.tsx');
-const parts = ['./ClientNav.tsx', './WhoWaits.tsx', './PortalLinks.tsx', './ProjectSelector.tsx'].map(read);
+const parts = ['./ClientNav.tsx', './WhoWaits.tsx', './PortalLinks.tsx', './ProjectSelector.tsx', './DocumentsList.tsx'].map(read);
 
 describe('client portal page', () => {
   it('guards with requireClient and keeps NoAccess', () => {
@@ -54,10 +54,13 @@ describe('client portal page', () => {
     expect(read('./WhoWaits.tsx')).toContain('href="#onboarding"');
   });
 
-  it('nav marks Projet current and disables the rest', () => {
+  it('nav links Projet and Documents with aria-current, Paiements stays disabled', () => {
     const nav = read('./ClientNav.tsx');
-    expect(nav).toContain('aria-current="page"');
-    expect(nav).toContain('Documents (bientôt)');
-    expect(nav).toContain('Paiements (bientôt)');
+    expect(nav).toContain('href="/espace-client/documents"');
+    expect(nav).toContain('aria-current');
+    expect(nav).toContain('nav.payments');
+    expect(nav).not.toContain('Documents (bientôt)');
+    expect(read('../../../lib/projects/copy.ts')).toContain('Paiements (bientôt)');
+    expect(page).toContain('current="projet"');
   });
 });

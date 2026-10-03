@@ -237,6 +237,33 @@
   min-height: 44px;
 }
 
+/* ---------- Documents (phase 13) ---------- */
+.pt-root .pt-doc-replaced {
+  color: var(--ink-dim);
+  border-left: 2px solid var(--line-strong);
+}
+.pt-root .pt-doc-replaced td:first-child {
+  padding-left: 16px;
+}
+.pt-root .pt-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
+.pt-root .pt-doc-meta {
+  display: block;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
 /* ---------- Accord de présentation ---------- */
 .pt-root .pt-consent-quote {
   margin: 0;

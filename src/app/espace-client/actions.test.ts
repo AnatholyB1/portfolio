@@ -24,6 +24,11 @@ vi.mock('@/lib/server/projects/files', () => ({
   createDownloadUrl: (...a: unknown[]) => createDownloadUrl(...a),
 }));
 
+const createDocumentDownloadUrl = vi.fn();
+vi.mock('@/lib/server/documents/download', () => ({
+  createDocumentDownloadUrl: (...a: unknown[]) => createDocumentDownloadUrl(...a),
+}));
+
 const revalidatePath = vi.fn();
 vi.mock('next/cache', () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
 
@@ -34,6 +39,7 @@ const {
   requestUploadAction,
   confirmUploadAction,
   downloadAction,
+  documentDownloadAction,
 } = await import('./actions');
 const { PROJECT_COPY } = await import('@/lib/projects/copy');
 
@@ -169,5 +175,37 @@ describe('file actions', () => {
   it('downloadAction failure returns the download error copy', async () => {
     createDownloadUrl.mockResolvedValue({ ok: false, code: 'not_found' });
     expect(await downloadAction('f1')).toEqual({ ok: false, message: PROJECT_COPY.errors.downloadFailed });
+  });
+});
+
+describe('documentDownloadAction', () => {
+  const DOC = '11111111-1111-4111-8111-111111111111';
+  const failure = { ok: false, message: PROJECT_COPY.documents.portal.downloadFailed };
+  const okCtx = { status: 'ok', supabase, client: { id: 'c1', name: 'C' } };
+
+  it('does not reach the server module without a client session', async () => {
+    requireClient.mockResolvedValue({ status: 'no_access' });
+    expect(await documentDownloadAction(DOC)).toEqual(failure);
+    expect(createDocumentDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('rejects a non-uuid id', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    expect(await documentDownloadAction('f1')).toEqual(failure);
+    expect(await documentDownloadAction(42 as unknown as string)).toEqual(failure);
+    expect(createDocumentDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('returns the signed url through the RLS client', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createDocumentDownloadUrl.mockResolvedValue({ ok: true, url: 'https://signed.example/x' });
+    expect(await documentDownloadAction(DOC)).toEqual({ ok: true, url: 'https://signed.example/x' });
+    expect(createDocumentDownloadUrl).toHaveBeenCalledWith(supabase, DOC);
+  });
+
+  it('maps a module failure to the download error copy', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createDocumentDownloadUrl.mockResolvedValue({ ok: false, code: 'not_found' });
+    expect(await documentDownloadAction(DOC)).toEqual(failure);
   });
 });

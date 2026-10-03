@@ -80,7 +80,7 @@ export default async function EspaceClientPage({
       <>
         <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
         <ShellMain width="client">
-          <ClientNav />
+          <ClientNav current="projet" />
           <section className="pt-card pt-client" aria-labelledby="empty-title">
             <h1 id="empty-title" className="pt-heading">
               {PROJECT_COPY.portal.emptyHeading}
@@ -105,7 +105,7 @@ export default async function EspaceClientPage({
       <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
       <ShellMain width="client">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-          <ClientNav />
+          <ClientNav current="projet" />
           <ProjectSelector projects={projects.map((p) => ({ id: p.id, title: p.title }))} activeId={project.id} />
           <section className="pt-card" aria-labelledby="project-title">
             <h1 id="project-title" className="pt-heading">
