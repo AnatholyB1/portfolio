@@ -227,10 +227,10 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 13-13-PLAN.md — Instantané, rendu et service d'émission (téléversement upsert:false, SHA-256, RPC, mails)
-- [ ] 13-14-PLAN.md — Onglet Documents du portail client (statuts, remplacés en retrait, téléchargement signé)
-- [ ] 13-15-PLAN.md — Formulaires admin devis, cahier des charges, aperçu de facture
-- [ ] 13-16-PLAN.md — Application en production de la migration (accord propriétaire)
+- [x] 13-13-PLAN.md — Instantané, rendu et service d'émission (téléversement upsert:false, SHA-256, RPC, mails)
+- [x] 13-14-PLAN.md — Onglet Documents du portail client (statuts, remplacés en retrait, téléchargement signé)
+- [x] 13-15-PLAN.md — Formulaires admin devis, cahier des charges, aperçu de facture
+- [x] 13-16-PLAN.md — Application en production de la migration (accord propriétaire)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -352,7 +352,7 @@ Plans:
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
-| 13. Document generation | v2.0 | 12/20 | In Progress|  |
+| 13. Document generation | v2.0 | 16/20 | In Progress|  |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
