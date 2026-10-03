@@ -169,7 +169,7 @@ Plans:
 - [x] 12-04-PLAN.md — Moteur de mails : règles en code, modèles, outbox idempotente
 - [x] 12-05-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
 - [x] 12-06-PLAN.md — Invitation via l'outbox, contrôles partagés, cron quotidien /api/cron/mail
-- [ ] 12-07-PLAN.md — Service de conversion lead -> client (compensation) + action admin
+- [x] 12-07-PLAN.md — Service de conversion lead -> client (compensation) + action admin
 - [x] 12-08-PLAN.md — Services faits (mail de changement d'étape) et onboarding (fait système + mail admin)
 - [x] 12-09-PLAN.md — Services fichiers (URL signées), liens utiles, accord de présentation
 - [x] 12-10-PLAN.md — Couche de lecture RLS (portail, liste et fiche admin, activité)
@@ -303,7 +303,7 @@ Plans:
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
-| 12. Conversion, projects & step engine | v2.0 | 10/22 | In Progress|  |
+| 12. Conversion, projects & step engine | v2.0 | 11/22 | In Progress|  |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
