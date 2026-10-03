@@ -206,9 +206,9 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 13-01-PLAN.md — Socle React-PDF (dépendances, polices embarquées, césure désactivée, montants en centimes, test rendu + extraction)
-- [ ] 13-02-PLAN.md — Migration sv_documents (documents en ajout seul, instantanés admin, bucket privé, RPC d'émission, outbox) + gardes statiques
-- [ ] 13-03-PLAN.md — Contrats de domaine : types et instantanés, identité vendeur gardée, schémas zod, textes FR
+- [x] 13-01-PLAN.md — Socle React-PDF (dépendances, polices embarquées, césure désactivée, montants en centimes, test rendu + extraction)
+- [x] 13-02-PLAN.md — Migration sv_documents (documents en ajout seul, instantanés admin, bucket privé, RPC d'émission, outbox) + gardes statiques
+- [x] 13-03-PLAN.md — Contrats de domaine : types et instantanés, identité vendeur gardée, schémas zod, textes FR
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -352,7 +352,7 @@ Plans:
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
-| 13. Document generation | v2.0 | 0/TBD | Not started | - |
+| 13. Document generation | v2.0 | 3/20 | In Progress|  |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
