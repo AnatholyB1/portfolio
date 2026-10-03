@@ -8,7 +8,13 @@ import { callRpc } from '@/lib/server/rpc';
 import { INVITE_EMAIL_FROM, INVITE_EMAIL_REPLY_TO, buildInviteEmail } from './inviteEmail';
 import { buildStepChangedEmail } from './stepChangedEmail';
 import { buildOnboardingCompletedEmail } from './onboardingCompletedEmail';
-import { buildAdminProjectUrl, buildLoginUrl, buildPortalUrl } from './urls';
+import { buildDocumentIssuedEmail } from './documentIssuedEmail';
+import {
+  buildAdminProjectUrl,
+  buildLoginUrl,
+  buildPortalDocumentsUrl,
+  buildPortalUrl,
+} from './urls';
 import { MAIL_RULES, type MailEvent, type MailTemplate } from './rules';
 
 const TABLE = 'sv_mail_outbox';
@@ -69,6 +75,14 @@ export function buildMail(row: OutboxRow): BuiltMail {
         companyName: str(p.companyName),
         projectTitle: str(p.projectTitle),
         adminUrl: buildAdminProjectUrl(row.project_id ?? ''),
+      });
+      break;
+    case 'document_issued':
+      mail = buildDocumentIssuedEmail({
+        documentLabel: str(p.documentLabel),
+        projectTitle: str(p.projectTitle),
+        revision: typeof p.revision === 'number' ? p.revision : 1,
+        portalUrl: buildPortalDocumentsUrl(),
       });
       break;
     default:
