@@ -57,7 +57,7 @@ export default function SpecV1({ snapshot }: { snapshot: SpecSnapshot }): ReactE
           </View>
         ))}
         <View style={pdfStyles.block}>
-          <SectionHeading>Critères d'acceptation</SectionHeading>
+          <SectionHeading>{"Critères d'acceptation"}</SectionHeading>
           {s.acceptanceCriteria.length === 0 ? (
             <Paragraphs text={EMPTY} />
           ) : (
