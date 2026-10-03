@@ -39,10 +39,10 @@
 
 ### Documents (DOC)
 
-- [ ] **DOC-01**: Les documents (devis, contrat, cahier des charges, PV de recette, facture) sont générés en PDF à partir de modèles versionnés et des données du projet, selon l'étape
-- [ ] **DOC-02**: Chaque PDF émis est figé : octets stockés en écriture unique avec empreinte SHA-256, version du modèle et copie des données utilisées
-- [ ] **DOC-03**: Le client retrouve tous ses documents dans son espace avec leur statut (à signer, signé, payé)
-- [ ] **DOC-04**: Un test automatisé vérifie les mentions légales françaises obligatoires dans le texte extrait de chaque facture et devis
+- [x] **DOC-01**: Les documents (devis, contrat, cahier des charges, PV de recette, facture) sont générés en PDF à partir de modèles versionnés et des données du projet, selon l'étape
+- [x] **DOC-02**: Chaque PDF émis est figé : octets stockés en écriture unique avec empreinte SHA-256, version du modèle et copie des données utilisées
+- [x] **DOC-03**: Le client retrouve tous ses documents dans son espace avec leur statut (à signer, signé, payé)
+- [x] **DOC-04**: Un test automatisé vérifie les mentions légales françaises obligatoires dans le texte extrait de chaque facture et devis
 
 ### Signature électronique (SIGN)
 
@@ -154,10 +154,10 @@
 | MAIL-01 | Phase 12 | Complete |
 | MAIL-02 | Phase 12 | Complete |
 | ADM-01 | Phase 12 | Complete |
-| DOC-01 | Phase 13 | Pending |
-| DOC-02 | Phase 13 | Pending |
-| DOC-03 | Phase 13 | Pending |
-| DOC-04 | Phase 13 | Pending |
+| DOC-01 | Phase 13 | Complete |
+| DOC-02 | Phase 13 | Complete |
+| DOC-03 | Phase 13 | Complete |
+| DOC-04 | Phase 13 | Complete |
 | SIGN-01 | Phase 14 | Pending |
 | SIGN-02 | Phase 14 | Pending |
 | SIGN-03 | Phase 14 | Pending |
