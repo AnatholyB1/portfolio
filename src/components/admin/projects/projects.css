@@ -1,4 +1,88 @@
 /* Styles admin projets (liste 12-15, fiche 12-17). Tokens existants uniquement. */
+
+/* Phase 13 : documents admin (13-12). */
+.pt-admin .pt-doc-expected {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-admin .pt-doc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pt-admin .pt-doc-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pt-admin .pt-doc-preview iframe {
+  width: 100%;
+  height: 720px;
+  border: 1px solid var(--pt-border-strong);
+  background: var(--bg-3);
+}
+@media (max-width: 640px) {
+  .pt-admin .pt-doc-preview iframe {
+    height: 480px;
+  }
+}
+.pt-admin .pt-doc-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-admin .pt-doc-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-doc-replaced {
+  color: var(--ink-dim);
+  border-left: 2px solid var(--line-strong);
+}
+.pt-admin .pt-doc-replaced > :first-child {
+  padding-left: 16px;
+}
+.pt-admin .pt-doc-hash {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  word-break: break-all;
+}
+.pt-admin .pt-doc-snapshot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-admin .pt-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
+.pt-admin .pt-doc-lines {
+  display: grid;
+  grid-template-columns: 1fr 96px 144px 144px 44px;
+  gap: 8px;
+  align-items: center;
+}
 .pt-admin .pt-proj-sort {
   display: inline-flex;
   align-items: center;
