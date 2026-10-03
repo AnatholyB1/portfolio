@@ -1,0 +1,272 @@
+/* Styles projet partagés portail / admin (12-UI-SPEC). Jetons existants uniquement.
+   Tailles 14/16/24/32px, espacements multiples de 4, aucune animation. */
+
+/* ---------- Frise ---------- */
+.pt-root .pt-step-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.pt-root .pt-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 44px;
+  padding: 8px 8px 24px;
+}
+.pt-root .pt-step:last-child {
+  padding-bottom: 8px;
+}
+.pt-root .pt-step::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-strong);
+}
+.pt-root .pt-step:last-child::before {
+  display: none;
+}
+.pt-root .pt-step-marker {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 2px solid var(--ink-faint);
+  background: transparent;
+  color: var(--ink);
+}
+.pt-root .pt-step-done .pt-step-marker {
+  border-color: var(--ink);
+}
+.pt-root .pt-step-current {
+  background: var(--acid-soft);
+  border-radius: 8px;
+}
+.pt-root .pt-step-current .pt-step-marker {
+  border-color: var(--acid);
+  background: var(--acid);
+}
+.pt-root .pt-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.pt-root .pt-step-body p {
+  margin: 0;
+}
+.pt-root .pt-step-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pt-root .pt-step-num {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+}
+.pt-root .pt-step-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-root .pt-step-upcoming .pt-step-name {
+  color: var(--ink-dim);
+}
+.pt-root .pt-step-desc,
+.pt-root .pt-step-date {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-step-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
+
+/* ---------- Qui attend ---------- */
+.pt-root .pt-who {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
+.pt-root .pt-who-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.pt-root .pt-who-body p {
+  margin: 0;
+}
+.pt-root .pt-who-label {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-who-name {
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.pt-root .pt-who-since {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+/* ---------- Onboarding ---------- */
+.pt-root .pt-onb-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  min-width: 0;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
+.pt-root .pt-onb-block legend {
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-root .pt-onb-progress {
+  display: block;
+  width: 100%;
+  height: 4px;
+  border: 0;
+  border-radius: 0;
+  background: var(--line-strong);
+  accent-color: var(--ink);
+}
+.pt-root .pt-onb-progress::-webkit-progress-bar {
+  background: var(--line-strong);
+}
+.pt-root .pt-onb-progress::-webkit-progress-value {
+  background: var(--ink);
+}
+.pt-root .pt-onb-progress::-moz-progress-bar {
+  background: var(--ink);
+}
+.pt-root .pt-onb-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .pt-root .pt-onb-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------- Fichiers ---------- */
+.pt-root .pt-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-root .pt-file-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  width: fit-content;
+}
+.pt-root .pt-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  opacity: 0;
+}
+.pt-root .pt-file-pick:focus-within {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-root .pt-file-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.pt-root .pt-file-progress {
+  flex: 1 1 160px;
+  height: 8px;
+  accent-color: var(--ink);
+}
+.pt-root .pt-file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.pt-root .pt-file-size {
+  font-variant-numeric: tabular-nums;
+}
+.pt-root .pt-file-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+/* ---------- Accord de présentation ---------- */
+.pt-root .pt-consent-quote {
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--ink);
+}
+.pt-root .pt-consent-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.pt-root .pt-consent-check input {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+/* ---------- Transitions ---------- */
+.pt-root .pt-file-pick,
+.pt-root .pt-step-badge {
+  transition: color 150ms ease, border-color 150ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-root .pt-file-pick,
+  .pt-root .pt-step-badge {
+    transition: none;
+  }
+}
