@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const url = () => process.env.SV_TEST_SUPABASE_URL as string;
@@ -208,6 +208,60 @@ export async function makeConvertibleLead(status = 'qualified', opts: LeadRpcOpt
   });
   if (error) throw new Error(`sv_set_lead_status failed: ${error.message}`);
   return lead;
+}
+
+export const DOCUMENTS_BUCKET = 'sv-documents';
+
+const MINIMAL_PDF = Buffer.from(
+  '%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
+    '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
+    '3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n' +
+    'trailer<</Root 1 0 R>>\n%%EOF\n',
+);
+
+/**
+ * Issue a test document through the real storage upload + sv_issue_document RPC
+ * (service role). Documents and snapshots are append-only: they are never cleaned up.
+ */
+export async function issueTestDocument(
+  projectId: string,
+  opts: {
+    docType?: 'quote' | 'contract' | 'spec' | 'acceptance';
+    replaces?: string | null;
+    revision?: number;
+    actor?: string | null;
+  } = {},
+): Promise<{
+  id: string;
+  path: string;
+  result: { document_id: string; revision: number; outbox_ids: string[] };
+}> {
+  const id = randomUUID();
+  const path = `${projectId}/${id}.pdf`;
+  const up = await svc().storage.from(DOCUMENTS_BUCKET).upload(path, MINIMAL_PDF, {
+    upsert: false,
+    contentType: 'application/pdf',
+  });
+  if (up.error) throw new Error(`document upload failed: ${up.error.message}`);
+  const revision = opts.revision ?? 1;
+  const { data, error } = await svc().rpc('sv_issue_document', {
+    p_id: id,
+    p_project_id: projectId,
+    p_doc_type: opts.docType ?? 'quote',
+    p_revision: revision,
+    p_template_version: 'test-1',
+    p_reference: `TEST-${revision}`,
+    p_filename: `Test-${id}.pdf`,
+    p_storage_path: path,
+    p_sha256: createHash('sha256').update(MINIMAL_PDF).digest('hex'),
+    p_size: MINIMAL_PDF.length,
+    p_snapshot: { test: true },
+    p_replaces: opts.replaces ?? null,
+    p_actor: opts.actor ?? null,
+    p_document_label: 'Devis',
+  });
+  if (error) throw new Error(`sv_issue_document failed: ${error.message}`);
+  return { id, path, result: data as { document_id: string; revision: number; outbox_ids: string[] } };
 }
 
 // NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
