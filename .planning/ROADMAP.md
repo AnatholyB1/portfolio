@@ -199,7 +199,28 @@ Plans:
   3. Le client retrouve tous ses documents dans son espace avec leur statut (à signer, signé, payé)
   4. Un test automatisé échoue si une mention légale française obligatoire manque dans le texte extrait d'un devis ou d'une facture
 
-**Plans**: TBD
+**Plans**: 20 plans
+Plans:
+- [ ] 13-01-PLAN.md — Socle React-PDF (dépendances, polices embarquées, césure désactivée, montants en centimes, test rendu + extraction)
+- [ ] 13-02-PLAN.md — Migration sv_documents (documents en ajout seul, instantanés admin, bucket privé, RPC d'émission, outbox) + gardes statiques
+- [ ] 13-03-PLAN.md — Contrats de domaine : types et instantanés, identité vendeur gardée, schémas zod, textes FR
+- [ ] 13-04-PLAN.md — Garde par étape et statut déduit des faits (TDD) + liste fermée SQL
+- [ ] 13-05-PLAN.md — Modèles devis et facture (PROFORMA) + test des mentions légales sur texte extrait (DOC-04)
+- [ ] 13-06-PLAN.md — Règle de mail « document émis » (modèle, clé d'unicité, listes fermées)
+- [ ] 13-07-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
+- [ ] 13-08-PLAN.md — Modèles contrat, cahier des charges, PV de recette + registre versionné + test de rendu
+- [ ] 13-09-PLAN.md — Tests RLS : isolation, ajout seul, stockage en écriture unique, chaîne de remplacement, outbox
+- [ ] 13-10-PLAN.md — Lecture RLS des documents, instantané admin, lien signé et vérification d'empreinte
+- [ ] 13-11-PLAN.md — Identité du vendeur fournie par le propriétaire (déblocage de l'émission)
+- [ ] 13-12-PLAN.md — Composants admin : aperçu puis émission, liste des émis, instantané en lecture seule
+- [ ] 13-13-PLAN.md — Instantané, rendu et service d'émission (téléversement upsert:false, SHA-256, RPC, mails)
+- [ ] 13-14-PLAN.md — Onglet Documents du portail client (statuts, remplacés en retrait, téléchargement signé)
+- [ ] 13-15-PLAN.md — Formulaires admin devis, cahier des charges, aperçu de facture
+- [ ] 13-16-PLAN.md — Application en production de la migration (accord propriétaire)
+- [ ] 13-17-PLAN.md — Actions admin : aperçu, émission, téléchargement, empreinte, instantané
+- [ ] 13-18-PLAN.md — Formulaires contrat et PV, section Documents dans la fiche projet admin
+- [ ] 13-19-PLAN.md — Porte locale, preview Vercel (rendu PDF Linux) et déploiement (accord propriétaire)
+- [ ] 13-20-PLAN.md — Vérification de bout en bout en production (fixture permanente) + statut des relectures
 **UI hint**: yes
 
 ### Phase 14: Electronic signature
