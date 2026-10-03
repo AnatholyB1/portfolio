@@ -10,6 +10,7 @@ export const PRICE_ALLOWED_ZONES: readonly { path: string; reason: string }[] = 
   { path: 'src/app/admin', reason: "Espace admin : l'administrateur gère clients, devis et montants." },
   { path: 'src/app/connexion', reason: "Page de connexion privée : même zone que le portail, hors site public." },
   { path: 'src/app/auth', reason: "Routes d'authentification (callback, confirmation) : zone privée, hors site public." },
+  { path: 'src/app/api/cron', reason: "Tâches planifiées protégées par CRON_SECRET (envoi de la file de mails) : aucune page publique, importent du code serveur." },
   { path: 'src/components/portal', reason: "Composants du portail client, qui afficheront des montants contractuels." },
   { path: 'src/components/admin', reason: "Composants de l'espace admin (tarification, suivi financier)." },
   { path: 'src/lib/server', reason: "Code serveur uniquement : accès base de données et données chiffrées, jamais embarqué côté client." },
