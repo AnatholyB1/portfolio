@@ -37,7 +37,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 
 - [x] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests (completed 2026-10-02)
 - [x] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement (completed 2026-10-02)
-- [ ] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin
+- [x] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin (completed 2026-10-03)
 - [ ] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client
 - [ ] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette
 - [ ] **Phase 15: Stripe payments & invoicing** - Acomptes par étape, webhook vérifié idempotent, factures sans trou et avoirs
@@ -184,7 +184,7 @@ Plans:
 - [x] 12-19-PLAN.md — Page portail /espace-client (héros, qui attend, frise, cartes)
 - [x] 12-20-PLAN.md — Application en production de la migration (accord propriétaire)
 - [x] 12-21-PLAN.md — Texte d'accord (décision propriétaire), CRON_SECRET, preview et déploiement
-- [ ] 12-22-PLAN.md — Vérification de bout en bout en production (fixtures permanentes)
+- [x] 12-22-PLAN.md — Vérification de bout en bout en production (fixtures permanentes)
 **UI hint**: yes
 
 ### Phase 13: Document generation
@@ -303,7 +303,7 @@ Plans:
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
-| 12. Conversion, projects & step engine | v2.0 | 21/22 | In Progress|  |
+| 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
