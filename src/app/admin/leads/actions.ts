@@ -152,6 +152,15 @@ export async function markReturnSeenAction(
   return { status: 'success', message: ADMIN_COPY.returnSeenSuccess };
 }
 
+// Le SIRET correspond-il déjà à un client ? Booléen seul, lecture RLS admin (T-12-51).
+export async function siretExistsAction(siret: string): Promise<{ exists: boolean }> {
+  const { supabase } = await requireAdmin();
+  const digits = typeof siret === 'string' ? siret.replace(/\s/g, '') : '';
+  if (!/^\d{14}$/.test(digits)) return { exists: false };
+  const { data } = await supabase.from('sv_clients').select('id').eq('siret', digits).maybeSingle();
+  return { exists: Boolean(data) };
+}
+
 export type ConvertState = {
   status: 'idle' | 'success' | 'error';
   message?: string;

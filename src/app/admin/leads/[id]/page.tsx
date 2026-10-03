@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, UserPlus } from 'lucide-react';
 import AdminNav from '@/components/admin/AdminNav';
 import AttributionCard from '@/components/admin/leads/AttributionCard';
+import ConvertDialog from '@/components/admin/leads/ConvertDialog';
 import CorrectSourceForm from '@/components/admin/leads/CorrectSourceForm';
 import EraseLeadForm from '@/components/admin/leads/EraseLeadForm';
 import LeadContacts, { type ContactRow } from '@/components/admin/leads/LeadContacts';
@@ -15,6 +16,8 @@ import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
 import { formatDateFr } from '@/lib/admin/format';
+import { OFFER_SLUGS, type OfferSlug } from '@/lib/projects/offers';
+import { PROJECT_COPY } from '@/lib/projects/copy';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -23,6 +26,18 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Détail du lead' };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+// Statuts convertibles (D-03) ; l'autorité reste sv_convert_lead (D-04).
+const CONVERTIBLE = ['qualified', 'rdv', 'quote_sent', 'signed'] as const;
+
+// Offre pressentie : un slug du dernier contact qui correspond à une offre connue.
+function offerFromPayload(payload: unknown): OfferSlug | undefined {
+  if (!payload || typeof payload !== 'object') return undefined;
+  for (const v of Object.values(payload as Record<string, unknown>)) {
+    if (typeof v === 'string' && (OFFER_SLUGS as readonly string[]).includes(v)) return v as OfferSlug;
+  }
+  return undefined;
+}
 
 interface LeadDetail {
   id: string;
@@ -71,12 +86,27 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
       : Promise.resolve({ data: null }),
   ]);
 
+  const { data: convData } = await supabase
+    .from('sv_leads')
+    .select('converted_client_id')
+    .eq('id', id)
+    .maybeSingle();
+  const convertedClientId = (convData as { converted_client_id?: string | null } | null)?.converted_client_id ?? null;
+  const { data: projectData } = convertedClientId
+    ? await supabase.from('sv_projects').select('id').eq('lead_id', id).limit(1).maybeSingle()
+    : { data: null };
+  const projectId = (projectData as { id?: string } | null)?.id ?? null;
+
   const contacts = (contactData ?? []) as unknown as ContactRow[];
   const events = (eventData ?? []) as unknown as EventRow[];
   const notes = (noteData ?? []) as unknown as NoteRow[];
   const previousAt = (previous.data as { created_at?: string } | null)?.created_at ?? null;
 
   const erased = Boolean(lead.erased_at);
+  const isConverted = Boolean(convertedClientId);
+  const canConvert =
+    !erased && !isConverted && (CONVERTIBLE as readonly string[]).includes(lead.status);
+  const latestContact = contacts[contacts.length - 1];
   const erasedEvent = events.find((e) => e.type === 'erased');
   const erasedAt = lead.erased_at ?? erasedEvent?.created_at ?? null;
   const name = erased ? 'Effacé' : lead.contact_nom || lead.contact_email || 'Lead';
@@ -98,6 +128,43 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
             <div className="pt-lead-header">
               <h1 className="pt-heading">{name}</h1>
               <StatusPill leadId={lead.id} status={lead.status} />
+              {isConverted ? (
+                <>
+                  <span className="pt-lead-badge">{PROJECT_COPY.conversion.converted}</span>
+                  {projectId ? (
+                    <Link href={`/admin/projets/${projectId}`} className="pt-btn-text">
+                      {PROJECT_COPY.conversion.viewProject}
+                    </Link>
+                  ) : null}
+                </>
+              ) : null}
+              {canConvert || (isConverted && !erased) ? (
+                <ConvertDialog
+                  leadId={lead.id}
+                  defaultName={lead.contact_nom ?? ''}
+                  defaultEmail={lead.contact_email ?? ''}
+                  defaultOffer={offerFromPayload(latestContact?.payload)}
+                  converted={isConverted}
+                />
+              ) : null}
+              {!erased && !isConverted && lead.status === 'new' ? (
+                <>
+                  <button type="button" className="pt-btn-primary" aria-disabled="true">
+                    <UserPlus size={16} aria-hidden="true" />
+                    {PROJECT_COPY.conversion.trigger}
+                  </button>
+                  <span className="pt-helper">{PROJECT_COPY.conversion.notYetConvertible}</span>
+                </>
+              ) : null}
+              {!erased && !isConverted && lead.status === 'lost' ? (
+                <>
+                  <button type="button" className="pt-btn-primary" aria-disabled="true">
+                    <UserPlus size={16} aria-hidden="true" />
+                    {PROJECT_COPY.conversion.trigger}
+                  </button>
+                  <span className="pt-helper">{PROJECT_COPY.conversion.reopenFirst}</span>
+                </>
+              ) : null}
               {lead.unseen_return ? (
                 <span className="pt-lead-badge">
                   <RotateCcw size={14} aria-hidden="true" />
