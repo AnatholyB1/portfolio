@@ -14,10 +14,13 @@ vi.mock('@/lib/server/leads/admin', () => ({
   markReturnSeen: (...a: unknown[]) => markReturnSeen(...a),
 }));
 
+const convertLead = vi.fn();
+vi.mock('@/lib/server/projects/convert', () => ({ convertLead: (...a: unknown[]) => convertLead(...a) }));
+
 const revalidatePath = vi.fn();
 vi.mock('next/cache', () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
 
-const { setStatusAction, markLostAction, correctSourceAction, eraseLeadAction, markReturnSeenAction } =
+const { convertLeadAction, setStatusAction, markLostAction, correctSourceAction, eraseLeadAction, markReturnSeenAction } =
   await import('./actions');
 
 const ID = '11111111-1111-4111-8111-111111111111';
@@ -163,5 +166,79 @@ describe('markReturnSeenAction', () => {
     const res = await markReturnSeenAction(idle, form({ leadId: ID }));
     expect(res.status).toBe('success');
     expect(markReturnSeen).toHaveBeenCalledWith(ID, 'admin-1');
+  });
+});
+
+describe('convertLeadAction', () => {
+  const fields = {
+    leadId: ID,
+    name: 'Acme',
+    email: 'jean@acme.fr',
+    siret: '55210055400025',
+    company_nom: 'ACME SAS',
+    companySource: 'api',
+    offer: 'site-vitrine',
+    projectTitle: 'Site Acme',
+  };
+  const okRes = { ok: true, clientId: 'c1', projectId: 'p1', clientReused: false, email: 'jean@acme.fr', mailSent: true };
+
+  it('propagates requireAdmin rejection and never calls the service', async () => {
+    requireAdmin.mockRejectedValue(new Error('NOT_FOUND'));
+    await expect(convertLeadAction(idle, form(fields))).rejects.toThrow('NOT_FOUND');
+    expect(convertLead).not.toHaveBeenCalled();
+  });
+
+  it('passes the form and actor to the service', async () => {
+    convertLead.mockResolvedValue(okRes);
+    await convertLeadAction(idle, form(fields));
+    expect(convertLead).toHaveBeenCalledWith(
+      expect.objectContaining({ leadId: ID, offer: 'site-vitrine', company: { nom: 'ACME SAS' } }),
+      { userId: 'admin-1' },
+    );
+  });
+
+  it('success with mail sent', async () => {
+    convertLead.mockResolvedValue(okRes);
+    const res = await convertLeadAction(idle, form(fields));
+    expect(res).toEqual({
+      status: 'success',
+      message: 'Client créé. Invitation envoyée à jean@acme.fr.',
+      projectId: 'p1',
+      mailSent: true,
+      clientReused: false,
+    });
+    expect(revalidatePath).toHaveBeenCalledWith('/admin/leads');
+    expect(revalidatePath).toHaveBeenCalledWith(`/admin/leads/${ID}`);
+    expect(revalidatePath).toHaveBeenCalledWith('/admin/projets');
+  });
+
+  it('success with mail failure shows the warn text', async () => {
+    convertLead.mockResolvedValue({ ...okRes, mailSent: false });
+    const res = await convertLeadAction(idle, form(fields));
+    expect(res.status).toBe('success');
+    expect(res.mailSent).toBe(false);
+    expect(res.message).toMatch(/n'a pas pu partir/);
+  });
+
+  it.each(['role_conflict', 'already_member', 'existing_account'])('%s maps to the e-mail used text', async (code) => {
+    convertLead.mockResolvedValue({ ok: false, code });
+    const res = await convertLeadAction(idle, form(fields));
+    expect(res.status).toBe('error');
+    expect(res.message).toMatch(/^Cette adresse e-mail est déjà utilisée/);
+  });
+
+  it('maps already_converted and not_convertible', async () => {
+    convertLead.mockResolvedValue({ ok: false, code: 'already_converted' });
+    expect((await convertLeadAction(idle, form(fields))).message).toBe('Ce lead est déjà converti en client.');
+    convertLead.mockResolvedValue({ ok: false, code: 'not_convertible' });
+    expect((await convertLeadAction(idle, form(fields))).message).toMatch(/Qualifié/);
+  });
+
+  it('maps unknown errors to a generic error without revalidating', async () => {
+    convertLead.mockResolvedValue({ ok: false, code: 'error' });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const res = await convertLeadAction(idle, form(fields));
+    expect(res.status).toBe('error');
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 });

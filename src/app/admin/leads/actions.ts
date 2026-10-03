@@ -4,6 +4,10 @@ import { revalidatePath } from 'next/cache';
 import { ADMIN_COPY, STATUS_LABELS, type LeadStatus } from '@/lib/admin/leadLabels';
 import { correctionSchema, eraseSchema, lostSchema, statusSchema } from '@/lib/admin/leadSchemas';
 import { requireAdmin } from '@/lib/server/auth/dal';
+import { buildCompany, field } from '@/lib/admin/companyForm';
+import { INVITE_COPY } from '@/lib/admin/inviteSchema';
+import { PROJECT_COPY } from '@/lib/projects/copy';
+import { convertLead } from '@/lib/server/projects/convert';
 import {
   correctLeadSource,
   eraseLead,
@@ -146,4 +150,73 @@ export async function markReturnSeenAction(
   if (!res.ok) return err(ADMIN_COPY.genericError);
   refresh(parsed.data);
   return { status: 'success', message: ADMIN_COPY.returnSeenSuccess };
+}
+
+export type ConvertState = {
+  status: 'idle' | 'success' | 'error';
+  message?: string;
+  projectId?: string;
+  mailSent?: boolean;
+  clientReused?: boolean;
+};
+
+function convertErr(message: string): ConvertState {
+  return { status: 'error', message };
+}
+
+// Conversion lead -> client : requireAdmin() d'abord (D-01, D-22).
+export async function convertLeadAction(
+  _prev: ConvertState,
+  formData: FormData,
+): Promise<ConvertState> {
+  const { user } = await requireAdmin();
+
+  const leadId = str(formData, 'leadId');
+  const siretRaw = field(formData, 'siret');
+  const result = await convertLead(
+    {
+      leadId,
+      name: field(formData, 'name'),
+      email: field(formData, 'email'),
+      siret: siretRaw,
+      company: buildCompany(formData),
+      companySource: field(formData, 'companySource') === 'manual' ? 'manual' : 'api',
+      offer: field(formData, 'offer'),
+      projectTitle: field(formData, 'projectTitle'),
+    },
+    { userId: user.id },
+  );
+
+  if (result.ok) {
+    revalidatePath('/admin/leads');
+    revalidatePath(`/admin/leads/${leadId}`);
+    revalidatePath('/admin/projets');
+    return {
+      status: 'success',
+      message: result.mailSent
+        ? PROJECT_COPY.conversion.success(result.email)
+        : PROJECT_COPY.conversion.mailFailed,
+      projectId: result.projectId,
+      mailSent: result.mailSent,
+      clientReused: result.clientReused,
+    };
+  }
+
+  switch (result.code) {
+    case 'role_conflict':
+    case 'already_member':
+    case 'existing_account':
+      return convertErr(PROJECT_COPY.conversion.emailTaken);
+    case 'already_converted':
+      return convertErr(PROJECT_COPY.conversion.alreadyConverted);
+    case 'not_convertible':
+      return convertErr(PROJECT_COPY.conversion.statusNotAllowed);
+    case 'invalid':
+      return convertErr(
+        /^\d{14}$/.test(siretRaw.replace(/\s/g, '')) ? INVITE_COPY.generic : INVITE_COPY.siretInvalid,
+      );
+    default:
+      console.error(`[admin/convert] ${result.code}`);
+      return convertErr(INVITE_COPY.generic);
+  }
 }
