@@ -1,0 +1,39 @@
+/* Styles admin projets (liste 12-15, fiche 12-17). Tokens existants uniquement. */
+.pt-admin .pt-proj-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+}
+.pt-admin .pt-proj-sort:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-proj-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pt-admin .pt-proj-days {
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-proj-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.pt-admin .pt-proj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.pt-admin .pt-proj-meta {
+  font-size: 14px;
+  color: var(--ink-dim);
+}

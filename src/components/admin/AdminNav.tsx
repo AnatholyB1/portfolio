@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import './leads/leads.css';
 
-export type AdminNavItem = 'clients' | 'leads' | 'entonnoir';
+export type AdminNavItem = 'clients' | 'leads' | 'projets' | 'entonnoir';
 
 const ITEMS: { key: AdminNavItem; href: string; label: string }[] = [
   { key: 'clients', href: '/admin', label: 'Clients' },
   { key: 'leads', href: '/admin/leads', label: 'Leads' },
+  { key: 'projets', href: '/admin/projets', label: 'Projets' },
   { key: 'entonnoir', href: '/admin/entonnoir', label: 'Entonnoir' },
 ];
 
