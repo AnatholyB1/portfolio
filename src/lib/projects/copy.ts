@@ -136,4 +136,101 @@ export const PROJECT_COPY = {
     resetFilters: 'Réinitialiser les filtres',
     navLabel: 'Projets',
   },
+  // Phase 13 : documents. Aucun prix ici, les libellés de prix vivent dans documents/types.ts.
+  documents: {
+    nav: {
+      project: 'Projet',
+      documents: 'Documents',
+      payments: 'Paiements (bientôt)',
+    },
+    portal: {
+      title: 'Documents',
+      emptyHeading: 'Aucun document pour le moment',
+      emptyBody:
+        "Votre devis, votre contrat et vos autres documents apparaîtront ici dès qu'ils seront émis. Vous recevrez un e-mail à chaque nouveau document.",
+      caption: (title: string) => `Documents du projet ${title}`,
+      columns: {
+        document: 'Document',
+        issuedOn: 'Émis le',
+        version: 'Version',
+        status: 'Statut',
+        action: 'Action',
+      },
+      version: (n: number) => `Version ${n}`,
+      replacedBy: (n: number, date: string) => `Remplacé par la version ${n} du ${date}`,
+      download: 'Télécharger',
+      preparing: 'Préparation…',
+      downloadFailed:
+        "Le téléchargement n'a pas pu démarrer. Réessayez dans un instant ; si le problème continue, écrivez-nous.",
+    },
+    admin: {
+      title: 'Documents',
+      noExpected: 'Aucun document attendu à cette étape.',
+      noIssued: 'Aucun document émis pour ce projet.',
+      toIssue: 'À émettre',
+      issuedVersion: (n: number) => `Émis, version ${n}`,
+      generate: 'Générer',
+      replace: 'Remplacer',
+      preview: 'Aperçu',
+      previewing: "Génération de l'aperçu…",
+      issue: 'Émettre le document',
+      issueHelper:
+        "Vérifiez l'aperçu. Une fois émis, le document ne peut plus être modifié, seulement remplacé.",
+      previewBanner: "Aperçu non conservé. Ce fichier n'est pas celui qui sera émis.",
+      openPreview: "Ouvrir l'aperçu dans un nouvel onglet",
+      confirmTitle: (label: string) => `Émettre ${label} ?`,
+      confirmBody:
+        'Le document sera figé, visible par le client dans son espace, et un e-mail lui sera envoyé.',
+      confirmReplace: (n: number) => `Il remplacera la version ${n}, qui restera consultable.`,
+      confirm: "Confirmer l'émission",
+      issuing: 'Émission en cours…',
+      cancel: 'Annuler',
+      success: 'Document émis. Le client a été notifié par e-mail.',
+      alreadyIssued: 'Ce document est déjà émis.',
+      mailFailed:
+        "Document émis. L'e-mail n'a pas pu partir immédiatement, il sera renvoyé automatiquement.",
+      validationSummary: 'Corrigez les champs indiqués puis relancez l\'aperçu.',
+      needQuote: "Émettez d'abord le devis.",
+      needSpec: "Émettez d'abord le cahier des charges.",
+      wrongStep: "Ce document ne peut pas être émis à l'étape actuelle.",
+      signedNoReplace:
+        'Un document signé ne peut pas être remplacé. Révoquez d\'abord la signature depuis le journal des faits.',
+      concurrent:
+        "Un autre document vient d'être émis entre-temps. Rechargez la page puis relancez l'aperçu.",
+      sellerNotConfigured:
+        "L'identité du vendeur n'est pas encore renseignée. L'émission reste bloquée jusqu'à sa saisie.",
+      issueFailed:
+        "Le document n'a pas pu être émis. Rien n'a été envoyé au client. Réessayez ; si l'erreur persiste, contactez le support technique.",
+      previewFailed: "L'aperçu n'a pas pu être généré. Vérifiez les champs puis réessayez.",
+      invoiceTitle: 'Facture (aperçu uniquement)',
+      invoiceHelper:
+        "L'émission des factures arrive avec le module de paiement. L'aperçu porte la mention PROFORMA et n'est pas conservé.",
+      contractHelper: 'Les clauses sont fixes. Les montants viennent du devis émis.',
+      specGoalHelper: 'Prérempli depuis le questionnaire du client',
+      specCriteriaHelper:
+        'Un critère par ligne. Ils seront repris tels quels dans le PV de recette.',
+      reservationsHelper: "Laissez vide s'il n'y a aucune réserve.",
+      issuedCaption: 'Documents émis',
+      columns: {
+        model: 'Modèle',
+        hash: 'Empreinte SHA-256',
+        actions: 'Actions',
+      },
+      viewData: 'Voir les données',
+      viewHash: "Voir l'empreinte",
+      download: 'Télécharger',
+    },
+    snapshot: {
+      title: "Données figées à l'émission",
+      meta: (v: string, date: string, size: string) => `Modèle ${v} · émis le ${date} · ${size}`,
+      copyHash: "Copier l'empreinte",
+      copied: 'Copié',
+      readOnly: 'Lecture seule. Pour corriger, émettez une nouvelle version.',
+      raw: 'Données brutes (JSON)',
+      verify: "Vérifier l'empreinte",
+      verifyOk: "L'empreinte correspond au fichier stocké.",
+      verifyKo:
+        "L'empreinte ne correspond pas au fichier stocké. Ne diffusez pas ce document et prévenez le support technique.",
+    },
+  },
 } as const;
