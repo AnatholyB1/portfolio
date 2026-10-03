@@ -234,11 +234,11 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 13-17-PLAN.md — Actions admin : aperçu, émission, téléchargement, empreinte, instantané
+- [x] 13-17-PLAN.md — Actions admin : aperçu, émission, téléchargement, empreinte, instantané
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 13-18-PLAN.md — Formulaires contrat et PV, section Documents dans la fiche projet admin
+- [x] 13-18-PLAN.md — Formulaires contrat et PV, section Documents dans la fiche projet admin
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
@@ -352,7 +352,7 @@ Plans:
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
-| 13. Document generation | v2.0 | 16/20 | In Progress|  |
+| 13. Document generation | v2.0 | 18/20 | In Progress|  |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
