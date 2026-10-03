@@ -212,18 +212,18 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 13-04-PLAN.md — Garde par étape et statut déduit des faits (TDD) + liste fermée SQL
-- [ ] 13-05-PLAN.md — Modèles devis et facture (PROFORMA) + test des mentions légales sur texte extrait (DOC-04)
-- [ ] 13-06-PLAN.md — Règle de mail « document émis » (modèle, clé d'unicité, listes fermées)
-- [ ] 13-07-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
+- [x] 13-04-PLAN.md — Garde par étape et statut déduit des faits (TDD) + liste fermée SQL
+- [x] 13-05-PLAN.md — Modèles devis et facture (PROFORMA) + test des mentions légales sur texte extrait (DOC-04)
+- [x] 13-06-PLAN.md — Règle de mail « document émis » (modèle, clé d'unicité, listes fermées)
+- [x] 13-07-PLAN.md — Branche de test Supabase (accord propriétaire) + push de la migration + helpers RLS
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 13-08-PLAN.md — Modèles contrat, cahier des charges, PV de recette + registre versionné + test de rendu
-- [ ] 13-09-PLAN.md — Tests RLS : isolation, ajout seul, stockage en écriture unique, chaîne de remplacement, outbox
-- [ ] 13-10-PLAN.md — Lecture RLS des documents, instantané admin, lien signé et vérification d'empreinte
-- [ ] 13-11-PLAN.md — Identité du vendeur fournie par le propriétaire (déblocage de l'émission)
-- [ ] 13-12-PLAN.md — Composants admin : aperçu puis émission, liste des émis, instantané en lecture seule
+- [x] 13-08-PLAN.md — Modèles contrat, cahier des charges, PV de recette + registre versionné + test de rendu
+- [x] 13-09-PLAN.md — Tests RLS : isolation, ajout seul, stockage en écriture unique, chaîne de remplacement, outbox
+- [x] 13-10-PLAN.md — Lecture RLS des documents, instantané admin, lien signé et vérification d'empreinte
+- [x] 13-11-PLAN.md — Identité du vendeur fournie par le propriétaire (déblocage de l'émission)
+- [x] 13-12-PLAN.md — Composants admin : aperçu puis émission, liste des émis, instantané en lecture seule
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -352,7 +352,7 @@ Plans:
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
-| 13. Document generation | v2.0 | 3/20 | In Progress|  |
+| 13. Document generation | v2.0 | 12/20 | In Progress|  |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
