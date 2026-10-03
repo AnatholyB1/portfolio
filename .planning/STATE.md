@@ -71,10 +71,11 @@ None.
 ### Blockers/Concerns
 
 - Confirmer le plan Vercel (Hobby vs Pro) : fréquence des crons et droits commerciaux (phase 10)
-- Relecture juridique (CGV, contrat, clause de convention de preuve) avant la phase 14 ; relecture comptable (mentions de facture, TVA) avant la phase 13
+- Relectures professionnelles à planifier : comptable (mentions de facture, franchise en base art. 293 B, mention EI, e-facturation 2027, cohérence avec le numéro de TVA FR58900988460 du propriétaire) et juridique (contrat, clause de convention de preuve avant la phase 14). Risque accepté le 2026-10-03 : textes provisoires utilisables avec de vrais clients, toute correction = nouvelle version de modèle (v2)
 - Vérifier les politiques `gecko_*` actives sur le projet Supabase partagé (phase 10)
 - Résolu en phase 11 : table de rétention dans supabase/migrations/20261003020000_sv_leads_backfill_purge.sql
-- Spike React-PDF sur Turbopack et polices locales en premier plan de la phase 13
+- Résolu en phase 13 : React-PDF sur Turbopack et polices locales (rendu prouvé sur Vercel Linux, 13-19)
+- Revue de code phase 13 : WR-01, WR-02, WR-08 restent ouverts (nécessitent une migration en production : bucket existant public, clé d'unicité outbox non bornée, règle « pas de remplacement d'un document signé » à revérifier dans la RPC) ; voir 13-REVIEW.md
 
 ## Deferred Items
 

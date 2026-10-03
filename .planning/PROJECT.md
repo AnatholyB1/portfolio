@@ -152,4 +152,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 — milestone v2.0 started*
+*Last updated: 2026-10-03 — Phase 13 complete (documents PDF figés: devis, contrat, cahier des charges, PV de recette; facture en aperçu seulement jusqu'à la phase 15)*
