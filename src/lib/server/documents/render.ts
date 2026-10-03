@@ -1,0 +1,18 @@
+// Rendu Node uniquement. Chaque rendu produit des octets différents : l'empreinte est calculée sur le buffer téléversé, jamais sur un nouveau rendu (RESEARCH Pitfall 1).
+import 'server-only';
+import { createHash } from 'node:crypto';
+import { renderToBuffer } from '@react-pdf/renderer';
+import { documentElement } from '@/lib/documents/registry';
+import type { DocumentSnapshot } from '@/lib/documents/types';
+
+export async function renderDocument(
+  snapshot: DocumentSnapshot,
+): Promise<{ buffer: Buffer; sha256: string; size: number }> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- l'élément racine est un <Document> react-pdf
+  const buffer = await renderToBuffer(documentElement(snapshot) as any);
+  return {
+    buffer,
+    sha256: createHash('sha256').update(buffer).digest('hex'),
+    size: buffer.length,
+  };
+}
