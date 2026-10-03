@@ -41,18 +41,18 @@ const VALID: SellerIdentity = {
 };
 
 describe('SELLER_V1', () => {
-  it('is unconfigured with visible placeholders', () => {
-    expect(SELLER_V1.configured).toBe(false);
-    expect(SELLER_V1.siret).toBe(SELLER_PLACEHOLDER);
+  it('is configured with the owner-supplied identity and no placeholder left', () => {
+    expect(SELLER_V1.configured).toBe(true);
+    expect(SELLER_V1.siret).toBe('90098846000011');
+    expect(JSON.stringify(SELLER_V1)).not.toContain(SELLER_PLACEHOLDER);
     expect(SELLER_V1.vatRegime).toBe('franchise');
     expect(SELLER_V1.vatNumber).toBeNull();
     expect(VAT_FRANCHISE_MENTION).toBe('TVA non applicable, art. 293 B du CGI');
   });
-  it('lists placeholders as problems and blocks issuance', () => {
-    const problems = sellerProblems(SELLER_V1);
-    expect(problems.length).toBeGreaterThan(0);
-    expect(isSellerConfigured(SELLER_V1)).toBe(false);
-    expect(isSellerConfigured()).toBe(SELLER_V1.configured && problems.length === 0);
+  it('has no validation problem and unblocks issuance', () => {
+    expect(sellerProblems(SELLER_V1)).toEqual([]);
+    expect(isSellerConfigured(SELLER_V1)).toBe(true);
+    expect(isSellerConfigured()).toBe(true);
   });
 });
 

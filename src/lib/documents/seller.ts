@@ -1,7 +1,7 @@
 // Module pur. Identité du vendeur versionnée, copiée dans chaque snapshot (D-12).
 //
-// Valeurs réelles à fournir par le propriétaire (plan 13-11). Tant que configured=false,
-// l'émission est refusée (13-13) ; l'aperçu reste possible et affiche « À COMPLÉTER ».
+// Valeurs fournies par le propriétaire le 2026-10-03 (13-11). Relecture comptable des mentions
+// encore requise avant usage réel (STATE.md).
 import type { SellerIdentity } from './types';
 
 export const SELLER_PLACEHOLDER = 'À COMPLÉTER';
@@ -15,20 +15,20 @@ export function latePenaltyText(s: SellerIdentity): string {
 
 export const SELLER_V1: SellerIdentity = {
   version: 'v1',
-  configured: false,
+  configured: true,
   tradeName: 'Sèvalys',
-  legalName: SELLER_PLACEHOLDER,
-  legalForm: SELLER_PLACEHOLDER,
+  legalName: 'Anatholy Bricon',
+  legalForm: 'Entrepreneur individuel',
   showEiMention: true,
-  siret: SELLER_PLACEHOLDER,
-  address: { line: SELLER_PLACEHOLDER, postalCode: SELLER_PLACEHOLDER, city: SELLER_PLACEHOLDER },
-  registration: SELLER_PLACEHOLDER,
+  siret: '90098846000011',
+  address: { line: '71 rue de Grand Cour', postalCode: '37550', city: 'Saint-Avertin' },
+  registration: "Entrepreneur individuel dispensé d'immatriculation au RCS et au RM",
   capital: null,
   vatRegime: 'franchise',
   vatNumber: null,
   email: 'contact@sevalys.com',
-  iban: SELLER_PLACEHOLDER,
-  bic: SELLER_PLACEHOLDER,
+  iban: 'FR7628233000011010832334333',
+  bic: 'REVOFRP2',
   paymentTermsDays: 30,
   paymentTermsText: 'Paiement à 30 jours à compter de la date de facture, par virement',
   latePenaltyRate: "trois fois le taux d'intérêt légal",
