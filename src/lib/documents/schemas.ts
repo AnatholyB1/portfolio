@@ -9,7 +9,14 @@ export function stripControlChars(s: string): string {
 }
 
 const uuid = z.string().uuid();
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+/** Date calendaire réelle (rejette 2026-13-45 ou 2026-02-30) : le document émis est immuable (WR-03). */
+const isoDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine((s) => {
+    const d = new Date(`${s}T00:00:00Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+  }, 'Date invalide.');
 const text = (min: number, max: number) =>
   z.string().transform(stripControlChars).pipe(z.string().trim().min(min).max(max));
 const intIn = (min: number, max: number) => z.coerce.number().int().min(min).max(max);

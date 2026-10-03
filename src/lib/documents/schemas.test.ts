@@ -144,3 +144,16 @@ describe('documentInputSchema', () => {
     expect(documentInputSchema.safeParse({ ...ids, docType: 'other' }).success).toBe(false);
   });
 });
+
+describe('calendar date validation (WR-03)', () => {
+  it.each(['2026-13-45', '2026-02-30', '2026-00-10', '2026-04-31', '2025-02-29'])('rejects %s', (d) => {
+    expect(contractInputSchema.safeParse({ ...ids, docType: 'contract', startDate: d }).success).toBe(false);
+    expect(acceptanceInputSchema.safeParse({ ...ids, docType: 'acceptance', deliveryDate: d }).success).toBe(false);
+    expect(
+      invoicePreviewSchema.safeParse({ ...ids, docType: 'invoice', kind: 'deposit', serviceDate: d }).success,
+    ).toBe(false);
+  });
+  it.each(['2026-02-28', '2028-02-29', '2026-12-31'])('accepts %s', (d) => {
+    expect(contractInputSchema.safeParse({ ...ids, docType: 'contract', startDate: d }).success).toBe(true);
+  });
+});
