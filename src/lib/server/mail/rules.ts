@@ -1,15 +1,21 @@
 // Règles d'e-mail en code (D-17) : pas d'éditeur admin. Aucun e-mail prospect (D-19).
 import 'server-only';
 
-export const MAIL_EVENTS = ['client_invited', 'step_changed', 'onboarding_completed'] as const;
+export const MAIL_EVENTS = [
+  'client_invited',
+  'step_changed',
+  'onboarding_completed',
+  'document_issued',
+] as const;
 export type MailEvent = (typeof MAIL_EVENTS)[number];
-export type MailTemplate = 'invite' | 'step_changed' | 'onboarding_completed';
+export type MailTemplate = 'invite' | 'step_changed' | 'onboarding_completed' | 'document_issued';
 export type Rule = { template: MailTemplate; delayMs: number; to: 'client' | 'admin' };
 
 export const MAIL_RULES: Record<MailEvent, Rule> = {
   client_invited: { template: 'invite', delayMs: 0, to: 'client' },
   step_changed: { template: 'step_changed', delayMs: 0, to: 'client' },
   onboarding_completed: { template: 'onboarding_completed', delayMs: 0, to: 'admin' },
+  document_issued: { template: 'document_issued', delayMs: 0, to: 'client' },
 };
 
 export const ADMIN_NOTIFY_EMAIL = 'contact@sevalys.com';
@@ -29,5 +35,8 @@ export const dedupeKey = {
   },
   onboardingCompleted(projectId: string, email: string): string {
     return clamp(`onboarding_completed:${projectId}:${norm(email)}`);
+  },
+  documentIssued(documentId: string, email: string): string {
+    return clamp(`document_issued:${documentId}:${norm(email)}`);
   },
 };

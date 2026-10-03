@@ -10,6 +10,10 @@ export function buildPortalUrl(): string {
   return `${getSiteUrl()}/espace-client`;
 }
 
+export function buildPortalDocumentsUrl(): string {
+  return `${getSiteUrl()}/espace-client/documents`;
+}
+
 export function buildAdminProjectUrl(projectId: string): string {
   return `${getSiteUrl()}/admin/projets/${projectId}`;
 }

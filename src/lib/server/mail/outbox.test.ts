@@ -220,4 +220,14 @@ describe('buildMail', () => {
     } as any);
     expect(m.subject).toBe(INVITE_SUBJECT);
   });
+
+  it('renders the document_issued template', () => {
+    const m = buildMail({
+      ...claimedRow,
+      template: 'document_issued',
+      payload: { documentLabel: 'Contrat', projectTitle: 'Refonte', revision: 2 },
+    } as any);
+    expect(m.subject).toBe('Nouvelle version : Contrat — Refonte');
+    expect(m.text).toContain('/espace-client/documents');
+  });
 });
