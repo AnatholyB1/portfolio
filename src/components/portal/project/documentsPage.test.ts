@@ -35,6 +35,12 @@ describe('client portal documents tab', () => {
     expect(page).toContain('PROJECT_COPY.documents.portal.emptyHeading');
   });
 
+  it('never defaults to a signing status when the bundle fails to load (WR-05)', () => {
+    expect(page).toContain('status: bundle ? d.status : null');
+    expect(list).toContain('copy.statusUnavailable');
+    expect(list).toContain('status: DocumentStatus | null');
+  });
+
   it('has no embedded viewer and navigates to the signed link only on click', () => {
     for (const src of [page, list]) expect(src).not.toContain('<iframe');
     expect(list).toContain('window.location.assign');

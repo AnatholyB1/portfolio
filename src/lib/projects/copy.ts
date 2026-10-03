@@ -160,6 +160,7 @@ export const PROJECT_COPY = {
       replacedBy: (n: number, date: string) => `Remplacé par la version ${n} du ${date}`,
       download: 'Télécharger',
       preparing: 'Préparation…',
+      statusUnavailable: 'Statut indisponible',
       downloadFailed:
         "Le téléchargement n'a pas pu démarrer. Réessayez dans un instant ; si le problème continue, écrivez-nous.",
     },

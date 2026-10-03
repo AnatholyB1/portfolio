@@ -13,7 +13,8 @@ export type DocumentListItem = {
   docType: DocType;
   revision: number;
   issuedAt: string;
-  status: DocumentStatus;
+  /** null = statut indisponible (lecture des faits en échec). */
+  status: DocumentStatus | null;
   replacedBy: { revision: number; issuedAt: string } | null;
 };
 
@@ -81,7 +82,7 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl 
               <td data-label={copy.columns.status}>
                 <span className="pt-doc-badge">
                   {d.status === 'signed' || d.status === 'paid' ? <Check size={14} aria-hidden="true" /> : null}
-                  {STATUS_LABELS[d.status]}
+                  {d.status ? STATUS_LABELS[d.status] : copy.statusUnavailable}
                 </span>
               </td>
               <td data-label={copy.columns.action}>

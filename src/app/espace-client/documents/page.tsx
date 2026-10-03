@@ -40,13 +40,14 @@ export default async function EspaceClientDocumentsPage() {
     const projectDocs = docs.filter((d) => d.projectId === p.id);
     if (projectDocs.length === 0) continue;
     const bundle = await loadProjectBundle(ctx.supabase, p.id, now);
+    // Sans faits, le statut n'est pas calculable : on n'affiche jamais « À signer » par défaut (WR-05).
     const facts = bundle?.facts ?? [];
     const items = sortForDisplay(withStatuses(projectDocs, facts)).map((d) => ({
       id: d.id,
       docType: d.docType,
       revision: d.revision,
       issuedAt: d.issuedAt,
-      status: d.status,
+      status: bundle ? d.status : null,
       replacedBy: d.replacedBy ? { revision: d.replacedBy.revision, issuedAt: d.replacedBy.issuedAt } : null,
     }));
     groups.push({ id: p.id, title: p.title, items });
