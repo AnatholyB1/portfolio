@@ -270,3 +270,48 @@
     transition: none;
   }
 }
+
+/* ---------- Navigation client et sélecteur de projet ---------- */
+.pt-root .pt-client-nav ul {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-root .pt-client-nav a,
+.pt-root .pt-client-nav-off {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.pt-root .pt-client-nav a.pt-client-nav-active {
+  color: var(--ink);
+  border-bottom-color: var(--acid);
+}
+.pt-root .pt-client-nav a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-root .pt-client-nav-off {
+  opacity: 0.6;
+}
+.pt-root .pt-project-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.pt-root .pt-project-select select {
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+}
