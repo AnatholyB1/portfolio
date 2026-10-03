@@ -9,7 +9,7 @@ completed: 2026-10-03
 
 # Phase 12 Plan 22: End-to-end verification on production
 
-Run on https://sevalys.com against the permanent fixture "Test E2E Sèvalys" (SIRET 90098846000011, client id `a9f89b1a-…`). Lead `e184cc42-edcb-4dfa-8264-587ad204d5d1` (address `anatholy+sv-test-p12-202610031045` plus-variant of the fixture inbox), project `9d54a1e5-2746-4c5d-b298-205d7a125926`.
+Run on https://sevalys.com against the permanent fixture "Test E2E Sèvalys" (SIRET 90098846000011, client id `a9f89b1a-…`). Lead `e184cc42-edcb-4dfa-8264-587ad204d5d1` (address `anatholyb+sv-test-p12-202610031045` plus-variant of the fixture inbox), project `9d54a1e5-2746-4c5d-b298-205d7a125926`.
 
 ## How it was run
 
@@ -35,7 +35,7 @@ Run on https://sevalys.com against the permanent fixture "Test E2E Sèvalys" (SI
 
 ## Observations (not blocking)
 
-- The fixture client has two members (`anatholy+sv-test` and the new p12 address), so each step change mails both: distinct recipients, by design.
+- The fixture client has two members (`anatholyb+sv-test` and the new p12 address), so each step change mails both: distinct recipients, by design.
 - The admin fact form showed no visible "out of order" warning when "Acompte reçu" was selected ahead of "Contrat signé" (UI-SPEC says a warning is shown); the step logic itself behaved correctly (stayed at 3). Worth a look in a follow-up.
 - Company legal form still shows the stored code (`1000`) in the portal, and the company address repeats the commune (`…SAINT-JEAN-LE-BLANC, 45650 SAINT-JEAN-LE-BLANC`).
 - The browser's previous client session was signed out at the start of the run; the owner's profile was left signed in as admin.
