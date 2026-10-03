@@ -2,9 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/server/auth/dal';
+import { documentInputSchema, specInputSchema, type DocumentInput } from '@/lib/documents/schemas';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { linkSchema, postFactSchema, revokeFactSchema, uploadRequestSchema } from '@/lib/projects/schemas';
 import { DONE_COPY, STEPS } from '@/lib/projects/steps';
+import { createDocumentDownloadUrl, verifyDocumentHash } from '@/lib/server/documents/download';
+import { issueDocument } from '@/lib/server/documents/issue';
+import { prepareDocument } from '@/lib/server/documents/prepare';
+import { loadDocumentSnapshot } from '@/lib/server/documents/read';
+import { renderDocument } from '@/lib/server/documents/render';
 import { getAccessibleProject } from '@/lib/server/projects/access';
 import { addProjectLink } from '@/lib/server/projects/content';
 import {
@@ -13,6 +19,12 @@ import {
   type FactPostResult,
 } from '@/lib/server/projects/facts';
 import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
+import type {
+  IssueResult,
+  PreviewResult,
+  SnapshotResult,
+  VerifyResult,
+} from '@/components/admin/projects/documents/types';
 import type {
   DownloadResult,
   SimpleResult,
@@ -38,6 +50,7 @@ function refresh(projectId: string) {
   revalidatePath('/admin/projets');
   revalidatePath(`/admin/projets/${projectId}`);
   revalidatePath('/espace-client');
+  revalidatePath('/espace-client/documents');
 }
 
 function mailLine(mail: 'sent' | 'pending' | 'failed' | 'none'): string | undefined {
@@ -175,4 +188,127 @@ export async function adminDownloadAction(fileId: string): Promise<DownloadResul
   const res = await createDownloadUrl(supabase, fileId);
   if (!res.ok) return { ok: false, message: PROJECT_COPY.errors.downloadFailed };
   return { ok: true, url: res.url };
+}
+
+// ---- Phase 13 : documents (D-17). Ordre : requireAdmin, zod, getAccessibleProject, module serveur. ----
+
+const DOC_COPY = PROJECT_COPY.documents.admin;
+const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function fieldErrorsOf(error: { issues: { path: PropertyKey[]; message: string }[] }): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const issue of error.issues) {
+    const key = issue.path.map(String).join('.');
+    if (key && !(key in out)) out[key] = issue.message;
+  }
+  return out;
+}
+
+type ParsedInput =
+  | { success: true; data: DocumentInput }
+  | { success: false; error: { issues: { path: PropertyKey[]; message: string }[] } };
+
+// L'union documentInputSchema ne porte pas la transformation de la spec (acceptanceCriteriaList, valeurs par défaut) :
+// on la rejoue via specInputSchema pour que le constructeur d'instantané reçoive la forme transformée.
+function parseDocumentInput(raw: unknown): ParsedInput {
+  const parsed = documentInputSchema.safeParse(raw);
+  if (!parsed.success) return parsed;
+  if (parsed.data.docType === 'spec') return specInputSchema.safeParse(raw);
+  return { success: true, data: parsed.data };
+}
+
+function checkMessage(code: string): string {
+  switch (code) {
+    case 'wrong_step':
+      return DOC_COPY.wrongStep;
+    case 'missing_quote':
+      return DOC_COPY.needQuote;
+    case 'missing_spec':
+      return DOC_COPY.needSpec;
+    case 'signed_no_replace':
+      return DOC_COPY.signedNoReplace;
+    case 'preview_only':
+      return DOC_COPY.invoiceHelper;
+    default:
+      return PROJECT_COPY.errors.generic;
+  }
+}
+
+export async function previewDocumentAction(raw: unknown): Promise<PreviewResult> {
+  const { supabase } = await requireAdmin();
+  const parsed = parseDocumentInput(raw);
+  if (!parsed.success) {
+    return { ok: false, message: DOC_COPY.validationSummary, fieldErrors: fieldErrorsOf(parsed.error) };
+  }
+  if (!(await getAccessibleProject(supabase, parsed.data.projectId))) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const prep = await prepareDocument(supabase, parsed.data, 'preview', new Date());
+  if (!prep.ok) return { ok: false, message: checkMessage(prep.code) };
+  try {
+    const rendered = await renderDocument(prep.snapshot);
+    return { ok: true, pdfBase64: rendered.buffer.toString('base64') };
+  } catch {
+    console.error('[admin/documents] preview failed');
+    return { ok: false, message: DOC_COPY.previewFailed };
+  }
+}
+
+export async function issueDocumentAction(raw: unknown): Promise<IssueResult> {
+  const { user, supabase } = await requireAdmin();
+  const parsed = parseDocumentInput(raw);
+  if (!parsed.success) {
+    return { ok: false, message: DOC_COPY.validationSummary, fieldErrors: fieldErrorsOf(parsed.error) };
+  }
+  // D-10 : les factures restent en aperçu pendant la phase 13.
+  if (parsed.data.docType === 'invoice') return { ok: false, message: DOC_COPY.invoiceHelper };
+  if (!(await getAccessibleProject(supabase, parsed.data.projectId))) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const prep = await prepareDocument(supabase, parsed.data, 'issue', new Date());
+  if (!prep.ok) return { ok: false, message: checkMessage(prep.code) };
+
+  const res = await issueDocument({
+    documentId: parsed.data.documentId,
+    projectId: parsed.data.projectId,
+    snapshot: prep.snapshot,
+    replaces: prep.replaces,
+    actorId: user.id,
+  });
+  if (res.ok) {
+    refresh(parsed.data.projectId);
+    return { ok: true, outcome: res.outcome, mail: res.mail };
+  }
+  if (res.code === 'invoice_not_issuable') return { ok: false, message: DOC_COPY.invoiceHelper };
+  if (res.code === 'seller_not_configured') return { ok: false, message: DOC_COPY.sellerNotConfigured };
+  if (res.code === 'replaces_mismatch' || res.code === 'revision_mismatch') {
+    return { ok: false, message: DOC_COPY.concurrent };
+  }
+  return { ok: false, message: DOC_COPY.issueFailed };
+}
+
+export async function adminDocumentDownloadAction(documentId: string): Promise<DownloadResult> {
+  const { supabase } = await requireAdmin();
+  const failed = { ok: false as const, message: PROJECT_COPY.documents.portal.downloadFailed };
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) return failed;
+  const res = await createDocumentDownloadUrl(supabase, documentId);
+  return res.ok ? { ok: true, url: res.url } : failed;
+}
+
+export async function verifyDocumentHashAction(documentId: string): Promise<VerifyResult> {
+  const { supabase } = await requireAdmin();
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const res = await verifyDocumentHash(supabase, documentId);
+  return res.ok ? { ok: true, match: res.match } : { ok: false, message: PROJECT_COPY.errors.generic };
+}
+
+export async function loadSnapshotAction(documentId: string): Promise<SnapshotResult> {
+  const { supabase } = await requireAdmin();
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const snapshot = await loadDocumentSnapshot(supabase, documentId);
+  return snapshot ? { ok: true, snapshot } : { ok: false, message: PROJECT_COPY.errors.generic };
 }
