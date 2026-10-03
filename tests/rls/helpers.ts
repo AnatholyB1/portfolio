@@ -249,7 +249,7 @@ export async function issueTestDocument(
     p_project_id: projectId,
     p_doc_type: opts.docType ?? 'quote',
     p_revision: revision,
-    p_template_version: 'test-1',
+    p_template_version: 'v1',
     p_reference: `TEST-${revision}`,
     p_filename: `Test-${id}.pdf`,
     p_storage_path: path,
