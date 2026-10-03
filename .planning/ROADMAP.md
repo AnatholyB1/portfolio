@@ -175,7 +175,7 @@ Plans:
 - [x] 12-10-PLAN.md — Couche de lecture RLS (portail, liste et fiche admin, activité)
 - [ ] 12-11-PLAN.md — Tests RLS : projets, faits, accords, outbox
 - [ ] 12-12-PLAN.md — Tests RLS : stockage privé, conversion atomique
-- [ ] 12-13-PLAN.md — UI partagée : frise, panneau fichiers, styles projet
+- [x] 12-13-PLAN.md — UI partagée : frise, panneau fichiers, styles projet
 - [ ] 12-14-PLAN.md — Dialogue de conversion sur la fiche lead
 - [ ] 12-15-PLAN.md — Tableau admin /admin/projets (filtres étape/blocage, tri)
 - [ ] 12-16-PLAN.md — Actions admin projet (poser/annuler un fait, liens, fichiers)
@@ -303,7 +303,7 @@ Plans:
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
-| 12. Conversion, projects & step engine | v2.0 | 9/22 | In Progress|  |
+| 12. Conversion, projects & step engine | v2.0 | 10/22 | In Progress|  |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
