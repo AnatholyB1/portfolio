@@ -11,6 +11,7 @@ import {
   LinksCard,
   OnboardingSummaryCard,
 } from '@/components/admin/projects/ProjectSideCards';
+import DocumentsPanel from '@/components/admin/projects/documents/DocumentsPanel';
 import FilesPanel from '@/components/portal/project/FilesPanel';
 import Timeline from '@/components/portal/project/Timeline';
 import ShellFooter from '@/components/portal/ShellFooter';
@@ -20,7 +21,12 @@ import SignOutButton from '@/components/portal/SignOutButton';
 import {
   adminConfirmUploadAction,
   adminDownloadAction,
+  adminDocumentDownloadAction,
   adminRequestUploadAction,
+  issueDocumentAction,
+  loadSnapshotAction,
+  previewDocumentAction,
+  verifyDocumentHashAction,
 } from '@/app/admin/projets/actions';
 import { classifyProject } from '@/lib/projects/blocking';
 import { PROJECT_COPY } from '@/lib/projects/copy';
@@ -28,6 +34,7 @@ import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { STEPS } from '@/lib/projects/steps';
 import { requireAdmin } from '@/lib/server/auth/dal';
+import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
 import { loadProjectBundle } from '@/lib/server/projects/read';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -53,6 +60,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   const now = new Date();
   const bundle = await loadProjectBundle(supabase, id, now);
   if (!bundle) notFound();
+  const docsView = await loadAdminDocumentsView(supabase, bundle);
 
   const { project, client, state, facts, notes, onboarding, files, links, consents, lastActivityAt } = bundle;
   const { isDormant, daysWaiting } = classifyProject(state, lastActivityAt, now);
@@ -132,6 +140,18 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                 requestUpload={adminRequestUploadAction}
                 confirmUpload={adminConfirmUploadAction}
                 getDownloadUrl={adminDownloadAction}
+              />
+              <DocumentsPanel
+                projectId={project.id}
+                view={docsView}
+                projectGoal={onboarding?.projectGoal ?? null}
+                actions={{
+                  preview: previewDocumentAction,
+                  issue: issueDocumentAction,
+                  download: adminDocumentDownloadAction,
+                  verify: verifyDocumentHashAction,
+                  loadSnapshot: loadSnapshotAction,
+                }}
               />
             </div>
             <div className="pt-lead-side">
