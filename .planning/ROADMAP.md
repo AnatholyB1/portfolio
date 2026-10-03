@@ -180,7 +180,7 @@ Plans:
 - [x] 12-15-PLAN.md — Tableau admin /admin/projets (filtres étape/blocage, tri)
 - [x] 12-16-PLAN.md — Actions admin projet (poser/annuler un fait, liens, fichiers)
 - [ ] 12-17-PLAN.md — Fiche projet admin /admin/projets/[id]
-- [ ] 12-18-PLAN.md — Actions portail + cartes onboarding et accord
+- [x] 12-18-PLAN.md — Actions portail + cartes onboarding et accord
 - [ ] 12-19-PLAN.md — Page portail /espace-client (héros, qui attend, frise, cartes)
 - [ ] 12-20-PLAN.md — Application en production de la migration (accord propriétaire)
 - [ ] 12-21-PLAN.md — Texte d'accord (décision propriétaire), CRON_SECRET, preview et déploiement
@@ -303,7 +303,7 @@ Plans:
 | 9. SEO & Discovery Wiring | v1.1 | 4/4 | Complete | 2026-10-01 |
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
-| 12. Conversion, projects & step engine | v2.0 | 15/22 | In Progress|  |
+| 12. Conversion, projects & step engine | v2.0 | 16/22 | In Progress|  |
 | 13. Document generation | v2.0 | 0/TBD | Not started | - |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
