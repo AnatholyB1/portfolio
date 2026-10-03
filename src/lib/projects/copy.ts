@@ -231,6 +231,7 @@ export const PROJECT_COPY = {
       verifyOk: "L'empreinte correspond au fichier stocké.",
       verifyKo:
         "L'empreinte ne correspond pas au fichier stocké. Ne diffusez pas ce document et prévenez le support technique.",
+      verifyFailed: 'Vérification impossible pour le moment. Réessayez dans un instant.',
     },
   },
 } as const;

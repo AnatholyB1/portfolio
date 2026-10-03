@@ -114,7 +114,8 @@ export default function SnapshotPanel({ doc, loadSnapshot, verify }: SnapshotPan
         if (!res.ok) setVerdict({ kind: 'error', text: res.message });
         else setVerdict(res.match ? { kind: 'ok', text: COPY.verifyOk } : { kind: 'ko', text: COPY.verifyKo });
       } catch {
-        setVerdict({ kind: 'error', text: COPY.verifyKo });
+        // Échec réseau/serveur : jamais présenté comme un verdict d'altération (WR-07).
+        setVerdict({ kind: 'error', text: COPY.verifyFailed });
       }
     });
   }

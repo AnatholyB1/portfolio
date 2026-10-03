@@ -52,6 +52,12 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
     expect(files.snapshot).not.toContain('<textarea');
   });
 
+  it('SnapshotPanel never shows the tamper verdict on a transport failure (WR-07)', () => {
+    const catchBlock = files.snapshot.slice(files.snapshot.indexOf('} catch {', files.snapshot.indexOf('verify(doc.id)')));
+    expect(catchBlock.slice(0, 300)).toContain('COPY.verifyFailed');
+    expect(catchBlock.slice(0, 300)).not.toContain('COPY.verifyKo');
+  });
+
   it('PDF rendering stays server-side', () => {
     for (const src of Object.values(files)) {
       expect(src).not.toContain('@react-pdf/renderer');
