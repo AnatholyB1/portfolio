@@ -38,7 +38,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests (completed 2026-10-02)
 - [x] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement (completed 2026-10-02)
 - [x] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin (completed 2026-10-03)
-- [ ] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client
+- [x] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client (completed 2026-10-03)
 - [ ] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette
 - [ ] **Phase 15: Stripe payments & invoicing** - Acomptes par étape, webhook vérifié idempotent, factures sans trou et avoirs
 - [ ] **Phase 16: Mailing automation completion** - Relances automatiques, rebonds/plaintes, désinscription, flux séparés
@@ -246,7 +246,7 @@ Plans:
 
 **Wave 8** *(blocked on Wave 7 completion)*
 
-- [ ] 13-20-PLAN.md — Vérification de bout en bout en production (fixture permanente) + statut des relectures
+- [x] 13-20-PLAN.md — Vérification de bout en bout en production (fixture permanente) + statut des relectures
 
 **UI hint**: yes
 
@@ -352,7 +352,7 @@ Plans:
 | 10. Foundation, auth & isolation | v2.0 | 13/13 | Complete    | 2026-10-02 |
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
-| 13. Document generation | v2.0 | 19/20 | In Progress|  |
+| 13. Document generation | v2.0 | 20/20 | Complete   | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
