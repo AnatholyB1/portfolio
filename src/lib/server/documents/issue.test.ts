@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const S = vi.hoisted(() => ({
   upload: vi.fn(),
+  remove: vi.fn(),
   existing: { data: null as any, error: null as any },
   render: vi.fn(),
   rpc: vi.fn(),
@@ -12,7 +13,7 @@ const S = vi.hoisted(() => ({
 vi.mock('server-only', () => ({}));
 vi.mock('@/lib/supabase/admin', () => ({
   createSupabaseAdminClient: () => ({
-    storage: { from: () => ({ upload: S.upload }) },
+    storage: { from: () => ({ upload: S.upload, remove: S.remove }) },
     from: () => {
       const b: any = {};
       b.select = () => b;
@@ -53,6 +54,7 @@ beforeEach(() => {
   S.existing = { data: null, error: null };
   S.render.mockResolvedValue({ buffer: BUF, sha256: 'abc123', size: BUF.length });
   S.upload.mockResolvedValue({ error: null });
+  S.remove.mockResolvedValue({ error: null });
   S.rpc.mockResolvedValue({ ok: true, data: { outbox_ids: [] } });
   S.send.mockResolvedValue('sent');
   errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -186,5 +188,54 @@ describe('issueDocument failures', () => {
       expect(text).not.toContain('@');
     }
     expect(errSpy).toHaveBeenCalled();
+  });
+});
+
+describe('issueDocument orphan cleanup (CR-01)', () => {
+  it.each(['sv_document_replaces_mismatch', 'sv_document_revision_mismatch', 'sv_other'])(
+    'removes the uploaded object when the rpc fails with %s',
+    async (code) => {
+      S.rpc.mockResolvedValue({ ok: false, code });
+      const r = await issueDocument(args());
+      expect(r.ok).toBe(false);
+      expect(S.remove).toHaveBeenCalledTimes(1);
+      expect(S.remove).toHaveBeenCalledWith([`${PID}/${DID}.pdf`]);
+    },
+  );
+  it('keeps the object on already_issued', async () => {
+    S.rpc.mockResolvedValue({ ok: false, code: 'sv_document_already_issued' });
+    expect(await issueDocument(args())).toMatchObject({ ok: true, outcome: 'already_issued' });
+    expect(S.remove).not.toHaveBeenCalled();
+  });
+  it('removes the object when the rpc throws', async () => {
+    S.rpc.mockRejectedValue(new Error('network'));
+    expect(await issueDocument(args())).toEqual({ ok: false, code: 'error' });
+    expect(S.remove).toHaveBeenCalledWith([`${PID}/${DID}.pdf`]);
+  });
+  it('does not remove anything on success or when upload failed', async () => {
+    await issueDocument(args());
+    S.upload.mockResolvedValue({ error: { message: 'x' } });
+    await issueDocument(args());
+    expect(S.remove).not.toHaveBeenCalled();
+  });
+  it('a cleanup failure never changes the result', async () => {
+    S.rpc.mockResolvedValue({ ok: false, code: 'sv_other' });
+    S.remove.mockRejectedValue(new Error('x'));
+    expect(await issueDocument(args())).toEqual({ ok: false, code: 'error' });
+  });
+  it('retry with the same id works once the failed attempt was cleaned up', async () => {
+    const stored = new Set<string>();
+    S.upload.mockImplementation(async (path: string) => {
+      if (stored.has(path)) return { error: { message: 'Duplicate' } };
+      stored.add(path);
+      return { error: null };
+    });
+    S.remove.mockImplementation(async (paths: string[]) => {
+      paths.forEach((p) => stored.delete(p));
+      return { error: null };
+    });
+    S.rpc.mockResolvedValueOnce({ ok: false, code: 'sv_document_revision_mismatch' });
+    expect(await issueDocument(args())).toEqual({ ok: false, code: 'revision_mismatch' });
+    expect(await issueDocument(args())).toMatchObject({ ok: true, outcome: 'issued' });
   });
 });

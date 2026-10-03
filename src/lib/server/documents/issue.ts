@@ -43,6 +43,19 @@ async function sendOutbox(ids: string[]): Promise<Mail> {
   }
 }
 
+/** Suppression au mieux de l'objet téléversé (service_role) ; ne lève jamais. */
+async function removeOrphan(
+  admin: ReturnType<typeof createSupabaseAdminClient>,
+  path: string | null,
+): Promise<void> {
+  if (!path) return;
+  try {
+    await admin.storage.from(SV_DOCUMENTS_BUCKET).remove([path]);
+  } catch {
+    console.error('[documents/issue] cleanup failed');
+  }
+}
+
 export async function issueDocument(a: {
   documentId: string;
   projectId: string;
@@ -54,6 +67,8 @@ export async function issueDocument(a: {
   if (snapshot.docType === 'invoice') return { ok: false, code: 'invoice_not_issuable' };
   if (!isSellerConfigured(snapshot.seller)) return { ok: false, code: 'seller_not_configured' };
 
+  // Objet téléversé et non encore rattaché à une ligne : à retirer si l'émission échoue (CR-01).
+  let orphanPath: string | null = null;
   try {
     const rendered = await renderDocument(snapshot);
     const path = `${a.projectId}/${a.documentId}.pdf`;
@@ -77,6 +92,7 @@ export async function issueDocument(a: {
       console.error('[documents/issue] upload_failed');
       return { ok: false, code: 'upload_failed' };
     }
+    orphanPath = path;
 
     const rpc = await callRpc<{ outbox_ids?: string[] | null }>('documents/issue', 'sv_issue_document', {
       p_id: a.documentId,
@@ -95,8 +111,14 @@ export async function issueDocument(a: {
       p_document_label: DOC_LABELS[snapshot.docType],
     });
     if (!rpc.ok) {
+      if (rpc.code !== 'sv_document_already_issued') {
+        await removeOrphan(admin, orphanPath);
+        orphanPath = null;
+      }
       switch (rpc.code) {
         case 'sv_document_already_issued':
+          // L'objet appartient à la ligne existante : ne jamais le supprimer.
+          orphanPath = null;
           return { ok: true, outcome: 'already_issued', documentId: a.documentId, mail: 'none' };
         case 'sv_document_replaces_mismatch':
           return { ok: false, code: 'replaces_mismatch' };
@@ -107,6 +129,7 @@ export async function issueDocument(a: {
       }
     }
 
+    orphanPath = null; // ligne créée : l'objet est référencé.
     const raw = rpc.data?.outbox_ids;
     const ids = Array.isArray(raw) ? raw.filter((x): x is string => typeof x === 'string') : [];
     // Un échec d'envoi n'annule jamais l'émission (D-04) : le cron reprend le reste.
@@ -114,6 +137,7 @@ export async function issueDocument(a: {
     return { ok: true, outcome: 'issued', documentId: a.documentId, mail };
   } catch {
     console.error('[documents/issue] failed');
+    if (orphanPath) await removeOrphan(createSupabaseAdminClient(), orphanPath);
     return { ok: false, code: 'error' };
   }
 }

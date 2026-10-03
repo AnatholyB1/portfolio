@@ -126,6 +126,7 @@ export default function PreviewIssuePanel({
         if (!res.ok) {
           setMsg({ kind: 'error', text: res.message });
           if (res.fieldErrors) onFieldErrors?.(res.fieldErrors);
+          setDocumentId(crypto.randomUUID()); // un nouvel essai ne doit pas réutiliser l'id (CR-01)
           return;
         }
         setConfirming(false);
@@ -144,6 +145,7 @@ export default function PreviewIssuePanel({
         setTimeout(() => msgRef.current?.focus(), 0);
       } catch {
         setMsg({ kind: 'error', text: COPY.issueFailed });
+        setDocumentId(crypto.randomUUID());
       } finally {
         setMode(null);
       }
