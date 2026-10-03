@@ -7,8 +7,11 @@ const files = {
   preview: read('./documents/PreviewIssuePanel.tsx'),
   list: read('./documents/IssuedDocumentsList.tsx'),
   snapshot: read('./documents/SnapshotPanel.tsx'),
+  quote: read('./documents/QuoteForm.tsx'),
+  spec: read('./documents/SpecForm.tsx'),
+  invoice: read('./documents/InvoicePreviewForm.tsx'),
 };
-const tsx = [files.preview, files.list, files.snapshot];
+const tsx = Object.values(files).filter((src) => src !== files.types);
 
 describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', () => {
   it('has no service client, GSAP, cursor or HTML injection', () => {
@@ -47,6 +50,32 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
   });
 
   it('PDF rendering stays server-side', () => {
-    for (const src of Object.values(files)) expect(src).not.toContain('@react-pdf/renderer');
+    for (const src of Object.values(files)) {
+      expect(src).not.toContain('@react-pdf/renderer');
+      expect(src).not.toContain('@/lib/server');
+    }
+  });
+
+  it('forms plug into PreviewIssuePanel with a dirtyKey', () => {
+    for (const src of [files.quote, files.spec, files.invoice]) {
+      expect(src).toContain('<PreviewIssuePanel');
+      expect(src).toContain('dirtyKey');
+    }
+  });
+
+  it('InvoicePreviewForm is preview-only (D-10, T-13-54)', () => {
+    expect(files.invoice).toContain('canIssue={false}');
+    expect(files.invoice).not.toContain('Émettre');
+  });
+
+  it('SpecForm prefills from the project goal and caps at 4000', () => {
+    expect(files.spec).toContain('projectGoal');
+    expect(files.spec).toContain('4000');
+  });
+
+  it('QuoteForm guards 30 lines and sends cents only (T-13-53)', () => {
+    expect(files.quote).toContain('MAX_LINES = 30');
+    expect(files.quote).toContain('toCents(');
+    expect(files.quote).not.toContain('Intl.NumberFormat');
   });
 });
