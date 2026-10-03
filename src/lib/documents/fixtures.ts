@@ -4,11 +4,14 @@ import { quoteTotals } from "./money";
 import { SELLER_V1 } from "./seller";
 import {
   buildReference,
+  type AcceptanceSnapshot,
   type ClientParty,
+  type ContractSnapshot,
   type InvoiceSnapshot,
   type QuoteLine,
   type QuoteSnapshot,
   type SellerIdentity,
+  type SpecSnapshot,
 } from "./types";
 
 export const sampleSeller: SellerIdentity = {
@@ -128,5 +131,91 @@ export function sampleInvoiceSnapshot(opts?: {
     orderNumber: null,
     operationNature: "Prestation de services",
     deliveryAddress: client.billingDiffers ? client.address : null,
+  };
+}
+
+export function sampleSpecSnapshot(opts?: {
+  seller?: SellerIdentity;
+  client?: ClientParty;
+}): SpecSnapshot {
+  const issuedOn = "2026-10-14";
+  return {
+    schemaVersion: 1,
+    docType: "spec",
+    templateVersion: "v1",
+    reference: buildReference("spec", SAMPLE_PROJECT.id, issuedOn, 1),
+    revision: 1,
+    issuedOn,
+    seller: opts?.seller ?? sampleSeller,
+    client: opts?.client ?? sampleClient(),
+    project: SAMPLE_PROJECT,
+    sections: {
+      context:
+        "L'atelier souhaite présenter ses œuvres en ligne.\n\nObjectif : générer des demandes de visite.",
+      scope: "Site vitrine de cinq pages.\n\n- Accueil\n- Galerie\n- Contact",
+      deliverables: "Maquette validée, site en ligne, formation d'une demi-journée.",
+      outOfScope: "Boutique en ligne et rédaction des textes.",
+      planning: "Six semaines à compter de la réception de l'acompte.",
+    },
+    acceptanceCriteria: [
+      "Les cinq pages sont accessibles depuis le menu.",
+      "Le formulaire de contact envoie un message au client.",
+      "Le site s'affiche correctement sur mobile et ordinateur.",
+    ],
+  };
+}
+
+export function sampleContractSnapshot(opts?: {
+  seller?: SellerIdentity;
+  client?: ClientParty;
+}): ContractSnapshot {
+  const quote = sampleQuoteSnapshot(opts);
+  const issuedOn = "2026-10-15";
+  return {
+    schemaVersion: 1,
+    docType: "contract",
+    templateVersion: "v1",
+    reference: buildReference("contract", SAMPLE_PROJECT.id, issuedOn, 1),
+    revision: 1,
+    issuedOn,
+    seller: quote.seller,
+    client: quote.client,
+    project: SAMPLE_PROJECT,
+    quote: {
+      reference: quote.reference,
+      revision: quote.revision,
+      issuedOn: quote.issuedOn,
+      lines: quote.lines,
+      totalCents: quote.totalCents,
+      depositPercent: quote.depositPercent,
+      depositCents: quote.depositCents,
+      balanceCents: quote.balanceCents,
+      leadTime: quote.leadTime,
+    },
+    startDate: "2026-11-02",
+  };
+}
+
+export function sampleAcceptanceSnapshot(opts?: {
+  seller?: SellerIdentity;
+  client?: ClientParty;
+  reservations?: string | null;
+}): AcceptanceSnapshot {
+  const spec = sampleSpecSnapshot(opts);
+  const issuedOn = "2026-12-18";
+  return {
+    schemaVersion: 1,
+    docType: "acceptance",
+    templateVersion: "v1",
+    reference: buildReference("acceptance", SAMPLE_PROJECT.id, issuedOn, 1),
+    revision: 1,
+    issuedOn,
+    seller: spec.seller,
+    client: spec.client,
+    project: SAMPLE_PROJECT,
+    spec: { reference: spec.reference, revision: spec.revision, issuedOn: spec.issuedOn },
+    acceptanceCriteria: [...spec.acceptanceCriteria],
+    deliveryDate: issuedOn,
+    reservations: opts?.reservations ?? null,
   };
 }
