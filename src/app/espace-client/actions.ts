@@ -6,6 +6,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { confirmCompany, saveOnboardingBlock } from '@/lib/server/projects/onboarding';
 import { setPresentationConsent } from '@/lib/server/projects/content';
 import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
+import { createDocumentDownloadUrl } from '@/lib/server/documents/download';
 import type {
   DownloadResult,
   SimpleResult,
@@ -229,5 +230,18 @@ export async function downloadAction(fileId: string): Promise<DownloadResult> {
   if (ctx.status !== 'ok') return { ok: false, message: PROJECT_COPY.errors.downloadFailed };
   const res = await createDownloadUrl(ctx.supabase, String(fileId));
   if (!res.ok) return { ok: false, message: PROJECT_COPY.errors.downloadFailed };
+  return { ok: true, url: res.url };
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Lien signé court (D-15) : autorisation par lecture RLS de la ligne, le lien n'est jamais stocké.
+export async function documentDownloadAction(documentId: string): Promise<DownloadResult> {
+  const failure = { ok: false as const, message: PROJECT_COPY.documents.portal.downloadFailed };
+  const ctx = await requireClient();
+  if (ctx.status !== 'ok') return failure;
+  if (typeof documentId !== 'string' || !UUID_RE.test(documentId)) return failure;
+  const res = await createDocumentDownloadUrl(ctx.supabase, documentId);
+  if (!res.ok) return failure;
   return { ok: true, url: res.url };
 }
