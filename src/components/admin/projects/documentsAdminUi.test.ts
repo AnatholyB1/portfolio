@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const read = (rel: string) => readFileSync(new URL(rel, import.meta.url), 'utf8');
@@ -10,6 +10,9 @@ const files = {
   quote: read('./documents/QuoteForm.tsx'),
   spec: read('./documents/SpecForm.tsx'),
   invoice: read('./documents/InvoicePreviewForm.tsx'),
+  contract: read('./documents/ContractForm.tsx'),
+  acceptance: read('./documents/AcceptanceForm.tsx'),
+  panel: read('./documents/DocumentsPanel.tsx'),
 };
 const tsx = Object.values(files).filter((src) => src !== files.types);
 
@@ -57,7 +60,7 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
   });
 
   it('forms plug into PreviewIssuePanel with a dirtyKey', () => {
-    for (const src of [files.quote, files.spec, files.invoice]) {
+    for (const src of [files.quote, files.spec, files.invoice, files.contract, files.acceptance]) {
       expect(src).toContain('<PreviewIssuePanel');
       expect(src).toContain('dirtyKey');
     }
@@ -77,5 +80,28 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
     expect(files.quote).toContain('MAX_LINES = 30');
     expect(files.quote).toContain('toCents(');
     expect(files.quote).not.toContain('Intl.NumberFormat');
+  });
+
+  it('ContractForm has no editable clause (D-07)', () => {
+    expect(files.contract).not.toContain('<textarea');
+    expect(files.contract).toContain("docType: 'contract'");
+  });
+
+  it('AcceptanceForm requires a delivery date and caps reservations at 2000 (D-09)', () => {
+    expect(files.acceptance).toContain('maxLength={2000}');
+    expect(files.acceptance).toContain('deliveryDate');
+    expect(files.acceptance).toContain("docType: 'acceptance'");
+  });
+
+  it('DocumentsPanel only opens forms on click and never generates by itself (D-01, T-13-66)', () => {
+    expect(files.panel).toContain('COPY.generate');
+    expect(files.panel).toContain('noExpected');
+    expect(files.panel).not.toContain('actions.preview(');
+    expect(files.panel).not.toContain('actions.issue(');
+    expect(files.panel).not.toContain('useEffect');
+  });
+
+  it('has no transverse documents page (D-16)', () => {
+    expect(existsSync(new URL('../../../app/admin/documents', import.meta.url))).toBe(false);
   });
 });
