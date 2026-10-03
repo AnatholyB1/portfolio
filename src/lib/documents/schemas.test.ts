@@ -157,3 +157,22 @@ describe('calendar date validation (WR-03)', () => {
     expect(contractInputSchema.safeParse({ ...ids, docType: 'contract', startDate: d }).success).toBe(true);
   });
 });
+
+describe('strict numeric fields (WR-04)', () => {
+  const ok = (o: Record<string, unknown>) => quoteInputSchema.safeParse(quote(o)).success;
+  it.each(['', null, true, '1e3', '0x10', '12', NaN])('rejects %j as unitPriceCents', (v) => {
+    expect(ok({ lines: [{ ...line, unitPriceCents: v }] })).toBe(false);
+  });
+  it.each(['', null, '30'])('rejects %j as depositPercent (default only when absent)', (v) => {
+    expect(ok({ depositPercent: v })).toBe(false);
+  });
+  it('rejects empty quantity and validityDays', () => {
+    expect(ok({ lines: [{ ...line, quantity: '' }] })).toBe(false);
+    expect(ok({ validityDays: null })).toBe(false);
+  });
+  it('applies defaults only for undefined', () => {
+    const r = quoteInputSchema.parse(quote({ depositPercent: undefined, validityDays: undefined }));
+    expect(r.depositPercent).toBe(30);
+    expect(r.validityDays).toBe(30);
+  });
+});

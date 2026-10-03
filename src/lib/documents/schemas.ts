@@ -19,7 +19,8 @@ const isoDate = z
   }, 'Date invalide.');
 const text = (min: number, max: number) =>
   z.string().transform(stripControlChars).pipe(z.string().trim().min(min).max(max));
-const intIn = (min: number, max: number) => z.coerce.number().int().min(min).max(max);
+// Strict (WR-04) : pas de coercition, "" / null / true ne deviennent jamais 0. Les formulaires envoient des nombres.
+const intIn = (min: number, max: number) => z.number().int().min(min).max(max);
 
 const base = <T extends string>(docType: T) => ({
   projectId: uuid,
