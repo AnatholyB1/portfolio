@@ -100,7 +100,7 @@ export function lintMigration(file: string, rawSql: string): string[] {
   // Rule 6: every public.sv_*_events table is an immutable journal: row-level
   // (update/delete) and truncate deny triggers calling sv_private.deny_mutation.
   // Phase 12 adds append-only tables that are not named *_events.
-  const APPEND_ONLY_TABLES = ['sv_project_facts', 'sv_project_fact_notes', 'sv_project_consents'];
+  const APPEND_ONLY_TABLES = ['sv_project_facts', 'sv_project_fact_notes', 'sv_project_consents', 'sv_project_documents', 'sv_document_snapshots'];
   const immutable = new Set<string>();
   for (const m of sql.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?public\.(sv_\w+_events)\b/gi)) {
     immutable.add(m[1]);
