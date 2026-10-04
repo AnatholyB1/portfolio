@@ -1,9 +1,10 @@
 ---
 phase: 15
 slug: stripe-payments-invoicing
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
+reviewed_at: 2026-10-04
 created: 2026-10-04
 ---
 
