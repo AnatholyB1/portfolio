@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-10-04T21:35:02.497Z"
+last_updated: "2026-10-04T21:49:35.112Z"
 last_activity: 2026-10-04
 progress:
   total_phases: 10
   completed_phases: 5
   total_plans: 113
-  completed_plans: 98
+  completed_plans: 99
   percent: 50
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 15 (Stripe payments & invoicing) — EXECUTING
-Plan: 7 of 21
+Plan: 8 of 21
 Status: Ready to execute
 Last activity: 2026-10-04
 
-Progress: [█████████░] 87%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 15]: [15-02] Invoice builders refuse net<=0 (nothing_to_invoice); billingSummary counts net to pay minus credits
 - [Phase 15]: [15-03] Credit notes carry net_to_pay 0; invoice seq capped 1..9999; migration not applied until 15-08/15-19
 - [Phase 15]: 15-04: sv_stripe_events processed rows frozen by WHEN-clause deny trigger; unprocessed rows accept only guarded processed_at transition
+- [Phase 15]: 15-07: buildMail throws on invalid payment payloads; rules.test closed lists read phase-15 invoices migration
 
 ### Pending Todos
 
@@ -87,7 +88,7 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-04T21:35:02.477Z
+Last session: 2026-10-04T21:49:24.073Z
 Stopped at: Phase 15 UI-SPEC approved
 Resume file: None
 

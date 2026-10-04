@@ -330,7 +330,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 15-06-PLAN.md — Modèles PDF facture v2 et avoir v1, test des mentions étendu
-- [ ] 15-07-PLAN.md — E-mails de paiement (demande, reçu, relances, alertes admin, avoir) et parité SQL/TS
+- [x] 15-07-PLAN.md — E-mails de paiement (demande, reçu, relances, alertes admin, avoir) et parité SQL/TS
 - [ ] 15-08-PLAN.md — Branche de test (accord propriétaire), push des deux migrations, helpers RLS
 - [ ] 15-09-PLAN.md — Checkout, client Stripe, remboursement, route webhook publique
 
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 6/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 7/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
