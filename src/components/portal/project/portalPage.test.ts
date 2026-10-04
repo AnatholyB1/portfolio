@@ -62,13 +62,15 @@ describe('client portal page', () => {
     expect(read('./WhoWaits.tsx')).toContain('href="#onboarding"');
   });
 
-  it('nav links Projet and Documents with aria-current, Paiements stays disabled', () => {
+  it('nav links Projet, Documents and Paiements with aria-current', () => {
     const nav = read('./ClientNav.tsx');
     expect(nav).toContain('href="/espace-client/documents"');
     expect(nav).toContain('aria-current');
     expect(nav).toContain('nav.payments');
     expect(nav).not.toContain('Documents (bientôt)');
-    expect(read('../../../lib/projects/copy.ts')).toContain('Paiements (bientôt)');
+    expect(nav).toContain('href="/espace-client/paiements"');
+    expect(nav).not.toContain('aria-disabled');
+    expect(read('../../../lib/projects/copy.ts')).toContain("payments: 'Paiements'");
     expect(page).toContain('current="projet"');
   });
 });

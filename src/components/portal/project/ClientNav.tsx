@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import './project.css';
 
-// Navigation de l'espace client : Projet et Documents actifs, Paiements à venir.
-export default function ClientNav({ current }: { current: 'projet' | 'documents' }) {
+// Navigation de l'espace client : Projet, Documents et Paiements, trois liens actifs.
+export default function ClientNav({ current }: { current: 'projet' | 'documents' | 'paiements' }) {
   const nav = PROJECT_COPY.documents.nav;
   return (
     <nav aria-label="Espace client" className="pt-client-nav">
@@ -27,9 +27,13 @@ export default function ClientNav({ current }: { current: 'projet' | 'documents'
           </Link>
         </li>
         <li>
-          <span aria-disabled="true" className="pt-client-nav-off">
+          <Link
+            href="/espace-client/paiements"
+            aria-current={current === 'paiements' ? 'page' : undefined}
+            className={current === 'paiements' ? 'pt-client-nav-active' : undefined}
+          >
             {nav.payments}
-          </span>
+          </Link>
         </li>
       </ul>
     </nav>
