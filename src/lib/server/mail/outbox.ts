@@ -15,6 +15,14 @@ import {
   buildDocumentSignedEmail,
 } from './documentSignedEmail';
 import {
+  creditNoteIssuedEmail,
+  paymentAnomalyAdminEmail,
+  paymentReceivedEmail,
+  paymentReminderAdminEmail,
+  paymentReminderEmail,
+  paymentRequestEmail,
+} from './paymentEmails';
+import {
   buildAdminProjectUrl,
   buildLoginUrl,
   buildPortalDocumentsUrl,
@@ -57,6 +65,15 @@ export type BuiltMail = {
 };
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+
+function cents(v: unknown): number {
+  if (typeof v !== 'number' || !Number.isFinite(v)) throw new Error('invalid_amount');
+  return v;
+}
+function oneOf<T extends string>(v: unknown, allowed: readonly T[]): T {
+  if (typeof v === 'string' && (allowed as readonly string[]).includes(v)) return v as T;
+  throw new Error('invalid_payload');
+}
 
 export function buildMail(row: OutboxRow): BuiltMail {
   const p = row.payload ?? {};
@@ -131,6 +148,61 @@ export function buildMail(row: OutboxRow): BuiltMail {
       });
       break;
     }
+    case 'payment_requested':
+      mail = paymentRequestEmail({
+        invoiceNumber: str(p.invoiceNumber),
+        kind: oneOf(p.kind, ['deposit', 'period', 'final'] as const),
+        amountCents: cents(p.amountCents),
+        projectTitle: str(p.projectTitle),
+        periodStart: str(p.periodStart) || null,
+        periodEnd: str(p.periodEnd) || null,
+      });
+      break;
+    case 'payment_received':
+      mail = paymentReceivedEmail({
+        invoiceNumber: str(p.invoiceNumber),
+        amountCents: cents(p.amountCents),
+        projectTitle: str(p.projectTitle),
+        kind: str(p.kind),
+      });
+      break;
+    case 'payment_reminder':
+      mail = paymentReminderEmail({
+        invoiceNumber: str(p.invoiceNumber),
+        amountCents: cents(p.amountCents),
+        projectTitle: str(p.projectTitle),
+        stage: oneOf(p.stage, ['d3', 'd7'] as const),
+      });
+      break;
+    case 'payment_reminder_admin':
+      mail = paymentReminderAdminEmail({
+        invoiceNumber: str(p.invoiceNumber),
+        amountCents: cents(p.amountCents),
+        projectTitle: str(p.projectTitle),
+        clientName: str(p.clientName),
+        issuedOn: str(p.issuedOn),
+        projectId: str(p.projectId) || (row.project_id ?? ''),
+      });
+      break;
+    case 'payment_anomaly_admin':
+      mail = paymentAnomalyAdminEmail({
+        invoiceNumber: str(p.invoiceNumber) || null,
+        amountCents: cents(p.amountCents),
+        expectedCents: typeof p.expectedCents === 'number' ? p.expectedCents : 0,
+        projectTitle: str(p.projectTitle),
+        projectId: str(p.projectId) || (row.project_id ?? ''),
+        detail: str(p.detail),
+      });
+      break;
+    case 'credit_note_issued':
+      mail = creditNoteIssuedEmail({
+        creditNoteNumber: str(p.creditNoteNumber),
+        invoiceNumber: str(p.invoiceNumber),
+        amountCents: cents(p.amountCents),
+        projectTitle: str(p.projectTitle),
+        refundRequested: p.refundRequested === true,
+      });
+      break;
     default:
       throw new Error('unknown_template');
   }

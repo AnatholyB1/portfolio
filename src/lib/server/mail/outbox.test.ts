@@ -279,4 +279,81 @@ describe('buildMail', () => {
     expect(m.subject).toBe('Recette refusée : 1 critère(s) — Site');
     expect(m.text).toContain('SEO : Manquant');
   });
+
+  describe('payment templates', () => {
+    const row = (template: string, payload: Record<string, unknown>) =>
+      ({ ...claimedRow, template, payload }) as any;
+
+    it('renders payment_requested', () => {
+      const m = buildMail(
+        row('payment_requested', {
+          invoiceNumber: 'FA-2026-0001',
+          kind: 'deposit',
+          amountCents: 5000,
+          projectTitle: 'Site',
+        }),
+      );
+      expect(m.subject).toBe("Facture d'acompte FA-2026-0001 — Site");
+    });
+
+    it('renders payment_received, reminders, anomaly and credit note', () => {
+      expect(
+        buildMail(row('payment_received', { invoiceNumber: 'F1', amountCents: 100, projectTitle: 'S' }))
+          .subject,
+      ).toBe('Paiement reçu : facture F1');
+      expect(
+        buildMail(
+          row('payment_reminder', { invoiceNumber: 'F1', amountCents: 100, projectTitle: 'S', stage: 'd7' }),
+        ).subject,
+      ).toBe("Dernier rappel : facture d'acompte F1");
+      expect(
+        buildMail(
+          row('payment_reminder_admin', {
+            invoiceNumber: 'F1',
+            amountCents: 100,
+            projectTitle: 'S',
+            clientName: 'Acme',
+            issuedOn: '2026-10-01',
+            projectId: 'p1',
+          }),
+        ).subject,
+      ).toBe('Acompte impayé depuis 14 jours — S');
+      expect(
+        buildMail(
+          row('payment_anomaly_admin', {
+            invoiceNumber: null,
+            amountCents: 100,
+            expectedCents: 0,
+            projectTitle: 'S',
+            projectId: 'p1',
+            detail: 'x',
+          }),
+        ).subject,
+      ).toBe('Paiement à rapprocher — S');
+      expect(
+        buildMail(
+          row('credit_note_issued', {
+            creditNoteNumber: 'AV1',
+            invoiceNumber: 'F1',
+            amountCents: 100,
+            projectTitle: 'S',
+            refundRequested: true,
+          }),
+        ).subject,
+      ).toBe('Avoir AV1 — S');
+    });
+
+    it('rejects bad amounts, stages and kinds', () => {
+      expect(() => buildMail(row('payment_received', { invoiceNumber: 'F1', projectTitle: 'S' }))).toThrow();
+      expect(() =>
+        buildMail(row('payment_received', { invoiceNumber: 'F1', amountCents: '100', projectTitle: 'S' })),
+      ).toThrow();
+      expect(() =>
+        buildMail(row('payment_reminder', { invoiceNumber: 'F1', amountCents: 1, projectTitle: 'S', stage: 'd9' })),
+      ).toThrow();
+      expect(() =>
+        buildMail(row('payment_requested', { invoiceNumber: 'F1', amountCents: 1, projectTitle: 'S', kind: 'x' })),
+      ).toThrow();
+    });
+  });
 });

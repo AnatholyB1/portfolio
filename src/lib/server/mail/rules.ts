@@ -9,6 +9,12 @@ export const MAIL_EVENTS = [
   'document_signed',
   'document_signed_admin',
   'acceptance_refused',
+  'payment_requested',
+  'payment_received',
+  'payment_reminder',
+  'payment_reminder_admin',
+  'payment_anomaly_admin',
+  'credit_note_issued',
 ] as const;
 export type MailEvent = (typeof MAIL_EVENTS)[number];
 export type MailTemplate =
@@ -18,7 +24,13 @@ export type MailTemplate =
   | 'document_issued'
   | 'document_signed'
   | 'document_signed_admin'
-  | 'acceptance_refused';
+  | 'acceptance_refused'
+  | 'payment_requested'
+  | 'payment_received'
+  | 'payment_reminder'
+  | 'payment_reminder_admin'
+  | 'payment_anomaly_admin'
+  | 'credit_note_issued';
 export type Rule = { template: MailTemplate; delayMs: number; to: 'client' | 'admin' };
 
 export const MAIL_RULES: Record<MailEvent, Rule> = {
@@ -29,6 +41,12 @@ export const MAIL_RULES: Record<MailEvent, Rule> = {
   document_signed: { template: 'document_signed', delayMs: 0, to: 'client' },
   document_signed_admin: { template: 'document_signed_admin', delayMs: 0, to: 'admin' },
   acceptance_refused: { template: 'acceptance_refused', delayMs: 0, to: 'admin' },
+  payment_requested: { template: 'payment_requested', delayMs: 0, to: 'client' },
+  payment_received: { template: 'payment_received', delayMs: 0, to: 'client' },
+  payment_reminder: { template: 'payment_reminder', delayMs: 0, to: 'client' },
+  payment_reminder_admin: { template: 'payment_reminder_admin', delayMs: 0, to: 'admin' },
+  payment_anomaly_admin: { template: 'payment_anomaly_admin', delayMs: 0, to: 'admin' },
+  credit_note_issued: { template: 'credit_note_issued', delayMs: 0, to: 'client' },
 };
 
 export const ADMIN_NOTIFY_EMAIL = 'contact@sevalys.com';
@@ -60,5 +78,23 @@ export const dedupeKey = {
   },
   acceptanceRefused(submissionId: string): string {
     return clamp(`acceptance_refused:${submissionId}`);
+  },
+  paymentRequested(invoiceId: string, email: string): string {
+    return clamp(`payment_requested:${invoiceId}:${norm(email)}`);
+  },
+  paymentReceived(invoiceId: string, email: string): string {
+    return clamp(`payment_received:${invoiceId}:${norm(email)}`);
+  },
+  paymentReminder(invoiceId: string, stage: 'd3' | 'd7', email: string): string {
+    return clamp(`payment_reminder:${invoiceId}:${stage}:${norm(email)}`);
+  },
+  paymentReminderAdmin(invoiceId: string): string {
+    return clamp(`payment_reminder_admin:${invoiceId}:d14`);
+  },
+  paymentAnomalyAdmin(stripeEventId: string): string {
+    return clamp(`payment_anomaly_admin:${stripeEventId}`);
+  },
+  creditNoteIssued(creditNoteId: string, email: string): string {
+    return clamp(`credit_note_issued:${creditNoteId}:${norm(email)}`);
   },
 };

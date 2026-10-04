@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { MAIL_EVENTS, MAIL_RULES, dedupeKey, type MailEvent, type Rule } from './rules';
 
 describe('MAIL_RULES', () => {
-  it('has exactly the seven events with expected recipients and zero delay', () => {
-    expect(MAIL_EVENTS).toHaveLength(7);
+  it('has exactly the thirteen events with expected recipients and zero delay', () => {
+    expect(MAIL_EVENTS).toHaveLength(13);
     expect(Object.keys(MAIL_RULES).sort()).toEqual([...MAIL_EVENTS].sort());
     expect(MAIL_RULES.document_issued).toEqual({
       template: 'document_issued',
@@ -17,6 +17,10 @@ describe('MAIL_RULES', () => {
     expect(MAIL_RULES.document_signed.to).toBe('client');
     expect(MAIL_RULES.document_signed_admin.to).toBe('admin');
     expect(MAIL_RULES.acceptance_refused.to).toBe('admin');
+    for (const e of ['payment_requested', 'payment_received', 'payment_reminder', 'credit_note_issued'] as const)
+      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'client' });
+    for (const e of ['payment_reminder_admin', 'payment_anomaly_admin'] as const)
+      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'admin' });
     for (const e of MAIL_EVENTS) expect(MAIL_RULES[e].delayMs).toBe(0);
   });
 
@@ -29,6 +33,12 @@ describe('MAIL_RULES', () => {
       document_signed: MAIL_RULES.document_signed,
       document_signed_admin: MAIL_RULES.document_signed_admin,
       acceptance_refused: MAIL_RULES.acceptance_refused,
+      payment_requested: MAIL_RULES.payment_requested,
+      payment_received: MAIL_RULES.payment_received,
+      payment_reminder: MAIL_RULES.payment_reminder,
+      payment_reminder_admin: MAIL_RULES.payment_reminder_admin,
+      payment_anomaly_admin: MAIL_RULES.payment_anomaly_admin,
+      credit_note_issued: MAIL_RULES.credit_note_issued,
     };
     expect(partial).toBeDefined();
   });
@@ -39,9 +49,9 @@ describe('MAIL_RULES', () => {
   });
 });
 
-describe('closed lists vs phase-14 migration', () => {
+describe('closed lists vs phase-15 migration', () => {
   const sql = readFileSync(
-    new URL('../../../../supabase/migrations/20261006000000_sv_signature.sql', import.meta.url),
+    new URL('../../../../supabase/migrations/20261007000000_sv_invoices.sql', import.meta.url),
     'utf8',
   )
     .split('\n')
@@ -80,6 +90,13 @@ describe('dedupeKey', () => {
     expect(dedupeKey.documentSigned('d1', 'A@X.fr')).toBe('document_signed:d1:a@x.fr');
     expect(dedupeKey.documentSignedAdmin('d1')).toBe('document_signed_admin:d1');
     expect(dedupeKey.acceptanceRefused('s1')).toBe('acceptance_refused:s1');
+    expect(dedupeKey.paymentRequested('id', 'A@B.fr')).toBe('payment_requested:id:a@b.fr');
+    expect(dedupeKey.paymentReceived('id', 'A@B.fr')).toBe('payment_received:id:a@b.fr');
+    expect(dedupeKey.paymentReminder('id', 'd3', 'A@B.fr')).toBe('payment_reminder:id:d3:a@b.fr');
+    expect(dedupeKey.paymentReminder('id', 'd7', 'a@b.fr')).toBe('payment_reminder:id:d7:a@b.fr');
+    expect(dedupeKey.paymentReminderAdmin('id')).toBe('payment_reminder_admin:id:d14');
+    expect(dedupeKey.paymentAnomalyAdmin('evt_1')).toBe('payment_anomaly_admin:evt_1');
+    expect(dedupeKey.creditNoteIssued('cn', 'A@B.fr')).toBe('credit_note_issued:cn:a@b.fr');
   });
   it('caps length at 256', () => {
     const long = 'a'.repeat(300) + '@x.fr';
