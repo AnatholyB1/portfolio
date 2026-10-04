@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { HASH_FORMAT_VERSION, LINK_SEPARATOR } from './canonical';
-import { SIGNATURE_EVENTS } from './events';
+import { SIGNATURE_EVENTS, type SignatureEvent } from './events';
 import { DOC_ID, buildExport, sha } from './chainFixtures';
 import { genesisHash, linkHash, verifyChainExport } from './verifyChain';
 import { readFileSync } from 'node:fs';
@@ -17,7 +17,7 @@ describe('genesisHash / linkHash', () => {
         '\u001f',
       ),
     );
-    expect(linkHash({ ...e, documentId: DOC_ID })).toBe(expected);
+    expect(linkHash({ ...e, eventType: e.eventType as SignatureEvent, documentId: DOC_ID })).toBe(expected);
   });
 
   it('local constants cannot drift from canonical/events', () => {
