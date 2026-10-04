@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: ready_to_plan
-stopped_at: Phase 13 complete (20/20) — ready to discuss Phase 14
-last_updated: 2026-10-03T20:59:20.039Z
-last_activity: 2026-10-03 -- Phase 13 execution started
+status: planning
+stopped_at: Phase 14 context gathered
+last_updated: "2026-10-04T06:28:19.404Z"
+last_activity: 2026-10-03
 progress:
   total_phases: 10
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 73
   completed_plans: 73
-  percent: 30
+  percent: 40
 ---
 
 # Project State
@@ -83,9 +83,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-03T14:14:28.210Z
-Stopped at: Phase 13 UI-SPEC approved
-Resume file: .planning/phases/13-document-generation/13-UI-SPEC.md
+Last session: 2026-10-04T06:28:19.382Z
+Stopped at: Phase 14 context gathered
+Resume file: .planning/phases/14-electronic-signature/14-CONTEXT.md
 
 ## Operator Next Steps
 
