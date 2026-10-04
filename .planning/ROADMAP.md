@@ -317,7 +317,51 @@ Plans:
   4. Les factures ont une numérotation sans trou, ne sont plus modifiables une fois émises et se corrigent par avoir
   5. Les données de facture sont stockées de façon structurée, prêtes pour Factur-X
 
-**Plans**: TBD
+**Plans**: 20 plans
+Plans:
+**Wave 1**
+
+- [ ] 15-01-PLAN.md — SDK stripe@23.0.0, garde du mode de clé, vérification du webhook et table de correspondance des événements (TDD)
+- [ ] 15-02-PLAN.md — Contrats facture/avoir, calculs en centimes, statut déduit, correspondance EN 16931 (TDD)
+- [ ] 15-03-PLAN.md — Migration sv_invoices : drapeau test, compteurs sans trou, factures immuables, RPC émission/avoir/PDF, relances
+- [ ] 15-04-PLAN.md — Migration sv_payments : clients Stripe, sessions, événements idempotents, registre, RPC d'application du webhook
+- [ ] 15-05-PLAN.md — Textes FR des paiements, onglet Paiements actif, zone de prix du webhook
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 15-06-PLAN.md — Modèles PDF facture v2 et avoir v1, test des mentions étendu
+- [ ] 15-07-PLAN.md — E-mails de paiement (demande, reçu, relances, alertes admin, avoir) et parité SQL/TS
+- [ ] 15-08-PLAN.md — Branche de test (accord propriétaire), push des deux migrations, helpers RLS
+- [ ] 15-09-PLAN.md — Checkout, client Stripe, remboursement, route webhook publique
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 15-10-PLAN.md — Contexte de facturation, construction des factures, émission en deux temps et PDF figé
+- [ ] 15-11-PLAN.md — Tests RLS : numérotation concurrente, séries, bascule d'année, immuabilité, avoirs, isolation
+- [ ] 15-12-PLAN.md — Tests RLS : rejeu, faits de paiement, relances, anomalies, garde Checkout, isolation
+- [ ] 15-13-PLAN.md — Lecture RLS des factures, téléchargement signé, actions Payer et Télécharger du portail
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 15-14-PLAN.md — Factures d'acompte et finale automatiques après signature, balayage quotidien
+- [ ] 15-15-PLAN.md — Onglet Paiements du portail et pages de retour
+- [ ] 15-16-PLAN.md — Vue admin de facturation et actions (période, avoir, remboursement, données)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 15-17-PLAN.md — Formulaires admin : facture de période et avoir
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
+- [ ] 15-18-PLAN.md — Section Facturation de la fiche projet, paiements à rapprocher, retrait de l'aperçu de facture
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
+- [ ] 15-19-PLAN.md — Application en production (accord propriétaire), client de test signalé, Stripe et Vercel, suppression de la branche
+
+**Wave 8** *(blocked on Wave 7 completion)*
+
+- [ ] 15-20-PLAN.md — Release gate, déploiement et vérification de bout en bout en mode test Stripe sur « Test E2E Sèvalys »
 **UI hint**: yes
 
 ### Phase 16: Mailing automation completion
