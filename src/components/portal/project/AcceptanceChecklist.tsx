@@ -23,7 +23,7 @@ type Props = {
   documentId: string;
   criteria: string[];
   submitAcceptanceAction: (id: string, answers: unknown) => Promise<SubmitAcceptanceResult>;
-  /** Props du flux de signature affiché après « Continuer vers la signature ». */
+  /** Props du flux de signature affiché après la validation des réponses. */
   flow: Omit<SigningFlowProps, 'stepOffset' | 'recap' | 'onEditAnswers'>;
 };
 
