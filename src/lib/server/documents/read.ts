@@ -103,7 +103,7 @@ export async function loadDocumentSnapshot(rls: SupabaseClient, documentId: stri
 export async function loadActiveSnapshot(
   rls: SupabaseClient,
   projectId: string,
-  docType: 'quote' | 'spec',
+  docType: 'quote' | 'spec' | 'contract',
 ): Promise<{ doc: DocumentRow; snapshot: DocumentSnapshot } | null> {
   const docs = (await loadProjectDocuments(rls, projectId)).filter((d) => d.docType === docType);
   const head = chainHeads(docs).get(docType);
