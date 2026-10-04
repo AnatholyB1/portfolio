@@ -1,5 +1,5 @@
 // Module pur, sûr côté client. Montants en centimes entiers, quantités en millièmes (D-05, Pitfall 12).
-// Aucune TVA calculée (franchise en base). Jamais Intl, jamais Date.now().
+// Aucune TVA calculée (franchise en base). Pas d API de formatage localisé, pas d horloge.
 import { NBSP } from "./money";
 import type { InvoiceDeduction, InvoiceLineV2 } from "./types";
 
