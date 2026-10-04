@@ -54,8 +54,8 @@
 
 ### Paiements & facturation (PAY)
 
-- [ ] **PAY-01**: Le client paie un acompte ou un solde par étape via Stripe Checkout, avec des montants calculés côté serveur
-- [ ] **PAY-02**: L'état « payé » vient uniquement d'un webhook Stripe vérifié (corps brut) et idempotent (table d'événements)
+- [x] **PAY-01**: Le client paie un acompte ou un solde par étape via Stripe Checkout, avec des montants calculés côté serveur
+- [x] **PAY-02**: L'état « payé » vient uniquement d'un webhook Stripe vérifié (corps brut) et idempotent (table d'événements)
 - [ ] **PAY-03**: Le client reçoit un reçu et des relances d'acompte impayé ; le paiement reçu débloque l'étape suivante
 - [ ] **PAY-04**: Les factures ont une numérotation sans trou, sont immuables une fois émises et se corrigent par avoir
 - [ ] **PAY-05**: Les factures sont stockées en données structurées, prêtes pour Factur-X et une plateforme agréée
@@ -163,8 +163,8 @@
 | SIGN-03 | Phase 14 | Complete |
 | SIGN-04 | Phase 14 | Complete |
 | SIGN-05 | Phase 14 | Complete |
-| PAY-01 | Phase 15 | Pending |
-| PAY-02 | Phase 15 | Pending |
+| PAY-01 | Phase 15 | Complete |
+| PAY-02 | Phase 15 | Complete |
 | PAY-03 | Phase 15 | Pending |
 | PAY-04 | Phase 15 | Pending |
 | PAY-05 | Phase 15 | Pending |
