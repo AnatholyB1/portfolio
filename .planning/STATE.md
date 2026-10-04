@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: planning
-stopped_at: Phase 15 context gathered
-last_updated: "2026-10-04T19:42:11.611Z"
-last_activity: 2026-10-03
+status: executing
+stopped_at: Phase 15 UI-SPEC approved
+last_updated: "2026-10-04T20:53:52.630Z"
+last_activity: 2026-10-04 -- Phase 15 planning complete
 progress:
   total_phases: 10
   completed_phases: 5
-  total_plans: 92
+  total_plans: 113
   completed_plans: 92
   percent: 50
 ---
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 Phase: 14
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-10-03
+Status: Ready to execute
+Last activity: 2026-10-04 -- Phase 15 planning complete
 
 Progress: [████████░░] 82%
 
@@ -83,9 +83,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-04T19:42:11.587Z
-Stopped at: Phase 15 context gathered
-Resume file: .planning/phases/15-stripe-payments-invoicing/15-CONTEXT.md
+Last session: 2026-10-04T19:57:55.876Z
+Stopped at: Phase 15 UI-SPEC approved
+Resume file: .planning/phases/15-stripe-payments-invoicing/15-UI-SPEC.md
 
 ## Operator Next Steps
 
