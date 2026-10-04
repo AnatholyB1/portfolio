@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { MAIL_EVENTS, MAIL_RULES, dedupeKey, type MailEvent, type Rule } from './rules';
 
 describe('MAIL_RULES', () => {
-  it('has exactly the four events with expected recipients and zero delay', () => {
-    expect(MAIL_EVENTS).toHaveLength(4);
+  it('has exactly the seven events with expected recipients and zero delay', () => {
+    expect(MAIL_EVENTS).toHaveLength(7);
     expect(Object.keys(MAIL_RULES).sort()).toEqual([...MAIL_EVENTS].sort());
     expect(MAIL_RULES.document_issued).toEqual({
       template: 'document_issued',
@@ -14,6 +14,9 @@ describe('MAIL_RULES', () => {
     expect(MAIL_RULES.client_invited.to).toBe('client');
     expect(MAIL_RULES.step_changed.to).toBe('client');
     expect(MAIL_RULES.onboarding_completed.to).toBe('admin');
+    expect(MAIL_RULES.document_signed.to).toBe('client');
+    expect(MAIL_RULES.document_signed_admin.to).toBe('admin');
+    expect(MAIL_RULES.acceptance_refused.to).toBe('admin');
     for (const e of MAIL_EVENTS) expect(MAIL_RULES[e].delayMs).toBe(0);
   });
 
@@ -23,6 +26,9 @@ describe('MAIL_RULES', () => {
       client_invited: MAIL_RULES.client_invited,
       step_changed: MAIL_RULES.step_changed,
       onboarding_completed: MAIL_RULES.onboarding_completed,
+      document_signed: MAIL_RULES.document_signed,
+      document_signed_admin: MAIL_RULES.document_signed_admin,
+      acceptance_refused: MAIL_RULES.acceptance_refused,
     };
     expect(partial).toBeDefined();
   });
@@ -33,9 +39,9 @@ describe('MAIL_RULES', () => {
   });
 });
 
-describe('closed lists vs phase-13 migration', () => {
+describe('closed lists vs phase-14 migration', () => {
   const sql = readFileSync(
-    new URL('../../../../supabase/migrations/20261005000000_sv_documents.sql', import.meta.url),
+    new URL('../../../../supabase/migrations/20261006000000_sv_signature.sql', import.meta.url),
     'utf8',
   )
     .split('\n')
@@ -71,6 +77,9 @@ describe('dedupeKey', () => {
     expect(dedupeKey.stepChanged('f1', 'A@X.fr')).toBe('step_changed:f1:a@x.fr');
     expect(dedupeKey.onboardingCompleted('p1', 'A@X.fr')).toBe('onboarding_completed:p1:a@x.fr');
     expect(dedupeKey.documentIssued('d1', 'A@X.fr')).toBe('document_issued:d1:a@x.fr');
+    expect(dedupeKey.documentSigned('d1', 'A@X.fr')).toBe('document_signed:d1:a@x.fr');
+    expect(dedupeKey.documentSignedAdmin('d1')).toBe('document_signed_admin:d1');
+    expect(dedupeKey.acceptanceRefused('s1')).toBe('acceptance_refused:s1');
   });
   it('caps length at 256', () => {
     const long = 'a'.repeat(300) + '@x.fr';

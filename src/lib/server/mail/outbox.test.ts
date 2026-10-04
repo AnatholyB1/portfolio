@@ -230,4 +230,53 @@ describe('buildMail', () => {
     expect(m.subject).toBe('Nouvelle version : Contrat — Refonte');
     expect(m.text).toContain('/espace-client/documents');
   });
+
+  it('renders the document_signed template', () => {
+    const m = buildMail({
+      ...claimedRow,
+      template: 'document_signed',
+      payload: {
+        documentLabel: 'le devis',
+        projectTitle: 'Site',
+        signedDate: '12/10/2026',
+        signedTime: '14:05',
+      },
+    } as any);
+    expect(m.subject).toBe('Document signé : le devis — Site');
+    expect(m.text).toContain('/espace-client/documents');
+  });
+
+  it('renders the document_signed_admin template', () => {
+    const m = buildMail({
+      ...claimedRow,
+      template: 'document_signed_admin',
+      payload: {
+        documentLabel: 'le devis',
+        projectTitle: 'Site',
+        clientName: 'Acme',
+        reference: 'DEV-1',
+        signedDate: '12/10/2026',
+        signedTime: '14:05',
+        reservedCount: 1,
+      },
+    } as any);
+    expect(m.subject).toBe('Signature reçue : le devis — Site');
+    expect(m.text).toContain('Réserves : 1');
+    expect(m.text).toContain('p1');
+  });
+
+  it('renders the acceptance_refused template', () => {
+    const m = buildMail({
+      ...claimedRow,
+      template: 'acceptance_refused',
+      payload: {
+        projectTitle: 'Site',
+        clientName: 'Acme',
+        refusedCount: 1,
+        refused: [{ index: 2, criterion: 'SEO', note: 'Manquant' }],
+      },
+    } as any);
+    expect(m.subject).toBe('Recette refusée : 1 critère(s) — Site');
+    expect(m.text).toContain('SEO : Manquant');
+  });
 });
