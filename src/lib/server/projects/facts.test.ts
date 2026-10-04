@@ -29,7 +29,7 @@ vi.mock('@/lib/server/rpc', () => ({
 }));
 vi.mock('@/lib/server/mail/outbox', () => ({ enqueueAndSend: (i: any) => mocks.send(i) }));
 
-import { postProjectFact, revokeProjectFact } from './facts';
+import { afterFactPosted, postProjectFact, revokeProjectFact } from './facts';
 
 const f = (id: number, type: string, target: number | null = null, at = `2026-02-0${id % 9 || 1}T00:00:00Z`) => ({
   id,
@@ -122,5 +122,21 @@ describe('revokeProjectFact', () => {
     );
     expect(r).toMatchObject({ ok: true, stepBefore: 3, stepAfter: 2 });
     expect(mocks.send.mock.calls[0][0].payload.stepName).toBe('Cadrage et devis');
+  });
+});
+
+describe('afterFactPosted', () => {
+  it('notifies only when the step changed', async () => {
+    state.facts = { data: [f(1, 'onboarding_completed'), f(10, 'quote_accepted')], error: null };
+    const r = await afterFactPosted('p', 10);
+    expect(r).toMatchObject({ stepBefore: 2, stepAfter: 3, mail: 'sent' });
+    expect(mocks.send).toHaveBeenCalledTimes(2);
+  });
+
+  it('no mail when the step is unchanged', async () => {
+    state.facts = { data: [f(1, 'onboarding_completed'), f(10, 'deposit_received')], error: null };
+    const r = await afterFactPosted('p', 10);
+    expect(r).toMatchObject({ stepBefore: 2, stepAfter: 2, mail: 'none' });
+    expect(mocks.send).not.toHaveBeenCalled();
   });
 });

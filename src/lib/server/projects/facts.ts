@@ -121,6 +121,30 @@ async function notifyStepChange(
   }
 }
 
+/** Après l'écriture d'un fait : recalcule l'étape avant/après et notifie si elle a changé (D-16). Ne lève jamais. */
+export async function afterFactPosted(
+  projectId: string,
+  factId: number,
+): Promise<{
+  stepBefore: number | null;
+  stepAfter: number | null;
+  done: boolean;
+  mail: 'sent' | 'pending' | 'failed' | 'none';
+}> {
+  const loaded = await loadProjectFacts(projectId);
+  if (!loaded) return { stepBefore: null, stepAfter: null, done: false, mail: 'none' };
+  const after = deriveProjectState(loaded.facts, loaded.startedAt);
+  const before = deriveProjectState(
+    loaded.facts.filter((f) => f.id !== factId),
+    loaded.startedAt,
+  );
+  let mail: 'sent' | 'pending' | 'failed' | 'none' = 'none';
+  if (before.currentStep !== after.currentStep) {
+    mail = await notifyStepChange(projectId, loaded.clientId, factId, after.currentStep);
+  }
+  return { stepBefore: before.currentStep, stepAfter: after.currentStep, done: after.done, mail };
+}
+
 async function post(a: {
   projectId: string;
   type: FactType;
@@ -149,28 +173,8 @@ async function post(a: {
     return { ok: true, changed: false, factId, stepBefore: null, stepAfter: null, done: false, mail: 'none' };
   }
 
-  const loaded = await loadProjectFacts(a.projectId);
-  if (!loaded) {
-    return { ok: true, changed: true, factId, stepBefore: null, stepAfter: null, done: false, mail: 'none' };
-  }
-  const after = deriveProjectState(loaded.facts, loaded.startedAt);
-  const before = deriveProjectState(
-    loaded.facts.filter((f) => f.id !== factId),
-    loaded.startedAt,
-  );
-  let mail: 'sent' | 'pending' | 'failed' | 'none' = 'none';
-  if (before.currentStep !== after.currentStep) {
-    mail = await notifyStepChange(a.projectId, loaded.clientId, factId, after.currentStep);
-  }
-  return {
-    ok: true,
-    changed: true,
-    factId,
-    stepBefore: before.currentStep,
-    stepAfter: after.currentStep,
-    done: after.done,
-    mail,
-  };
+  const after = await afterFactPosted(a.projectId, factId);
+  return { ok: true, changed: true, factId, ...after };
 }
 
 export function postProjectFact(a: {
