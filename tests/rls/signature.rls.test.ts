@@ -223,5 +223,145 @@ describe('concurrency', () => {
   });
 });
 
-// consent and acceptance suites are appended in Task 2
-export { clientB, userB, sealedPaths, submit, randomUUID };
+describe('consent', () => {
+  it('refuses a code request without any consent', async () => {
+    const { documentId } = await newDoc();
+    const { error } = await request(documentId, userA);
+    expect(error?.message).toMatch(/sv_consent_missing/);
+  });
+
+  it('refuses a code request for another consent version', async () => {
+    const { documentId } = await newDoc();
+    await ok(consent(documentId, userA, 'v1'));
+    const { error } = await request(documentId, userA, '111111', 'v2');
+    expect(error?.message).toMatch(/sv_consent_missing/);
+  });
+
+  it('refuses a consent whose payload version differs from the declared version', async () => {
+    const { documentId } = await newDoc();
+    const { error } = await consent(documentId, userA, 'v1', { version: 'v2' });
+    expect(error?.message).toMatch(/sv_invalid_payload/);
+  });
+
+  it('refuses a non-member of the project client', async () => {
+    const { documentId } = await newDoc();
+    const c = await consent(documentId, userB);
+    expect(c.error?.message).toMatch(/sv_not_client_member/);
+    const r = await request(documentId, userB);
+    expect(r.error?.message).toMatch(/sv_not_client_member/);
+  });
+
+  it('refuses a member whose client signatory section is incomplete', async () => {
+    const clientC = await makeClient('RLS Sig C');
+    const userC = await makeUser('sigc');
+    await addMember(clientC.id, userC);
+    await svc().from('sv_client_onboarding').upsert({ client_id: clientC.id, signatory_name: 'X', signatory_role: null }, { onConflict: 'client_id' });
+    const { documentId } = await newDoc('quote', { client: clientC });
+    const c = await consent(documentId, userC);
+    expect(c.error?.message).toMatch(/sv_signatory_incomplete/);
+    const r = await request(documentId, userC);
+    expect(r.error?.message).toMatch(/sv_signatory_incomplete/);
+  });
+
+  it('stores the exact consent texts in the consent_given link', async () => {
+    const { documentId } = await newDoc();
+    const payload = { version: 'v1', texts: ['Je reconnais avoir lu le document.', 'Je signe électroniquement.'] };
+    await ok(consent(documentId, userA, 'v1', payload));
+    const { data, error } = await svc()
+      .from('sv_signature_events')
+      .select('payload')
+      .eq('document_id', documentId)
+      .eq('event_type', 'consent_given');
+    expect(error).toBeNull();
+    expect(data).toHaveLength(1);
+    expect(JSON.parse(data![0].payload as string)).toEqual(payload);
+  });
+});
+
+const answers = (statuses: Array<'delivered' | 'reserved' | 'refused'>) =>
+  statuses.map((status, i) => ({ index: i + 1, status, note: status === 'delivered' ? null : `Note ${status} ${i + 1}` }));
+
+describe('acceptance', () => {
+  it('requires a submission before a code, validates answers, and blocks on refusal', async () => {
+    const { documentId, projectId } = await newDoc('acceptance');
+    await ok(consent(documentId, userA));
+
+    const early = await request(documentId, userA);
+    expect(early.error?.message).toMatch(/sv_acceptance_missing/);
+
+    const mismatch = await submit(documentId, userA, answers(['delivered', 'delivered']));
+    expect(mismatch.error?.message).toMatch(/sv_acceptance_mismatch/);
+
+    const noNote = await submit(documentId, userA, [
+      { index: 1, status: 'delivered', note: null },
+      { index: 2, status: 'reserved' },
+      { index: 3, status: 'delivered', note: null },
+    ]);
+    expect(noNote.error?.message).toMatch(/sv_invalid_answer/);
+
+    const sub = await ok(submit(documentId, userA, answers(['delivered', 'refused', 'delivered'])));
+    expect(sub.refused_count).toBe(1);
+    expect(sub.outbox_ids).toHaveLength(1);
+
+    const { data: outbox } = await svc()
+      .from('sv_mail_outbox')
+      .select('event_type, dedupe_key, recipient_kind, project_id')
+      .eq('dedupe_key', `acceptance_refused:${sub.submission_id}`);
+    expect(outbox).toHaveLength(1);
+    expect(outbox![0]).toMatchObject({ event_type: 'acceptance_refused', recipient_kind: 'admin', project_id: projectId });
+
+    expect(await linkCount(documentId, 'acceptance_response')).toBe(3);
+    expect(await linkCount(documentId, 'acceptance_refused')).toBe(1);
+
+    const blocked = await request(documentId, userA);
+    expect(blocked.error?.message).toMatch(/sv_acceptance_refused/);
+    const again = await submit(documentId, userA, answers(['delivered', 'delivered', 'delivered']));
+    expect(again.error?.message).toMatch(/sv_acceptance_refused/);
+  });
+
+  it('lets reserves sign, and the seal posts acceptance_signed and unlocks the next step', async () => {
+    const { documentId, projectId } = await newDoc('acceptance');
+    await ok(consent(documentId, userA));
+    const sub = await ok(submit(documentId, userA, answers(['delivered', 'reserved', 'delivered'])));
+    expect(sub).toMatchObject({ reserved_count: 1, refused_count: 0 });
+
+    await ok(request(documentId, userA, '654321'));
+    const signed = await ok(verify(documentId, userA, '654321'));
+    expect(signed).toMatchObject({ ok: true, already_signed: false });
+
+    // signing alone does not post the project fact: only the seal does
+    const before = await svc().from('sv_project_facts').select('id').eq('project_id', projectId).eq('type', 'acceptance_signed');
+    expect(before.data).toHaveLength(0);
+
+    const sealedPath = `${projectId}/sealed/${randomUUID()}.pdf`;
+    const up = await svc().storage.from(DOCUMENTS_BUCKET).upload(sealedPath, Buffer.from('%PDF-1.4\n%%EOF\n'), {
+      contentType: 'application/pdf',
+    });
+    expect(up.error).toBeNull();
+    sealedPaths.push(sealedPath);
+
+    const seal = await ok(
+      svc().rpc('sv_seal_document', {
+        p_document_id: documentId,
+        p_storage_path: sealedPath,
+        p_sha256: 'b'.repeat(64),
+        p_size: 15,
+        p_admin_email: ADMIN,
+      }),
+    );
+    expect(seal.fact_changed).toBe(true);
+
+    const facts = await svc().from('sv_project_facts').select('type, actor_kind').eq('project_id', projectId).eq('type', 'acceptance_signed');
+    expect(facts.data).toEqual([{ type: 'acceptance_signed', actor_kind: 'client' }]);
+
+    const { data: members } = await svc().from('sv_client_members').select('invited_email').eq('client_id', clientA.id);
+    const outbox = await svc().from('sv_mail_outbox').select('event_type').eq('project_id', projectId);
+    const signedMails = (outbox.data ?? []).filter((o) => o.event_type === 'document_signed');
+    const adminMails = (outbox.data ?? []).filter((o) => o.event_type === 'document_signed_admin');
+    expect(signedMails).toHaveLength(new Set((members ?? []).map((m) => m.invited_email.toLowerCase())).size);
+    expect(adminMails).toHaveLength(1);
+
+    const sig = await svc().from('sv_document_signatures').select('acceptance_submission_id').eq('document_id', documentId).single();
+    expect(sig.data?.acceptance_submission_id).toBe(sub.submission_id);
+  });
+});
