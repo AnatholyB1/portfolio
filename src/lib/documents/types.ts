@@ -36,7 +36,7 @@ export type TemplateVersion = `v${number}`;
 export const CURRENT_TEMPLATE_VERSION: Record<DocType, TemplateVersion> = {
   quote: 'v1',
   spec: 'v1',
-  contract: 'v1',
+  contract: 'v2',
   acceptance: 'v1',
   invoice: 'v1',
 };

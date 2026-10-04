@@ -63,6 +63,12 @@ describe('document constants', () => {
       expect(CURRENT_TEMPLATE_VERSION[t]).toMatch(/^v[0-9]+$/);
     }
   });
+  it('issues contracts with template v2, other types stay v1', () => {
+    expect(CURRENT_TEMPLATE_VERSION.contract).toBe('v2');
+    for (const t of DOC_TYPES.filter((d) => d !== 'contract')) {
+      expect(CURRENT_TEMPLATE_VERSION[t]).toBe('v1');
+    }
+  });
   it('has the status labels', () => {
     expect(STATUS_LABELS.to_sign).toBe('À signer');
     expect(STATUS_LABELS.replaced).toBe('Remplacé');
