@@ -33,6 +33,25 @@ describe('no price in copy', () => {
   });
 });
 
+describe('payments copy', () => {
+  it('has exactly the five invoice statuses', () => {
+    expect(Object.keys(PROJECT_COPY.payments.statuses).sort()).toEqual(
+      ['credited', 'paid', 'processing', 'refunded', 'to_pay'],
+    );
+  });
+  it('enables the Paiements nav label', () => {
+    expect(PROJECT_COPY.documents.nav.payments).toBe('Paiements');
+  });
+  it('spot-checks UI-SPEC strings', () => {
+    expect(PROJECT_COPY.payments.portal.payDeposit).toBe("Payer l'acompte");
+    expect(PROJECT_COPY.payments.returnBanner.confirmingTitle).toBe(
+      'Paiement reçu, confirmation en cours',
+    );
+    expect(PROJECT_COPY.payments.admin.list.credit).toBe('Émettre un avoir');
+    expect(PROJECT_COPY.payments.portal.paidOn('3 octobre 2026')).toBe('Payée le 3 octobre 2026');
+  });
+});
+
 describe('blocage labels', () => {
   it('match UI-SPEC', () => {
     expect(PROJECT_COPY.blocage.client).toBe('Attend le client');
