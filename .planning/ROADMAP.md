@@ -336,7 +336,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 15-10-PLAN.md — Contexte de facturation, construction des factures, émission en deux temps et PDF figé
+- [x] 15-10-PLAN.md — Contexte de facturation, construction des factures, émission en deux temps et PDF figé
 - [ ] 15-11-PLAN.md — Tests RLS : numérotation concurrente, séries, bascule d'année, immuabilité, avoirs, isolation
 - [ ] 15-12-PLAN.md — Tests RLS : rejeu, faits de paiement, relances, anomalies, garde Checkout, isolation
 - [ ] 15-13-PLAN.md — Lecture RLS des factures, téléchargement signé, actions Payer et Télécharger du portail
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 9/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 10/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
