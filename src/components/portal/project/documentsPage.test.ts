@@ -41,6 +41,18 @@ describe('client portal documents tab', () => {
     expect(list).toContain('status: DocumentStatus | null');
   });
 
+  it('offers the signing entry, the sealed download and the signed meta line (SIGN-01, SIGN-04)', () => {
+    expect(list).toContain('/signer');
+    expect(list).toContain('PROJECT_COPY.signature.documentsTab');
+    expect(list).toContain('sig.readAndSign');
+    expect(list).toContain('ShieldCheck');
+    expect(list).toContain('PenLine');
+    expect(list).toContain('getSealedDownloadUrl');
+    expect(page).toContain('sealedDocumentDownloadAction');
+    expect(page).toContain('sv_document_signatures');
+    expect(page).toContain('signedAt');
+  });
+
   it('has no embedded viewer and navigates to the signed link only on click', () => {
     for (const src of [page, list]) expect(src).not.toContain('<iframe');
     expect(list).toContain('window.location.assign');

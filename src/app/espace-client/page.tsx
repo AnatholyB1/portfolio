@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import NoAccess from '@/components/portal/NoAccess';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -20,7 +21,9 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { isOnboardingComplete } from '@/lib/projects/onboardingSchema';
+import { withStatuses } from '@/lib/documents/status';
 import { requireClient } from '@/lib/server/auth/dal';
+import { loadProjectDocuments } from '@/lib/server/documents/read';
 import {
   latestConsent,
   loadClientProjects,
@@ -99,6 +102,9 @@ export default async function EspaceClientPage({
   const showOnboardingCta = state.currentStep === 1 && !(onboarding && isOnboardingComplete(onboarding));
   const company = (client.company ?? null) as CompanySnapshot | null;
   const current = latestConsent(consents);
+  // Un document de tête à signer (statut dérivé des faits) déclenche l'avis sous l'étape courante.
+  const projectDocs = await loadProjectDocuments(ctx.supabase, project.id);
+  const awaitingSignature = withStatuses(projectDocs, bundle.facts).some((d) => d.status === 'to_sign');
 
   return (
     <>
@@ -115,6 +121,14 @@ export default async function EspaceClientPage({
               {offer} · {PROJECT_COPY.portal.startedOn(formatDateFr(project.startedAt))}
             </p>
             <WhoWaits state={state} now={now} showOnboardingCta={showOnboardingCta} />
+            {awaitingSignature ? (
+              <p className="pt-helper" style={{ fontSize: 14, color: 'var(--ink-dim)' }}>
+                {PROJECT_COPY.signature.documentsTab.awaiting}{' '}
+                <Link href="/espace-client/documents" className="pt-btn-text">
+                  {PROJECT_COPY.signature.documentsTab.goToDocuments}
+                </Link>
+              </p>
+            ) : null}
           </section>
           <section className="pt-card" aria-label={PROJECT_COPY.portal.timelineLabel}>
             <Timeline state={state} variant="client" />
