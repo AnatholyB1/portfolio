@@ -89,6 +89,8 @@ const ALLOWED_TEMPLATES = [
   '`/admin/projets/${projectId}`',
   '`/admin/projets/${state.projectId}`',
   '`/admin/projets/${r.projectId}`',
+  // Portal documents list: sign link, resolved by /espace-client/documents/[id]/signer (plan 14-16).
+  '`/espace-client/documents/${d.id}/signer`',
   // Portal onboarding card: external mailto with an encoded subject (not a route).
   '`mailto:contact@sevalys.com?subject=${subject}`',
 ];
