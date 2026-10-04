@@ -493,21 +493,28 @@ $$;
 | A8 | Stripe Dashboard receipt e-mails can be left disabled and do not apply to bank transfers by default | Pitfall 5 | Duplicate receipts to the client |
 | A9 | Hobby daily cron is sufficient and acceptable (commercial-use right unresolved in STATE.md) | Summary/Env | Plan limitation could force Pro; reminders still daily |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Test vs live per client (D-01 literal reading).**
    - Known: production DB hosts the permanent test client; D-01 forbids live payment on it and wants test keys everywhere but real production customers.
    - Unclear: one `STRIPE_SECRET_KEY` per environment cannot serve both a real client and the test client in the production environment.
    - Recommendation: Option B: keep both key pairs in the production environment (`STRIPE_SECRET_KEY_TEST/LIVE`, `STRIPE_WEBHOOK_SECRET_TEST/LIVE`), choose the mode per client via a flag (`is_test` true => test keys and `TFA/TAV` series), live keys only when `VERCEL_ENV=production` and the client is not flagged. Option A (simpler): production runs test keys until first real customer, then flips; the E2E client then stops being payable. Needs owner pick; plan Option B unless told otherwise.
+   - RESOLVED: Option B per CONTEXT D-01 clarification (per-client `is_test` flag, both key pairs, TFA/TAV series); implemented in 15-01 (key-mode guard, stripeModeForClient), 15-03 (is_test column and test series), 15-04 (livemode checks per client).
 2. **Final invoice basis with TJM period invoices (D-06/D-08/D-09).**
    - Known: final = "solde du reliquat en déduisant l'acompte".
    - Unclear: are previously issued period invoices also deducted from the quote total? Without it the client is billed twice.
    - Recommendation: final invoice shows the quote lines (or "reliquat"), with deductions for the deposit invoice AND every non-credited period invoice (each a row in `sv_invoice_deductions` with number/date). Confirm with owner; the schema supports both.
+   - RESOLVED: CONTEXT D-09 clarification: the final invoice bills the quote total minus the non-credited period invoices (reliquat line) and deducts only the deposit; implemented in 15-02 (finalInvoiceAmounts, over_invoiced / nothing_to_invoice refusal) and 15-10 (buildFinalInput).
 3. **Stripe account readiness (France, EI "Anatholy Bricon").** Activated account, Dashboard "Virements bancaires" enabled, branding, legal name exactly as clients should type, receipts disabled, webhook endpoints (test + live) created with the pinned API version. Cannot verify from here; plan a checklist task and `checkpoint:human-action`.
+   - RESOLVED: owner-side checkpoints in 15-19 (Task 2 human-action for the Stripe account, Task 3 approval) and the end-to-end test-mode check in 15-20.
 4. **Accountant review** (STATE.md blocker): mention list, franchise wording, `PROFORMA` removal, deposit invoice wording ("facture d'acompte", type 386), credit-note mentions, whether test series is acceptable.
+   - RESOLVED: owner-side item; risk accepted on 2026-10-03 and recorded in STATE.md (wording versioned per invoice row); restated as an open blocker at the 15-19 Task 3 approval checkpoint.
 5. **Vercel plan** (Hobby vs Pro): daily cron is assumed; Hobby cron precision is hourly-window; commercial-use terms unresolved (STATE.md).
+   - RESOLVED: owner-side item; daily cron kept (D-17, 15-14 leaves vercel.json unchanged); risk accepted in STATE.md and restated at the 15-19 Task 3 approval checkpoint.
 6. **Unlock for period invoices.** D-08 says period invoices post no fact; confirm they must never block the step engine (planner: no).
+   - RESOLVED: a paid period invoice posts no fact (D-08); enforced in 15-04 sv_apply_stripe_event step g and proven in 15-12.
 7. **Admin cancel of a pending bank transfer.** Recommend an admin action calling `paymentIntents.cancel` with ledger entry; not in CONTEXT, include only if the anomaly view needs it.
+   - RESOLVED: no standalone admin cancel action; when a credit note credits an unpaid invoice, expireOpenPayments in 15-09 expires open sessions and cancels processing PaymentIntents. Otherwise informational (the 15-18 pending view is read-only with an 'Ouvrir dans Stripe' link); a separate cancel action is deferred.
 
 ## Environment Availability
 

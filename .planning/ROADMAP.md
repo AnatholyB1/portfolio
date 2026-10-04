@@ -317,7 +317,7 @@ Plans:
   4. Les factures ont une numérotation sans trou, ne sont plus modifiables une fois émises et se corrigent par avoir
   5. Les données de facture sont stockées de façon structurée, prêtes pour Factur-X
 
-**Plans**: 20 plans
+**Plans**: 21 plans
 Plans:
 **Wave 1**
 
@@ -353,13 +353,17 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 15-18-PLAN.md — Section Facturation de la fiche projet, paiements à rapprocher, retrait de l'aperçu de facture
+- [ ] 15-18-PLAN.md — Section Facturation de la fiche projet, paiements à rapprocher
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
-- [ ] 15-19-PLAN.md — Application en production (accord propriétaire), client de test signalé, Stripe et Vercel, suppression de la branche
+- [ ] 15-21-PLAN.md — Retrait de l'aperçu de facture des Documents, tests UI de la section Facturation
 
 **Wave 8** *(blocked on Wave 7 completion)*
+
+- [ ] 15-19-PLAN.md — Application en production (accord propriétaire), client de test signalé, Stripe et Vercel, suppression de la branche
+
+**Wave 9** *(blocked on Wave 8 completion)*
 
 - [ ] 15-20-PLAN.md — Release gate, déploiement et vérification de bout en bout en mode test Stripe sur « Test E2E Sèvalys »
 **UI hint**: yes

@@ -2,7 +2,7 @@
 phase: 15
 slug: stripe-payments-invoicing
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-10-04
 ---
@@ -45,7 +45,7 @@ Filled by the planner from the requirement map below; every task must carry an `
 | PAY-02 | Replay same event id → one ledger row, one fact, one receipt; crash before `processed_at` retries once; amount/currency mismatch → anomaly, no unlock | RLS/integration | `npx vitest run -c vitest.rls.config.ts tests/rls/payments.rls.test.ts` | ❌ W0 |
 | PAY-03 | Paid deposit → `deposit_received`, step 4; paid final → `balance_received`; period invoice posts nothing; receipt deduped; reminders J+3/J+7/J+14 with `send_after`, skipped on payment/credit/processing | RLS/integration + unit | same + `npx vitest run src/lib/paymentsMigration.test.ts src/lib/server/mail/rules.test.ts` | ❌ W0 |
 | PAY-04 | N parallel issues → numbers 1..N, no gap; failure after allocation reuses number; Paris year rollover; `AV` and `T*` series; UPDATE/DELETE/TRUNCATE refused even for service_role; credit-note cap and reason; RLS client A vs B, anonymous, Gecko | RLS/integration | `npx vitest run -c vitest.rls.config.ts tests/rls/invoices.rls.test.ts` | ❌ W0 |
-| PAY-04 | Invoice and credit-note PDF mentions (number, date, deductions, "Acquittée", origin reference) | unit (text extraction) | `npx vitest run src/lib/documents/legalMentions.test.ts src/lib/documents/render.test.ts` | ✅ extend |
+| PAY-04 | Invoice and credit-note PDF mentions (number, date, deductions, origin reference); no "Acquittée" mention on the PDF (Payée is a portal status derived from the ledger, D-16 / 15-06) | unit (text extraction) | `npx vitest run src/lib/documents/legalMentions.test.ts src/lib/documents/render.test.ts` | ✅ extend |
 | PAY-05 | EN 16931 term mapping from fixtures; milli-quantity rounding; deposit + final + deductions never negative/over-invoiced | unit | `npx vitest run src/lib/documents/facturx.test.ts src/lib/documents/invoiceMath.test.ts` | ❌ W0 |
 | D-01 | Key-mode guard: live key refused outside production; publishable key refused | unit | `npx vitest run src/lib/server/stripe/client.test.ts` | ❌ W0 |
 | priceScope | New Stripe/portal/admin paths stay inside allowed price zones | unit | `npx vitest run src/lib/priceScope.test.ts` | ✅ existing |
@@ -75,11 +75,11 @@ Filled by the planner from the requirement map below; every task must carry an `
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (test files are created by plans 15-01, 15-02, 15-04, 15-08, 15-09, 15-11, 15-12; `wave_0_complete` stays false until they exist)
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** plan-level sign-off after checker revision 2026-10-04; execution evidence pending
