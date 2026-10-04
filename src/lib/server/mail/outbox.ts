@@ -10,6 +10,11 @@ import { buildStepChangedEmail } from './stepChangedEmail';
 import { buildOnboardingCompletedEmail } from './onboardingCompletedEmail';
 import { buildDocumentIssuedEmail } from './documentIssuedEmail';
 import {
+  buildAcceptanceRefusedAdminEmail,
+  buildDocumentSignedAdminEmail,
+  buildDocumentSignedEmail,
+} from './documentSignedEmail';
+import {
   buildAdminProjectUrl,
   buildLoginUrl,
   buildPortalDocumentsUrl,
@@ -85,6 +90,47 @@ export function buildMail(row: OutboxRow): BuiltMail {
         portalUrl: buildPortalDocumentsUrl(),
       });
       break;
+    case 'document_signed':
+      mail = buildDocumentSignedEmail({
+        documentLabel: str(p.documentLabel),
+        projectTitle: str(p.projectTitle),
+        signedDate: str(p.signedDate),
+        signedTime: str(p.signedTime),
+        portalUrl: buildPortalDocumentsUrl(),
+      });
+      break;
+    case 'document_signed_admin':
+      mail = buildDocumentSignedAdminEmail({
+        documentLabel: str(p.documentLabel),
+        projectTitle: str(p.projectTitle),
+        clientName: str(p.clientName),
+        reference: str(p.reference),
+        signedDate: str(p.signedDate),
+        signedTime: str(p.signedTime),
+        reservedCount: typeof p.reservedCount === 'number' ? p.reservedCount : 0,
+        adminUrl: buildAdminProjectUrl(row.project_id ?? ''),
+      });
+      break;
+    case 'acceptance_refused': {
+      const refused = Array.isArray(p.refused)
+        ? p.refused.map((r: unknown) => {
+            const o = (r && typeof r === 'object' ? r : {}) as Record<string, unknown>;
+            return {
+              index: typeof o.index === 'number' ? o.index : undefined,
+              criterion: str(o.criterion),
+              note: str(o.note),
+            };
+          })
+        : [];
+      mail = buildAcceptanceRefusedAdminEmail({
+        projectTitle: str(p.projectTitle),
+        clientName: str(p.clientName),
+        refused,
+        refusedCount: typeof p.refusedCount === 'number' ? p.refusedCount : refused.length,
+        adminUrl: buildAdminProjectUrl(row.project_id ?? ''),
+      });
+      break;
+    }
     default:
       throw new Error('unknown_template');
   }
