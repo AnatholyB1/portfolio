@@ -41,7 +41,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin
  (completed 2026-10-03)
 - [x] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client (completed 2026-10-03)
-- [ ] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette
+- [x] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette (completed 2026-10-04)
 - [ ] **Phase 15: Stripe payments & invoicing** - Acomptes par étape, webhook vérifié idempotent, factures sans trou et avoirs
 - [ ] **Phase 16: Mailing automation completion** - Relances automatiques, rebonds/plaintes, désinscription, flux séparés
 - [ ] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source
@@ -268,40 +268,40 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 14-01-PLAN.md — pdf-lib + fontkit, compatibilité prouvée sur les PDF émis (3 types), polices du certificat, secret documenté
-- [ ] 14-02-PLAN.md — Liste fermée d'événements, JSON canonique, hachage de maillon et vérificateur hors ligne (TDD)
-- [ ] 14-03-PLAN.md — Textes juridiques versionnés, règle de signabilité et de signataire, réponses de PV, données du certificat (TDD)
-- [ ] 14-04-PLAN.md — Migration sv_signature : tables en ajout seul, chaîne de hachage, RPC code/PV/signature/scellé, outbox, garde « signé = gelé »
+- [x] 14-01-PLAN.md — pdf-lib + fontkit, compatibilité prouvée sur les PDF émis (3 types), polices du certificat, secret documenté
+- [x] 14-02-PLAN.md — Liste fermée d'événements, JSON canonique, hachage de maillon et vérificateur hors ligne (TDD)
+- [x] 14-03-PLAN.md — Textes juridiques versionnés, règle de signabilité et de signataire, réponses de PV, données du certificat (TDD)
+- [x] 14-04-PLAN.md — Migration sv_signature : tables en ajout seul, chaîne de hachage, RPC code/PV/signature/scellé, outbox, garde « signé = gelé »
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 14-05-PLAN.md — Branche de test (accord propriétaire), push de la migration, spike iframe, helpers RLS
-- [ ] 14-06-PLAN.md — E-mails après signature et refus de PV (outbox, listes fermées)
-- [ ] 14-07-PLAN.md — Service du code à usage unique (HMAC, envoi Resend direct, IP)
-- [ ] 14-08-PLAN.md — Wrappers de la piste, lien d'aperçu et téléchargement du scellé vérifié
-- [ ] 14-09-PLAN.md — Page certificat pdf-lib et finalisation idempotente (scellé + fait)
-- [ ] 14-10-PLAN.md — Modèle de contrat v2 (convention de preuve) et textes FR de la phase
+- [x] 14-05-PLAN.md — Branche de test (accord propriétaire), push de la migration, spike iframe, helpers RLS
+- [x] 14-06-PLAN.md — E-mails après signature et refus de PV (outbox, listes fermées)
+- [x] 14-07-PLAN.md — Service du code à usage unique (HMAC, envoi Resend direct, IP)
+- [x] 14-08-PLAN.md — Wrappers de la piste, lien d'aperçu et téléchargement du scellé vérifié
+- [x] 14-09-PLAN.md — Page certificat pdf-lib et finalisation idempotente (scellé + fait)
+- [x] 14-10-PLAN.md — Modèle de contrat v2 (convention de preuve) et textes FR de la phase
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 14-11-PLAN.md — Tests RLS : code, concurrence, consentement, PV
-- [ ] 14-12-PLAN.md — Tests RLS : ajout seul, falsification, parité SQL/TS, isolation, scellé atomique, gel
-- [ ] 14-13-PLAN.md — Contexte de signature et actions serveur du client
-- [ ] 14-14-PLAN.md — Vue admin des signatures et actions d'audit (export, intégrité, scellé, reprise)
-- [ ] 14-15-PLAN.md — Onglet Documents : « Lire et signer », téléchargement du scellé
+- [x] 14-11-PLAN.md — Tests RLS : code, concurrence, consentement, PV
+- [x] 14-12-PLAN.md — Tests RLS : ajout seul, falsification, parité SQL/TS, isolation, scellé atomique, gel
+- [x] 14-13-PLAN.md — Contexte de signature et actions serveur du client
+- [x] 14-14-PLAN.md — Vue admin des signatures et actions d'audit (export, intégrité, scellé, reprise)
+- [x] 14-15-PLAN.md — Onglet Documents : « Lire et signer », téléchargement du scellé
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 14-16-PLAN.md — Page de signature et liste de recette du PV
-- [ ] 14-17-PLAN.md — Fiche document admin : bloc signature, piste, Remplacer gelé, avis sur faits manuels
+- [x] 14-16-PLAN.md — Page de signature et liste de recette du PV
+- [x] 14-17-PLAN.md — Fiche document admin : bloc signature, piste, Remplacer gelé, avis sur faits manuels
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 14-18-PLAN.md — Application en production (accord propriétaire), secret Vercel, suppression de la branche
+- [x] 14-18-PLAN.md — Application en production (accord propriétaire), secret Vercel, suppression de la branche
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 14-19-PLAN.md — Release gate, déploiement et vérification de bout en bout sur « Test E2E Sèvalys »
+- [x] 14-19-PLAN.md — Release gate, déploiement et vérification de bout en bout sur « Test E2E Sèvalys »
 **UI hint**: yes
 
 ### Phase 15: Stripe payments & invoicing
@@ -392,7 +392,7 @@ Plans:
 | 11. Lead attribution, pipeline & consent | v2.0 | 18/18 | Complete    | 2026-10-02 |
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
-| 14. Electronic signature | v2.0 | 0/TBD | Not started | - |
+| 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 0/TBD | Not started | - |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
