@@ -29,6 +29,16 @@ vi.mock('@/lib/server/documents/download', () => ({
   createDocumentDownloadUrl: (...a: unknown[]) => createDocumentDownloadUrl(...a),
 }));
 
+const createInvoiceDownloadUrl = vi.fn();
+vi.mock('@/lib/server/invoices/download', () => ({
+  createInvoiceDownloadUrl: (...a: unknown[]) => createInvoiceDownloadUrl(...a),
+}));
+
+const createCheckoutForInvoice = vi.fn();
+vi.mock('@/lib/server/stripe/checkout', () => ({
+  createCheckoutForInvoice: (...a: unknown[]) => createCheckoutForInvoice(...a),
+}));
+
 const createSealedDownloadUrl = vi.fn();
 vi.mock('@/lib/server/signature/links', () => ({
   createSealedDownloadUrl: (...a: unknown[]) => createSealedDownloadUrl(...a),
@@ -49,6 +59,8 @@ const {
   downloadAction,
   documentDownloadAction,
   sealedDocumentDownloadAction,
+  payInvoiceAction,
+  invoiceDownloadAction,
 } = await import('./actions');
 const { PROJECT_COPY } = await import('@/lib/projects/copy');
 
@@ -250,5 +262,80 @@ describe('sealedDocumentDownloadAction', () => {
     expect(await sealedDocumentDownloadAction(DOC)).toEqual(failure);
     createSealedDownloadUrl.mockResolvedValueOnce({ ok: false, code: 'not_found' });
     expect(await sealedDocumentDownloadAction(DOC)).toEqual(failure);
+  });
+});
+
+describe('payInvoiceAction', () => {
+  const INV = '22222222-2222-4222-8222-222222222222';
+  const portal = PROJECT_COPY.payments.portal;
+  const okCtx = { status: 'ok', supabase, user: { id: 'user-1' }, client: { id: 'c1', name: 'C' } };
+
+  it('rejects a non-uuid id before the session check and never reaches Stripe', async () => {
+    expect(await payInvoiceAction('not-a-uuid')).toEqual({ ok: false, message: portal.payFailed });
+    expect(requireClient).not.toHaveBeenCalled();
+    expect(createCheckoutForInvoice).not.toHaveBeenCalled();
+  });
+
+  it('refuses a client without access', async () => {
+    requireClient.mockResolvedValue({ status: 'no_access' });
+    expect(await payInvoiceAction(INV)).toEqual({ ok: false, message: portal.payFailed });
+    expect(createCheckoutForInvoice).not.toHaveBeenCalled();
+  });
+
+  it('returns the checkout url through the RLS client', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createCheckoutForInvoice.mockResolvedValue({ ok: true, url: 'https://checkout.stripe.test/s' });
+    expect(await payInvoiceAction(INV)).toEqual({ ok: true, url: 'https://checkout.stripe.test/s' });
+    expect(createCheckoutForInvoice).toHaveBeenCalledWith(supabase, INV);
+  });
+
+  it('maps not_payable and in_progress to the settled message', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    for (const code of ['not_payable', 'in_progress']) {
+      createCheckoutForInvoice.mockResolvedValueOnce({ ok: false, code });
+      expect(await payInvoiceAction(INV)).toEqual({ ok: false, message: portal.alreadySettled, settled: true });
+    }
+  });
+
+  it('maps other failures to the generic pay message without leaking codes', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    for (const code of ['not_found', 'error']) {
+      createCheckoutForInvoice.mockResolvedValueOnce({ ok: false, code });
+      expect(await payInvoiceAction(INV)).toEqual({ ok: false, message: portal.payFailed });
+    }
+  });
+
+  it('accepts no amount: both actions take a single id parameter', () => {
+    expect(payInvoiceAction.length).toBe(1);
+    expect(invoiceDownloadAction.length).toBe(1);
+  });
+});
+
+describe('invoiceDownloadAction', () => {
+  const INV = '22222222-2222-4222-8222-222222222222';
+  const failure = { ok: false, message: PROJECT_COPY.payments.portal.downloadFailed };
+  const okCtx = { status: 'ok', supabase, user: { id: 'user-1' }, client: { id: 'c1', name: 'C' } };
+
+  it('guards id and session', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    expect(await invoiceDownloadAction('x')).toEqual(failure);
+    requireClient.mockResolvedValue({ status: 'no_access' });
+    expect(await invoiceDownloadAction(INV)).toEqual(failure);
+    expect(createInvoiceDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('returns the signed url through the RLS client', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createInvoiceDownloadUrl.mockResolvedValue({ ok: true, url: 'https://signed.example/i' });
+    expect(await invoiceDownloadAction(INV)).toEqual({ ok: true, url: 'https://signed.example/i' });
+    expect(createInvoiceDownloadUrl).toHaveBeenCalledWith(supabase, INV);
+  });
+
+  it('maps not_ready and errors to the download failure copy', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    for (const code of ['not_ready', 'not_found', 'error']) {
+      createInvoiceDownloadUrl.mockResolvedValueOnce({ ok: false, code });
+      expect(await invoiceDownloadAction(INV)).toEqual(failure);
+    }
   });
 });

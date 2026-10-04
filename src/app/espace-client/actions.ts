@@ -10,6 +10,8 @@ import { confirmCompany, saveOnboardingBlock } from '@/lib/server/projects/onboa
 import { setPresentationConsent } from '@/lib/server/projects/content';
 import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
 import { createDocumentDownloadUrl } from '@/lib/server/documents/download';
+import { createInvoiceDownloadUrl } from '@/lib/server/invoices/download';
+import { createCheckoutForInvoice } from '@/lib/server/stripe/checkout';
 import type {
   DownloadResult,
   SimpleResult,
@@ -260,6 +262,35 @@ export async function sealedDocumentDownloadAction(documentId: string): Promise<
     id: ctx.user.id,
     ip: requestIp(await headers()),
   });
+  if (!res.ok) return failure;
+  return { ok: true, url: res.url };
+}
+
+// Paiement (D-05, PAY-01) : seul l'identifiant de facture est accepté, le montant vient de la base.
+export async function payInvoiceAction(
+  invoiceId: string,
+): Promise<{ ok: true; url: string } | { ok: false; message: string; settled?: boolean }> {
+  const failure = { ok: false as const, message: PROJECT_COPY.payments.portal.payFailed };
+  if (typeof invoiceId !== 'string' || !UUID_RE.test(invoiceId)) return failure;
+  const ctx = await requireClient();
+  if (ctx.status !== 'ok') return failure;
+  const res = await createCheckoutForInvoice(ctx.supabase, invoiceId);
+  if (res.ok) return { ok: true, url: res.url };
+  if (res.code === 'not_payable' || res.code === 'in_progress') {
+    return { ok: false, message: PROJECT_COPY.payments.portal.alreadySettled, settled: true };
+  }
+  return failure;
+}
+
+// Facture PDF : autorisation par lecture RLS, lien signé de 60 secondes (D-18).
+export async function invoiceDownloadAction(
+  invoiceId: string,
+): Promise<{ ok: true; url: string } | { ok: false; message: string }> {
+  const failure = { ok: false as const, message: PROJECT_COPY.payments.portal.downloadFailed };
+  if (typeof invoiceId !== 'string' || !UUID_RE.test(invoiceId)) return failure;
+  const ctx = await requireClient();
+  if (ctx.status !== 'ok') return failure;
+  const res = await createInvoiceDownloadUrl(ctx.supabase, invoiceId);
   if (!res.ok) return failure;
   return { ok: true, url: res.url };
 }
