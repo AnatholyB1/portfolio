@@ -39,6 +39,8 @@ import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { STEPS } from '@/lib/projects/steps';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
+import { loadSignatureViews } from '@/lib/server/signature/adminView';
+import { SIGNING_FACT } from '@/lib/documents/steps';
 import { loadProjectBundle } from '@/lib/server/projects/read';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -65,6 +67,16 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   const bundle = await loadProjectBundle(supabase, id, now);
   if (!bundle) notFound();
   const docsView = await loadAdminDocumentsView(supabase, bundle);
+  const signatureMap = await loadSignatureViews(supabase, id);
+  const signatures = Object.fromEntries(signatureMap);
+  const signedFacts = [
+    ...new Set(
+      docsView.issued.flatMap((d) => {
+        const fact = signatures[d.id]?.signature ? SIGNING_FACT[d.docType] : undefined;
+        return fact ? [fact] : [];
+      }),
+    ),
+  ];
 
   const { project, client, state, facts, notes, onboarding, files, links, consents, lastActivityAt } = bundle;
   const { isDormant, daysWaiting } = classifyProject(state, lastActivityAt, now);
@@ -127,7 +139,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   <dt>Action attendue</dt>
                   <dd>{state.expectedAction}</dd>
                 </dl>
-                <PostFactForm projectId={project.id} facts={facts} />
+                <PostFactForm projectId={project.id} facts={facts} signedFacts={signedFacts} />
                 <FactJournal projectId={project.id} facts={facts} notes={notes} />
               </section>
               <FilesPanel
@@ -148,6 +160,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
               <DocumentsPanel
                 projectId={project.id}
                 view={docsView}
+                signatures={signatures}
                 projectGoal={onboarding?.projectGoal ?? null}
                 actions={{
                   preview: previewDocumentAction,

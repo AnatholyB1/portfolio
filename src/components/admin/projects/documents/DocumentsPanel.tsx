@@ -1,9 +1,10 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { Lock } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { DOC_LABELS, type DocType } from '@/lib/documents/types';
-import type { DocumentActions, IssuedDocView } from './types';
+import type { DocumentActions, IssuedDocView, SignatureView } from './types';
 import QuoteForm from './QuoteForm';
 import SpecForm from './SpecForm';
 import ContractForm from './ContractForm';
@@ -43,9 +44,10 @@ type DocumentsPanelProps = {
   view: DocumentsView;
   projectGoal: string | null;
   actions: DocumentActions;
+  signatures?: Record<string, SignatureView>;
 };
 
-export default function DocumentsPanel({ projectId, view, projectGoal, actions }: DocumentsPanelProps) {
+export default function DocumentsPanel({ projectId, view, projectGoal, actions, signatures = {} }: DocumentsPanelProps) {
   const uid = useId();
   const titleId = `${uid}-title`;
   const [openType, setOpenType] = useState<DocType | null>(null);
@@ -91,7 +93,10 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions }
             const label = e.docType === 'invoice' ? COPY.invoiceTitle : DOC_LABELS[e.docType];
             const open = openType === e.docType;
             // Un document signé ou un prérequis manquant bloque le bouton ; la facture reste ouvrable (aperçu seul).
-            const disabled = e.previewOnly ? false : !e.canIssue;
+            const head = view.issued.find((d) => d.docType === e.docType && d.revision === e.activeRevision);
+            const signed = head ? Boolean(signatures[head.id]?.signature) : false;
+            const frozenId = `${uid}-${e.docType}-frozen`;
+            const disabled = signed || (e.previewOnly ? false : !e.canIssue);
             return (
               <div key={e.docType}>
                 <div className="pt-doc-expected">
@@ -100,7 +105,12 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions }
                     <p className="pt-helper">
                       {e.activeRevision === null ? COPY.toIssue : COPY.issuedVersion(e.activeRevision)}
                     </p>
-                    {e.blockedReason ? (
+                    {signed ? (
+                      <p className="pt-doc-frozen" id={frozenId}>
+                        <Lock size={16} aria-hidden="true" />
+                        {COPY.signedNoReplace}
+                      </p>
+                    ) : e.blockedReason ? (
                       <p className="pt-helper" id={reasonId}>
                         {e.blockedReason}
                       </p>
@@ -110,7 +120,7 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions }
                     type="button"
                     className="pt-btn-ghost"
                     disabled={disabled}
-                    aria-describedby={e.blockedReason ? reasonId : undefined}
+                    aria-describedby={signed ? frozenId : e.blockedReason ? reasonId : undefined}
                     aria-expanded={open}
                     onClick={() => setOpenType(open ? null : e.docType)}
                   >
@@ -129,7 +139,7 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions }
         {view.issued.length === 0 ? (
           <p className="pt-helper">{COPY.noIssued}</p>
         ) : (
-          <IssuedDocumentsList documents={view.issued} actions={actions} />
+          <IssuedDocumentsList documents={view.issued} actions={actions} signatures={signatures} />
         )}
       </div>
     </section>

@@ -16,7 +16,15 @@ import '../leads/leads.css';
 const INITIAL: ProjectActionState = { status: 'idle' };
 const NOTE_MAX = 500;
 
-export default function PostFactForm({ projectId, facts }: { projectId: string; facts: Fact[] }) {
+export default function PostFactForm({
+  projectId,
+  facts,
+  signedFacts = [],
+}: {
+  projectId: string;
+  facts: Fact[];
+  signedFacts?: string[];
+}) {
   const [state, formAction, pending] = useActionState(
     async (prev: ProjectActionState, fd: FormData) => postFactAction(prev, fd),
     INITIAL,
@@ -54,6 +62,11 @@ export default function PostFactForm({ projectId, facts }: { projectId: string; 
             </option>
           ))}
         </select>
+        {current !== '' && signedFacts.includes(current) ? (
+          <p className="pt-warning" style={{ fontSize: 14 }}>
+            {PROJECT_COPY.signature.admin.manualFactNotice}
+          </p>
+        ) : null}
         {ahead ? (
           <p className="pt-warn">
             <TriangleAlert size={16} aria-hidden="true" /> {PROJECT_COPY.facts.ahead}
