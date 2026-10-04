@@ -13,7 +13,9 @@ const files = {
   contract: read('./documents/ContractForm.tsx'),
   acceptance: read('./documents/AcceptanceForm.tsx'),
   panel: read('./documents/DocumentsPanel.tsx'),
+  signature: read('./documents/SignaturePanel.tsx'),
 };
+const postFact = read('./PostFactForm.tsx');
 const tsx = Object.values(files).filter((src) => src !== files.types);
 
 describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', () => {
@@ -105,6 +107,50 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
     expect(files.panel).not.toContain('actions.preview(');
     expect(files.panel).not.toContain('actions.issue(');
     expect(files.panel).not.toContain('useEffect');
+  });
+
+  it('SignaturePanel exposes export, integrity and both download controls (D-08, D-13)', () => {
+    expect(files.signature).toContain('COPY.exportTrail');
+    expect(files.signature).toContain('COPY.verify');
+    expect(files.signature).toContain('COPY.downloadOriginal');
+    expect(files.signature).toContain('COPY.downloadSealed');
+    expect(files.signature).toContain('new Blob(');
+    expect(files.signature).toContain('URL.revokeObjectURL');
+    expect(files.signature).toContain('aria-live="polite"');
+    expect(files.signature).toContain('COPY.integrityBroken');
+  });
+
+  it('integrity OK path does not use a success or green class', () => {
+    expect(files.signature).not.toContain('pt-success');
+    expect(files.signature).not.toMatch(/green|#0f0|#00ff/i);
+  });
+
+  it('Surface D sentences come from PROJECT_COPY, not literals', () => {
+    for (const src of [files.signature, files.list, files.panel, postFact]) {
+      expect(src).not.toContain("Exporter la piste");
+      expect(src).not.toContain('Piste rompue');
+      expect(src).not.toContain('Toute correction manuelle');
+      expect(src).not.toContain('Le client a refusé');
+      expect(src).not.toContain('signé et figé');
+    }
+  });
+
+  it('IssuedDocumentsList renders SignaturePanel, the signed line and the PV refusal notice (D-15)', () => {
+    expect(files.list).toContain('<SignaturePanel');
+    expect(files.list).toContain('SIGN.signedBy');
+    expect(files.list).toContain('SIGN.pvRefusal');
+  });
+
+  it('DocumentsPanel freezes Remplacer with aria-describedby once signed (D-17)', () => {
+    expect(files.panel).toContain('signatures[head.id]?.signature');
+    expect(files.panel).toContain('frozenId');
+    expect(files.panel).toContain('<Lock');
+    expect(files.panel).toContain('disabled = signed ||');
+  });
+
+  it('PostFactForm carries the electronic-signature notice (D-16)', () => {
+    expect(postFact).toContain('signedFacts');
+    expect(postFact).toContain('manualFactNotice');
   });
 
   it('has no transverse documents page (D-16)', () => {
