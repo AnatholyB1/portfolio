@@ -15,6 +15,7 @@ export const PRICE_ALLOWED_ZONES: readonly { path: string; reason: string }[] = 
   { path: 'src/components/admin', reason: "Composants de l'espace admin (tarification, suivi financier)." },
   { path: 'src/lib/server', reason: "Code serveur uniquement : accès base de données et données chiffrées, jamais embarqué côté client." },
   { path: 'src/lib/documents', reason: "Modèles de documents (contrats, devis) des phases 13 et 15, qui contiennent des prix." },
+  { path: 'src/lib/signature', reason: "Signature électronique (phase 14) : règles, certificat et piste d'audit des documents chiffrés, utilisés seulement par le portail et l'admin." },
 ] as const;
 
 // Fichiers publics protégés par un test « pas de prix ». Ces tests restent
