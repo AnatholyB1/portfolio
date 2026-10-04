@@ -1,6 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
+import { createSealedDownloadUrl } from '@/lib/server/signature/links';
+import { requestIp } from '@/lib/server/signature/clientIp';
 import { requireClient } from '@/lib/server/auth/dal';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { confirmCompany, saveOnboardingBlock } from '@/lib/server/projects/onboarding';
@@ -242,6 +245,21 @@ export async function documentDownloadAction(documentId: string): Promise<Downlo
   if (ctx.status !== 'ok') return failure;
   if (typeof documentId !== 'string' || !UUID_RE.test(documentId)) return failure;
   const res = await createDocumentDownloadUrl(ctx.supabase, documentId);
+  if (!res.ok) return failure;
+  return { ok: true, url: res.url };
+}
+
+// Document scellé (D-09) : lecture RLS du sceau, hash vérifié côté serveur avant l'émission du lien (T-14-55/56).
+export async function sealedDocumentDownloadAction(documentId: string): Promise<DownloadResult> {
+  const failure = { ok: false as const, message: PROJECT_COPY.signature.success.downloadFailed };
+  const ctx = await requireClient();
+  if (ctx.status !== 'ok') return failure;
+  if (typeof documentId !== 'string' || !UUID_RE.test(documentId)) return failure;
+  const res = await createSealedDownloadUrl(ctx.supabase, documentId, {
+    kind: 'client',
+    id: ctx.user.id,
+    ip: requestIp(await headers()),
+  });
   if (!res.ok) return failure;
   return { ok: true, url: res.url };
 }

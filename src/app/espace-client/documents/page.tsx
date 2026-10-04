@@ -8,7 +8,7 @@ import ClientNav from '@/components/portal/project/ClientNav';
 import DocumentsList, { type DocumentListItem } from '@/components/portal/project/DocumentsList';
 import '@/components/portal/client.css';
 import '@/components/portal/project/project.css';
-import { documentDownloadAction } from '@/app/espace-client/actions';
+import { documentDownloadAction, sealedDocumentDownloadAction } from '@/app/espace-client/actions';
 import { sortForDisplay, withStatuses } from '@/lib/documents/status';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { requireClient } from '@/lib/server/auth/dal';
@@ -35,6 +35,18 @@ export default async function EspaceClientDocumentsPage() {
   const projectIds = projects.map((p) => p.id);
   const docs = await loadDocumentsForProjects(ctx.supabase, projectIds);
 
+  // Dates de signature électronique, lues via RLS (le client ne voit que les siennes).
+  const signedAtById = new Map<string, string>();
+  if (docs.length > 0) {
+    const sigs = await ctx.supabase
+      .from('sv_document_signatures')
+      .select('document_id, signed_at')
+      .in('document_id', docs.map((d) => d.id));
+    for (const row of (sigs.data ?? []) as { document_id: string; signed_at: string }[]) {
+      signedAtById.set(row.document_id, row.signed_at);
+    }
+  }
+
   const groups: { id: string; title: string; items: DocumentListItem[] }[] = [];
   for (const p of projects) {
     const projectDocs = docs.filter((d) => d.projectId === p.id);
@@ -49,6 +61,7 @@ export default async function EspaceClientDocumentsPage() {
       issuedAt: d.issuedAt,
       status: bundle ? d.status : null,
       replacedBy: d.replacedBy ? { revision: d.replacedBy.revision, issuedAt: d.replacedBy.issuedAt } : null,
+      signedAt: signedAtById.get(d.id) ?? null,
     }));
     groups.push({ id: p.id, title: p.title, items });
   }
@@ -71,7 +84,7 @@ export default async function EspaceClientDocumentsPage() {
             groups.map((g) => (
               <section key={g.id} className="pt-card" aria-labelledby={`documents-${g.id}`}>
                 {groups.length > 1 ? <h2 id={`documents-${g.id}`}>{g.title}</h2> : null}
-                <DocumentsList projectTitle={g.title} getDownloadUrl={documentDownloadAction} documents={g.items} />
+                <DocumentsList projectTitle={g.title} getDownloadUrl={documentDownloadAction} getSealedDownloadUrl={sealedDocumentDownloadAction} documents={g.items} />
               </section>
             ))
           )}

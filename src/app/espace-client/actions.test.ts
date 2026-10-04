@@ -29,6 +29,14 @@ vi.mock('@/lib/server/documents/download', () => ({
   createDocumentDownloadUrl: (...a: unknown[]) => createDocumentDownloadUrl(...a),
 }));
 
+const createSealedDownloadUrl = vi.fn();
+vi.mock('@/lib/server/signature/links', () => ({
+  createSealedDownloadUrl: (...a: unknown[]) => createSealedDownloadUrl(...a),
+}));
+
+vi.mock('@/lib/server/signature/clientIp', () => ({ requestIp: () => '203.0.113.9' }));
+vi.mock('next/headers', () => ({ headers: async () => new Headers() }));
+
 const revalidatePath = vi.fn();
 vi.mock('next/cache', () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
 
@@ -40,6 +48,7 @@ const {
   confirmUploadAction,
   downloadAction,
   documentDownloadAction,
+  sealedDocumentDownloadAction,
 } = await import('./actions');
 const { PROJECT_COPY } = await import('@/lib/projects/copy');
 
@@ -207,5 +216,39 @@ describe('documentDownloadAction', () => {
     requireClient.mockResolvedValue(okCtx);
     createDocumentDownloadUrl.mockResolvedValue({ ok: false, code: 'not_found' });
     expect(await documentDownloadAction(DOC)).toEqual(failure);
+  });
+});
+
+describe('sealedDocumentDownloadAction', () => {
+  const DOC = '11111111-1111-4111-8111-111111111111';
+  const failure = { ok: false, message: PROJECT_COPY.signature.success.downloadFailed };
+  const okCtx = { status: 'ok', supabase, user: { id: 'user-1' }, client: { id: 'c1', name: 'C' } };
+
+  it('does not reach the service without a client session', async () => {
+    requireClient.mockResolvedValue({ status: 'no_access' });
+    expect(await sealedDocumentDownloadAction(DOC)).toEqual(failure);
+    expect(createSealedDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('rejects a non-uuid id without a service call', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    expect(await sealedDocumentDownloadAction('f1')).toEqual(failure);
+    expect(await sealedDocumentDownloadAction(42 as unknown as string)).toEqual(failure);
+    expect(createSealedDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('returns the url and passes the client actor with the request ip', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createSealedDownloadUrl.mockResolvedValue({ ok: true, url: 'https://signed.example/s' });
+    expect(await sealedDocumentDownloadAction(DOC)).toEqual({ ok: true, url: 'https://signed.example/s' });
+    expect(createSealedDownloadUrl).toHaveBeenCalledWith(supabase, DOC, { kind: 'client', id: 'user-1', ip: '203.0.113.9' });
+  });
+
+  it('maps hash_mismatch and not_found to the failure message without a url', async () => {
+    requireClient.mockResolvedValue(okCtx);
+    createSealedDownloadUrl.mockResolvedValueOnce({ ok: false, code: 'hash_mismatch' });
+    expect(await sealedDocumentDownloadAction(DOC)).toEqual(failure);
+    createSealedDownloadUrl.mockResolvedValueOnce({ ok: false, code: 'not_found' });
+    expect(await sealedDocumentDownloadAction(DOC)).toEqual(failure);
   });
 });

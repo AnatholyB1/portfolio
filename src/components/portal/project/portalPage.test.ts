@@ -32,6 +32,13 @@ describe('client portal page', () => {
     for (const a of ['requestUploadAction', 'confirmUploadAction', 'downloadAction']) expect(page).toContain(a);
   });
 
+  it('shows the awaiting-signature notice linking to the documents tab', () => {
+    expect(page).toContain('awaitingSignature');
+    expect(page).toContain("d.status === 'to_sign'");
+    expect(page).toContain('PROJECT_COPY.signature.documentsTab.awaiting');
+    expect(page).toContain('href="/espace-client/documents"');
+  });
+
   it('has the empty state and drops the placeholder', () => {
     expect(page).toContain('PROJECT_COPY.portal.emptyHeading');
     const copy = read('../../../lib/projects/copy.ts');
