@@ -121,3 +121,54 @@
   font-size: 14px;
   color: var(--ink-dim);
 }
+
+/* Phase 14 : signature électronique, carte document admin (14-17). */
+.pt-admin .pt-doc-signature {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-admin .pt-doc-signature dd {
+  margin: 0;
+}
+.pt-admin .pt-doc-signed-line {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-doc-frozen {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-doc-trail-scroll {
+  max-height: 320px;
+  overflow: auto;
+}
+@media (max-width: 640px) {
+  .pt-admin .pt-doc-trail-scroll {
+    max-height: none;
+  }
+  .pt-admin .pt-doc-trail-scroll thead {
+    display: none;
+  }
+  .pt-admin .pt-doc-trail-scroll tr,
+  .pt-admin .pt-doc-trail-scroll td {
+    display: block;
+  }
+  .pt-admin .pt-doc-trail-scroll tr {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pt-admin .pt-doc-trail-scroll td::before {
+    content: attr(data-label) " : ";
+    color: var(--ink-dim);
+  }
+}
