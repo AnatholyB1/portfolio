@@ -171,6 +171,86 @@ export type InvoiceSnapshot = SnapshotBase<'invoice'> & {
   deliveryAddress: PostalAddress | null;
 };
 
+// --- Phase 15 : factures numérotées et avoirs (hors sv_project_documents) ---------------------
+// Montants en centimes entiers ; quantités en millièmes de jour (D-05).
+
+export type InvoiceKind = 'deposit' | 'period' | 'final';
+export type InvoiceSeries = 'FA' | 'AV' | 'TFA' | 'TAV';
+
+export type InvoiceLineV2 = {
+  designation: string;
+  quantityMilli: number;
+  unitCode: 'DAY' | 'C62';
+  unitPriceCents: number;
+  totalCents: number;
+};
+
+export type InvoiceDeduction = {
+  label: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  amountCents: number;
+};
+
+export type InvoiceSnapshotV2 = {
+  schemaVersion: 2;
+  docType: 'invoice';
+  templateVersion: 'v2';
+  /** null = aperçu, rendu avec le tampon PROFORMA. */
+  number: string | null;
+  kind: InvoiceKind;
+  typeCode: 380 | 386;
+  isTest: boolean;
+  issuedOn: string;
+  dueDate: string;
+  seller: SellerIdentity;
+  client: ClientParty;
+  project: ProjectRef;
+  quote: { reference: string; revision: number } | null;
+  contractReference: string | null;
+  orderNumber: string | null;
+  servicePeriod: { start: string; end: string } | null;
+  depositPercent: number | null;
+  lines: InvoiceLineV2[];
+  totalExclTaxCents: number;
+  vatTotalCents: 0;
+  totalInclTaxCents: number;
+  deductions: InvoiceDeduction[];
+  prepaidCents: number;
+  netToPayCents: number;
+  vatRegime: 'franchise' | 'standard';
+  vatExemptionText: string;
+  paymentTermsText: string;
+  latePenaltyText: string;
+  recoveryIndemnityText: string;
+};
+
+export type CreditNoteSnapshot = {
+  schemaVersion: 2;
+  docType: 'credit_note';
+  templateVersion: 'v1';
+  number: string | null;
+  typeCode: 381;
+  isTest: boolean;
+  issuedOn: string;
+  seller: SellerIdentity;
+  client: ClientParty;
+  project: ProjectRef;
+  origin: { invoiceId: string; number: string; issuedOn: string; totalInclTaxCents: number };
+  scope: 'total' | 'partial';
+  reason: string;
+  refundRequested: boolean;
+  lines: InvoiceLineV2[];
+  totalExclTaxCents: number;
+  vatTotalCents: 0;
+  totalInclTaxCents: number;
+  vatRegime: 'franchise' | 'standard';
+  vatExemptionText: string;
+};
+
+export type LedgerSnapshot = InvoiceSnapshotV2 | CreditNoteSnapshot;
+
 export type DocumentSnapshot =
   | QuoteSnapshot
   | SpecSnapshot
