@@ -57,7 +57,7 @@ revised: 2026-10-04
 | SIGN-03 | Offline CLI `node scripts/verify-trail.mjs` on JSON exports (D-13) | 14-02 | unit (spawns plain node) | `npx vitest run src/lib/signature/verifyTrailCli.test.ts` | ⬜ pending |
 | SIGN-03 | Isolation client A/B, anon, Gecko; storage_path hidden | 14-12 | RLS | `npm run test:rls -- tests/rls/signatureChain.rls.test.ts -t isolation` | ⬜ pending |
 | SIGN-03 | Static migration guards (grants, triggers, closed list, part-1 seam) | 14-04 | unit | `npx vitest run src/lib/signatureMigration.test.ts src/lib/migrationLint.test.ts` | ⬜ pending |
-| SIGN-04 | Sealed = original pages + certificate; stored hash = downloaded hash; deterministic retry | 14-09 | unit | `npx vitest run src/lib/server/signature/seal.test.ts` | ⬜ pending |
+| SIGN-04 | Sealed = original pages + certificate; stored hash = downloaded hash; idempotent re-seal | 14-09 | unit | `npx vitest run src/lib/server/signature/seal.test.ts` | ⬜ pending |
 | SIGN-04 | Seal failure ⇒ no fact; idempotent re-seal | 14-12 | RLS | `npm run test:rls -- tests/rls/signatureChain.rls.test.ts -t seal-atomic` | ⬜ pending |
 | SIGN-04 | Signed document cannot be replaced | 14-12 | RLS | `npm run test:rls -- tests/rls/signatureChain.rls.test.ts -t frozen` | ⬜ pending |
 | SIGN-05 | Answer schema, refusal/reserve rules | 14-03 | unit | `npx vitest run src/lib/signature/acceptance.test.ts` | ⬜ pending |
