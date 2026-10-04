@@ -20,6 +20,7 @@ export type IssueDocumentResult =
         | 'seller_not_configured'
         | 'replaces_mismatch'
         | 'revision_mismatch'
+        | 'signed_no_replace'
         | 'upload_failed'
         | 'error';
     };
@@ -122,6 +123,8 @@ export async function issueDocument(a: {
           return { ok: true, outcome: 'already_issued', documentId: a.documentId, mail: 'none' };
         case 'sv_document_replaces_mismatch':
           return { ok: false, code: 'replaces_mismatch' };
+        case 'sv_document_signed':
+          return { ok: false, code: 'signed_no_replace' };
         case 'sv_document_revision_mismatch':
           return { ok: false, code: 'revision_mismatch' };
         default:

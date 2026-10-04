@@ -202,6 +202,11 @@ describe('issueDocument orphan cleanup (CR-01)', () => {
       expect(S.remove).toHaveBeenCalledWith([`${PID}/${DID}.pdf`]);
     },
   );
+  it('maps sv_document_signed to signed_no_replace and removes the orphan (D-17)', async () => {
+    S.rpc.mockResolvedValue({ ok: false, code: 'sv_document_signed' });
+    expect(await issueDocument(args())).toEqual({ ok: false, code: 'signed_no_replace' });
+    expect(S.remove).toHaveBeenCalledWith([`${PID}/${DID}.pdf`]);
+  });
   it('keeps the object on already_issued', async () => {
     S.rpc.mockResolvedValue({ ok: false, code: 'sv_document_already_issued' });
     expect(await issueDocument(args())).toMatchObject({ ok: true, outcome: 'already_issued' });

@@ -38,7 +38,27 @@ vi.mock('@/lib/server/documents/download', () => ({
   verifyDocumentHash: (...a: unknown[]) => verifyDocumentHash(...a),
 }));
 
+vi.mock('next/headers', () => ({ headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9' }) }));
+const exportSignatureChain = vi.fn();
+const verifySignatureChainInDb = vi.fn();
+vi.mock('@/lib/server/signature/chain', () => ({
+  exportSignatureChain: (...a: unknown[]) => exportSignatureChain(...a),
+  verifySignatureChainInDb: (...a: unknown[]) => verifySignatureChainInDb(...a),
+}));
+const createSealedDownloadUrl = vi.fn();
+vi.mock('@/lib/server/signature/links', () => ({
+  createSealedDownloadUrl: (...a: unknown[]) => createSealedDownloadUrl(...a),
+}));
+const finalizeSignature = vi.fn();
+vi.mock('@/lib/server/signature/seal', () => ({
+  finalizeSignature: (...a: unknown[]) => finalizeSignature(...a),
+}));
+
 const {
+  exportSignatureTrailAction,
+  verifySignatureChainAction,
+  adminSealedDownloadAction,
+  adminResumeFinalizationAction,
   previewDocumentAction,
   issueDocumentAction,
   adminDocumentDownloadAction,
@@ -220,6 +240,7 @@ describe('issueDocumentAction', () => {
     ['seller_not_configured', COPY.sellerNotConfigured],
     ['replaces_mismatch', COPY.concurrent],
     ['revision_mismatch', COPY.concurrent],
+    ['signed_no_replace', COPY.signedNoReplace],
     ['upload_failed', COPY.issueFailed],
     ['error', COPY.issueFailed],
   ])('maps issue error %s to its message', async (code, message) => {
@@ -258,5 +279,98 @@ describe('id based actions', () => {
     });
     expect((await verifyDocumentHashAction(DID)).ok).toBe(false);
     expect((await loadSnapshotAction(DID)).ok).toBe(false);
+  });
+});
+
+describe('signature audit actions', () => {
+  const SIG = PROJECT_COPY.signature.admin;
+  let row: { data: unknown; error: unknown };
+  const rlsWithRow = () => ({
+    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => row }) }) }),
+  });
+  const services = () => [exportSignatureChain, verifySignatureChainInDb, createSealedDownloadUrl, finalizeSignature];
+
+  beforeEach(() => {
+    row = { data: { reference: 'PV-2026-01', project_id: PID }, error: null };
+    requireAdmin.mockResolvedValue({ user: { id: 'admin-1' }, supabase: rlsWithRow() });
+    exportSignatureChain.mockResolvedValue({ ok: true, json: '{"a":1}', verified: true });
+    verifySignatureChainInDb.mockResolvedValue({ ok: true, chainOk: true, count: 7, brokenAt: null, headHash: 'h' });
+    createSealedDownloadUrl.mockResolvedValue({ ok: true, url: 'https://s/sealed' });
+    finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
+  });
+
+  const calls: [string, (id: string) => Promise<unknown>][] = [
+    ['exportSignatureTrailAction', exportSignatureTrailAction],
+    ['verifySignatureChainAction', verifySignatureChainAction],
+    ['adminSealedDownloadAction', adminSealedDownloadAction],
+    ['adminResumeFinalizationAction', adminResumeFinalizationAction],
+  ];
+
+  describe.each(calls)('%s', (_n, run) => {
+    it('propagates requireAdmin rejection and reaches no service', async () => {
+      requireAdmin.mockRejectedValue(new Error('NOT_FOUND'));
+      await expect(run(DID)).rejects.toThrow('NOT_FOUND');
+      for (const m of services()) expect(m).not.toHaveBeenCalled();
+    });
+    it('rejects a non-UUID id without calling services', async () => {
+      const res = (await run('not-a-uuid')) as { ok: boolean };
+      expect(res.ok).toBe(false);
+      for (const m of services()) expect(m).not.toHaveBeenCalled();
+    });
+  });
+
+  it('exports the trail under piste-audit-{reference}.json', async () => {
+    expect(await exportSignatureTrailAction(DID)).toEqual({
+      ok: true,
+      filename: 'piste-audit-PV-2026-01.json',
+      json: '{"a":1}',
+    });
+    expect(exportSignatureChain).toHaveBeenCalledWith(DID);
+  });
+
+  it('returns the export error copy when the chain is broken or the document unreadable', async () => {
+    exportSignatureChain.mockResolvedValue({ ok: false, code: 'chain_broken', brokenAtSeq: 3 });
+    expect(await exportSignatureTrailAction(DID)).toEqual({ ok: false, message: SIG.exportFailed });
+    row = { data: null, error: null };
+    expect(await exportSignatureTrailAction(DID)).toEqual({ ok: false, message: SIG.exportFailed });
+  });
+
+  it('verifies the chain with an ISO checkedAt', async () => {
+    const res = await verifySignatureChainAction(DID);
+    expect(res).toMatchObject({ ok: true, intact: true, count: 7, brokenAt: null });
+    if (res.ok) expect(new Date(res.checkedAt).toISOString()).toBe(res.checkedAt);
+  });
+
+  it('reports the broken link number', async () => {
+    verifySignatureChainInDb.mockResolvedValue({ ok: true, chainOk: false, count: 5, brokenAt: 4, headHash: null });
+    expect(await verifySignatureChainAction(DID)).toMatchObject({ ok: true, intact: false, brokenAt: 4 });
+  });
+
+  it('maps a technical failure to the integrity failure copy', async () => {
+    verifySignatureChainInDb.mockResolvedValue({ ok: false, code: 'error' });
+    expect(await verifySignatureChainAction(DID)).toEqual({ ok: false, message: SIG.integrityFailure });
+  });
+
+  it('downloads the sealed document with an admin actor and validated IP', async () => {
+    expect(await adminSealedDownloadAction(DID)).toEqual({ ok: true, url: 'https://s/sealed' });
+    expect(createSealedDownloadUrl).toHaveBeenCalledWith(expect.anything(), DID, {
+      kind: 'admin',
+      id: 'admin-1',
+      ip: '203.0.113.9',
+    });
+    createSealedDownloadUrl.mockResolvedValue({ ok: false, code: 'not_found' });
+    expect((await adminSealedDownloadAction(DID)).ok).toBe(false);
+  });
+
+  it('resumes finalization and revalidates the project page', async () => {
+    expect(await adminResumeFinalizationAction(DID)).toEqual({ ok: true });
+    expect(finalizeSignature).toHaveBeenCalledWith(DID);
+    expect(revalidatePath).toHaveBeenCalledWith(`/admin/projets/${PID}`);
+  });
+
+  it('does not revalidate when finalization fails', async () => {
+    finalizeSignature.mockResolvedValue({ ok: false, code: 'seal_failed' });
+    expect((await adminResumeFinalizationAction(DID)).ok).toBe(false);
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
