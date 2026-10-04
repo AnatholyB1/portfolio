@@ -12,6 +12,8 @@ import {
 } from "../seller";
 import type {
   ClientParty,
+  InvoiceDeduction,
+  InvoiceLineV2,
   PostalAddress,
   QuoteLine,
   SellerIdentity,
@@ -262,6 +264,47 @@ export function LinesTable({ lines }: { lines: QuoteLine[] }) {
           <Text style={[s.cell, s.colQty]}>{String(l.quantity)}</Text>
           <Text style={[s.cell, s.colUnit]}>{formatEuros(l.unitPriceCents)}</Text>
           <Text style={[s.cell, s.colTotal]}>{formatEuros(l.totalCents)}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function formatQuantityMilli(l: InvoiceLineV2): string {
+  const n = l.quantityMilli / 1000;
+  const text = Number.isInteger(n) ? String(n) : String(n).replace(".", ",");
+  return l.unitCode === "DAY" ? `${text} j` : text;
+}
+
+export function LedgerLinesTable({
+  lines,
+  deductions = [],
+}: {
+  lines: InvoiceLineV2[];
+  deductions?: InvoiceDeduction[];
+}) {
+  return (
+    <View style={s.table}>
+      <View style={s.th} wrap={false}>
+        <Text style={[s.cell, s.thText, s.colDesignation]}>Désignation</Text>
+        <Text style={[s.cell, s.thText, s.colQty]}>Quantité</Text>
+        <Text style={[s.cell, s.thText, s.colUnit]}>Prix unitaire HT</Text>
+        <Text style={[s.cell, s.thText, s.colTotal]}>Montant HT</Text>
+      </View>
+      {lines.map((l, i) => (
+        <View key={i} style={s.tr} wrap={false}>
+          <Text style={[s.cell, s.colDesignation]}>{l.designation}</Text>
+          <Text style={[s.cell, s.colQty]}>{formatQuantityMilli(l)}</Text>
+          <Text style={[s.cell, s.colUnit]}>{formatEuros(l.unitPriceCents)}</Text>
+          <Text style={[s.cell, s.colTotal]}>{formatEuros(l.totalCents)}</Text>
+        </View>
+      ))}
+      {deductions.map((d, i) => (
+        <View key={`d${i}`} style={s.tr} wrap={false}>
+          <Text style={[s.cell, s.colDesignation]}>{d.label}</Text>
+          <Text style={[s.cell, s.colQty]}>{""}</Text>
+          <Text style={[s.cell, s.colUnit]}>{""}</Text>
+          <Text style={[s.cell, s.colTotal]}>{formatEuros(d.amountCents)}</Text>
         </View>
       ))}
     </View>
