@@ -322,7 +322,7 @@ Plans:
 **Wave 1**
 
 - [x] 15-01-PLAN.md — SDK stripe@23.0.0, garde du mode de clé, vérification du webhook et table de correspondance des événements (TDD)
-- [ ] 15-02-PLAN.md — Contrats facture/avoir, calculs en centimes, statut déduit, correspondance EN 16931 (TDD)
+- [x] 15-02-PLAN.md — Contrats facture/avoir, calculs en centimes, statut déduit, correspondance EN 16931 (TDD)
 - [ ] 15-03-PLAN.md — Migration sv_invoices : drapeau test, compteurs sans trou, factures immuables, RPC émission/avoir/PDF, relances
 - [ ] 15-04-PLAN.md — Migration sv_payments : clients Stripe, sessions, événements idempotents, registre, RPC d'application du webhook
 - [ ] 15-05-PLAN.md — Textes FR des paiements, onglet Paiements actif, zone de prix du webhook
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 1/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 2/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |

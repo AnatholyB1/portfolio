@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-10-04T21:00:16.293Z"
+last_updated: "2026-10-04T21:06:08.284Z"
 last_activity: 2026-10-04
 progress:
   total_phases: 10
   completed_phases: 5
   total_plans: 113
-  completed_plans: 93
+  completed_plans: 94
   percent: 50
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 15 (Stripe payments & invoicing) — EXECUTING
-Plan: 2 of 21
+Plan: 3 of 21
 Status: Ready to execute
 Last activity: 2026-10-04
 
-Progress: [████████░░] 82%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase ?]: 11-11: contact ingest best-effort, simulator ingest fatal
 - [Phase 11]: 11-12: refusal strips click ids from sv_attr_* cookies; mentions-legales section 5 text needs legal review
 - [Phase 15-01]: Stripe webhook verified via static Stripe.webhooks; env vars STRIPE_SECRET_KEY_TEST/LIVE, STRIPE_WEBHOOK_SECRET_TEST/LIVE
+- [Phase 15]: [15-02] Invoice builders refuse net<=0 (nothing_to_invoice); billingSummary counts net to pay minus credits
 
 ### Pending Todos
 
@@ -84,7 +85,7 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-04T21:00:01.300Z
+Last session: 2026-10-04T21:05:56.006Z
 Stopped at: Phase 15 UI-SPEC approved
 Resume file: None
 
