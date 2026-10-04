@@ -371,8 +371,7 @@ export function linkHash(e: LinkFields): string {
 | A6 | Le signataire se limite à nom/fonction (+ membre du client) faute d'e-mail à l'onboarding | Pitfall 7 | Exigence D-04 plus stricte ⇒ ajout d'un champ onboarding |
 | A7 | Conserver l'IP en clair dans la piste est acceptable (D-08) | Pitfall 12 | Relecture RGPD peut exiger durée/finalité |
 
-## Open Questions
-
+## Open Questions (RESOLVED)
 1. **Correspondance signataire / utilisateur (D-04)** — l'onboarding n'a pas d'e-mail du signataire. Recommandation : membre du client + section signataire complète ; confirmer avec l'utilisateur lors de la planification (ou discuss-phase rapide).
 2. **Clause de convention de preuve** — texte à produire (placeholder `v1` clairement marqué) et à relire ; le contrat passe en `v2` (nouveau `template_version`, vérifier `docTypesSql.test.ts` / registry qui fixent la regex `^v[0-9]+$`).
 3. **Étapes de garde** — `STEPS` gate : étape 2 attend `quote_accepted`, etc. Vérifier au plan quels documents sont signables à quel moment (le contrat avant `quote_accepted` ?) et appliquer la même garde dans `sv_request_signature_code`.
@@ -485,3 +484,11 @@ export function linkHash(e: LinkFields): string {
 
 **Research date:** 2026-10-04
 **Valid until:** 2026-11-03 (30 jours ; pile stable)
+
+
+## Open Questions Resolution
+
+1. RESOLVED: owner ruling 2026-10-04 in 14-CONTEXT.md D-04 (member + signatory section complete).
+2. RESOLVED: consentText v1 + contract v2 (plans 14-03, 14-10); legal review stays a pre-production blocker.
+3. RESOLVED: step guard via checkSignable, to be enforced in server actions (revision of plan 14-13).
+4. RESOLVED: CHECK limits on criteria/reservations (plan 14-04).
