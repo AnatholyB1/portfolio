@@ -14,6 +14,10 @@ export function buildPortalDocumentsUrl(): string {
   return `${getSiteUrl()}/espace-client/documents`;
 }
 
+export function buildPortalPaymentsUrl(): string {
+  return `${getSiteUrl()}/espace-client/paiements`;
+}
+
 export function buildAdminProjectUrl(projectId: string): string {
   return `${getSiteUrl()}/admin/projets/${projectId}`;
 }
