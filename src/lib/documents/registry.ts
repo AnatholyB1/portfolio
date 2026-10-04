@@ -3,6 +3,7 @@
 import { createElement, type ReactElement } from "react";
 import AcceptanceV1 from "./pdf/templates/acceptance/v1/AcceptanceV1";
 import ContractV1 from "./pdf/templates/contract/v1/ContractV1";
+import ContractV2 from "./pdf/templates/contract/v2/ContractV2";
 import InvoiceV1 from "./pdf/templates/invoice/v1/InvoiceV1";
 import QuoteV1 from "./pdf/templates/quote/v1/QuoteV1";
 import SpecV1 from "./pdf/templates/spec/v1/SpecV1";
@@ -16,7 +17,7 @@ export const TEMPLATES: {
 } = {
   quote: { v1: QuoteV1 },
   spec: { v1: SpecV1 },
-  contract: { v1: ContractV1 },
+  contract: { v1: ContractV1, v2: ContractV2 },
   acceptance: { v1: AcceptanceV1 },
   invoice: { v1: InvoiceV1 },
 };

@@ -8,6 +8,7 @@ import {
   sampleQuoteSnapshot,
   sampleSpecSnapshot,
 } from "./fixtures";
+import { PROOF_CLAUSE } from "../signature/consentText";
 import { formatEuros } from "./money";
 import { pdfText, renderBuffer } from "./pdf/testText";
 import { documentElement, TEMPLATES } from "./registry";
@@ -82,6 +83,17 @@ describe("registre et rendu des cinq documents", () => {
     expect(text).toContain(normalizeText(formatEuros(c.quote.totalCents)));
     expect(text).toContain("TVA non applicable, art. 293 B du CGI");
   }, 30_000);
+
+  it("le contrat v2 porte la clause de preuve et la mention de non contre-signature, pas le v1", async () => {
+    expect(CURRENT_TEMPLATE_VERSION.contract).toBe("v2");
+    const base = sampleContractSnapshot();
+    const v2 = await pdfText(documentElement({ ...base, templateVersion: "v2" }));
+    expect(v2).toContain(normalizeText(PROOF_CLAUSE.v1.title));
+    expect(v2).toContain("ne contre-signe pas");
+    const v1 = await pdfText(documentElement({ ...base, templateVersion: "v1" }));
+    expect(v1).not.toContain(normalizeText(PROOF_CLAUSE.v1.title));
+    expect(v1).toContain(base.reference);
+  }, 60_000);
 
   it("le cahier des charges numérote les critères", () => {
     const spec = sampleSpecSnapshot();
