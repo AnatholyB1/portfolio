@@ -195,7 +195,7 @@ export const PROJECT_COPY = {
       needSpec: "Émettez d'abord le cahier des charges.",
       wrongStep: "Ce document ne peut pas être émis à l'étape actuelle.",
       signedNoReplace:
-        'Un document signé ne peut pas être remplacé. Révoquez d\'abord la signature depuis le journal des faits.',
+        'Ce document est signé et figé. Pour corriger, ajoutez un fait correctif depuis le journal des faits.',
       concurrent:
         "Un autre document vient d'être émis entre-temps. Rechargez la page puis relancez l'aperçu.",
       sellerNotConfigured:
@@ -233,6 +233,178 @@ export const PROJECT_COPY = {
       verifyKo:
         "L'empreinte ne correspond pas au fichier stocké. Ne diffusez pas ce document et prévenez le support technique.",
       verifyFailed: 'Vérification impossible pour le moment. Réessayez dans un instant.',
+    },
+  },
+  // Phase 14 : signature électronique (portail, onglet Documents, admin). Aucun prix, aucun U+202F.
+  // Les textes de consentement et mentions du certificat vivent dans src/lib/signature/consentText.ts.
+  signature: {
+    back: 'Retour aux documents',
+    titles: {
+      quote: 'Signer le devis',
+      contract: 'Signer le contrat',
+      acceptance: 'Signer le procès-verbal de recette',
+      acceptanceChecklist: 'Recette du projet',
+    },
+    meta: (version: number, date: string) => `Version ${version} · émis le ${date}`,
+    stepsLabel: 'Étapes de la signature',
+    steps: {
+      three: ['1. Lire', '2. Consentir', '3. Confirmer par code'],
+      four: ['1. Vérifier les critères', '2. Lire', '3. Consentir', '4. Confirmer par code'],
+    },
+    read: {
+      legend: 'Lire le document',
+      iframeTitle: (type: string) => `Document à signer : ${type}`,
+      openNewTab: 'Ouvrir le document dans un nouvel onglet',
+      download: 'Télécharger le document',
+      mobileNote:
+        "Sur téléphone, l'affichage intégré peut être limité. Utilisez « Ouvrir le document » pour le lire en entier.",
+      reference: (reference: string, hash12: string) => `Référence ${reference} · Empreinte ${hash12}`,
+      viewerError:
+        "Le document n'a pas pu s'afficher. Ouvrez-le dans un nouvel onglet ou réessayez dans un instant.",
+      retry: 'Réessayer',
+    },
+    consent: {
+      legend: 'Avant de signer',
+      textVersion: (n: number) => `Texte v${n}`,
+      signer: (name: string, role: string) => `Signataire : ${name}, ${role}`,
+      signerNoRole: (name: string) => `Signataire : ${name}`,
+      codeTarget: (maskedEmail: string) => `Le code sera envoyé à ${maskedEmail}`,
+      helper: 'Cochez les deux cases pour recevoir le code.',
+      receiveCode: 'Recevoir le code',
+      sendingCode: 'Envoi du code…',
+      recap: 'Consentements enregistrés',
+    },
+    mismatch: {
+      title: "Vous n'êtes pas le signataire désigné",
+      body: (name: string) =>
+        `Ce document doit être signé par ${name}. Connectez-vous avec l'adresse e-mail du signataire, ou écrivez-nous pour modifier le signataire.`,
+      logout: 'Se déconnecter',
+      write: 'Écrire à Sèvalys',
+    },
+    code: {
+      label: 'Code à 6 chiffres',
+      sent: (maskedEmail: string) => `Code envoyé à ${maskedEmail}. Il est valable 10 minutes.`,
+      wrong: (n: number) => `Ce code n'est pas correct. Il vous reste ${n} ${n > 1 ? 'essais' : 'essai'}.`,
+      tooMany: "Trop d'essais. Ce code n'est plus valable. Demandez-en un nouveau.",
+      expired: 'Ce code a expiré. Demandez-en un nouveau.',
+      newCode: 'Recevoir un nouveau code',
+      resend: 'Renvoyer le code',
+      resendIn: (s: number) => `Renvoyer le code (${s} s)`,
+      tooSoon: (s: number) => `Patientez ${s} s avant de demander un nouveau code.`,
+      hourlyCap: 'Limite atteinte : 5 envois par heure. Réessayez plus tard ou écrivez-nous.',
+      sendFailed:
+        "Le code n'a pas pu être envoyé. Réessayez dans un instant ; si le problème continue, écrivez-nous.",
+      beforeSign: (type: string) =>
+        `En cliquant sur « Signer le document », vous signez ${type} et le document ne pourra plus être modifié.`,
+      sign: 'Signer le document',
+      signing: 'Signature en cours…',
+      // Utilisé uniquement quand la vérification du code elle-même échoue : rien n'est enregistré.
+      signFailed:
+        "La signature n'a pas pu être finalisée. Aucune signature n'a été enregistrée. Réessayez ; si l'erreur persiste, écrivez-nous.",
+      // Signature enregistrée mais scellement échoué (protocoles A/B/C) : la phrase précédente serait fausse.
+      finalizePending:
+        "Votre signature est enregistrée, mais le document signé n'a pas encore pu être finalisé. Réessayez dans un instant ; si l'erreur persiste, écrivez-nous.",
+      finalizeAction: 'Reprendre la finalisation',
+    },
+    states: {
+      replaced: (n: number) => `Cette version a été remplacée par la version ${n}.`,
+      seeVersion: (n: number) => `Voir la version ${n}`,
+      notSignable: "Ce document n'est pas encore à signer.",
+    },
+    success: {
+      heading: 'Document signé',
+      body: (date: string, time: string) =>
+        `Merci. Votre signature a été enregistrée le ${date} à ${time} (heure de Paris).`,
+      reference: (reference: string) => `Référence ${reference}`,
+      sealedHash: (hash12: string) => `Empreinte du document scellé ${hash12}`,
+      download: 'Télécharger le document signé',
+      preparing: 'Préparation…',
+      downloadFailed:
+        "Le téléchargement n'a pas pu démarrer. Réessayez dans un instant ; si le problème continue, écrivez-nous.",
+      emailSent: 'Un e-mail de confirmation vous a été envoyé.',
+    },
+    checklist: {
+      intro:
+        "Pour chaque critère, indiquez s'il est livré. Vous pouvez signaler une réserve ou refuser un critère.",
+      criterionLegend: (n: number, text: string) => `Critère ${n} : ${text}`,
+      delivered: 'Livré',
+      reserve: 'Livré avec réserve',
+      refused: 'Non livré (refus)',
+      reserveLabel: 'Décrivez la réserve',
+      refusedLabel: "Pourquoi ce critère n'est-il pas livré ?",
+      counter: (n: number) => `${n} / 1000`,
+      refusedHelper:
+        'Un critère refusé empêche la signature. Sèvalys est prévenu et vous enverra un procès-verbal corrigé.',
+      summary: (validated: number, total: number, reserves: number, refusals: number) =>
+        `${validated} sur ${total} critères validés · ${reserves} ${reserves > 1 ? 'réserves' : 'réserve'} · ${refusals} refus`,
+      reservesNote: 'Vos réserves seront inscrites au procès-verbal signé. La signature reste possible.',
+      remaining: (n: number) => `Répondez à chacun des ${n} critères restants.`,
+      continue: 'Continuer vers la signature',
+      sendFeedback: 'Envoyer mon retour à Sèvalys',
+      feedbackSent:
+        'Retour envoyé. Sèvalys a été prévenu et vous enverra un procès-verbal corrigé. Aucune signature n\'a été enregistrée.',
+      feedbackFailed:
+        "Votre retour n'a pas pu être envoyé. Réessayez ; si l'erreur persiste, écrivez-nous.",
+      recap: (validated: number, reserves: number) =>
+        `Vos réponses : ${validated} validés, ${reserves} ${reserves > 1 ? 'réserves' : 'réserve'}`,
+      editAnswers: 'Modifier mes réponses',
+    },
+    documentsTab: {
+      readAndSign: 'Lire et signer',
+      downloadSigned: 'Télécharger le document signé',
+      signedOn: (date: string) => `Signé le ${date}`,
+      awaiting: 'Un document attend votre signature.',
+      goToDocuments: 'Aller aux documents',
+    },
+    admin: {
+      signedBy: (name: string, date: string, ip: string) => `Signé par ${name} le ${date} · IP ${ip}`,
+      manualFactNotice:
+        'Ce fait a déjà été posé par une signature électronique. Toute correction manuelle est journalisée.',
+      pvRefusal: (n: number) =>
+        `Le client a refusé ${n} ${n > 1 ? 'critères' : 'critère'}. Émettez un procès-verbal corrigé.`,
+      block: {
+        title: 'Signature',
+        signer: 'Signataire',
+        signedAt: 'Signé le',
+        ip: 'IP',
+        templateVersion: 'Version du modèle',
+        consentVersion: 'Texte de consentement',
+        originalHash: "Empreinte de l'original",
+        sealedHash: 'Empreinte du document scellé',
+        lastLinkHash: 'Empreinte du dernier maillon',
+        reserves: 'Réserves',
+        copy: 'Copier',
+      },
+      exportTrail: "Exporter la piste d'audit",
+      exporting: "Préparation de l'export…",
+      exportFailed:
+        "L'export n'a pas pu être généré. Réessayez ; si l'erreur persiste, contactez le support technique.",
+      verify: "Vérifier l'intégrité",
+      verifying: 'Vérification en cours…',
+      integrityOk: (n: number, date: string, time: string) =>
+        `Piste intègre : ${n} ${n > 1 ? 'maillons vérifiés' : 'maillon vérifié'} le ${date} à ${time}.`,
+      integrityBroken: (k: number) =>
+        `Piste rompue au maillon ${k}. Ne diffusez pas ce document et prévenez le support technique.`,
+      integrityFailure: "La vérification n'a pas pu être exécutée. Réessayez dans un instant.",
+      downloadOriginal: "Télécharger l'original",
+      downloadSealed: 'Télécharger le document scellé',
+      trailSummary: (n: number) => `Journal de la piste (${n} ${n > 1 ? 'événements' : 'événement'})`,
+      trailEmpty: 'Aucun événement enregistré pour ce document.',
+      trailColumns: { date: 'Date', event: 'Événement', actor: 'Acteur', ip: 'IP' },
+      actions: {
+        document_opened: 'Document ouvert',
+        acceptance_response: 'Réponse au critère',
+        acceptance_refused: 'Recette refusée',
+        consent_given: 'Consentement enregistré',
+        code_sent: 'Code envoyé',
+        code_send_failed: "Échec d'envoi du code",
+        code_failed: 'Code incorrect',
+        code_locked: "Code bloqué (trop d'essais)",
+        code_expired: 'Code expiré',
+        signed: 'Document signé',
+        sealed: 'Document scellé',
+        seal_downloaded: 'Document scellé téléchargé',
+      },
     },
   },
 } as const;
