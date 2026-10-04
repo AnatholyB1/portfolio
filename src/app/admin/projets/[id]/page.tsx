@@ -23,6 +23,10 @@ import {
   adminDownloadAction,
   adminDocumentDownloadAction,
   adminRequestUploadAction,
+  adminResumeFinalizationAction,
+  adminSealedDownloadAction,
+  exportSignatureTrailAction,
+  verifySignatureChainAction,
   issueDocumentAction,
   loadSnapshotAction,
   previewDocumentAction,
@@ -151,6 +155,10 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   download: adminDocumentDownloadAction,
                   verify: verifyDocumentHashAction,
                   loadSnapshot: loadSnapshotAction,
+                  exportTrail: exportSignatureTrailAction,
+                  verifyChain: verifySignatureChainAction,
+                  downloadSealed: adminSealedDownloadAction,
+                  resumeFinalization: adminResumeFinalizationAction,
                 }}
               />
             </div>

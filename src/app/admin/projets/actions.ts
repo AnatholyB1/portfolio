@@ -1,6 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
+import { exportSignatureChain, verifySignatureChainInDb } from '@/lib/server/signature/chain';
+import { requestIp } from '@/lib/server/signature/clientIp';
+import { createSealedDownloadUrl } from '@/lib/server/signature/links';
+import { finalizeSignature } from '@/lib/server/signature/seal';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { documentInputSchema, specInputSchema, type DocumentInput } from '@/lib/documents/schemas';
 import { PROJECT_COPY } from '@/lib/projects/copy';
@@ -20,6 +25,9 @@ import {
 } from '@/lib/server/projects/facts';
 import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
 import type {
+  ChainCheckResult,
+  ExportTrailResult,
+  ResumeResult,
   IssueResult,
   PreviewResult,
   SnapshotResult,
@@ -281,6 +289,7 @@ export async function issueDocumentAction(raw: unknown): Promise<IssueResult> {
   }
   if (res.code === 'invoice_not_issuable') return { ok: false, message: DOC_COPY.invoiceHelper };
   if (res.code === 'seller_not_configured') return { ok: false, message: DOC_COPY.sellerNotConfigured };
+  if (res.code === 'signed_no_replace') return { ok: false, message: DOC_COPY.signedNoReplace };
   if (res.code === 'replaces_mismatch' || res.code === 'revision_mismatch') {
     return { ok: false, message: DOC_COPY.concurrent };
   }
@@ -302,6 +311,61 @@ export async function verifyDocumentHashAction(documentId: string): Promise<Veri
   }
   const res = await verifyDocumentHash(supabase, documentId);
   return res.ok ? { ok: true, match: res.match } : { ok: false, message: PROJECT_COPY.errors.generic };
+}
+
+const SIG_COPY = PROJECT_COPY.signature.admin;
+
+export async function exportSignatureTrailAction(documentId: string): Promise<ExportTrailResult> {
+  const { supabase } = await requireAdmin();
+  const failed = { ok: false as const, message: SIG_COPY.exportFailed };
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const doc = await supabase.from('sv_project_documents').select('reference').eq('id', documentId).maybeSingle();
+  if (doc.error || !doc.data) return failed;
+  const reference = String((doc.data as { reference: unknown }).reference).replace(/[^A-Za-z0-9._-]/g, '_');
+  // Export auto-vérifié avant remise (T-14-54).
+  const res = await exportSignatureChain(documentId);
+  if (!res.ok) return failed;
+  return { ok: true, filename: `piste-audit-${reference}.json`, json: res.json };
+}
+
+export async function verifySignatureChainAction(documentId: string): Promise<ChainCheckResult> {
+  await requireAdmin();
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const res = await verifySignatureChainInDb(documentId);
+  if (!res.ok) return { ok: false, message: SIG_COPY.integrityFailure };
+  return {
+    ok: true,
+    intact: res.chainOk,
+    count: res.count,
+    brokenAt: res.brokenAt,
+    checkedAt: new Date().toISOString(),
+  };
+}
+
+export async function adminSealedDownloadAction(documentId: string): Promise<DownloadResult> {
+  const { supabase, user } = await requireAdmin();
+  const failed = { ok: false as const, message: PROJECT_COPY.documents.portal.downloadFailed };
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) return failed;
+  const ip = requestIp(await headers());
+  const res = await createSealedDownloadUrl(supabase, documentId, { kind: 'admin', id: user.id, ip });
+  return res.ok ? { ok: true, url: res.url } : failed;
+}
+
+export async function adminResumeFinalizationAction(documentId: string): Promise<ResumeResult> {
+  const { supabase } = await requireAdmin();
+  if (typeof documentId !== 'string' || !uuidRe.test(documentId)) {
+    return { ok: false, message: PROJECT_COPY.errors.generic };
+  }
+  const doc = await supabase.from('sv_project_documents').select('project_id').eq('id', documentId).maybeSingle();
+  if (doc.error || !doc.data) return { ok: false, message: PROJECT_COPY.errors.generic };
+  const res = await finalizeSignature(documentId);
+  if (!res.ok) return { ok: false, message: PROJECT_COPY.errors.generic };
+  refresh(String((doc.data as { project_id: unknown }).project_id));
+  return { ok: true };
 }
 
 export async function loadSnapshotAction(documentId: string): Promise<SnapshotResult> {
