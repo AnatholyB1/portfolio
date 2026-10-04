@@ -11,7 +11,13 @@ import {
 import { PROOF_CLAUSE } from "../signature/consentText";
 import { formatEuros } from "./money";
 import { pdfText, renderBuffer } from "./pdf/testText";
-import { documentElement, TEMPLATES } from "./registry";
+import {
+  sampleCreditNote,
+  sampleDepositInvoiceV2,
+  sampleFinalInvoiceV2,
+  samplePeriodInvoiceV2,
+} from "./invoiceFixtures";
+import { documentElement, ledgerDocumentElement, TEMPLATES } from "./registry";
 import { normalizeText } from "./text";
 import {
   CURRENT_TEMPLATE_VERSION,
@@ -53,6 +59,28 @@ function listSourceFiles(dir: string): string[] {
   }
   return out;
 }
+
+describe("registre ledger : factures v2 et avoir", () => {
+  const ledger = [
+    sampleDepositInvoiceV2(),
+    samplePeriodInvoiceV2(),
+    sampleFinalInvoiceV2(),
+    sampleCreditNote(),
+  ];
+  for (const snap of ledger) {
+    it(`rend un PDF non vide pour ${snap.docType} ${snap.number}`, async () => {
+      const buf = await renderBuffer(ledgerDocumentElement(snap));
+      expect(buf.length).toBeGreaterThan(1000);
+      expect(buf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    }, 30_000);
+  }
+
+  it("lève unknown_template pour une paire inconnue", () => {
+    expect(() =>
+      ledgerDocumentElement({ ...sampleCreditNote(), templateVersion: "v9" } as never),
+    ).toThrow("unknown_template");
+  });
+});
 
 describe("registre et rendu des cinq documents", () => {
   for (const snap of snapshots) {

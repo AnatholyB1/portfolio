@@ -10,7 +10,15 @@ import {
   VAT_FRANCHISE_MENTION,
   latePenaltyText,
 } from "./seller";
-import type { InvoiceSnapshot, QuoteSnapshot, SellerIdentity } from "./types";
+import type {
+  ClientParty,
+  CreditNoteSnapshot,
+  InvoiceLineV2,
+  InvoiceSnapshot,
+  InvoiceSnapshotV2,
+  QuoteSnapshot,
+  SellerIdentity,
+} from "./types";
 import { formatAddress } from "./addressFormat";
 
 export type Mention = {
@@ -92,7 +100,7 @@ function conditionMentions(seller: SellerIdentity): Mention[] {
   ];
 }
 
-function clientMentions(s: QuoteSnapshot | InvoiceSnapshot): Mention[] {
+function clientMentions(s: { client: ClientParty }): Mention[] {
   const c = s.client;
   const list: Mention[] = [
     m("client_name", "Identité du client", includesCi(c.name)),
@@ -173,6 +181,93 @@ export function invoiceMentions(s: InvoiceSnapshot): Mention[] {
     m("seller_iban", "IBAN du vendeur", includesCi(s.seller.iban)),
   );
   return list;
+}
+
+function ledgerLineMentions(lines: InvoiceLineV2[]): Mention[] {
+  return lines.flatMap((l, i) => [
+    m(`designation_${i}`, `Désignation ligne ${i + 1}`, includesCi(l.designation)),
+    m(
+      `line_total_${i}`,
+      `Montant ligne ${i + 1}`,
+      includesCi(l.designation, formatEuros(l.totalCents)),
+    ),
+  ]);
+}
+
+export function invoiceV2Mentions(s: InvoiceSnapshotV2): Mention[] {
+  const list: Mention[] = [
+    m("invoice_number", "Numéro", s.number ? includesCi("Numéro", s.number) : includesCi("PROFORMA")),
+    m("issue_date", "Date d'émission", includesCi("Date d'émission", formatDateLongFr(s.issuedOn))),
+    m("due_date", "Date d'échéance", includesCi("Date d'échéance", formatDateLongFr(s.dueDate))),
+    m("operation_nature", "Nature de l'opération", includesCi("Prestation de services")),
+    ...sellerMentions(s.seller),
+    ...clientMentions(s),
+    ...ledgerLineMentions(s.lines),
+    m("total_ht", "Total HT", includesCi("Total HT", formatEuros(s.totalExclTaxCents))),
+    m("vat_exemption", "Mention d'exemption de TVA", includesCi(s.vatExemptionText)),
+    m("total_ttc", "Total TTC", includesCi("Total TTC", formatEuros(s.totalInclTaxCents))),
+    m("payment_terms", "Conditions de règlement", includesCi(s.paymentTermsText)),
+    m("late_penalties", "Pénalités de retard", includesCi(s.latePenaltyText)),
+    m("recovery_40", "Indemnité de recouvrement 40 €", includesCi(s.recoveryIndemnityText)),
+    m("discount", "Escompte", includesCi(DISCOUNT_TEXT)),
+    m("seller_iban", "IBAN du vendeur", includesCi(s.seller.iban)),
+  ];
+  if (s.kind === "deposit") {
+    list.push(m("deposit_title", "Facture d'acompte", includesCi("Facture d'acompte")));
+  }
+  if (s.servicePeriod) {
+    list.push(
+      m(
+        "service_period",
+        "Période de prestation",
+        includesCi(
+          "Période du",
+          formatDateLongFr(s.servicePeriod.start),
+          "au",
+          formatDateLongFr(s.servicePeriod.end),
+        ),
+      ),
+    );
+  }
+  s.deductions.forEach((d, i) => {
+    list.push(
+      m(
+        `deduction_${i}`,
+        `Déduction ${i + 1}`,
+        includesCi(d.label, d.invoiceNumber, formatEuros(d.amountCents)),
+      ),
+    );
+  });
+  if (s.prepaidCents > 0) {
+    list.push(
+      m("net_to_pay", "Net à payer", includesCi("Net à payer", formatEuros(s.netToPayCents))),
+    );
+  }
+  return list;
+}
+
+export function creditNoteMentions(s: CreditNoteSnapshot): Mention[] {
+  return [
+    m("credit_title", "Avoir", includesCi("Avoir")),
+    m("credit_number", "Numéro", s.number ? includesCi("Numéro", s.number) : includesCi("PROFORMA")),
+    m("issue_date", "Date d'émission", includesCi("Date d'émission", formatDateLongFr(s.issuedOn))),
+    m(
+      "origin_invoice",
+      "Facture d'origine",
+      includesCi("Avoir sur la facture", s.origin.number, formatDateLongFr(s.origin.issuedOn)),
+    ),
+    m("reason", "Motif", includesCi("Motif", s.reason)),
+    ...sellerMentions(s.seller),
+    ...clientMentions(s),
+    ...ledgerLineMentions(s.lines),
+    m("total_ttc_credited", "Total TTC crédité", includesCi("Total TTC crédité", formatEuros(s.totalInclTaxCents))),
+    m("vat_exemption", "Mention d'exemption de TVA", includesCi(s.vatExemptionText)),
+    m(
+      "stripe_refund",
+      "Remboursement par Stripe",
+      includesCi(`Remboursement par Stripe : ${s.refundRequested ? "oui" : "non"}`),
+    ),
+  ];
 }
 
 export function findMissingMentions(text: string, mentions: Mention[]): string[] {

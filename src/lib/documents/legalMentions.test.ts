@@ -4,17 +4,32 @@ import { createElement } from "react";
 import { beforeAll, describe, expect, it } from "vitest";
 import { sampleClient, sampleInvoiceSnapshot, sampleQuoteSnapshot, sampleSeller } from "./fixtures";
 import {
+  creditNoteMentions,
   findMissingMentions,
   invoiceMentions,
+  invoiceV2Mentions,
   quoteMentions,
   type Mention,
 } from "./legalMentions";
+import {
+  sampleCreditNote,
+  sampleDepositInvoiceV2,
+  sampleFinalInvoiceV2,
+  samplePeriodInvoiceV2,
+} from "./invoiceFixtures";
+import CreditNoteV1 from "./pdf/templates/credit-note/v1/CreditNoteV1";
+import InvoiceV2 from "./pdf/templates/invoice/v2/InvoiceV2";
 import InvoiceV1 from "./pdf/templates/invoice/v1/InvoiceV1";
 import QuoteV1 from "./pdf/templates/quote/v1/QuoteV1";
 import { pdfText } from "./pdf/testText";
 import { normalizeText } from "./text";
 import { SELLER_V1 } from "./seller";
-import type { InvoiceSnapshot, QuoteSnapshot } from "./types";
+import type {
+  CreditNoteSnapshot,
+  InvoiceSnapshot,
+  InvoiceSnapshotV2,
+  QuoteSnapshot,
+} from "./types";
 
 const sellers = [
   ["SELLER_V1", SELLER_V1],
@@ -147,4 +162,78 @@ describe("DOC-04 : facture PROFORMA", () => {
   it("non-vacuité : chaque mention retirée est détectée", () => {
     for (const r of rendered) assertNonVacuity(r.text, invoiceMentions(r.snapshot));
   }, 30_000);
+});
+
+describe("DOC-04 : factures numérotées v2", () => {
+  const rendered: { name: string; snapshot: InvoiceSnapshotV2; text: string }[] = [];
+  let previewText = "";
+
+  beforeAll(async () => {
+    const test = { ...sampleDepositInvoiceV2(), number: "TFA-2026-0001", isTest: true };
+    const cases: [string, InvoiceSnapshotV2][] = [
+      ["acompte", sampleDepositInvoiceV2()],
+      ["période", samplePeriodInvoiceV2()],
+      ["finale", sampleFinalInvoiceV2()],
+      ["acompte de test", test],
+    ];
+    for (const [name, snapshot] of cases) {
+      rendered.push({ name, snapshot, text: await pdfText(createElement(InvoiceV2, { snapshot })) });
+    }
+    previewText = await pdfText(
+      createElement(InvoiceV2, { snapshot: { ...sampleDepositInvoiceV2(), number: null } }),
+    );
+  }, 120_000);
+
+  it("contient toutes les mentions obligatoires", () => {
+    expect(rendered.length).toBe(4);
+    for (const r of rendered) {
+      expect(findMissingMentions(r.text, invoiceV2Mentions(r.snapshot)), r.name).toEqual([]);
+    }
+  }, 30_000);
+
+  it("non-vacuité : chaque mention retirée est détectée", () => {
+    for (const r of rendered) assertNonVacuity(r.text, invoiceV2Mentions(r.snapshot));
+  }, 60_000);
+
+  it("PROFORMA seulement pour un aperçu sans numéro", () => {
+    expect(previewText).toContain("PROFORMA");
+    expect(previewText).toContain("APERÇU");
+    for (const r of rendered) {
+      expect(r.text).not.toContain("PROFORMA");
+      expect(r.text).not.toContain("APERÇU");
+    }
+  });
+
+  it("n'imprime ni taux ni montant de TVA", () => {
+    for (const r of rendered) assertNoVatRate(r.text);
+  });
+});
+
+describe("DOC-04 : avoir", () => {
+  const rendered: { name: string; snapshot: CreditNoteSnapshot; text: string }[] = [];
+
+  beforeAll(async () => {
+    for (const refundRequested of [true, false]) {
+      const snapshot = { ...sampleCreditNote(), refundRequested };
+      rendered.push({
+        name: refundRequested ? "remboursement oui" : "remboursement non",
+        snapshot,
+        text: await pdfText(createElement(CreditNoteV1, { snapshot })),
+      });
+    }
+  }, 120_000);
+
+  it("contient toutes les mentions obligatoires", () => {
+    for (const r of rendered) {
+      expect(findMissingMentions(r.text, creditNoteMentions(r.snapshot)), r.name).toEqual([]);
+    }
+  }, 30_000);
+
+  it("non-vacuité : chaque mention retirée est détectée", () => {
+    for (const r of rendered) assertNonVacuity(r.text, creditNoteMentions(r.snapshot));
+  }, 60_000);
+
+  it("n'imprime pas de signe moins sur les montants", () => {
+    for (const r of rendered) expect(r.text).not.toMatch(/[-−]\s*\d+[,.]\d{2}/);
+  });
 });
