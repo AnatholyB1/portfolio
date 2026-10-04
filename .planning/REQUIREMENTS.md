@@ -46,11 +46,11 @@
 
 ### Signature électronique (SIGN)
 
-- [ ] **SIGN-01**: Le client signe un document avec un code à usage unique envoyé par e-mail (haché, expire à 10 minutes, 5 essais maximum)
-- [ ] **SIGN-02**: Avant signature, le client consent explicitement à la signature électronique et à la clause de convention de preuve
-- [ ] **SIGN-03**: Chaque signature écrit une piste d'audit en ajout seul et chaînée par hachage (horodatage, IP, empreinte du document, version)
-- [ ] **SIGN-04**: Le PDF signé est scellé avec une page certificat, et la piste d'audit est exportable
-- [ ] **SIGN-05**: Le PV de recette permet au client de valider chaque étape livrée
+- [x] **SIGN-01**: Le client signe un document avec un code à usage unique envoyé par e-mail (haché, expire à 10 minutes, 5 essais maximum)
+- [x] **SIGN-02**: Avant signature, le client consent explicitement à la signature électronique et à la clause de convention de preuve
+- [x] **SIGN-03**: Chaque signature écrit une piste d'audit en ajout seul et chaînée par hachage (horodatage, IP, empreinte du document, version)
+- [x] **SIGN-04**: Le PDF signé est scellé avec une page certificat, et la piste d'audit est exportable
+- [x] **SIGN-05**: Le PV de recette permet au client de valider chaque étape livrée
 
 ### Paiements & facturation (PAY)
 
@@ -158,11 +158,11 @@
 | DOC-02 | Phase 13 | Complete |
 | DOC-03 | Phase 13 | Complete |
 | DOC-04 | Phase 13 | Complete |
-| SIGN-01 | Phase 14 | Pending |
-| SIGN-02 | Phase 14 | Pending |
-| SIGN-03 | Phase 14 | Pending |
-| SIGN-04 | Phase 14 | Pending |
-| SIGN-05 | Phase 14 | Pending |
+| SIGN-01 | Phase 14 | Complete |
+| SIGN-02 | Phase 14 | Complete |
+| SIGN-03 | Phase 14 | Complete |
+| SIGN-04 | Phase 14 | Complete |
+| SIGN-05 | Phase 14 | Complete |
 | PAY-01 | Phase 15 | Pending |
 | PAY-02 | Phase 15 | Pending |
 | PAY-03 | Phase 15 | Pending |
