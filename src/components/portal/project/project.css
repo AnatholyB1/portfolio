@@ -342,3 +342,267 @@
   border: 1px solid var(--pt-border-strong);
   border-radius: 8px;
 }
+
+/* ---------- Signature électronique (phase 14, 14-UI-SPEC surfaces A et B) ---------- */
+.pt-root .pt-sign {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.pt-root .pt-sign-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-sign-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+}
+.pt-root .pt-sign-steps li[aria-current='step'] {
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-root .pt-sign-recap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.pt-root .pt-sign-recap p {
+  margin: 0;
+}
+.pt-root .pt-sign-legend {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-root .pt-sign-read,
+.pt-root .pt-sign-consent-block,
+.pt-root .pt-sign-code-block,
+.pt-root .pt-sign-mismatch,
+.pt-root .pt-sign-success {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-root .pt-sign-frame {
+  display: block;
+  width: 100%;
+  height: 480px;
+  box-sizing: border-box;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+  background: var(--bg-3);
+}
+.pt-root .pt-sign-meta-line,
+.pt-root .pt-sign-meta {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-sign-meta {
+  padding: 0;
+  list-style: none;
+}
+.pt-root .pt-sign-mono {
+  font-family: var(--font-mono), monospace;
+  word-break: break-all;
+}
+.pt-root .pt-sign-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.pt-root .pt-sign-success-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pt-root .pt-sign-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pt-root .pt-sign-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  padding: 16px;
+  box-sizing: border-box;
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.pt-root .pt-sign-consent input,
+.pt-root .pt-sign-radio input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--acid);
+}
+.pt-root .pt-sign-consent:focus-within,
+.pt-root .pt-sign-radio:focus-within {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-root .pt-sign-version {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-sign-otp {
+  width: 100%;
+  max-width: 320px;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  background: var(--bg-3);
+  color: var(--ink);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+  font-family: var(--font-mono), monospace;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  text-align: center;
+  transition: border-color 150ms ease;
+}
+.pt-root .pt-sign-otp:focus-visible {
+  border: 2px solid var(--acid);
+  outline: none;
+}
+.pt-root .pt-sign-otp[aria-invalid='true'] {
+  border-color: var(--warm);
+}
+.pt-root .pt-sign-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-root .pt-sign-bar p {
+  margin: 0;
+}
+
+/* Recette (surface B) */
+.pt-root .pt-sign-criteria {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-root .pt-sign-criterion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-root .pt-sign-criterion-text {
+  margin: 0;
+  font-size: 16px;
+}
+.pt-root .pt-sign-num {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-sign-radios {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pt-root .pt-sign-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.pt-root .pt-sign-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 16px;
+}
+.pt-root .pt-sign-note-reserved {
+  border-left: 2px solid var(--pt-border-strong);
+}
+.pt-root .pt-sign-note-refused {
+  border-left: 2px solid var(--warm);
+}
+.pt-root .pt-sign-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.pt-root .pt-sign-counter {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-sign-summary {
+  background: var(--bg-3);
+}
+.pt-root .pt-sign-summary p {
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .pt-root .pt-sign-frame {
+    height: 720px;
+  }
+  .pt-root .pt-sign-radios {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+/* Barre d'action collante sur mobile (clavier visuel, zone sûre) */
+@media (max-width: 639px) {
+  .pt-root .pt-sign-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+  }
+  .pt-root .pt-sign-summary {
+    position: sticky;
+    bottom: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-root .pt-sign-otp {
+    transition: none;
+  }
+}
+.pt-root .pt-sign-frame-empty {
+  border-style: dashed;
+}
