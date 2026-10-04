@@ -1,4 +1,5 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const url = () => process.env.SV_TEST_SUPABASE_URL as string;
@@ -230,6 +231,7 @@ export async function issueTestDocument(
     replaces?: string | null;
     revision?: number;
     actor?: string | null;
+    snapshot?: object;
   } = {},
 ): Promise<{
   id: string;
@@ -255,13 +257,127 @@ export async function issueTestDocument(
     p_storage_path: path,
     p_sha256: createHash('sha256').update(MINIMAL_PDF).digest('hex'),
     p_size: MINIMAL_PDF.length,
-    p_snapshot: { test: true },
+    p_snapshot: opts.snapshot ?? { test: true },
     p_replaces: opts.replaces ?? null,
     p_actor: opts.actor ?? null,
     p_document_label: 'Devis',
   });
   if (error) throw new Error(`sv_issue_document failed: ${error.message}`);
   return { id, path, result: data as { document_id: string; revision: number; outbox_ids: string[] } };
+}
+
+// ---------------------------------------------------------------------------
+// Phase 14 (electronic signature) helpers
+// ---------------------------------------------------------------------------
+
+const PROD_REF = 'ubxllsvanurkwkohzxau';
+
+/** HMAC secret of the signature code (SV_TEST_ prefix so vitest.rls.config.ts loads it). Throws when missing. */
+export function signatureTestSecret(): string {
+  const s = process.env.SV_TEST_SIGNATURE_CODE_SECRET ?? process.env.SV_SIGNATURE_CODE_SECRET;
+  if (!s) throw new Error('SV_TEST_SIGNATURE_CODE_SECRET is not set (see .env.test.local)');
+  return s;
+}
+export const SIGNATURE_TEST_SECRET = {
+  get value(): string {
+    return signatureTestSecret();
+  },
+};
+
+/** HMAC-SHA256(secret, `${documentId}:${userId}:${code}`) hex, same formula as the production codes module. */
+export function testCodeHmac(documentId: string, userId: string, code: string): string {
+  return createHmac('sha256', signatureTestSecret()).update(`${documentId}:${userId}:${code}`).digest('hex');
+}
+
+/**
+ * Run a SQL statement on the throwaway branch through the Supabase CLI and return the raw output.
+ * Refuses any URL containing the production ref.
+ */
+export function dbQuery(sql: string): string {
+  const dbUrl = process.env.SV_TEST_DB_URL;
+  if (!dbUrl) throw new Error('SV_TEST_DB_URL is required for dbQuery');
+  if (dbUrl.includes(PROD_REF)) throw new Error(`dbQuery refused: target contains production ref ${PROD_REF}`);
+  try {
+    return execFileSync('supabase', ['db', 'query', '--db-url', `"${dbUrl}"`, `"${sql.replace(/"/g, '\\"')}"`], {
+      encoding: 'utf8',
+      stdio: 'pipe',
+      shell: true,
+    });
+  } catch (e: any) {
+    return `${e.stdout ?? ''}${e.stderr ?? ''}`;
+  }
+}
+
+/** Complete the signatory section of a client's onboarding (service role upsert). */
+export async function completeSignatory(clientId: string, name = 'Jeanne Test', role = 'Gérante') {
+  const { error } = await svc()
+    .from('sv_client_onboarding')
+    .upsert({ client_id: clientId, signatory_name: name, signatory_role: role }, { onConflict: 'client_id' });
+  if (error) throw new Error(`completeSignatory failed: ${error.message}`);
+}
+
+/**
+ * Issue a signable document (quote, contract or acceptance) with a real snapshot.
+ * sv_issue_document has no fact prerequisite, so no project fact is posted here.
+ * The acceptance snapshot carries acceptanceCriteria (default: 3 criteria).
+ */
+export async function issueSignableDocument(
+  projectId: string,
+  docType: 'quote' | 'contract' | 'acceptance',
+  opts: { criteria?: string[]; replaces?: string | null; revision?: number } = {},
+) {
+  const snapshot =
+    docType === 'acceptance'
+      ? { test: true, acceptanceCriteria: opts.criteria ?? ['Critère 1', 'Critère 2', 'Critère 3'] }
+      : { test: true };
+  return issueTestDocument(projectId, { docType, replaces: opts.replaces, revision: opts.revision, snapshot });
+}
+
+/**
+ * Drive a full signature: consent, optional acceptance answers, code request and verify.
+ * Returns the sv_verify_signature_code jsonb. Throws on any RPC error.
+ */
+export async function signTestDocument(
+  documentId: string,
+  user: { id: string },
+  opts: { answers?: unknown[]; ip?: string; adminEmail?: string } = {},
+): Promise<unknown> {
+  const ip = opts.ip ?? '203.0.113.7';
+  const consent = await svc().rpc('sv_record_signature_consent', {
+    p_document_id: documentId,
+    p_actor_id: user.id,
+    p_ip: ip,
+    p_consent_version: 'v1',
+    p_payload: JSON.stringify({ version: 'v1' }),
+  });
+  if (consent.error) throw new Error(`sv_record_signature_consent failed: ${consent.error.message}`);
+  if (opts.answers) {
+    const acc = await svc().rpc('sv_submit_acceptance', {
+      p_document_id: documentId,
+      p_actor_id: user.id,
+      p_ip: ip,
+      p_answers: opts.answers,
+      p_admin_email: opts.adminEmail ?? 'admin@example.test',
+    });
+    if (acc.error) throw new Error(`sv_submit_acceptance failed: ${acc.error.message}`);
+  }
+  const hmac = testCodeHmac(documentId, user.id, '123456');
+  const req = await svc().rpc('sv_request_signature_code', {
+    p_document_id: documentId,
+    p_actor_id: user.id,
+    p_ip: ip,
+    p_code_hmac: hmac,
+    p_consent_version: 'v1',
+  });
+  if (req.error) throw new Error(`sv_request_signature_code failed: ${req.error.message}`);
+  const ver = await svc().rpc('sv_verify_signature_code', {
+    p_document_id: documentId,
+    p_actor_id: user.id,
+    p_ip: ip,
+    p_code_hmac: hmac,
+  });
+  if (ver.error) throw new Error(`sv_verify_signature_code failed: ${ver.error.message}`);
+  return ver.data;
 }
 
 // NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
