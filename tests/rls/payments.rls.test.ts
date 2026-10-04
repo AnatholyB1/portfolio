@@ -448,3 +448,226 @@ describe('sv_apply_stripe_event: unresolved events', { timeout: 120_000 }, () =>
     });
   }
 });
+
+// ---------------------------------------------------------------------------
+// Task 2: checkout guards, refunds, isolation
+// ---------------------------------------------------------------------------
+
+describe('sv_record_checkout_session guards', { timeout: 180_000 }, () => {
+  const refused = async (invoiceId: string, code: string, opts: { amountCents?: number; livemode?: boolean } = {}) => {
+    const { error } = await svc().rpc('sv_record_checkout_session', {
+      p_invoice_id: invoiceId,
+      p_session_id: `cs_test_${randomUUID().replace(/-/g, '')}`,
+      p_livemode: opts.livemode ?? false,
+      p_url: 'https://checkout.stripe.com/c/pay/x',
+      p_amount_cents: opts.amountCents ?? 50000,
+      p_expires_at: new Date(Date.now() + 3600_000).toISOString(),
+    });
+    expect(error?.message ?? '').toContain(code);
+  };
+
+  it('refuses a paid invoice', async () => {
+    const d = await newDeposit(clientA.id);
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'paid', invoiceId: d.inv.invoice_id, checkoutSessionId: d.sessionId, amountCents: 50000, method: 'card' });
+    await refused(d.inv.invoice_id, 'sv_invoice_not_payable');
+  });
+
+  it('refuses a fully credited invoice', async () => {
+    const d = await newDeposit(clientA.id, { session: false });
+    await issueTestCreditNote(d.inv.invoice_id, { scope: 'total', amountCents: 50000 });
+    await refused(d.inv.invoice_id, 'sv_invoice_not_payable');
+  });
+
+  it('refuses a processing invoice and another invoice of the same client while one is processing', async () => {
+    const x = await newDeposit(clientP.id);
+    const y = await newDeposit(clientP.id, { session: false });
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'processing', invoiceId: x.inv.invoice_id, checkoutSessionId: x.sessionId, amountCents: 50000, method: 'bank_transfer' });
+    await refused(x.inv.invoice_id, 'sv_invoice_not_payable');
+    await refused(y.inv.invoice_id, 'sv_client_payment_in_progress');
+  });
+
+  it('refuses an amount that differs from the net to pay, also after a partial credit note', async () => {
+    const d = await newDeposit(clientA.id, { session: false });
+    await refused(d.inv.invoice_id, 'sv_checkout_amount_mismatch', { amountCents: 49999 });
+    await issueTestCreditNote(d.inv.invoice_id, { scope: 'partial', amountCents: 10000 });
+    await refused(d.inv.invoice_id, 'sv_checkout_amount_mismatch', { amountCents: 50000 });
+    const ok = await recordTestSession(d.inv.invoice_id, { amountCents: 40000 });
+    expect(ok.result).toEqual({ recorded: true });
+  });
+
+  it('refuses live mode on a test client and accepts test mode', async () => {
+    const d = await newDeposit(clientT.id, { session: false });
+    await refused(d.inv.invoice_id, 'sv_checkout_livemode_invalid', { livemode: true });
+    const ok = await recordTestSession(d.inv.invoice_id);
+    expect(ok.result).toEqual({ recorded: true });
+  });
+
+  it('accepts a normal invoice', async () => {
+    const d = await newDeposit(clientA.id);
+    expect(d.sessionId).toMatch(/^cs_test_/);
+  });
+});
+
+describe('sv_record_refund_request and refund events', { timeout: 180_000 }, () => {
+  it('refuses a credit note issued without refund_requested', async () => {
+    const d = await newDeposit(clientR.id);
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'paid', invoiceId: d.inv.invoice_id, checkoutSessionId: d.sessionId, amountCents: 50000, method: 'card' });
+    const cn = await issueTestCreditNote(d.inv.invoice_id, { scope: 'partial', amountCents: 10000, refundRequested: false });
+    const { error } = await svc().rpc('sv_record_refund_request', {
+      p_credit_note_id: cn.credit_note_id,
+      p_refund_id: `re_test_${randomUUID().replace(/-/g, '')}`,
+      p_amount_cents: 10000,
+      p_payment_intent_id: pi(),
+      p_livemode: false,
+    });
+    expect(error?.message ?? '').toContain('sv_refund_not_requested');
+  });
+
+  it('refuses a refund when the origin has no paid row', async () => {
+    const d = await newDeposit(clientR.id, { session: false });
+    const cn = await issueTestCreditNote(d.inv.invoice_id, { scope: 'total', amountCents: 50000, refundRequested: true });
+    const { error } = await svc().rpc('sv_record_refund_request', {
+      p_credit_note_id: cn.credit_note_id,
+      p_refund_id: `re_test_${randomUUID().replace(/-/g, '')}`,
+      p_amount_cents: 50000,
+      p_payment_intent_id: pi(),
+      p_livemode: false,
+    });
+    expect(error?.message ?? '').toContain('sv_refund_origin_unpaid');
+  });
+
+  it('records a refund request on a paid origin; refunded and refund_failed events resolve by payment intent', async () => {
+    const d = await newDeposit(clientR.id);
+    const intent = pi();
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'paid', invoiceId: d.inv.invoice_id, checkoutSessionId: d.sessionId, paymentIntentId: intent, amountCents: 50000, method: 'card' });
+    const cn = await issueTestCreditNote(d.inv.invoice_id, { scope: 'total', amountCents: 50000, refundRequested: true });
+    const refundId = `re_test_${randomUUID().replace(/-/g, '')}`;
+    const args = {
+      p_credit_note_id: cn.credit_note_id,
+      p_refund_id: refundId,
+      p_amount_cents: 50000,
+      p_payment_intent_id: intent,
+      p_livemode: false,
+    };
+    const first = await svc().rpc('sv_record_refund_request', args);
+    expect(first.error).toBeNull();
+    const second = await svc().rpc('sv_record_refund_request', args);
+    expect(second.data).toEqual(first.data);
+
+    const rows = await ledger({ invoiceId: d.inv.invoice_id });
+    expect(rows.filter((r) => r.kind === 'refund_requested')).toHaveLength(1);
+
+    const refunded = await applyTestEvent({ type: 'charge.refunded', kind: 'refunded', paymentIntentId: intent, amountCents: 50000, refundId });
+    expect(refunded.outcome).toBe('refunded');
+    const after = await ledger({ invoiceId: d.inv.invoice_id });
+    expect(after.filter((r) => r.kind === 'refunded')).toHaveLength(1);
+
+    const failedId = evt();
+    const failed = await applyTestEvent({ eventId: failedId, type: 'refund.failed', kind: 'refund_failed', paymentIntentId: intent, amountCents: 50000, refundId: `re_test_${randomUUID().replace(/-/g, '')}` });
+    expect(failed.outcome).toBe('refund_failed');
+    const frow = await ledger({ eventId: failedId });
+    expect(frow[0].invoice_id).toBe(d.inv.invoice_id);
+    expect(frow[0].kind).toBe('refund_failed');
+    expect(frow[0].detail).toBe('refund_failed');
+    expect(await mailsByKey(`payment_anomaly_admin:${failedId}`)).toHaveLength(1);
+  });
+});
+
+describe('payment isolation and privileges', { timeout: 180_000 }, () => {
+  let aInvoices: string[] = [];
+  let bInvoice: string;
+
+  beforeAll(async () => {
+    const a = await newDeposit(clientA.id);
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'paid', invoiceId: a.inv.invoice_id, checkoutSessionId: a.sessionId, paymentIntentId: pi(), amountCents: 50000, method: 'card' });
+    const b = await newDeposit(clientB.id);
+    await applyTestEvent({ type: 'checkout.session.completed', kind: 'paid', invoiceId: b.inv.invoice_id, checkoutSessionId: b.sessionId, paymentIntentId: pi(), amountCents: 50000, method: 'card' });
+    bInvoice = b.inv.invoice_id;
+    const { data } = await svc().from('sv_invoices').select('id').eq('client_id', clientA.id);
+    aInvoices = (data ?? []).map((r: any) => r.id);
+    expect(aInvoices).toContain(a.inv.invoice_id);
+  }, 120_000);
+
+  it('a member reads only the safe columns of its own ledger rows', async () => {
+    const { data, error } = await memberA.client
+      .from('sv_invoice_payment_events')
+      .select('id, invoice_id, kind, amount_cents, method, occurred_at');
+    expect(error).toBeNull();
+    expect((data ?? []).length).toBeGreaterThan(0);
+    for (const r of data ?? []) expect(aInvoices).toContain((r as any).invoice_id);
+    expect((data ?? []).some((r: any) => r.invoice_id === bInvoice)).toBe(false);
+    expect((data ?? []).some((r: any) => r.kind === 'paid')).toBe(true);
+  });
+
+  it('a member cannot select Stripe identifiers', async () => {
+    const pic = await memberA.client.from('sv_invoice_payment_events').select('payment_intent_id');
+    expect(pic.error).not.toBeNull();
+    const evc = await memberA.client.from('sv_invoice_payment_events').select('stripe_event_id');
+    expect(evc.error).not.toBeNull();
+  });
+
+  it('events, sessions and customers are closed to clients, anonymous, plain and Gecko users', async () => {
+    const clients = [memberA.client, anonClient(), plain.client, gecko.client];
+    for (const c of clients) {
+      for (const table of ['sv_stripe_events', 'sv_checkout_sessions', 'sv_stripe_customers']) {
+        const { data, error } = await c.from(table).select('*');
+        expect(error !== null || (data ?? []).length === 0).toBe(true);
+      }
+    }
+  });
+
+  it('an admin reads sessions and customers', async () => {
+    const s = await admin.client.from('sv_checkout_sessions').select('id');
+    expect(s.error).toBeNull();
+    expect((s.data ?? []).length).toBeGreaterThan(0);
+    const c = await admin.client.from('sv_stripe_customers').select('stripe_customer_id');
+    expect(c.error).toBeNull();
+    expect((c.data ?? []).length).toBeGreaterThan(0);
+  });
+
+  it('ledger rows cannot be updated or deleted', async () => {
+    const rows = await ledger({});
+    const id = rows[0].id;
+    const upd = await svc().from('sv_invoice_payment_events').update({ amount_cents: 1 }).eq('id', id).select();
+    expect(upd.error).not.toBeNull();
+    const del = await svc().from('sv_invoice_payment_events').delete().eq('id', id).select();
+    expect(del.error).not.toBeNull();
+    const owner = dbQuery(`update public.sv_invoice_payment_events set amount_cents = 1 where id = ${id}`);
+    expect(owner).toContain('sv_immutable_table');
+  });
+
+  it('authenticated cannot execute the payment and invoice RPCs', async () => {
+    const apply = await memberA.client.rpc('sv_apply_stripe_event', {
+      p_event_id: evt(),
+      p_type: 'x',
+      p_livemode: false,
+      p_object_id: 'o',
+      p_kind: 'paid',
+      p_invoice_id: null,
+      p_customer_id: null,
+      p_payment_intent_id: null,
+      p_checkout_session_id: null,
+      p_amount_cents: 1,
+      p_expected_cents: null,
+      p_currency: 'eur',
+      p_method: null,
+      p_refund_id: null,
+      p_admin_email: 'contact@sevalys.com',
+    });
+    expect(apply.error).not.toBeNull();
+    expect(String(apply.error?.message)).toMatch(/permission denied|not found|Could not find/i);
+
+    const issue = await memberA.client.rpc('sv_issue_invoice', {
+      p_id: randomUUID(),
+      p_issue_key: `rls-${randomUUID()}`,
+      p_project_id: randomUUID(),
+      p_kind: 'deposit',
+      p_header: {},
+      p_lines: [],
+      p_deductions: [],
+      p_admin_email: 'contact@sevalys.com',
+    });
+    expect(issue.error).not.toBeNull();
+    expect(String(issue.error?.message)).toMatch(/permission denied|not found|Could not find/i);
+  });
+});
