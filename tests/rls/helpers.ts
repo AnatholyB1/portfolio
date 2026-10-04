@@ -380,6 +380,229 @@ export async function signTestDocument(
   return ver.data;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 15 (invoices and payments) helpers
+// ---------------------------------------------------------------------------
+
+/** Flag a client as a test client (series TFA/TAV). Locked by the DB once an invoice exists. */
+export async function setClientTest(clientId: string, isTest: boolean) {
+  const { error } = await svc().from('sv_clients').update({ is_test: isTest }).eq('id', clientId);
+  if (error) throw new Error(`setClientTest failed: ${error.message}`);
+}
+
+/**
+ * Reach contract_signed on a project. sv_post_project_fact enforces no prerequisite,
+ * so the steps are posted in engine order: onboarding_completed, quote_accepted, contract_signed.
+ */
+export async function reachContractSigned(projectId: string) {
+  await postFact(projectId, 'onboarding_completed', { actorKind: 'system' });
+  await postFact(projectId, 'quote_accepted', { actorKind: 'admin' });
+  await postFact(projectId, 'contract_signed', { actorKind: 'admin' });
+}
+
+/**
+ * Reach acceptance_signed: contract_signed first, then deposit_received, production_completed
+ * and acceptance_signed (engine order).
+ */
+export async function reachAcceptanceSigned(projectId: string) {
+  await reachContractSigned(projectId);
+  await postFact(projectId, 'deposit_received', { actorKind: 'admin' });
+  await postFact(projectId, 'production_completed', { actorKind: 'admin' });
+  await postFact(projectId, 'acceptance_signed', { actorKind: 'admin' });
+}
+
+export interface TestInvoiceLine {
+  designation: string;
+  quantity_milli: number;
+  unit_code: string;
+  unit_price_cents: number;
+  line_total_cents: number;
+}
+
+/** Valid p_header (seller values from SELLER_V1, franchise VAT). totalExclCents must equal the lines sum. */
+export function invoiceHeader(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    seller_legal_name: 'Anatholy Bricon',
+    seller_trade_name: 'Sèvalys',
+    seller_siret: '90098846000011',
+    seller_address_line: '71 rue de Grand Cour',
+    seller_postal_code: '37550',
+    seller_city: 'Saint-Avertin',
+    seller_vat_number: null,
+    seller_iban: 'FR7628233000011010832334333',
+    seller_bic: 'REVOFRP2',
+    seller_email: 'contact@sevalys.com',
+    buyer_name: 'RLS Client',
+    buyer_siret: '12345678900012',
+    buyer_siren: '123456789',
+    buyer_address_line: '1 rue du Test',
+    buyer_postal_code: '37000',
+    buyer_city: 'Tours',
+    buyer_vat_number: null,
+    vat_regime: 'franchise',
+    vat_exemption_code: 'VATEX-FR-FRANCHISE',
+    vat_exemption_text: 'TVA non applicable, art. 293 B du CGI',
+    payment_terms_days: 30,
+    payment_terms_text: 'Paiement à 30 jours à compter de la date de facture, par virement',
+    late_penalty_text: "Pénalités de retard : trois fois le taux d'intérêt légal",
+    recovery_indemnity_text: 'Indemnité forfaitaire pour frais de recouvrement : 40 €',
+    total_excl_tax_cents: 50000,
+    vat_total_cents: 0,
+    prepaid_cents: 0,
+    template_version: 'v1',
+    snapshot: { test: true },
+    ...overrides,
+  };
+}
+
+function defaultInvoiceLines(): TestInvoiceLine[] {
+  return [
+    { designation: 'Acompte site vitrine', quantity_milli: 1000, unit_code: 'C62', unit_price_cents: 50000, line_total_cents: 50000 },
+  ];
+}
+
+/**
+ * Issue an invoice through public.sv_issue_invoice (service role). Deterministic issue key
+ * unless one is given. When lines are overridden without a header, the header total follows the lines.
+ * Returns the RPC jsonb. Invoices are append-only: they are never cleaned up.
+ */
+export async function issueTestInvoice(
+  projectId: string,
+  opts: {
+    kind?: 'deposit' | 'period' | 'final';
+    lines?: TestInvoiceLine[];
+    deductions?: unknown[];
+    header?: Record<string, unknown>;
+    issueKey?: string;
+    id?: string;
+    adminEmail?: string;
+  } = {},
+): Promise<{ invoice_id: string; number: string; issued_on: string; due_date: string; already: boolean; outbox_ids: string[] }> {
+  const id = opts.id ?? randomUUID();
+  const kind = opts.kind ?? 'deposit';
+  const lines = opts.lines ?? defaultInvoiceLines();
+  const totalExcl = lines.reduce((s, l) => s + l.line_total_cents, 0);
+  const prepaid = (opts.deductions as { amount_cents: number }[] | undefined)?.reduce((s, d) => s + d.amount_cents, 0) ?? 0;
+  const header = invoiceHeader({
+    total_excl_tax_cents: totalExcl,
+    prepaid_cents: prepaid,
+    ...(kind === 'period' ? { service_period_start: '2026-10-01', service_period_end: '2026-10-31' } : {}),
+    ...(opts.header ?? {}),
+  });
+  const { data, error } = await svc().rpc('sv_issue_invoice', {
+    p_id: id,
+    p_issue_key: opts.issueKey ?? `rls-inv-${id}`,
+    p_project_id: projectId,
+    p_kind: kind,
+    p_header: header,
+    p_lines: lines,
+    p_deductions: opts.deductions ?? [],
+    p_admin_email: opts.adminEmail ?? 'contact@sevalys.com',
+  });
+  if (error) throw new Error(`sv_issue_invoice failed: ${error.message}`);
+  return data as any;
+}
+
+/** Issue a credit note through public.sv_issue_credit_note (service role). Default: total scope over the open amount. */
+export async function issueTestCreditNote(
+  originId: string,
+  opts: {
+    scope?: 'total' | 'partial';
+    amountCents?: number;
+    reason?: string;
+    refundRequested?: boolean;
+    lines?: TestInvoiceLine[];
+    issueKey?: string;
+    id?: string;
+    createdBy?: string | null;
+  } = {},
+): Promise<{ credit_note_id: string; number: string; issued_on: string; already: boolean; outbox_ids: string[]; fully_credited: boolean }> {
+  const id = opts.id ?? randomUUID();
+  const amount = opts.amountCents ?? 50000;
+  const lines =
+    opts.lines ??
+    [{ designation: 'Avoir', quantity_milli: 1000, unit_code: 'C62', unit_price_cents: amount, line_total_cents: amount }];
+  const { data, error } = await svc().rpc('sv_issue_credit_note', {
+    p_id: id,
+    p_issue_key: opts.issueKey ?? `rls-cn-${id}`,
+    p_origin_invoice_id: originId,
+    p_scope: opts.scope ?? 'total',
+    p_amount_cents: amount,
+    p_reason: opts.reason ?? 'Avoir de test RLS',
+    p_refund_requested: opts.refundRequested ?? false,
+    p_lines: lines,
+    p_snapshot: { test: true },
+    p_created_by: opts.createdBy ?? null,
+  });
+  if (error) throw new Error(`sv_issue_credit_note failed: ${error.message}`);
+  return data as any;
+}
+
+/** Record a checkout session (ids cs_test_ + random) for an invoice through sv_record_checkout_session. */
+export async function recordTestSession(
+  invoiceId: string,
+  opts: { livemode?: boolean; amountCents?: number; sessionId?: string; expiresAt?: string } = {},
+): Promise<{ sessionId: string; result: unknown }> {
+  const sessionId = opts.sessionId ?? `cs_test_${randomUUID().replace(/-/g, '')}`;
+  let amount = opts.amountCents;
+  if (amount === undefined) {
+    const inv = await svc().from('sv_invoices').select('net_to_pay_cents').eq('id', invoiceId).single();
+    if (inv.error || !inv.data) throw new Error(`recordTestSession: invoice lookup failed: ${inv.error?.message}`);
+    amount = Number(inv.data.net_to_pay_cents);
+  }
+  const { data, error } = await svc().rpc('sv_record_checkout_session', {
+    p_invoice_id: invoiceId,
+    p_session_id: sessionId,
+    p_livemode: opts.livemode ?? false,
+    p_url: `https://checkout.stripe.com/c/pay/${sessionId}`,
+    p_amount_cents: amount,
+    p_expires_at: opts.expiresAt ?? new Date(Date.now() + 23 * 3600 * 1000).toISOString(),
+  });
+  if (error) throw new Error(`sv_record_checkout_session failed: ${error.message}`);
+  return { sessionId, result: data };
+}
+
+export interface ApplyTestEventArgs {
+  type: string;
+  kind: string;
+  invoiceId?: string | null;
+  eventId?: string;
+  livemode?: boolean;
+  objectId?: string;
+  customerId?: string | null;
+  paymentIntentId?: string | null;
+  checkoutSessionId?: string | null;
+  amountCents?: number | null;
+  expectedCents?: number | null;
+  currency?: string | null;
+  method?: string | null;
+  refundId?: string | null;
+  adminEmail?: string;
+}
+
+/** Apply a Stripe event through sv_apply_stripe_event (ids evt_test_ + random, admin contact@sevalys.com). */
+export async function applyTestEvent(args: ApplyTestEventArgs): Promise<any> {
+  const { data, error } = await svc().rpc('sv_apply_stripe_event', {
+    p_event_id: args.eventId ?? `evt_test_${randomUUID().replace(/-/g, '')}`,
+    p_type: args.type,
+    p_livemode: args.livemode ?? false,
+    p_object_id: args.objectId ?? args.checkoutSessionId ?? args.paymentIntentId ?? `obj_test_${randomUUID().replace(/-/g, '')}`,
+    p_kind: args.kind,
+    p_invoice_id: args.invoiceId ?? null,
+    p_customer_id: args.customerId ?? null,
+    p_payment_intent_id: args.paymentIntentId ?? null,
+    p_checkout_session_id: args.checkoutSessionId ?? null,
+    p_amount_cents: args.amountCents ?? null,
+    p_expected_cents: args.expectedCents ?? null,
+    p_currency: args.currency ?? 'eur',
+    p_method: args.method ?? null,
+    p_refund_id: args.refundId ?? null,
+    p_admin_email: args.adminEmail ?? 'contact@sevalys.com',
+  });
+  if (error) throw new Error(`sv_apply_stripe_event failed: ${error.message}`);
+  return data;
+}
+
 // NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
 // immutable (deny triggers) and leads are tombstoned only. The branch is
 // throwaway; tests must always use uniqueEmail() so runs never collide.
