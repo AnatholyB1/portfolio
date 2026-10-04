@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: planning
-stopped_at: Phase 14 executed, deployed, verification human_needed (iOS, legal review)
-last_updated: "2026-10-04T11:44:32.904Z"
+stopped_at: Phase 15 context gathered
+last_updated: "2026-10-04T19:42:11.611Z"
 last_activity: 2026-10-03
 progress:
   total_phases: 10
@@ -83,9 +83,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-04T11:44:32.892Z
-Stopped at: Phase 14 executed, deployed, verification human_needed (iOS, legal review)
-Resume file: .planning/phases/14-electronic-signature/14-HUMAN-UAT.md
+Last session: 2026-10-04T19:42:11.587Z
+Stopped at: Phase 15 context gathered
+Resume file: .planning/phases/15-stripe-payments-invoicing/15-CONTEXT.md
 
 ## Operator Next Steps
 
