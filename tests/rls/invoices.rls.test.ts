@@ -160,6 +160,12 @@ beforeAll(async () => {
 }, 240_000);
 
 afterAll(async () => {
+  // Issuing queues due payment_requested mails: mark them skipped so this suite never
+  // starves sv_claim_due_mail (limit 50) in mailoutbox.rls.test.ts on the shared branch.
+  const ids = [clientA, clientB, clientT, clientC].filter(Boolean).map((c) => c.id);
+  if (ids.length > 0) {
+    await svc().from('sv_mail_outbox').update({ status: 'skipped' }).in('client_id', ids).eq('status', 'pending');
+  }
   await cleanup();
 });
 
