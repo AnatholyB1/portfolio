@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
-stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-10-05T10:12:59.224Z"
+stopped_at: Phase 15 deployed to production; 15-20 Task 2 (owner end-to-end in Stripe test mode) pending
+last_updated: "2026-10-05T11:08:52.756Z"
 last_activity: 2026-10-05
 progress:
   total_phases: 10
@@ -89,9 +89,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-05T00:42:34.548Z
-Stopped at: Phase 15 UI-SPEC approved
-Resume file: None
+Last session: 2026-10-05T11:08:52.712Z
+Stopped at: Phase 15 deployed to production; 15-20 Task 2 (owner end-to-end in Stripe test mode) pending
+Resume file: .planning/phases/15-stripe-payments-invoicing/15-20-PLAN.md
 
 ## Operator Next Steps
 
