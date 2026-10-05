@@ -34,6 +34,9 @@ describe('admin project sheet source guards (T-12-60, T-12-61, T-12-62)', () => 
     expect(page).toContain('<FactJournal');
     expect(page).toContain('viewer="admin"');
     expect(page).toContain('<DocumentsPanel');
+    expect(page).toContain('<BillingPanel');
+    expect(page.indexOf('<BillingPanel')).toBeGreaterThan(page.indexOf('<DocumentsPanel'));
+    expect(page).not.toContain('Facture (aperçu uniquement)');
     expect(page).toContain('loadAdminDocumentsView(supabase');
     expect(page).toContain('loadSignatureViews(supabase');
     expect(page).toContain('signedFacts={signedFacts}');

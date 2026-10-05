@@ -9,7 +9,6 @@ const files = {
   snapshot: read('./documents/SnapshotPanel.tsx'),
   quote: read('./documents/QuoteForm.tsx'),
   spec: read('./documents/SpecForm.tsx'),
-  invoice: read('./documents/InvoicePreviewForm.tsx'),
   contract: read('./documents/ContractForm.tsx'),
   acceptance: read('./documents/AcceptanceForm.tsx'),
   panel: read('./documents/DocumentsPanel.tsx'),
@@ -68,15 +67,17 @@ describe('admin document components source guards (T-13-39, T-13-40, T-13-41)', 
   });
 
   it('forms plug into PreviewIssuePanel with a dirtyKey', () => {
-    for (const src of [files.quote, files.spec, files.invoice, files.contract, files.acceptance]) {
+    for (const src of [files.quote, files.spec, files.contract, files.acceptance]) {
       expect(src).toContain('<PreviewIssuePanel');
       expect(src).toContain('dirtyKey');
     }
   });
 
-  it('InvoicePreviewForm is preview-only (D-10, T-13-54)', () => {
-    expect(files.invoice).toContain('canIssue={false}');
-    expect(files.invoice).not.toContain('Émettre');
+  it('DocumentsPanel has no invoice case: invoices live in Facturation (T-15-72)', () => {
+    expect(files.panel).not.toContain("'invoice'");
+    expect(files.panel).not.toContain('InvoicePreviewForm');
+    expect(files.panel).not.toContain('Facture (aperçu uniquement)');
+    expect(existsSync(new URL('./documents/InvoicePreviewForm.tsx', import.meta.url))).toBe(false);
   });
 
   it('SpecForm prefills from the project goal and caps at 4000', () => {

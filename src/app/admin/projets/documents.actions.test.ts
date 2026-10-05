@@ -34,6 +34,7 @@ vi.mock('@/lib/server/documents/read', () => ({
 const createDocumentDownloadUrl = vi.fn();
 const verifyDocumentHash = vi.fn();
 vi.mock('@/lib/server/documents/download', () => ({
+  SV_DOCUMENTS_BUCKET: 'sv-documents',
   createDocumentDownloadUrl: (...a: unknown[]) => createDocumentDownloadUrl(...a),
   verifyDocumentHash: (...a: unknown[]) => verifyDocumentHash(...a),
 }));
