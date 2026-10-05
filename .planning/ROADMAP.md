@@ -345,7 +345,7 @@ Plans:
 
 - [x] 15-14-PLAN.md — Factures d'acompte et finale automatiques après signature, balayage quotidien
 - [x] 15-15-PLAN.md — Onglet Paiements du portail et pages de retour
-- [ ] 15-16-PLAN.md — Vue admin de facturation et actions (période, avoir, remboursement, données)
+- [x] 15-16-PLAN.md — Vue admin de facturation et actions (période, avoir, remboursement, données)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 15/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 16/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
