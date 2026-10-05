@@ -33,3 +33,23 @@ export type FilesPanelProps = FileActionsProps & {
   files: FileRowView[];
   viewer: 'client' | 'admin';
 };
+
+/** Vue facture côté client (structurellement compatible avec InvoiceView du lecteur serveur). */
+export type PortalInvoiceView = {
+  id: string;
+  kind: 'deposit' | 'period' | 'final' | 'credit_note';
+  number: string;
+  isTest: boolean;
+  issuedOn: string;
+  dueDate: string | null;
+  periodStart: string | null;
+  periodEnd: string | null;
+  totalInclTaxCents: number;
+  amountDueCents: number;
+  status: 'to_pay' | 'processing' | 'paid' | 'credited' | 'refunded';
+  paidAt: string | null;
+  partialCreditCents: number;
+  lastFailedAt: string | null;
+  hasPdf: boolean;
+  creditNotes: PortalInvoiceView[];
+};

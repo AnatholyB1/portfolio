@@ -606,3 +606,93 @@
 .pt-root .pt-sign-frame-empty {
   border-style: dashed;
 }
+
+/* ---------- Paiements (phase 15) ---------- */
+.pt-root .pt-pay-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-root .pt-pay-card h2,
+.pt-root .pt-pay-card p {
+  margin: 0;
+}
+.pt-root .pt-pay-amount {
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.pt-root .pt-pay-number {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+}
+.pt-root .pt-pay-amount-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pt-root .pt-pay-action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-root .pt-pay-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.pt-root .pt-pay-processing {
+  border-left: 2px solid var(--pt-border-strong);
+}
+.pt-root .pt-pay-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.pt-root .pt-pay-banner h2,
+.pt-root .pt-pay-banner p {
+  margin: 0;
+}
+.pt-root .pt-pay-banner-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pt-root .pt-pay-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pt-root .pt-pay-banner h2:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+@media (max-width: 639px) {
+  .pt-root .pt-pay-btn,
+  .pt-root .pt-pay-action,
+  .pt-root .pt-pay-card .pt-pay-action {
+    width: 100%;
+  }
+  .pt-root .pt-pay-btn {
+    min-height: 48px;
+  }
+  .pt-root .pt-pay-card {
+    align-items: stretch;
+  }
+}
