@@ -172,3 +172,66 @@
     color: var(--ink-dim);
   }
 }
+
+/* Phase 15 : formulaires de facturation admin (15-17). Tokens existants uniquement. */
+.pt-admin .pt-bill-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-admin .pt-bill-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-admin .pt-bill-dates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.pt-admin .pt-bill-line {
+  display: grid;
+  grid-template-columns: 1fr 96px 144px 144px 44px;
+  gap: 8px;
+  align-items: start;
+}
+.pt-admin .pt-bill-amount {
+  display: block;
+  min-height: 44px;
+  line-height: 44px;
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-bill-remove {
+  min-width: 44px;
+  min-height: 44px;
+  align-self: end;
+}
+.pt-admin .pt-bill-totals {
+  align-items: flex-end;
+}
+.pt-admin .pt-bill-heading {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+.pt-admin .pt-bill-counter {
+  text-align: right;
+}
+.pt-admin .pt-bill-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.pt-admin .pt-bill-check input {
+  accent-color: var(--acid);
+}
+@media (max-width: 640px) {
+  .pt-admin .pt-bill-line,
+  .pt-admin .pt-bill-dates {
+    grid-template-columns: 1fr;
+  }
+}
