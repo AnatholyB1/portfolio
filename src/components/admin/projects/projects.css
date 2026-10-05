@@ -235,3 +235,35 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Phase 15 : section Facturation admin (15-18). Tokens existants uniquement. */
+.pt-admin .pt-bill-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+.pt-admin .pt-bill-summary dt {
+  color: var(--ink-dim);
+}
+.pt-admin .pt-bill-summary dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-bill-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.pt-admin .pt-bill-pending {
+  border-left: 2px solid var(--pt-border-strong);
+  padding-left: 16px;
+  margin-top: 32px;
+}
+.pt-admin .pt-bill-auto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
