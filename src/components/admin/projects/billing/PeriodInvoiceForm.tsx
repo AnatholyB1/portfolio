@@ -22,8 +22,10 @@ type PeriodInvoiceFormProps = {
   onCancel: () => void;
 };
 
+let lineSeq = 0;
 function newLine(): LineState {
-  return { key: crypto.randomUUID(), designation: '', days: '', dailyRate: '' };
+  lineSeq += 1;
+  return { key: `line-${lineSeq}`, designation: '', days: '', dailyRate: '' };
 }
 
 function base64ToBlobUrl(b64: string): string {
