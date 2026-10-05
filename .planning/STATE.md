@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-10-05T00:34:54.967Z"
+last_updated: "2026-10-05T00:42:41.754Z"
 last_activity: 2026-10-05
 progress:
   total_phases: 10
   completed_phases: 5
   total_plans: 113
-  completed_plans: 110
+  completed_plans: 111
   percent: 50
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 15 (Stripe payments & invoicing) — EXECUTING
-Plan: 19 of 21
+Plan: 20 of 21
 Status: Ready to execute
 Last activity: 2026-10-05
 
-Progress: [██████████] 97%
+Progress: [██████████] 98%
 
 ## Performance Metrics
 
@@ -89,7 +89,7 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-05T00:34:54.957Z
+Last session: 2026-10-05T00:42:34.548Z
 Stopped at: Phase 15 UI-SPEC approved
 Resume file: None
 
