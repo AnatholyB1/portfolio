@@ -11,6 +11,7 @@ import {
   LinksCard,
   OnboardingSummaryCard,
 } from '@/components/admin/projects/ProjectSideCards';
+import BillingPanel from '@/components/admin/projects/billing/BillingPanel';
 import DocumentsPanel from '@/components/admin/projects/documents/DocumentsPanel';
 import FilesPanel from '@/components/portal/project/FilesPanel';
 import Timeline from '@/components/portal/project/Timeline';
@@ -31,6 +32,13 @@ import {
   loadSnapshotAction,
   previewDocumentAction,
   verifyDocumentHashAction,
+  adminInvoiceDownloadAction,
+  issueCreditNoteAction,
+  issuePeriodInvoiceAction,
+  loadInvoiceDataAction,
+  previewCreditNoteAction,
+  previewPeriodInvoiceAction,
+  verifyInvoiceHashAction,
 } from '@/app/admin/projets/actions';
 import { classifyProject } from '@/lib/projects/blocking';
 import { PROJECT_COPY } from '@/lib/projects/copy';
@@ -39,6 +47,7 @@ import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { STEPS } from '@/lib/projects/steps';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
+import { loadAdminBillingView } from '@/lib/server/invoices/adminView';
 import { loadSignatureViews } from '@/lib/server/signature/adminView';
 import { SIGNING_FACT } from '@/lib/documents/steps';
 import { loadProjectBundle } from '@/lib/server/projects/read';
@@ -67,6 +76,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   const bundle = await loadProjectBundle(supabase, id, now);
   if (!bundle) notFound();
   const docsView = await loadAdminDocumentsView(supabase, bundle);
+  const billingView = await loadAdminBillingView(supabase, bundle, now);
   const signatureMap = await loadSignatureViews(supabase, id);
   const signatures = Object.fromEntries(signatureMap);
   const signedFacts = [
@@ -172,6 +182,19 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   verifyChain: verifySignatureChainAction,
                   downloadSealed: adminSealedDownloadAction,
                   resumeFinalization: adminResumeFinalizationAction,
+                }}
+              />
+              <BillingPanel
+                projectId={project.id}
+                view={billingView}
+                actions={{
+                  previewPeriod: previewPeriodInvoiceAction,
+                  issuePeriod: issuePeriodInvoiceAction,
+                  previewCredit: previewCreditNoteAction,
+                  issueCredit: issueCreditNoteAction,
+                  download: adminInvoiceDownloadAction,
+                  verifyHash: verifyInvoiceHashAction,
+                  loadData: loadInvoiceDataAction,
                 }}
               />
             </div>
