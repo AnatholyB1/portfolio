@@ -82,8 +82,8 @@ describe('loadAdminDocumentsView', () => {
   it('step 2 without docs: quote and spec issuable', async () => {
     const v = await loadAdminDocumentsView({} as any, bundle(step2()));
     expect(v.expected).toEqual([
-      { docType: 'quote', activeRevision: null, canIssue: true, previewOnly: false, blockedReason: null },
-      { docType: 'spec', activeRevision: null, canIssue: true, previewOnly: false, blockedReason: null },
+      { docType: 'quote', activeRevision: null, canIssue: true, blockedReason: null },
+      { docType: 'spec', activeRevision: null, canIssue: true, blockedReason: null },
     ]);
   });
 
@@ -109,7 +109,7 @@ describe('loadAdminDocumentsView', () => {
     });
   });
 
-  it('step 6 invoice is preview-only', async () => {
+  it('step 6 offers no invoice preview (invoices live in Facturation)', async () => {
     const facts = [
       ...step3(),
       fact('contract_signed'),
@@ -117,13 +117,8 @@ describe('loadAdminDocumentsView', () => {
       fact('production_completed'),
       fact('acceptance_signed'),
     ];
-    let v = await loadAdminDocumentsView({} as any, bundle(facts));
-    expect(v.expected).toEqual([
-      { docType: 'invoice', activeRevision: null, canIssue: false, previewOnly: true, blockedReason: COPY.needQuote },
-    ]);
-    loadProjectDocuments.mockResolvedValue([doc('quote')]);
-    v = await loadAdminDocumentsView({} as any, bundle(facts));
-    expect(v.expected[0]).toMatchObject({ previewOnly: true, canIssue: false, blockedReason: null });
+    const v = await loadAdminDocumentsView({} as any, bundle(facts));
+    expect(v.expected).toEqual([]);
   });
 
   it('step 4 and done expect nothing', async () => {

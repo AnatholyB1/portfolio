@@ -8,7 +8,6 @@ import type { DocType, QuoteLine, QuoteSnapshot, SpecSnapshot } from '@/lib/docu
 import {
   chainHeads,
   checkIssuable,
-  checkPreviewable,
   expectedDocTypes,
   type IssueCheckCode,
 } from '@/lib/documents/steps';
@@ -23,7 +22,6 @@ export type ExpectedDocView = {
   docType: DocType;
   activeRevision: number | null;
   canIssue: boolean;
-  previewOnly: boolean;
   blockedReason: string | null;
 };
 
@@ -60,27 +58,19 @@ export async function loadAdminDocumentsView(rls: SupabaseClient, bundle: Projec
   const heads = chainHeads(docs);
   const args = { facts, startedAt: project.startedAt, docs };
 
-  const expected: ExpectedDocView[] = expectedDocTypes(state.currentStep).map((docType) => {
-    const activeRevision = heads.get(docType)?.revision ?? null;
-    if (docType === 'invoice') {
-      const pre = checkPreviewable({ docType, ...args });
+  // Les factures vivent uniquement dans la section Facturation (PAY-04) : plus d'aperçu ici.
+  const expected: ExpectedDocView[] = expectedDocTypes(state.currentStep)
+    .filter((docType) => docType !== 'invoice')
+    .map((docType) => {
+      const activeRevision = heads.get(docType)?.revision ?? null;
+      const res = checkIssuable({ docType, ...args });
       return {
         docType,
         activeRevision,
-        canIssue: false,
-        previewOnly: true,
-        blockedReason: pre.ok ? null : REASONS[pre.code],
+        canIssue: res.ok,
+        blockedReason: res.ok ? null : REASONS[res.code],
       };
-    }
-    const res = checkIssuable({ docType, ...args });
-    return {
-      docType,
-      activeRevision,
-      canIssue: res.ok,
-      previewOnly: false,
-      blockedReason: res.ok ? null : REASONS[res.code],
-    };
-  });
+    });
 
   const issued: IssuedDocView[] = sortForDisplay(withStatuses(docs, facts)).map((d) => ({
     id: d.id,

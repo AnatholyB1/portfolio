@@ -203,7 +203,6 @@ export const PROJECT_COPY = {
       issueFailed:
         "Le document n'a pas pu être émis. Rien n'a été envoyé au client. Réessayez ; si l'erreur persiste, contactez le support technique.",
       previewFailed: "L'aperçu n'a pas pu être généré. Vérifiez les champs puis réessayez.",
-      invoiceTitle: 'Facture (aperçu uniquement)',
       invoiceHelper:
         "L'émission des factures arrive avec le module de paiement. L'aperçu porte la mention PROFORMA et n'est pas conservé.",
       contractHelper: 'Les clauses sont fixes. Les montants viennent du devis émis.',

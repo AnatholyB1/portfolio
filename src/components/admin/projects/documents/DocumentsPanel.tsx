@@ -9,7 +9,6 @@ import QuoteForm from './QuoteForm';
 import SpecForm from './SpecForm';
 import ContractForm from './ContractForm';
 import AcceptanceForm from './AcceptanceForm';
-import InvoicePreviewForm from './InvoicePreviewForm';
 import IssuedDocumentsList from './IssuedDocumentsList';
 
 const COPY = PROJECT_COPY.documents.admin;
@@ -30,7 +29,6 @@ type DocumentsView = {
     docType: DocType;
     activeRevision: number | null;
     canIssue: boolean;
-    previewOnly: boolean;
     blockedReason: string | null;
   }[];
   issued: IssuedDocView[];
@@ -71,8 +69,6 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions, 
         return <ContractForm {...common} canIssue={e.canIssue} quote={view.activeQuote} parties={view.parties} />;
       case 'acceptance':
         return <AcceptanceForm {...common} canIssue={e.canIssue} spec={view.activeSpec} />;
-      case 'invoice':
-        return <InvoicePreviewForm {...common} quote={view.activeQuote} />;
       default:
         return null;
     }
@@ -90,13 +86,13 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions, 
         ) : (
           view.expected.map((e) => {
             const reasonId = `${uid}-${e.docType}-reason`;
-            const label = e.docType === 'invoice' ? COPY.invoiceTitle : DOC_LABELS[e.docType];
+            const label = DOC_LABELS[e.docType];
             const open = openType === e.docType;
-            // Un document signé ou un prérequis manquant bloque le bouton ; la facture reste ouvrable (aperçu seul).
+            // Un document signé ou un prérequis manquant bloque le bouton.
             const head = view.issued.find((d) => d.docType === e.docType && d.revision === e.activeRevision);
             const signed = head ? Boolean(signatures[head.id]?.signature) : false;
             const frozenId = `${uid}-${e.docType}-frozen`;
-            const disabled = signed || (e.previewOnly ? false : !e.canIssue);
+            const disabled = signed || !e.canIssue;
             return (
               <div key={e.docType}>
                 <div className="pt-doc-expected">
