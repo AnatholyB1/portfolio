@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 15 UI-SPEC approved
-last_updated: "2026-10-05T00:42:41.754Z"
+last_updated: "2026-10-05T10:12:59.224Z"
 last_activity: 2026-10-05
 progress:
   total_phases: 10
   completed_phases: 5
   total_plans: 113
-  completed_plans: 111
+  completed_plans: 112
   percent: 50
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 15 (Stripe payments & invoicing) — EXECUTING
-Plan: 20 of 21
+Plan: 21 of 21
 Status: Ready to execute
 Last activity: 2026-10-05
 

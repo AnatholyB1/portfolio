@@ -361,7 +361,7 @@ Plans:
 
 **Wave 8** *(blocked on Wave 7 completion)*
 
-- [ ] 15-19-PLAN.md — Application en production (accord propriétaire), client de test signalé, Stripe et Vercel, suppression de la branche
+- [x] 15-19-PLAN.md — Application en production (accord propriétaire), client de test signalé, Stripe et Vercel, suppression de la branche
 
 **Wave 9** *(blocked on Wave 8 completion)*
 
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 19/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 20/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
