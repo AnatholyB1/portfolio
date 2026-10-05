@@ -12,6 +12,8 @@ const S = vi.hoisted(() => ({
   rpc: vi.fn(),
   send: vi.fn(),
   after: vi.fn(),
+  dep: vi.fn(),
+  fin: vi.fn(),
 }));
 
 vi.mock('server-only', () => ({}));
@@ -30,6 +32,10 @@ vi.mock('@/lib/supabase/admin', () => ({
 vi.mock('@/lib/server/rpc', () => ({ callRpc: S.rpc }));
 vi.mock('@/lib/server/mail/outbox', () => ({ sendOutboxRow: S.send }));
 vi.mock('@/lib/server/projects/facts', () => ({ afterFactPosted: S.after }));
+vi.mock('@/lib/server/invoices/autoIssue', () => ({
+  ensureDepositInvoice: S.dep,
+  ensureFinalInvoice: S.fin,
+}));
 
 import { renderDocument } from '@/lib/server/documents/render';
 import { sampleAcceptanceSnapshot, sampleQuoteSnapshot } from '@/lib/documents/fixtures';
@@ -210,6 +216,8 @@ describe('finalizeSignature', () => {
       data: { seal_id: 's', fact_id: 42, fact_changed: true, outbox_ids: ['o1'] },
     });
     S.send.mockResolvedValue('sent');
+    S.dep.mockResolvedValue('issued');
+    S.fin.mockResolvedValue('issued');
     S.after.mockResolvedValue({ stepBefore: 3, stepAfter: 4, done: false, mail: 'sent' });
     errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -276,6 +284,45 @@ describe('finalizeSignature', () => {
     expect(S.send).toHaveBeenCalledWith('o1');
     expect(S.after).toHaveBeenCalledWith(PID, 42);
     expect(S.remove).not.toHaveBeenCalled();
+  });
+
+  it('contract seal -> ensureDepositInvoice once, after afterFactPosted', async () => {
+    S.tables.sv_project_documents = { data: { ...docRow(sha(quote)), doc_type: 'contract' }, error: null };
+    const r = await finalizeSignature(DID);
+    expect(r.ok).toBe(true);
+    expect(S.dep).toHaveBeenCalledTimes(1);
+    expect(S.dep).toHaveBeenCalledWith(PID);
+    expect(S.fin).not.toHaveBeenCalled();
+    expect(S.after.mock.invocationCallOrder[0]).toBeLessThan(S.dep.mock.invocationCallOrder[0]);
+  });
+
+  it('acceptance seal -> ensureFinalInvoice', async () => {
+    S.tables.sv_project_documents = { data: { ...docRow(sha(quote)), doc_type: 'acceptance' }, error: null };
+    await finalizeSignature(DID);
+    expect(S.fin).toHaveBeenCalledWith(PID);
+    expect(S.dep).not.toHaveBeenCalled();
+  });
+
+  it('quote seal -> no invoice call', async () => {
+    await finalizeSignature(DID);
+    expect(S.dep).not.toHaveBeenCalled();
+    expect(S.fin).not.toHaveBeenCalled();
+  });
+
+  it('ensure throwing or failed never changes the sealed result', async () => {
+    S.tables.sv_project_documents = { data: { ...docRow(sha(quote)), doc_type: 'contract' }, error: null };
+    S.dep.mockRejectedValueOnce(new Error('boom'));
+    expect((await finalizeSignature(DID)).ok).toBe(true);
+    S.dep.mockResolvedValueOnce('failed');
+    const r = await finalizeSignature(DID);
+    expect(r).toMatchObject({ ok: true, outcome: 'sealed' });
+  });
+
+  it('already_sealed -> no invoice call', async () => {
+    S.tables.sv_project_documents = { data: { ...docRow(sha(quote)), doc_type: 'contract' }, error: null };
+    S.rpc.mockResolvedValue({ ok: false, code: 'sv_already_sealed' });
+    await finalizeSignature(DID);
+    expect(S.dep).not.toHaveBeenCalled();
   });
 
   it('fact_changed false -> afterFactPosted not called', async () => {

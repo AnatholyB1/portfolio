@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
+import { sweepInvoices } from '@/lib/server/invoices/autoIssue';
 import { processDueMail } from '@/lib/server/mail/outbox';
 
 export const dynamic = 'force-dynamic';
@@ -21,5 +22,12 @@ export async function GET(request: Request): Promise<Response> {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const result = await processDueMail(25);
-  return NextResponse.json(result);
+  let invoices: unknown;
+  try {
+    invoices = await sweepInvoices(10);
+  } catch {
+    console.error('[cron/mail] invoices_failed');
+    invoices = { error: 'invoices_failed' };
+  }
+  return NextResponse.json({ ...result, invoices });
 }

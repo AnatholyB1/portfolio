@@ -11,6 +11,7 @@ import { SV_DOCUMENTS_BUCKET } from '@/lib/server/documents/download';
 import { aggregateMail } from '@/lib/server/documents/issue';
 import { sendOutboxRow } from '@/lib/server/mail/outbox';
 import { ADMIN_NOTIFY_EMAIL } from '@/lib/server/mail/rules';
+import { ensureDepositInvoice, ensureFinalInvoice } from '@/lib/server/invoices/autoIssue';
 import { afterFactPosted } from '@/lib/server/projects/facts';
 import { callRpc } from '@/lib/server/rpc';
 import { appendCertificatePages } from './certificatePdf';
@@ -225,6 +226,15 @@ export async function finalizeSignature(documentId: string): Promise<FinalizeSig
         await afterFactPosted(doc.project_id, Number(factId));
       } catch {
         console.error('[signature/seal] notify_failed');
+      }
+    }
+    // Facturation automatique (D-07, D-09) : au mieux, jamais bloquante ; le cron quotidien reprend (Pitfall 7).
+    if (doc.doc_type === 'contract' || doc.doc_type === 'acceptance') {
+      try {
+        if (doc.doc_type === 'contract') await ensureDepositInvoice(doc.project_id);
+        else await ensureFinalInvoice(doc.project_id);
+      } catch {
+        console.error('[signature/seal] invoice_failed');
       }
     }
     return { ok: true, outcome: 'sealed', sealSha256: sealed.sha256 };
