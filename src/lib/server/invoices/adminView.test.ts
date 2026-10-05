@@ -12,6 +12,10 @@ vi.mock('@/lib/server/documents/read', () => ({
   loadActiveSnapshot: (...a: unknown[]) => loadActiveSnapshot(...a),
 }));
 
+// Le grand livre est lu via le client service_role : le mock délègue au même client simulé que le client RLS.
+let currentClient: unknown;
+vi.mock('@/lib/supabase/admin', () => ({ createSupabaseAdminClient: () => currentClient }));
+
 const { loadAdminBillingView } = await import('./adminView');
 
 type Res = { data?: unknown[]; error?: unknown };
@@ -26,7 +30,8 @@ function rlsWith(queues: Record<string, Res[]>) {
       resolve({ data: next.error ? null : (next.data ?? []), error: next.error ?? null });
     return chain;
   });
-  return { from } as never;
+  currentClient = { from };
+  return currentClient as never;
 }
 
 const NOW = new Date('2026-10-20T10:00:00Z');

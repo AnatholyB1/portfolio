@@ -1,11 +1,14 @@
-// PRECONDITION : l'appelant a déjà passé requireAdmin() et fournit le client RLS de l'admin (jamais service_role).
-// Les identifiants Stripe ne sont lisibles que par l'admin (politiques RLS) : ils n'atteignent que la page admin (T-15-56).
+// PRECONDITION : l'appelant a déjà passé requireAdmin() et fournit le client RLS de l'admin.
+// Les factures et le client sont lus par RLS (autorisation du projet). Le grand livre de paiements, dont les colonnes
+// détaillées (identifiants Stripe, livemode, client_id) ne sont volontairement pas accordées à `authenticated`, est lu
+// avec le client service_role, limité aux factures de ce projet et à son client : il n'atteint que la page admin (T-15-56).
 // Ne lit jamais les instantanés.
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { billingSummary, creditNoteMax, finalInvoiceAmounts } from '@/lib/documents/invoiceMath';
 import type { ContractSnapshot } from '@/lib/documents/types';
 import { loadActiveSnapshot } from '@/lib/server/documents/read';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import type { ProjectBundle } from '@/lib/server/projects/read';
 import { InvoicesLoadError, loadInvoicesForProjects, type InvoiceView } from './read';
 
@@ -93,15 +96,16 @@ export async function loadAdminBillingView(
   const contract =
     contractHit && contractHit.snapshot.docType === 'contract' ? (contractHit.snapshot as ContractSnapshot) : null;
 
+  const ledgerDb = createSupabaseAdminClient();
   const ids = views.flatMap((v) => [v.id, ...v.creditNotes.map((c) => c.id)]);
   const [invoiceLedger, clientLedger] = await Promise.all([
     ids.length > 0
       ? read(() =>
-          rls.from('sv_invoice_payment_events').select(LEDGER_COLS).in('invoice_id', ids).order('id', { ascending: true }),
+          ledgerDb.from('sv_invoice_payment_events').select(LEDGER_COLS).in('invoice_id', ids).order('id', { ascending: true }),
         )
       : Promise.resolve<Row[]>([]),
     read(() =>
-      rls
+      ledgerDb
         .from('sv_invoice_payment_events')
         .select(LEDGER_COLS)
         .eq('client_id', bundle.client.id)

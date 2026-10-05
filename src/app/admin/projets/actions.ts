@@ -565,7 +565,8 @@ async function loadCreditOrigin(supabase: AdminSupabase, originInvoiceId: string
   const snapshot = (snap.data as { snapshot?: InvoiceSnapshotV2 } | null)?.snapshot;
   if (snap.error || !snapshot) return { ok: false, message: PAY.credit.error };
 
-  const ledger = await supabase
+  // payment_intent_id n'est pas accordé à `authenticated` : lecture service_role, après le contrôle d'accès ci-dessus.
+  const ledger = await createSupabaseAdminClient()
     .from('sv_invoice_payment_events')
     .select('payment_intent_id')
     .eq('invoice_id', originInvoiceId)

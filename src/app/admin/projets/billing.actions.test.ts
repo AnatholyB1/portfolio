@@ -126,11 +126,14 @@ const ctx = {
 function originQueues(opts: { paid: boolean; pi?: string | null }) {
   rlsQueues = {
     sv_invoices: [{ data: [{ id: ORIGIN, project_id: PID, kind: 'deposit' }] }],
+  };
+  // Le snapshot et le grand livre (payment_intent_id non accordé à `authenticated`) passent par le client service_role.
+  adminQueues = {
+    sv_invoices: [{ data: [{ snapshot: { docType: 'invoice' } }] }],
     sv_invoice_payment_events: [
       { data: opts.paid ? [{ payment_intent_id: opts.pi === undefined ? 'pi_1' : opts.pi }] : [] },
     ],
   };
-  adminQueues = { sv_invoices: [{ data: [{ snapshot: { docType: 'invoice' } }] }] };
 }
 
 beforeEach(() => {
