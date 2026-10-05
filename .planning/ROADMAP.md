@@ -353,7 +353,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 15-18-PLAN.md — Section Facturation de la fiche projet, paiements à rapprocher
+- [x] 15-18-PLAN.md — Section Facturation de la fiche projet, paiements à rapprocher
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
@@ -441,7 +441,7 @@ Plans:
 | 12. Conversion, projects & step engine | v2.0 | 22/22 | Complete   | 2026-10-03 |
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
-| 15. Stripe payments & invoicing | v2.0 | 17/21 | In Progress|  |
+| 15. Stripe payments & invoicing | v2.0 | 18/21 | In Progress|  |
 | 16. Mailing automation completion | v2.0 | 0/TBD | Not started | - |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
