@@ -64,7 +64,7 @@ describe('verifyResendEvent', () => {
 describe('toApplyArgs', () => {
   const bounced = (type: string, to: unknown = ['A@B.fr', 'a@b.fr']) => ({
     type: 'email.bounced',
-    data: { to, bounce: { type } },
+    data: { from: 'Sèvalys <contact@sevalys.com>', to, bounce: { type } },
   });
 
   it('maps a Permanent bounce, normalised and de-duplicated', () => {
@@ -82,7 +82,7 @@ describe('toApplyArgs', () => {
   });
 
   it('maps complaints with null bounce type', () => {
-    expect(toApplyArgs('e', { type: 'email.complained', data: { to: ['x@y.fr'] } })).toEqual({
+    expect(toApplyArgs('e', { type: 'email.complained', data: { from: 'Sèvalys <contact@sevalys.com>', to: ['x@y.fr'] } })).toEqual({
       p_event_id: 'e',
       p_event_type: 'email.complained',
       p_emails: ['x@y.fr'],
@@ -92,11 +92,15 @@ describe('toApplyArgs', () => {
 
   it('ignores other events and malformed input', () => {
     for (const t of ['email.delivered', 'email.opened', 'email.delivery_delayed']) {
-      expect(toApplyArgs('e', { type: t, data: { to: ['x@y.fr'] } })).toBeNull();
+      expect(toApplyArgs('e', { type: t, data: { from: 'Sèvalys <contact@sevalys.com>', to: ['x@y.fr'] } })).toBeNull();
     }
     expect(toApplyArgs('e', 'nope')).toBeNull();
-    expect(toApplyArgs('e', { type: 'email.complained', data: {} })).toBeNull();
-    expect(toApplyArgs('e', { type: 'email.complained', data: { to: [] } })).toBeNull();
+    expect(toApplyArgs('e', { type: 'email.complained', data: { from: 'a@sevalys.com' } })).toBeNull();
+    expect(toApplyArgs('e', { type: 'email.complained', data: { from: 'a@sevalys.com', to: [] } })).toBeNull();
+    // Compte Resend partagé : un envoi d'un autre domaine, ou sans expéditeur, est ignoré.
+    expect(toApplyArgs('e', { type: 'email.complained', data: { from: 'Gecko <hello@geckocabanerestaurant.com>', to: ['x@y.fr'] } })).toBeNull();
+    expect(toApplyArgs('e', { type: 'email.complained', data: { from: 'x@evil-sevalys.com', to: ['x@y.fr'] } })).toBeNull();
+    expect(toApplyArgs('e', { type: 'email.complained', data: { to: ['x@y.fr'] } })).toBeNull();
   });
 
   it('caps recipients at 50 and drops invalid entries', () => {

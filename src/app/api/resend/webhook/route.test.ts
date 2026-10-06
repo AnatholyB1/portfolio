@@ -28,7 +28,7 @@ function req(event: unknown, opts: { omit?: string; badSig?: boolean } = {}): Re
   return new Request('https://site.test/api/resend/webhook', { method: 'POST', body, headers });
 }
 
-const bounce = { type: 'email.bounced', data: { to: ['Alice@Example.com'], bounce: { type: 'Permanent' } } };
+const bounce = { type: 'email.bounced', data: { from: 'Sèvalys <contact@sevalys.com>', to: ['Alice@Example.com'], bounce: { type: 'Permanent' } } };
 
 beforeEach(() => {
   vi.clearAllMocks();

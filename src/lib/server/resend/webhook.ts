@@ -16,6 +16,8 @@ export type ApplyArgs = {
 
 const MAX_RECIPIENTS = 50;
 const MAX_EMAIL = 254;
+// Le compte Resend est partagé avec d'autres domaines : seuls les envois Sèvalys comptent.
+const OWN_SENDER_DOMAIN = 'sevalys.com';
 
 export function resendWebhookSecret(env: Record<string, string | undefined> = process.env): string | null {
   const v = env.RESEND_WEBHOOK_SECRET;
@@ -67,12 +69,20 @@ function recipients(v: unknown): string[] {
   return [...out];
 }
 
+export function isOwnSender(from: unknown): boolean {
+  if (typeof from !== 'string') return false;
+  const m = from.match(/<([^<>]+)>\s*$/);
+  const addr = normalizeEmail(m ? m[1] : from);
+  return addr.endsWith('@' + OWN_SENDER_DOMAIN);
+}
+
 export function toApplyArgs(eventId: string, event: unknown): ApplyArgs | null {
   if (!isObj(event) || !str(eventId)) return null;
   const type = event.type;
   if (type !== 'email.bounced' && type !== 'email.complained') return null;
   const data = event.data;
   if (!isObj(data)) return null;
+  if (!isOwnSender(data.from)) return null;
 
   let bounceType: string | null = null;
   if (type === 'email.bounced') {
