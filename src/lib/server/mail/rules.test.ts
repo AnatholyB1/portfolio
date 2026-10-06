@@ -3,13 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { MAIL_EVENTS, MAIL_RULES, dedupeKey, type MailEvent, type Rule } from './rules';
 
 describe('MAIL_RULES', () => {
-  it('has exactly the thirteen events with expected recipients and zero delay', () => {
-    expect(MAIL_EVENTS).toHaveLength(13);
+  it('has exactly the seventeen events with expected recipients and zero delay', () => {
+    expect(MAIL_EVENTS).toHaveLength(17);
     expect(Object.keys(MAIL_RULES).sort()).toEqual([...MAIL_EVENTS].sort());
     expect(MAIL_RULES.document_issued).toEqual({
       template: 'document_issued',
       delayMs: 0,
       to: 'client',
+      class: 'transactional',
     });
     expect(MAIL_RULES.client_invited.to).toBe('client');
     expect(MAIL_RULES.step_changed.to).toBe('client');
@@ -18,10 +19,19 @@ describe('MAIL_RULES', () => {
     expect(MAIL_RULES.document_signed_admin.to).toBe('admin');
     expect(MAIL_RULES.acceptance_refused.to).toBe('admin');
     for (const e of ['payment_requested', 'payment_received', 'payment_reminder', 'credit_note_issued'] as const)
-      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'client' });
+      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'client', class: 'transactional' });
     for (const e of ['payment_reminder_admin', 'payment_anomaly_admin'] as const)
-      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'admin' });
+      expect(MAIL_RULES[e]).toEqual({ template: e, delayMs: 0, to: 'admin', class: 'transactional' });
     for (const e of MAIL_EVENTS) expect(MAIL_RULES[e].delayMs).toBe(0);
+  });
+
+  it('declares a class on every rule and only review_request is marketing', () => {
+    for (const e of MAIL_EVENTS) expect(['transactional', 'marketing']).toContain(MAIL_RULES[e].class);
+    expect(MAIL_EVENTS.filter((e) => MAIL_RULES[e].class === 'marketing')).toEqual(['review_request']);
+    expect(MAIL_RULES.document_reminder.to).toBe('client');
+    expect(MAIL_RULES.document_reminder_admin.to).toBe('admin');
+    expect(MAIL_RULES.review_request.to).toBe('client');
+    expect(MAIL_RULES.mail_suppression_admin.to).toBe('admin');
   });
 
   it('is type-checked as Record<MailEvent, Rule>', () => {
@@ -39,6 +49,10 @@ describe('MAIL_RULES', () => {
       payment_reminder_admin: MAIL_RULES.payment_reminder_admin,
       payment_anomaly_admin: MAIL_RULES.payment_anomaly_admin,
       credit_note_issued: MAIL_RULES.credit_note_issued,
+      document_reminder: MAIL_RULES.document_reminder,
+      document_reminder_admin: MAIL_RULES.document_reminder_admin,
+      review_request: MAIL_RULES.review_request,
+      mail_suppression_admin: MAIL_RULES.mail_suppression_admin,
     };
     expect(partial).toBeDefined();
   });
@@ -49,9 +63,9 @@ describe('MAIL_RULES', () => {
   });
 });
 
-describe('closed lists vs phase-15 migration', () => {
+describe('closed lists vs phase-16 migration', () => {
   const sql = readFileSync(
-    new URL('../../../../supabase/migrations/20261007000000_sv_invoices.sql', import.meta.url),
+    new URL('../../../../supabase/migrations/20261008000000_sv_mail_automation.sql', import.meta.url),
     'utf8',
   )
     .split('\n')
@@ -97,11 +111,17 @@ describe('dedupeKey', () => {
     expect(dedupeKey.paymentReminderAdmin('id')).toBe('payment_reminder_admin:id:d14');
     expect(dedupeKey.paymentAnomalyAdmin('evt_1')).toBe('payment_anomaly_admin:evt_1');
     expect(dedupeKey.creditNoteIssued('cn', 'A@B.fr')).toBe('credit_note_issued:cn:a@b.fr');
+    expect(dedupeKey.documentReminder('d1', 'd3', 'A@B.fr')).toBe('document_reminder:d1:d3:a@b.fr');
+    expect(dedupeKey.documentReminderAdmin('d1')).toBe('document_reminder_admin:d1:d14');
+    expect(dedupeKey.reviewRequest('p1', 'd21', 'A@B.fr')).toBe('review_request:p1:d21:a@b.fr');
+    expect(dedupeKey.mailSuppressionAdmin(42)).toBe('mail_suppression_admin:42');
   });
   it('caps length at 256', () => {
     const long = 'a'.repeat(300) + '@x.fr';
     expect(dedupeKey.clientInvited('c1', long).length).toBeLessThanOrEqual(256);
     expect(dedupeKey.clientInvited('c1', long, 2).length).toBeLessThanOrEqual(256);
+    expect(dedupeKey.documentReminder('d1', 'd3', long).length).toBeLessThanOrEqual(256);
+    expect(dedupeKey.reviewRequest('p1', 'd7', long).length).toBeLessThanOrEqual(256);
     expect(dedupeKey.clientInvited('c1', long, 2).endsWith(':resend:2')).toBe(true);
   });
 });

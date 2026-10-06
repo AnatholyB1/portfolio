@@ -11,6 +11,7 @@ const read = (name: string): string =>
 
 const invoices = read('20261007000000_sv_invoices.sql');
 const payments = read('20261007010000_sv_payments.sql');
+const automation = read('20261008000000_sv_mail_automation.sql');
 
 function list(sql: string, constraint: string, column: string): string[] {
   const re = new RegExp(`${constraint}\\s+check\\s*\\(\\s*${column}\\s+in\\s*\\(([^)]*)\\)`, 'i');
@@ -26,6 +27,7 @@ function templates(sql: string, prefix: string): string[] {
     m[0]
       .replace(/\s+/g, ' ')
       .replace(/(p_id|v_inv\.id|v_origin\.id)::text/g, '{id}')
+      .replace(/p_suppression_id::text/g, '{id}')
       .replace(/v_email|v_admin/g, '{email}')
       .replace(/p_event_id/g, '{evt}')
       .replace(/'([^']*)'/g, '$1')
@@ -36,14 +38,14 @@ function templates(sql: string, prefix: string): string[] {
 
 describe('payments mail SQL/TS parity', () => {
   it('event_type list equals MAIL_EVENTS', () => {
-    expect(list(invoices, 'sv_mail_outbox_event_type_check', 'event_type').sort()).toEqual(
+    expect(list(automation, 'sv_mail_outbox_event_type_check', 'event_type').sort()).toEqual(
       [...MAIL_EVENTS].sort(),
     );
   });
 
   it('template list equals invite plus rule templates', () => {
     const t = new Set<string>(['invite', ...Object.values(MAIL_RULES).map((r) => r.template)]);
-    expect(list(invoices, 'sv_mail_outbox_template_check', 'template').sort()).toEqual(
+    expect(list(automation, 'sv_mail_outbox_template_check', 'template').sort()).toEqual(
       [...t].sort(),
     );
   });
@@ -55,6 +57,7 @@ describe('payments mail SQL/TS parity', () => {
       payment_reminder_admin: { sql: invoices, sample: dedupeKey.paymentReminderAdmin('{id}') },
       payment_anomaly_admin: { sql: payments, sample: dedupeKey.paymentAnomalyAdmin('{evt}') },
       credit_note_issued: { sql: invoices, sample: dedupeKey.creditNoteIssued('{id}', '{email}') },
+      mail_suppression_admin: { sql: automation, sample: dedupeKey.mailSuppressionAdmin('{id}') },
     };
     for (const [prefix, { sql, sample }] of Object.entries(expected)) {
       const found = templates(sql, prefix);

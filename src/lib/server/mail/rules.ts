@@ -15,6 +15,10 @@ export const MAIL_EVENTS = [
   'payment_reminder_admin',
   'payment_anomaly_admin',
   'credit_note_issued',
+  'document_reminder',
+  'document_reminder_admin',
+  'review_request',
+  'mail_suppression_admin',
 ] as const;
 export type MailEvent = (typeof MAIL_EVENTS)[number];
 export type MailTemplate =
@@ -30,23 +34,37 @@ export type MailTemplate =
   | 'payment_reminder'
   | 'payment_reminder_admin'
   | 'payment_anomaly_admin'
-  | 'credit_note_issued';
-export type Rule = { template: MailTemplate; delayMs: number; to: 'client' | 'admin' };
+  | 'credit_note_issued'
+  | 'document_reminder'
+  | 'document_reminder_admin'
+  | 'review_request'
+  | 'mail_suppression_admin';
+export type MailClass = 'transactional' | 'marketing';
+export type Rule = {
+  template: MailTemplate;
+  delayMs: number;
+  to: 'client' | 'admin';
+  class: MailClass;
+};
 
 export const MAIL_RULES: Record<MailEvent, Rule> = {
-  client_invited: { template: 'invite', delayMs: 0, to: 'client' },
-  step_changed: { template: 'step_changed', delayMs: 0, to: 'client' },
-  onboarding_completed: { template: 'onboarding_completed', delayMs: 0, to: 'admin' },
-  document_issued: { template: 'document_issued', delayMs: 0, to: 'client' },
-  document_signed: { template: 'document_signed', delayMs: 0, to: 'client' },
-  document_signed_admin: { template: 'document_signed_admin', delayMs: 0, to: 'admin' },
-  acceptance_refused: { template: 'acceptance_refused', delayMs: 0, to: 'admin' },
-  payment_requested: { template: 'payment_requested', delayMs: 0, to: 'client' },
-  payment_received: { template: 'payment_received', delayMs: 0, to: 'client' },
-  payment_reminder: { template: 'payment_reminder', delayMs: 0, to: 'client' },
-  payment_reminder_admin: { template: 'payment_reminder_admin', delayMs: 0, to: 'admin' },
-  payment_anomaly_admin: { template: 'payment_anomaly_admin', delayMs: 0, to: 'admin' },
-  credit_note_issued: { template: 'credit_note_issued', delayMs: 0, to: 'client' },
+  client_invited: { template: 'invite', delayMs: 0, to: 'client', class: 'transactional' },
+  step_changed: { template: 'step_changed', delayMs: 0, to: 'client', class: 'transactional' },
+  onboarding_completed: { template: 'onboarding_completed', delayMs: 0, to: 'admin', class: 'transactional' },
+  document_issued: { template: 'document_issued', delayMs: 0, to: 'client', class: 'transactional' },
+  document_signed: { template: 'document_signed', delayMs: 0, to: 'client', class: 'transactional' },
+  document_signed_admin: { template: 'document_signed_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  acceptance_refused: { template: 'acceptance_refused', delayMs: 0, to: 'admin', class: 'transactional' },
+  payment_requested: { template: 'payment_requested', delayMs: 0, to: 'client', class: 'transactional' },
+  payment_received: { template: 'payment_received', delayMs: 0, to: 'client', class: 'transactional' },
+  payment_reminder: { template: 'payment_reminder', delayMs: 0, to: 'client', class: 'transactional' },
+  payment_reminder_admin: { template: 'payment_reminder_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  payment_anomaly_admin: { template: 'payment_anomaly_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  credit_note_issued: { template: 'credit_note_issued', delayMs: 0, to: 'client', class: 'transactional' },
+  document_reminder: { template: 'document_reminder', delayMs: 0, to: 'client', class: 'transactional' },
+  document_reminder_admin: { template: 'document_reminder_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  review_request: { template: 'review_request', delayMs: 0, to: 'client', class: 'marketing' },
+  mail_suppression_admin: { template: 'mail_suppression_admin', delayMs: 0, to: 'admin', class: 'transactional' },
 };
 
 export const ADMIN_NOTIFY_EMAIL = 'contact@sevalys.com';
@@ -96,5 +114,17 @@ export const dedupeKey = {
   },
   creditNoteIssued(creditNoteId: string, email: string): string {
     return clamp(`credit_note_issued:${creditNoteId}:${norm(email)}`);
+  },
+  documentReminder(documentId: string, stage: 'd3' | 'd7', email: string): string {
+    return clamp(`document_reminder:${documentId}:${stage}:${norm(email)}`);
+  },
+  documentReminderAdmin(documentId: string): string {
+    return clamp(`document_reminder_admin:${documentId}:d14`);
+  },
+  reviewRequest(projectId: string, stage: 'd7' | 'd21', email: string): string {
+    return clamp(`review_request:${projectId}:${stage}:${norm(email)}`);
+  },
+  mailSuppressionAdmin(suppressionId: string | number): string {
+    return clamp(`mail_suppression_admin:${suppressionId}`);
   },
 };
