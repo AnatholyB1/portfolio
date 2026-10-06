@@ -400,7 +400,7 @@ Plans:
 
 - [x] 16-10-PLAN.md — Garde d'envoi par flux dans l'outbox, chemin marketing, statut skipped
 - [x] 16-11-PLAN.md — Balayage des relances (document non signé, demande d'avis) et cron
-- [ ] 16-12-PLAN.md — Suite RLS et RPC sur la branche dédiée
+- [x] 16-12-PLAN.md — Suite RLS et RPC sur la branche dédiée
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -471,7 +471,7 @@ Plans:
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
-| 16. Mailing automation completion | v2.0 | 11/14 | In Progress|  |
+| 16. Mailing automation completion | v2.0 | 12/14 | In Progress|  |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
