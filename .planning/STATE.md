@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 16 context gathered
-last_updated: "2026-10-06T16:09:26.469Z"
-last_activity: 2026-10-06 -- Phase 16 planning complete
+last_updated: "2026-10-06T16:12:47.768Z"
+last_activity: 2026-10-06
 progress:
   total_phases: 10
   completed_phases: 6
   total_plans: 127
-  completed_plans: 113
+  completed_plans: 114
   percent: 60
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 16 — mailing automation completion
+**Current focus:** Phase 16 — mailing-automation-completion
 
 ## Current Position
 
-Phase: 16
-Plan: Not started
+Phase: 16 (mailing-automation-completion) — EXECUTING
+Plan: 2 of 14
 Status: Ready to execute
-Last activity: 2026-10-06 -- Phase 16 planning complete
+Last activity: 2026-10-06
 
-Progress: [██████████] 98%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
@@ -89,9 +89,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-06T15:33:41.012Z
+Last session: 2026-10-06T16:12:47.758Z
 Stopped at: Phase 16 context gathered
-Resume file: .planning/phases/16-mailing-automation-completion/16-CONTEXT.md
+Resume file: None
 
 ## Operator Next Steps
 
