@@ -51,6 +51,11 @@ describe('admin project sheet source guards (T-12-60, T-12-61, T-12-62)', () => 
     }
   });
 
+  it('renders the reminder hold card with its loader', () => {
+    expect(page).toContain('<ReminderHoldCard');
+    expect(page).toContain('loadReminderHold(supabase');
+  });
+
   it('shows the status block strings', () => {
     for (const s of ['Étape en cours', 'En attente de', 'whoWaits.label', 'Depuis']) {
       if (s === 'En attente de') expect(page + read('../../../lib/projects/copy.ts')).toContain(s);
