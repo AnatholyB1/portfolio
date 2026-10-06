@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: ready_to_plan
-stopped_at: Phase 15 complete (21/21) — ready to discuss Phase 16
-last_updated: 2026-10-06T14:55:40.926Z
+status: planning
+stopped_at: Phase 16 context gathered
+last_updated: "2026-10-06T15:33:41.023Z"
 last_activity: 2026-10-06
 progress:
   total_phases: 10
@@ -89,9 +89,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-06T14:13:15.992Z
-Stopped at: Phase 15 executed and deployed; verification human_needed (receipt setting, label deploy, PV/final invoice run, accountant review)
-Resume file: .planning/phases/15-stripe-payments-invoicing/15-VERIFICATION.md
+Last session: 2026-10-06T15:33:41.012Z
+Stopped at: Phase 16 context gathered
+Resume file: .planning/phases/16-mailing-automation-completion/16-CONTEXT.md
 
 ## Operator Next Steps
 
