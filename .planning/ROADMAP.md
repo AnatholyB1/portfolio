@@ -394,7 +394,7 @@ Plans:
 - [x] 16-06-PLAN.md — Routes publiques : webhook Resend et désinscription en un clic
 - [x] 16-07-PLAN.md — Page /desinscription, routes privées et matcher du proxy
 - [x] 16-08-PLAN.md — Vue admin de la liste de suppression et réactivation motivée
-- [ ] 16-09-PLAN.md — Suspension et reprise des relances sur la fiche projet
+- [x] 16-09-PLAN.md — Suspension et reprise des relances sur la fiche projet
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -471,7 +471,7 @@ Plans:
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
-| 16. Mailing automation completion | v2.0 | 7/14 | In Progress|  |
+| 16. Mailing automation completion | v2.0 | 8/14 | In Progress|  |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
