@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import './leads/leads.css';
 
-export type AdminNavItem = 'clients' | 'leads' | 'projets' | 'entonnoir';
+export type AdminNavItem = 'clients' | 'leads' | 'projets' | 'entonnoir' | 'emails';
 
 const ITEMS: { key: AdminNavItem; href: string; label: string }[] = [
   { key: 'clients', href: '/admin', label: 'Clients' },
   { key: 'leads', href: '/admin/leads', label: 'Leads' },
   { key: 'projets', href: '/admin/projets', label: 'Projets' },
   { key: 'entonnoir', href: '/admin/entonnoir', label: 'Entonnoir' },
+  { key: 'emails', href: '/admin/emails', label: 'E-mails' },
 ];
 
 // Navigation de l'administration (UI-SPEC A1). Composant serveur.
