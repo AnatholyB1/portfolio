@@ -132,6 +132,7 @@ export const config = {
     '/admin/:path*',
     '/admin',
     '/connexion',
+    '/desinscription',
     '/auth/:path*',
     {
       source: '/((?!api|_next|_vercel|\\.well-known|.*\\..*).*)',

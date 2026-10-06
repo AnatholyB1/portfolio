@@ -30,7 +30,7 @@ import { updateSession } from '@/lib/supabase/proxy';
 import { recordVisit } from '@/lib/leads/visits';
 
 const root = process.cwd();
-const source = readFileSync(join(root, 'src/proxy.ts'), 'utf8');
+const source = readFileSync(join(root, 'src/proxy.ts'), 'utf8').replace(/\r\n/g, '\n');
 
 function readMatcherBlock(): string {
   const m = source.match(/matcher:\s*\[([\s\S]*?)\n  \],\n\};/);
@@ -72,15 +72,31 @@ beforeEach(() => {
 });
 
 describe('src/proxy.ts static contract', () => {
-  it('keeps the six private entries verbatim', () => {
+  it('keeps the seven private entries verbatim', () => {
     expect(privateEntries()).toEqual([
       '/espace-client/:path*',
       '/espace-client',
       '/admin/:path*',
       '/admin',
       '/connexion',
+      '/desinscription',
       '/auth/:path*',
     ]);
+  });
+
+  it('leaves /api/resend/webhook and /api/unsubscribe outside every matcher entry', () => {
+    const literal = privateEntries();
+    const sourceMatch = readMatcherBlock().match(/source:\s*'([^']+)'/);
+    expect(sourceMatch).not.toBeNull();
+    // Le littéral du source utilise des antislashs doublés dans le fichier.
+    const catchAll = new RegExp(`^${sourceMatch![1].replace(/\\\\/g, '\\')}$`);
+    for (const path of ['/api/resend/webhook', '/api/unsubscribe']) {
+      expect(catchAll.test(path)).toBe(false);
+      for (const entry of literal) {
+        const prefix = entry.replace('/:path*', '');
+        expect(path === prefix || path.startsWith(`${prefix}/`)).toBe(false);
+      }
+    }
   });
 
   it('covers every PRIVATE_PREFIXES entry', () => {
@@ -114,6 +130,13 @@ describe('proxy private branch', () => {
     expect(updateSession).toHaveBeenCalledTimes(1);
     expect(res.status).toBe(307);
     expect(res.headers.get('location')).toContain('/connexion?next=%2Fadmin');
+  });
+
+  it('does not redirect anonymous /desinscription to /connexion', async () => {
+    const res = await proxy(req('/desinscription?t=x'), event);
+    expect(updateSession).toHaveBeenCalledTimes(1);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('location')).toBeNull();
   });
 
   it('never calls updateSession on a public page', async () => {

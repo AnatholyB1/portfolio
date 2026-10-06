@@ -2,7 +2,13 @@
 // ClientProviders, PostHogProvider, robots.ts, next.config (headers) et le
 // test du matcher du proxy. Module pur, sûr côté client : aucun import.
 
-export const PRIVATE_PREFIXES = ['/espace-client', '/admin', '/connexion', '/auth'] as const;
+export const PRIVATE_PREFIXES = [
+  '/espace-client',
+  '/admin',
+  '/connexion',
+  '/auth',
+  '/desinscription',
+] as const;
 
 // Sous-ensemble qui exige une session (le proxy redirige vers /connexion).
 export const PROTECTED_PREFIXES = ['/espace-client', '/admin'] as const;

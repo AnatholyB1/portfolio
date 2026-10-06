@@ -3,7 +3,18 @@ import { PRIVATE_PREFIXES, PROTECTED_PREFIXES, isPrivatePath } from './privateRo
 
 describe('privateRoutes', () => {
   it('PRIVATE_PREFIXES est la source unique attendue', () => {
-    expect([...PRIVATE_PREFIXES]).toEqual(['/espace-client', '/admin', '/connexion', '/auth']);
+    expect([...PRIVATE_PREFIXES]).toEqual([
+      '/espace-client',
+      '/admin',
+      '/connexion',
+      '/auth',
+      '/desinscription',
+    ]);
+  });
+
+  it('/desinscription est privée mais non protégée', () => {
+    expect(isPrivatePath('/desinscription')).toBe(true);
+    expect((PROTECTED_PREFIXES as readonly string[]).includes('/desinscription')).toBe(false);
   });
 
   it('PROTECTED_PREFIXES est un sous-ensemble de PRIVATE_PREFIXES', () => {

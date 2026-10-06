@@ -59,6 +59,7 @@ describe('robots and noindex headers (D-15)', () => {
       '/admin/:path*',
       '/admin',
       '/connexion',
+      '/desinscription',
       '/auth/:path*',
     ]) {
       expect(sources).toContain(s)
