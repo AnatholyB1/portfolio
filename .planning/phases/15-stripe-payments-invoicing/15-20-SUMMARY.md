@@ -41,12 +41,22 @@ The phase is deployed and every ROADMAP success criterion was observed on produc
 | Credit note | Partial credit of 200,00 € with Stripe refund: `TAV-2026-0001`, type 381, `refund_requested` true, 2 `credit_note_issued` mails, Stripe refund `pyr_1UNZ3n…` 200,00 € `succeeded`, `charge.refunded` webhook recorded as `refunded` (20 000). |
 | Immutability | `UPDATE` and `DELETE` on `sv_invoices` inside a rolled-back transaction both fail with `sv_immutable_table`; the row is unchanged. |
 
+## PV de recette and final invoice (run on production, 2026-10-06)
+| Step | Observation |
+|---|---|
+| Fact | Admin recorded `production_completed` (the project moves to Recette). |
+| PV | Admin issued `PVR-2026-9D54A1E5-1` (the three CDC acceptance criteria, delivery 06/10/2026, no reserve, sha256 `1fc8f10b…`) after a not-stored preview and a confirmation panel. |
+| Signature | Client signed with the e-mailed code: `acceptance_signed` posted by the client. |
+| Final invoice | `TFA-2026-0003` issued automatically: total 1 100,00 € HT/TTC, one deduction line « Acompte déjà versé (facture TFA-2026-0001) » of 480,00 €, net 620,00 €. Check: 480 + (700 − 200 credit) + 620 = 1 600 = quote total, no double billing. |
+| Balance | Card payment of 620,00 € expected and received, `checkout.session.completed` processed as `paid`, `balance_received` posted by the system, receipts sent. |
+
+The 15-14 label fix « En attente du PV de recette signé » (5e7c394) and the column-grant guard test (8f4f114) were deployed.
+
 ## Not exercised
-- The PV de recette signature and the automatic final invoice with the deposit-deduction line (plan step 8, optional) were not run.
 - Live Stripe mode was never configured; live checkout fails closed.
 - The owner-side Stripe dashboard setting « Envoyer des reçus pour les paiements réussis » (D-16) is still to be disabled by the owner.
 
 ## Open items
-- Replace the expiring Stripe CLI key (2027-01-03) by a restricted key from the dashboard.
-- Accountant review of invoice mentions and the franchise wording; Vercel plan (cron stays daily).
-- Add a guard that every column selected through an RLS client is within the column grants (this class of defect escaped both unit tests and RLS suites).
+- Stripe CLI key expiring 2027-01-03 used as the production test key: the owner judged this not a concern for now.
+- Accountant review of invoice mentions and the franchise wording: owner decision of 2026-10-06, not needed for now. Vercel plan unchanged (cron stays daily).
+- Column-grant guard added (`columnGrants.test.ts`, 8f4f114): this class of defect escaped both unit tests and RLS suites.

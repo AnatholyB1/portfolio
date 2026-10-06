@@ -2,7 +2,7 @@
 phase: 15-stripe-payments-invoicing
 verified: 2026-10-06T16:30:00Z
 status: human_needed
-score: 5/5 must-haves verified (code), 4 owner-side items pending
+score: 5/5 must-haves verified (code and production), 1 owner-side item pending
 overrides_applied: 0
 human_verification:
   - test: "Desactiver dans le dashboard Stripe « Envoyer des recus pour les paiements reussis » (D-16)"
@@ -82,3 +82,11 @@ Aucun manque de comportement code. Le statut est `human_needed` parce que quatre
 
 _Verified: 2026-10-06_
 _Verifier: Claude (gsd-verifier)_
+
+
+## Update 2026-10-06 (owner follow-up)
+- Deployed: 5e7c394 (label) and 8f4f114 (column-grant guard test).
+- Run on production: PV de recette signed, final invoice TFA-2026-0003 (620,00 € net, deposit deducted) paid by card, balance_received posted; see 15-20-SUMMARY.md.
+- Accountant review: owner decision, not needed for now.
+- Stripe CLI key expiry: owner decision, not a concern.
+- Still pending for the owner: disable the Stripe dashboard setting « Envoyer des reçus pour les paiements réussis » (D-16).
