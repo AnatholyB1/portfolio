@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { sweepInvoices } from '@/lib/server/invoices/autoIssue';
 import { processDueMail } from '@/lib/server/mail/outbox';
+import { sweepReminders } from '@/lib/server/reminders/sweep';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,14 @@ export async function GET(request: Request): Promise<Response> {
   if (!authorized(request.headers.get('authorization'))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+  // Relances d'abord : celles mises en file aujourd'hui partent dans le même passage.
+  let reminders: unknown;
+  try {
+    reminders = await sweepReminders();
+  } catch {
+    console.error('[cron/mail] reminders_failed');
+    reminders = { error: 'reminders_failed' };
+  }
   const result = await processDueMail(25);
   let invoices: unknown;
   try {
@@ -29,5 +38,5 @@ export async function GET(request: Request): Promise<Response> {
     console.error('[cron/mail] invoices_failed');
     invoices = { error: 'invoices_failed' };
   }
-  return NextResponse.json({ ...result, invoices });
+  return NextResponse.json({ ...result, reminders, invoices });
 }
