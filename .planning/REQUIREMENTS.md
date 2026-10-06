@@ -64,8 +64,8 @@
 
 - [x] **MAIL-01**: Un moteur de règles envoie un e-mail à partir d'un événement (statut, étape, document, paiement) avec un modèle et un délai
 - [x] **MAIL-02**: Chaque envoi est idempotent (aucun doublon par événement et destinataire) et journalisé
-- [x] **MAIL-03**: Des relances automatiques partent pour document non signé, acompte impayé et demande d'avis
-- [x] **MAIL-04**: Les rebonds et plaintes Resend alimentent une liste de suppression ; chaque e-mail marketing a un lien de désinscription ; flux transactionnel et marketing sont séparés
+- [ ] **MAIL-03**: Des relances automatiques partent pour document non signé, acompte impayé et demande d'avis
+- [ ] **MAIL-04**: Les rebonds et plaintes Resend alimentent une liste de suppression ; chaque e-mail marketing a un lien de désinscription ; flux transactionnel et marketing sont séparés
 
 ### Pilotage admin (ADM)
 
@@ -168,8 +168,8 @@
 | PAY-03 | Phase 15 | Complete |
 | PAY-04 | Phase 15 | Complete |
 | PAY-05 | Phase 15 | Complete |
-| MAIL-03 | Phase 16 | Complete |
-| MAIL-04 | Phase 16 | Complete |
+| MAIL-03 | Phase 16 | Pending |
+| MAIL-04 | Phase 16 | Pending |
 | ADM-02 | Phase 17 | Pending |
 | ADM-03 | Phase 17 | Pending |
 | ADM-04 | Phase 17 | Pending |
