@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 16 context gathered
-last_updated: "2026-10-06T16:19:54.209Z"
+last_updated: "2026-10-06T16:20:01.650Z"
 last_activity: 2026-10-06
 progress:
   total_phases: 10
@@ -69,6 +69,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 15]: 15-04: sv_stripe_events processed rows frozen by WHEN-clause deny trigger; unprocessed rows accept only guarded processed_at transition
 - [Phase 15]: 15-07: buildMail throws on invalid payment payloads; rules.test closed lists read phase-15 invoices migration
 - [Phase 15]: 15-09: Checkout amount from RLS-read invoice minus credits; webhook ignored_unresolved returns 200 (no retry)
+- [Phase ?]: 16-03: marketing sender bonjour@sevalys.com on verified sevalys.com domain (A2), no sending subdomain
 
 ### Pending Todos
 
