@@ -404,7 +404,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 16-13-PLAN.md — Application en production (accord propriétaire), webhook Resend et secrets Vercel, suppression de la branche
+- [x] 16-13-PLAN.md — Application en production (accord propriétaire), webhook Resend et secrets Vercel, suppression de la branche
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -471,7 +471,7 @@ Plans:
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
-| 16. Mailing automation completion | v2.0 | 12/14 | In Progress|  |
+| 16. Mailing automation completion | v2.0 | 13/14 | In Progress|  |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
