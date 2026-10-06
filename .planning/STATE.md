@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: verifying
-stopped_at: Phase 15 executed and deployed; verification human_needed (receipt setting, label deploy, PV/final invoice run, accountant review)
-last_updated: "2026-10-06T14:13:16.009Z"
+status: ready_to_plan
+stopped_at: Phase 15 complete (21/21) — ready to discuss Phase 16
+last_updated: 2026-10-06T14:55:40.926Z
 last_activity: 2026-10-06
 progress:
   total_phases: 10
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 15 — Stripe payments & invoicing
+**Current focus:** Phase 16 — mailing automation completion
 
 ## Current Position
 
-Phase: 15 (Stripe payments & invoicing) — EXECUTING
-Plan: 21 of 21
-Status: Phase complete — ready for verification
+Phase: 16
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-10-06
 
 Progress: [██████████] 98%
@@ -36,7 +36,7 @@ Progress: [██████████] 98%
 
 **Velocity:**
 
-- Total plans completed: 99 (v1.0: 21, v1.1: 27)
+- Total plans completed: 120 (v1.0: 21, v1.1: 27)
 - v2.0: 0 plans executed
 
 *Updated after each plan completion*
