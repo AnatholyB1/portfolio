@@ -506,6 +506,7 @@ export const PROJECT_COPY = {
         finalLine:
           'Facture finale : émise automatiquement après le PV de recette signé, déduction de l\'acompte',
         waitingContract: 'En attente du contrat',
+        waitingAcceptance: 'En attente du PV de recette signé',
         issued: (number: string) => `Émise ${number}`,
         finalHelper: 'La facture finale ne facture que le travail non déjà facturé en périodes.',
         finalOverInvoiced:

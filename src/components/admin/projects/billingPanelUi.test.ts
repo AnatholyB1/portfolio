@@ -27,6 +27,11 @@ describe('Facturation composition source guards (T-15-72, T-15-73)', () => {
     expect(panel).toContain("open?.kind === 'credit'");
   });
 
+  it('BillingPanel labels the final invoice wait with the acceptance copy, not the contract one', () => {
+    expect(panel).toMatch(/waiting_acceptance'\s*\?\s*COPY\.auto\.waitingAcceptance/);
+    expect(panel).not.toMatch(/waiting_acceptance'\s*\?\s*COPY\.auto\.waitingContract/);
+  });
+
   it('BillingPanel renders the over-invoiced and nothing-to-invoice final states', () => {
     expect(panel).toContain('COPY.auto.finalOverInvoiced');
     expect(panel).toContain('COPY.auto.finalNothingToInvoice');

@@ -76,7 +76,7 @@ export default function BillingPanel({ projectId, view, actions }: BillingPanelP
     finalState === 'issued' && auto.final.number
       ? COPY.auto.issued(auto.final.number)
       : finalState === 'waiting_acceptance'
-        ? COPY.auto.waitingContract
+        ? COPY.auto.waitingAcceptance
         : finalState === 'over_invoiced'
           ? COPY.auto.finalOverInvoiced
           : finalState === 'nothing_to_invoice'
