@@ -379,7 +379,36 @@ Plans:
   2. Un rebond ou une plainte Resend ajoute l'adresse à la liste de suppression et aucun e-mail marketing ne lui est plus envoyé
   3. Chaque e-mail marketing contient un lien de désinscription fonctionnel ; les flux transactionnel et marketing sont séparés
 
-**Plans**: TBD
+**Plans**: 14 plans
+
+**Wave 1**
+
+- [ ] 16-01-PLAN.md — Migration : listes fermées de l'outbox, journaux en ajout seul (suppressions, levées, événements Resend, suspensions) et RPC
+- [ ] 16-02-PLAN.md — Jeton de désinscription HMAC et vérification/mappage du webhook Resend, variables d'environnement
+- [ ] 16-03-PLAN.md — Contenus : gabarit partagé, constructeur marketing (pied et en-têtes imposés), relances, demande d'avis, alerte de suppression
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 16-04-PLAN.md — Règles : classe de flux, nouveaux événements, drapeau, cadence partagée et parité SQL
+- [ ] 16-05-PLAN.md — Branche RLS sv-rls-p16 (accord propriétaire), push [BLOCKING] de la migration, helpers
+- [ ] 16-06-PLAN.md — Routes publiques : webhook Resend et désinscription en un clic
+- [ ] 16-07-PLAN.md — Page /desinscription, routes privées et matcher du proxy
+- [ ] 16-08-PLAN.md — Vue admin de la liste de suppression et réactivation motivée
+- [ ] 16-09-PLAN.md — Suspension et reprise des relances sur la fiche projet
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 16-10-PLAN.md — Garde d'envoi par flux dans l'outbox, chemin marketing, statut skipped
+- [ ] 16-11-PLAN.md — Balayage des relances (document non signé, demande d'avis) et cron
+- [ ] 16-12-PLAN.md — Suite RLS et RPC sur la branche dédiée
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 16-13-PLAN.md — Application en production (accord propriétaire), webhook Resend et secrets Vercel, suppression de la branche
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 16-14-PLAN.md — Release gate, déploiement et vérification de bout en bout
 
 ### Phase 17: Admin forecast dashboard
 
