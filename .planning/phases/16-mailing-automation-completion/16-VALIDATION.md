@@ -1,8 +1,8 @@
 ---
 phase: 16
 slug: mailing-automation-completion
-status: draft
-nyquist_compliant: false
+status: ready
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-10-06
 ---
@@ -39,8 +39,8 @@ created: 2026-10-06
 | Req ID | Behavior | Test Type | Automated Command | File Exists |
 |--------|----------|-----------|-------------------|-------------|
 | MAIL-03 | cadence pure d3/d7/d14, palier le plus élevé, arrêt | unit | `rtk vitest run src/lib/server/reminders/cadence.test.ts` | ❌ W0 |
-| MAIL-03 | document non signé, acompte impayé : 1 mail/palier/destinataire, 0 doublon, arrêt signé/remplacé/refusé/suspendu | unit | `rtk vitest run src/lib/server/reminders/sweep.test.ts` | ❌ W0 |
-| MAIL-03 | demande d'avis J+7/J+21 avec lien factice ; drapeau éteint = pas d'enfilage | unit | `rtk vitest run src/lib/server/mail/reviewRequestEmail.test.ts` | ❌ W0 |
+| MAIL-03 | document non signé : 1 mail/palier/destinataire, 0 doublon, arrêt signé/remplacé/refusé/suspendu ; lectures paginées et fail-closed (1500 faits, garde de pages) | unit | `rtk vitest run src/lib/server/reminders/sweep.test.ts` | ❌ W0 |
+| MAIL-03 | demande d'avis J+7/J+21 avec lien factice ; drapeau éteint = pas d'enfilage | unit | `rtk vitest run src/lib/server/mail/reminderEmails.test.ts src/lib/server/reminders/sweep.test.ts` | ❌ W0 |
 | MAIL-04 | webhook Resend : signature valide/invalide/périmée, mappage Permanent/Transient/complained | unit | `rtk vitest run src/lib/server/resend/webhook.test.ts src/app/api/resend/webhook/route.test.ts` | ❌ W0 |
 | MAIL-04 | garde `deliver()` : marketing bloqué, transactionnel passe sur plainte, rebond dur bloque tout, `skipped` | unit | `rtk vitest run src/lib/server/mail/outbox.test.ts` | étendre |
 | MAIL-04 | jeton de désinscription HMAC | unit | `rtk vitest run src/lib/server/mail/unsubscribeToken.test.ts` | ❌ W0 |

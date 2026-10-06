@@ -348,16 +348,14 @@ Dans `sv_apply_resend_event`, après insertion : `exists (select 1 from sv_clien
 | A5 | Pas d'expiration du jeton de désinscription | Pattern 5 | Politique de sécurité à confirmer |
 | A6 | `REVIEW_REQUESTS_ENABLED` en variable d'environnement (et non table de configuration) | Drapeau | Phase 18 devra le lever en prod |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Balayage d'acompte impayé absent (écart avec CONTEXT).**
-   - Connu : seuls modèle/règle/clé existent. Inconnu : si l'utilisateur le sait.
-   - Recommandation : l'inclure dans le plan (MAIL-03, critère 1), à signaler au passage dans le résumé de planification.
-2. **« Livré sans avis » : quelle donnée marque un projet livré ?**
+1. **Balayage d'acompte impayé absent (écart avec CONTEXT).** RESOLVED: affirmation erronée, les relances d'acompte sont mises en file par SQL (`sv_private.issue_invoice_at`, migration `20261007000000_sv_invoices.sql`) ; CONTEXT D-16 fait foi, le balayage TypeScript ne couvre que document non signé et avis.
+2. **« Livré sans avis » : quelle donnée marque un projet livré ?** RESOLVED: `acceptance_signed` (plan 16-11).
    - `production_completed`/`acceptance_signed` sont des faits ; D-05 ancre sur `acceptance_signed`. Aucune table d'avis avant la phase 18.
    - Recommandation : `acceptance_signed` effectif ; `hasReview()` retourne `false` jusqu'à la phase 18.
-3. **Destinataire des demandes d'avis** : membres du client (comme `document_issued`) ; confirmer pas de contact de projet distinct.
-4. **Alertes admin sur rebond d'adresse inconnue** (ni client ni lead) : journalisée seulement, pas d'alerte (D-08).
+3. **Destinataire des demandes d'avis** RESOLVED: membres du client (plan 16-11).
+4. **Alertes admin sur rebond d'adresse inconnue** RESOLVED: le plan 16-01 met en file une alerte admin pour tout rebond permanent, même adresse inconnue (`p_force`) ; écart assumé avec la recommandation initiale. client ni lead) : journalisée seulement, pas d'alerte (D-08).
 
 ## Environment Availability
 
