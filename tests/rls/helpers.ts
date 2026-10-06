@@ -603,6 +603,54 @@ export async function applyTestEvent(args: ApplyTestEventArgs): Promise<any> {
   return data;
 }
 
+/** Phase 16: apply a Resend webhook event through the service role. Returns { data, error }. */
+export async function applyResendEvent(args: {
+  eventId?: string;
+  type: 'email.bounced' | 'email.complained' | string;
+  emails: string[];
+  bounceType?: string | null;
+}) {
+  return svc().rpc('sv_apply_resend_event', {
+    p_event_id: args.eventId ?? `msg_test_${randomUUID().replace(/-/g, '')}`,
+    p_event_type: args.type,
+    p_emails: args.emails,
+    p_bounce_type: args.bounceType ?? null,
+    p_admin_email: 'contact@sevalys.com',
+  });
+}
+
+/** Phase 16: record an unsubscribe. Returns { data, error }. */
+export async function recordUnsubscribe(email: string, source: string = 'one_click') {
+  return svc().rpc('sv_record_unsubscribe', {
+    p_email: email,
+    p_source: source,
+    p_admin_email: 'contact@sevalys.com',
+  });
+}
+
+/** Phase 16: lift a suppression with a reason. Returns { data, error }. */
+export async function liftSuppression(id: number | string, reason: string, actorId: string) {
+  return svc().rpc('sv_lift_suppression', {
+    p_suppression_id: id,
+    p_reason: reason,
+    p_actor_id: actorId,
+  });
+}
+
+/** Phase 16: set or release a reminder hold on a project. Returns { data, error }. */
+export async function setReminderHold(projectId: string, action: string, actorId: string) {
+  return svc().rpc('sv_set_reminder_hold', {
+    p_project_id: projectId,
+    p_action: action,
+    p_actor_id: actorId,
+  });
+}
+
+/** Phase 16: read the mail block scope of an address. Returns { data, error }. */
+export async function blockScope(email: string) {
+  return svc().rpc('sv_mail_block_scope', { p_email: email });
+}
+
 // NOTE: cleanup() does NOT delete leads, contacts or sv_lead_events. Events are
 // immutable (deny triggers) and leads are tombstoned only. The branch is
 // throwaway; tests must always use uniqueEmail() so runs never collide.
