@@ -8,7 +8,7 @@
 
 Les relances partent seules, et la délivrabilité et les obligations de désinscription sont maîtrisées. Livre : relance automatique des documents non signés, règle et modèle de demande d'avis (envoi réel activé en phase 18), webhook Resend (rebonds, plaintes) alimentant une liste de suppression administrable, séparation des flux transactionnel et marketing avec désinscription en un clic. Requirements : MAIL-03, MAIL-04.
 
-Hors périmètre : lien d'avis unique, page de dépôt et modération des avis (phase 18), campagnes ou suivi marketing réels vers les prospects, dashboard (phase 17). Les modèles, règles et clés d'unicité des relances d'acompte impayé (J+3, J+7, alerte admin J+14) existent (phase 15 D-17), mais **aucun balayage ne les met en file** (vérifié dans le code, 2026-10-06) : la phase 16 construit un balayage de relances générique couvrant acompte impayé, document non signé et demande d'avis, sans dupliquer modèles ni règles.
+Hors périmètre : lien d'avis unique, page de dépôt et modération des avis (phase 18), campagnes ou suivi marketing réels vers les prospects, dashboard (phase 17). Les relances d'acompte impayé (J+3, J+7, alerte admin J+14) existent déjà : `sv_private.issue_invoice_at` (migration `20261007000000_sv_invoices.sql`) met les trois mails en file à l'émission de la facture, et `sv_apply_stripe_event` / l'avoir les passent en `skipped` (vérifié 2026-10-06). Ne pas les dupliquer ni les migrer.
 
 </domain>
 
@@ -37,7 +37,7 @@ Hors périmètre : lien d'avis unique, page de dépôt et modération des avis (
 - **D-13:** **Séparation des flux par une classe de message portée par chaque règle** (`transactional` / `marketing`) dans `MAIL_RULES`, appliquée par l'outbox : la garde de suppression et de désinscription s'applique selon le flux au moment de l'envoi (statut `skipped` journalisé, jamais d'envoi silencieux). **Expéditeur distinct pour le marketing, sur le même domaine** (`sevalys.com`, SPF/DKIM/DMARC déjà vérifiés en phase 10). **Pas de sous-domaine d'envoi dédié** en phase 16 (isolation de réputation différée, voir ci-dessous).
 
 ### Hérité des phases précédentes (rappel)
-- **D-16:** **Balayage générique de relances** (`reminderStage` + `sweepReminders`) appelé par le cron quotidien : une seule mécanique pour acompte impayé, document non signé et demande d'avis.
+- **D-16:** **Balayage de relances en TypeScript** (`reminderStage` + `sweepReminders`) appelé par le cron quotidien, pour document non signé et demande d'avis uniquement. L'acompte impayé reste sur le chemin SQL existant ; seule la logique de palier est partagée.
 - **D-14:** Règles d'e-mail en code (phase 12 D-17), outbox idempotente `sv_mail_outbox` (clé d'unicité, `send_after`, statuts dont `skipped`), cron quotidien. Les nouveaux événements et modèles étendent la liste fermée dans une migration (contraintes `check`, jamais de nom de contrainte codé en dur) et dans `rules.ts` (`MAIL_EVENTS`, `MailTemplate`, `dedupeKey`).
 - **D-15:** Portail et admin en français uniquement, `noindex`, sans cinéma/curseur/GSAP. RLS dans la même migration que chaque table, `service_role` uniquement dans des modules `server-only`, tests RLS sur branche Supabase dédiée (client A vs B, anonyme, utilisateur Gecko), rôles en tables. Prix autorisés dans portail, admin et modèles, jamais sur le public. Client de test permanent « Test E2E Sèvalys » réutilisé, sans le supprimer. Fuseau `Europe/Paris`, formats `fr-FR`.
 
