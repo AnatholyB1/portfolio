@@ -21,3 +21,17 @@ export function buildPortalPaymentsUrl(): string {
 export function buildAdminProjectUrl(projectId: string): string {
   return `${getSiteUrl()}/admin/projets/${projectId}`;
 }
+
+/** Page publique de confirmation de désinscription (le jeton est signé, jamais l'adresse en clair). */
+export function buildUnsubscribePageUrl(token: string): string {
+  return `${getSiteUrl()}/desinscription?t=${encodeURIComponent(token)}`;
+}
+
+/** Cible RFC 8058 (POST one-click) pour l'en-tête List-Unsubscribe. */
+export function buildUnsubscribeOneClickUrl(token: string): string {
+  return `${getSiteUrl()}/api/unsubscribe?t=${encodeURIComponent(token)}`;
+}
+
+export function buildAdminMailUrl(): string {
+  return `${getSiteUrl()}/admin/emails`;
+}
