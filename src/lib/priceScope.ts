@@ -6,12 +6,15 @@
 // Module pur, sans import.
 
 export const PRICE_ALLOWED_ZONES: readonly { path: string; reason: string }[] = [
+  { path: 'src/app/desinscription', reason: "Page publique de désinscription (jeton signé) : rendue avec les composants de carte privée du portail, hors site vitrine, noindex." },
   { path: 'src/app/espace-client', reason: "Portail client : le client consulte ses contrats, devis et factures chiffrés." },
   { path: 'src/app/admin', reason: "Espace admin : l'administrateur gère clients, devis et montants." },
   { path: 'src/app/connexion', reason: "Page de connexion privée : même zone que le portail, hors site public." },
   { path: 'src/app/auth', reason: "Routes d'authentification (callback, confirmation) : zone privée, hors site public." },
   { path: 'src/app/api/cron', reason: "Tâches planifiées protégées par CRON_SECRET (envoi de la file de mails) : aucune page publique, importent du code serveur." },
   { path: 'src/app/api/stripe', reason: "Webhook Stripe signé (corps brut vérifié) : aucune page publique, transmet des identifiants et montants en centimes au serveur." },
+  { path: 'src/app/api/resend', reason: "Webhook Resend signé (Svix, corps brut vérifié) : aucune page publique, alimente la liste de suppression et déclenche l'envoi de la file de mails." },
+  { path: 'src/app/api/unsubscribe', reason: "Désinscription en un clic (jeton signé HMAC) : route serveur sans page, écrit la liste de suppression et alerte l'admin." },
   { path: 'src/components/portal', reason: "Composants du portail client, qui afficheront des montants contractuels." },
   { path: 'src/components/admin', reason: "Composants de l'espace admin (tarification, suivi financier)." },
   { path: 'src/lib/server', reason: "Code serveur uniquement : accès base de données et données chiffrées, jamais embarqué côté client." },

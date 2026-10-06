@@ -95,6 +95,8 @@ const ALLOWED_TEMPLATES = [
   '`/espace-client/documents/${sctx.replacedBy.id}/signer`',
   // Portal onboarding card: external mailto with an encoded subject (not a route).
   '`mailto:contact@sevalys.com?subject=${subject}`',
+  // Unsubscribe page: external mailto to the contact address (not a route).
+  '`mailto:${CONTACT}`',
 ];
 
 function resolveHref(href: string, fromRoute: string): { ok: boolean; reason: string } {
