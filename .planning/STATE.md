@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: verifying
-stopped_at: Phase 15 deployed to production; 15-20 Task 2 (owner end-to-end in Stripe test mode) pending
-last_updated: "2026-10-06T14:11:11.148Z"
+stopped_at: Phase 15 executed and deployed; verification human_needed (receipt setting, label deploy, PV/final invoice run, accountant review)
+last_updated: "2026-10-06T14:13:16.009Z"
 last_activity: 2026-10-06
 progress:
   total_phases: 10
@@ -89,9 +89,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-05T11:08:52.712Z
-Stopped at: Phase 15 deployed to production; 15-20 Task 2 (owner end-to-end in Stripe test mode) pending
-Resume file: .planning/phases/15-stripe-payments-invoicing/15-20-PLAN.md
+Last session: 2026-10-06T14:13:15.992Z
+Stopped at: Phase 15 executed and deployed; verification human_needed (receipt setting, label deploy, PV/final invoice run, accountant review)
+Resume file: .planning/phases/15-stripe-payments-invoicing/15-VERIFICATION.md
 
 ## Operator Next Steps
 
