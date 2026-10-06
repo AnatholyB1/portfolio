@@ -1,8 +1,8 @@
 ---
 phase: 15-stripe-payments-invoicing
 verified: 2026-10-06T16:30:00Z
-status: human_needed
-score: 5/5 must-haves verified (code and production), 1 owner-side item pending
+status: passed
+score: 5/5 must-haves verified (code and production), no pending item
 overrides_applied: 0
 human_verification:
   - test: "Desactiver dans le dashboard Stripe « Envoyer des recus pour les paiements reussis » (D-16)"
@@ -25,7 +25,7 @@ deferred: []
 
 **Phase Goal:** Le client paie en ligne par etape, l'etat « paye » est fiable, et les factures sont legales et immuables
 **Verified:** 2026-10-06
-**Status:** human_needed
+**Status:** passed
 **Re-verification:** No, initial verification
 
 ## Observable Truths
@@ -90,3 +90,7 @@ _Verifier: Claude (gsd-verifier)_
 - Accountant review: owner decision, not needed for now.
 - Stripe CLI key expiry: owner decision, not a concern.
 - Still pending for the owner: disable the Stripe dashboard setting « Envoyer des reçus pour les paiements réussis » (D-16).
+
+## Closure 2026-10-06
+- Stripe dashboard (test mode), Paramètres > Entreprise > Adresses e-mail de clients: « Paiements réussis » and « Remboursements » are both off (read, not modified). No Stripe payment receipt reached the test client for the three payments; the two Stripe refund e-mails of 14:09 predate the change.
+- D-16 satisfied. Phase closed by owner decision.
