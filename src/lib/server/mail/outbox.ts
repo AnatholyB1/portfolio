@@ -27,8 +27,20 @@ import {
   buildLoginUrl,
   buildPortalDocumentsUrl,
   buildPortalUrl,
+  buildUnsubscribeOneClickUrl,
+  buildUnsubscribePageUrl,
 } from './urls';
 import { MAIL_RULES, type MailEvent, type MailTemplate } from './rules';
+import {
+  documentReminderAdminEmail,
+  documentReminderEmail,
+  mailSuppressionAdminEmail,
+  reviewRequestContent,
+} from './reminderEmails';
+import { buildMarketingEmail } from './marketingEmail';
+import { signUnsubscribeToken, unsubscribeSecret } from './unsubscribeToken';
+import { reviewRequestsEnabled } from './flags';
+import { blockScope, decideSend } from './suppression';
 
 const TABLE = 'sv_mail_outbox';
 
@@ -62,6 +74,7 @@ export type BuiltMail = {
   subject: string;
   html: string;
   text: string;
+  headers?: Record<string, string>;
 };
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
@@ -77,6 +90,25 @@ function oneOf<T extends string>(v: unknown, allowed: readonly T[]): T {
 
 export function buildMail(row: OutboxRow): BuiltMail {
   const p = row.payload ?? {};
+  // D-13 : la classe vient toujours des regles en code, jamais d'une copie stockee.
+  const rule = (MAIL_RULES as Record<string, (typeof MAIL_RULES)[MailEvent] | undefined>)[
+    row.event_type
+  ];
+  if (rule?.class === 'marketing') {
+    const secret = unsubscribeSecret();
+    if (!secret) throw new Error('unsubscribe_unavailable');
+    const token = signUnsubscribeToken(row.recipient_email, secret);
+    if (row.template !== 'review_request') throw new Error('unknown_template');
+    const content = reviewRequestContent({
+      projectTitle: str(p.projectTitle),
+      reviewUrl: str(p.reviewUrl),
+      stage: oneOf(p.stage, ['d7', 'd21'] as const),
+    });
+    return buildMarketingEmail(content, {
+      pageUrl: buildUnsubscribePageUrl(token),
+      oneClickUrl: buildUnsubscribeOneClickUrl(token),
+    });
+  }
   let mail: { subject: string; html: string; text: string };
   switch (row.template) {
     case 'invite':
@@ -203,6 +235,31 @@ export function buildMail(row: OutboxRow): BuiltMail {
         refundRequested: p.refundRequested === true,
       });
       break;
+    case 'document_reminder':
+      mail = documentReminderEmail({
+        documentLabel: str(p.documentLabel),
+        projectTitle: str(p.projectTitle),
+        revision: typeof p.revision === 'number' ? p.revision : 1,
+        stage: oneOf(p.stage, ['d3', 'd7'] as const),
+      });
+      break;
+    case 'document_reminder_admin':
+      mail = documentReminderAdminEmail({
+        documentLabel: str(p.documentLabel),
+        projectTitle: str(p.projectTitle),
+        clientName: str(p.clientName),
+        issuedOn: str(p.issuedOn),
+        projectId: str(p.projectId) || (row.project_id ?? ''),
+      });
+      break;
+    case 'mail_suppression_admin':
+      mail = mailSuppressionAdminEmail({
+        cause: oneOf(p.cause, ['complaint', 'bounce_permanent', 'unsubscribe'] as const),
+        maskedEmail: str(p.maskedEmail),
+        clientName: str(p.clientName) || null,
+        isLead: p.isLead === true,
+      });
+      break;
     default:
       throw new Error('unknown_template');
   }
@@ -250,14 +307,37 @@ async function markRow(id: string, patch: Record<string, unknown>): Promise<void
   }
 }
 
-async function deliver(row: OutboxRow): Promise<'sent' | 'failed'> {
+async function deliver(row: OutboxRow): Promise<'sent' | 'failed' | 'skipped'> {
   const fail = async (code: string) => {
     await markRow(row.id, { status: 'failed', last_error: code });
     console.error(`[mail/outbox] ${row.template} ${code}`);
     return 'failed' as const;
   };
+  const skip = async (code: string) => {
+    await markRow(row.id, { status: 'skipped', last_error: code });
+    console.error(`[mail/outbox] ${row.template} ${code}`);
+    return 'skipped' as const;
+  };
 
   if (!process.env.RESEND_API_KEY) return fail('no_api_key');
+
+  const rule = (MAIL_RULES as Record<string, (typeof MAIL_RULES)[MailEvent] | undefined>)[
+    row.event_type
+  ];
+  if (!rule) return fail('unknown_event');
+  const reviewEnabled = reviewRequestsEnabled();
+  const flagBlocks = row.template === 'review_request' && !reviewEnabled;
+  const scope =
+    row.recipient_kind === 'admin' || flagBlocks ? 'none' : await blockScope(row.recipient_email);
+  const verdict = decideSend({
+    mailClass: rule.class,
+    recipientKind: row.recipient_kind,
+    template: row.template,
+    scope,
+    reviewEnabled,
+  });
+  if (verdict === 'suppressed' || verdict === 'flag_off') return skip(verdict);
+  if (verdict === 'suppression_unavailable') return fail(verdict);
 
   let mail: BuiltMail;
   try {
@@ -276,6 +356,7 @@ async function deliver(row: OutboxRow): Promise<'sent' | 'failed'> {
         subject: mail.subject,
         html: mail.html,
         text: mail.text,
+        ...(mail.headers ? { headers: mail.headers } : {}),
       },
       { idempotencyKey: row.dedupe_key },
     );
@@ -292,7 +373,7 @@ async function deliver(row: OutboxRow): Promise<'sent' | 'failed'> {
   }
 }
 
-export async function sendOutboxRow(id: string): Promise<'sent' | 'failed' | 'not_claimed'> {
+export async function sendOutboxRow(id: string): Promise<'sent' | 'failed' | 'skipped' | 'not_claimed'> {
   const sb = createSupabaseAdminClient();
   const now = new Date().toISOString();
 
@@ -317,7 +398,7 @@ export async function sendOutboxRow(id: string): Promise<'sent' | 'failed' | 'no
 
 export async function enqueueAndSend(
   input: EnqueueInput,
-): Promise<'sent' | 'pending' | 'failed' | 'duplicate'> {
+): Promise<'sent' | 'pending' | 'failed' | 'skipped' | 'duplicate'> {
   try {
     const { id, inserted } = await enqueueMail(input);
     if (!id) return 'failed';
@@ -332,18 +413,21 @@ export async function enqueueAndSend(
 
 export async function processDueMail(
   limit = 25,
-): Promise<{ claimed: number; sent: number; failed: number }> {
+): Promise<{ claimed: number; sent: number; failed: number; skipped: number }> {
   const res = await callRpc<OutboxRow[]>('mail/outbox', 'sv_claim_due_mail', { p_limit: limit });
-  if (!res.ok || !Array.isArray(res.data)) return { claimed: 0, sent: 0, failed: 0 };
+  if (!res.ok || !Array.isArray(res.data)) return { claimed: 0, sent: 0, failed: 0, skipped: 0 };
   let sent = 0;
   let failed = 0;
+  let skipped = 0;
   for (const row of res.data) {
     try {
-      if ((await deliver(row)) === 'sent') sent += 1;
+      const out = await deliver(row);
+      if (out === 'sent') sent += 1;
+      else if (out === 'skipped') skipped += 1;
       else failed += 1;
     } catch {
       failed += 1;
     }
   }
-  return { claimed: res.data.length, sent, failed };
+  return { claimed: res.data.length, sent, failed, skipped };
 }

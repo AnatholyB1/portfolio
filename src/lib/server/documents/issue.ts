@@ -25,8 +25,8 @@ export type IssueDocumentResult =
         | 'error';
     };
 
-/** 'failed' l'emporte, puis 'pending' (non réclamé), puis 'sent' ; aucune ligne = 'none'. */
-export function aggregateMail(results: ('sent' | 'failed' | 'not_claimed')[]): Mail {
+/** 'failed' l'emporte, puis 'pending' (non réclamé), puis 'sent' ('skipped' est terminal, jamais un échec) ; aucune ligne = 'none'. */
+export function aggregateMail(results: ('sent' | 'failed' | 'skipped' | 'not_claimed')[]): Mail {
   if (results.length === 0) return 'none';
   if (results.some((r) => r === 'failed')) return 'failed';
   if (results.some((r) => r === 'not_claimed')) return 'pending';

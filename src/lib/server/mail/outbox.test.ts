@@ -9,7 +9,11 @@ const state = vi.hoisted(() => ({
   sendResult: { data: { id: 'prov1' }, error: null } as any,
   sendThrows: false,
   rpc: { ok: true, data: [] } as any,
+  scope: 'none' as any,
+  scopeCalls: 0,
 }));
+
+const SECRET = 'test-secret-test-secret-test-secret-0123';
 
 const mocks = vi.hoisted(() => ({
   send: vi.fn(),
@@ -55,6 +59,16 @@ vi.mock('@/lib/supabase/env', () => ({ getSiteUrl: () => 'https://sevalys.com' }
 vi.mock('@/lib/supabase/admin', () => ({
   createSupabaseAdminClient: () => ({ from: () => builder() }),
 }));
+vi.mock('./suppression', async (orig) => {
+  const actual = await orig<typeof import('./suppression')>();
+  return {
+    ...actual,
+    blockScope: async () => {
+      state.scopeCalls += 1;
+      return state.scope;
+    },
+  };
+});
 vi.mock('@/lib/server/rpc', () => ({ callRpc: async () => state.rpc }));
 vi.mock('resend', () => ({
   Resend: class {
@@ -72,6 +86,8 @@ vi.mock('resend', () => ({
 }));
 
 import { INVITE_SUBJECT } from './inviteEmail';
+import { MAIL_EVENTS, MAIL_RULES } from './rules';
+import { verifyUnsubscribeToken } from './unsubscribeToken';
 import { buildMail, enqueueAndSend, enqueueMail, processDueMail, sendOutboxRow } from './outbox';
 
 const input = {
@@ -111,11 +127,16 @@ beforeEach(() => {
   state.sendResult = { data: { id: 'prov1' }, error: null };
   state.sendThrows = false;
   state.rpc = { ok: true, data: [] };
+  state.scope = 'none';
+  state.scopeCalls = 0;
+  vi.stubEnv('UNSUBSCRIBE_SECRET', SECRET);
+  vi.stubEnv('REVIEW_REQUESTS_ENABLED', 'true');
   process.env.RESEND_API_KEY = 're_test';
   errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   errSpy.mockRestore();
 });
 
@@ -201,13 +222,13 @@ describe('processDueMail', () => {
       get: () => (n++ === 0 ? { data: { id: 'p' }, error: null } : { data: null, error: { message: 'x' } }),
     });
     const r = await processDueMail();
-    expect(r).toEqual({ claimed: 2, sent: 1, failed: 1 });
+    expect(r).toEqual({ claimed: 2, sent: 1, failed: 1, skipped: 0 });
     Object.defineProperty(state, 'sendResult', { configurable: true, writable: true, value: { data: { id: 'p' }, error: null } });
   });
 
   it('returns zeros when the rpc fails', async () => {
     state.rpc = { ok: false, code: 'unknown' };
-    expect(await processDueMail()).toEqual({ claimed: 0, sent: 0, failed: 0 });
+    expect(await processDueMail()).toEqual({ claimed: 0, sent: 0, failed: 0, skipped: 0 });
   });
 });
 
@@ -355,5 +376,167 @@ describe('buildMail', () => {
         buildMail(row('payment_requested', { invoiceNumber: 'F1', amountCents: 1, projectTitle: 'S', kind: 'x' })),
       ).toThrow();
     });
+  });
+});
+
+const payRow = {
+  ...claimedRow,
+  event_type: 'payment_requested',
+  template: 'payment_requested',
+  payload: { invoiceNumber: 'F1', kind: 'deposit', amountCents: 100, projectTitle: 'S' },
+};
+const reviewRow = {
+  ...claimedRow,
+  event_type: 'review_request',
+  template: 'review_request',
+  payload: { projectTitle: 'Site', reviewUrl: 'https://sevalys.com/avis', stage: 'd7' },
+};
+const adminRow = {
+  ...claimedRow,
+  event_type: 'mail_suppression_admin',
+  template: 'mail_suppression_admin',
+  recipient_kind: 'admin',
+  payload: { cause: 'complaint', maskedEmail: 'u***@e***.com', clientName: null, isLead: false },
+};
+
+describe('suppression guard in deliver', () => {
+  it('skips marketing for scope marketing', async () => {
+    state.claim = { data: reviewRow, error: null };
+    state.scope = 'marketing';
+    expect(await sendOutboxRow('row1')).toBe('skipped');
+    expect(mocks.send).not.toHaveBeenCalled();
+    expect(mocks.updates.at(-1)).toMatchObject({ status: 'skipped', last_error: 'suppressed' });
+    noEmailInLogs();
+  });
+
+  it('sends transactional on scope marketing, skips on all', async () => {
+    state.claim = { data: payRow, error: null };
+    state.scope = 'marketing';
+    expect(await sendOutboxRow('row1')).toBe('sent');
+    expect(mocks.send.mock.calls[0][0].headers).toBeUndefined();
+    mocks.send.mockReset();
+    state.scope = 'all';
+    expect(await sendOutboxRow('row1')).toBe('skipped');
+    expect(mocks.send).not.toHaveBeenCalled();
+    expect(mocks.updates.at(-1)).toMatchObject({ status: 'skipped', last_error: 'suppressed' });
+  });
+
+  it('skips review_request with flag_off without a lookup', async () => {
+    vi.stubEnv('REVIEW_REQUESTS_ENABLED', '');
+    state.claim = { data: reviewRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('skipped');
+    expect(mocks.updates.at(-1)).toMatchObject({ status: 'skipped', last_error: 'flag_off' });
+    expect(state.scopeCalls).toBe(0);
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  it('sends admin mail even when the address is fully suppressed', async () => {
+    state.claim = { data: adminRow, error: null };
+    state.scope = 'all';
+    expect(await sendOutboxRow('row1')).toBe('sent');
+  });
+
+  it('fails marketing retryably on lookup error, sends transactional', async () => {
+    state.scope = 'error';
+    state.claim = { data: reviewRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('failed');
+    expect(mocks.updates.at(-1)).toMatchObject({
+      status: 'failed',
+      last_error: 'suppression_unavailable',
+    });
+    state.claim = { data: payRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('sent');
+  });
+
+  it('sends a compliant marketing mail', async () => {
+    state.claim = { data: reviewRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('sent');
+    const arg = mocks.send.mock.calls[0][0];
+    expect(arg.from).toBe('"Sèvalys" <bonjour@sevalys.com>');
+    expect(arg.headers['List-Unsubscribe']).toMatch(
+      /^<https:\/\/sevalys\.com\/api\/unsubscribe\?t=.+>$/,
+    );
+    expect(arg.headers['List-Unsubscribe-Post']).toBeTruthy();
+    expect(arg.html).toContain('/desinscription?t=');
+    expect(arg.text).toContain('/desinscription?t=');
+    const token = /desinscription\?t=([^\s"<>]+)/.exec(arg.text)![1];
+    expect(verifyUnsubscribeToken(decodeURIComponent(token), SECRET)).toBe('user@example.com');
+  });
+
+  it('fails render_error for marketing without a secret', async () => {
+    vi.stubEnv('UNSUBSCRIBE_SECRET', '');
+    state.claim = { data: reviewRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('failed');
+    expect(mocks.updates.at(-1)).toMatchObject({ status: 'failed', last_error: 'render_error' });
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  it('counts skipped separately in processDueMail', async () => {
+    state.rpc = { ok: true, data: [payRow, { ...reviewRow, id: 'r2' }, { ...payRow, id: 'r3' }] };
+    // payRow: none -> sent; review: all -> skipped; payRow: all -> skipped
+    const scopes = ['none', 'all', 'all'];
+    let n = 0;
+    Object.defineProperty(state, 'scope', {
+      configurable: true,
+      get: () => scopes[n++] ?? 'none',
+      set: () => {},
+    });
+    const r = await processDueMail();
+    Object.defineProperty(state, 'scope', { configurable: true, writable: true, value: 'none' });
+    expect(r).toEqual({ claimed: 3, sent: 1, failed: 0, skipped: 2 });
+  });
+});
+
+describe('new templates and marketing parity', () => {
+  const row = (template: string, payload: Record<string, unknown>) =>
+    ({ ...claimedRow, event_type: template, template, payload }) as any;
+
+  it('renders document reminders and admin templates', () => {
+    expect(
+      buildMail(row('document_reminder', { documentLabel: 'le devis', projectTitle: 'S', stage: 'd3' }))
+        .subject,
+    ).toContain('le devis');
+    expect(
+      buildMail(row('document_reminder', { documentLabel: 'le devis', projectTitle: 'S', stage: 'd7' }))
+        .subject,
+    ).toContain('Dernier rappel');
+    expect(
+      buildMail(
+        row('document_reminder_admin', {
+          documentLabel: 'le devis',
+          projectTitle: 'S',
+          clientName: 'Acme',
+          issuedOn: '2026-10-01',
+          projectId: 'p1',
+        }),
+      ).text,
+    ).toContain('Acme');
+    expect(
+      buildMail(
+        row('mail_suppression_admin', {
+          cause: 'complaint',
+          maskedEmail: 'u***@e.com',
+          clientName: 'Acme',
+          isLead: false,
+        }),
+      ).subject,
+    ).toContain('Adresse suspendue');
+  });
+
+  it('rejects an invalid reminder stage', () => {
+    expect(() =>
+      buildMail(row('document_reminder', { documentLabel: 'x', projectTitle: 'S', stage: 'd9' })),
+    ).toThrow();
+  });
+
+  it('every marketing event builds with unsubscribe headers and link (D-12)', () => {
+    const marketing = MAIL_EVENTS.filter((e) => MAIL_RULES[e].class === 'marketing');
+    expect(marketing.length).toBeGreaterThan(0);
+    for (const e of marketing) {
+      const m = buildMail({ ...reviewRow, event_type: e, template: MAIL_RULES[e].template } as any);
+      expect(m.headers?.['List-Unsubscribe']).toBeTruthy();
+      expect(m.html).toContain('/desinscription?t=');
+      expect(m.text).toContain('/desinscription?t=');
+    }
   });
 });
