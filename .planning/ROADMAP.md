@@ -389,7 +389,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 16-04-PLAN.md — Règles : classe de flux, nouveaux événements, drapeau, cadence partagée et parité SQL
+- [x] 16-04-PLAN.md — Règles : classe de flux, nouveaux événements, drapeau, cadence partagée et parité SQL
 - [ ] 16-05-PLAN.md — Branche RLS sv-rls-p16 (accord propriétaire), push [BLOCKING] de la migration, helpers
 - [ ] 16-06-PLAN.md — Routes publiques : webhook Resend et désinscription en un clic
 - [ ] 16-07-PLAN.md — Page /desinscription, routes privées et matcher du proxy
@@ -471,7 +471,7 @@ Plans:
 | 13. Document generation | v2.0 | 20/20 | Complete    | 2026-10-03 |
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
-| 16. Mailing automation completion | v2.0 | 3/14 | In Progress|  |
+| 16. Mailing automation completion | v2.0 | 4/14 | In Progress|  |
 | 17. Admin forecast dashboard | v2.0 | 0/TBD | Not started | - |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
