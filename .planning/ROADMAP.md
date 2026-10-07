@@ -448,7 +448,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 17-07-PLAN.md — RLS loader with typed failure, dashboard view model, column-grant guard
+- [x] 17-07-PLAN.md — RLS loader with typed failure, dashboard view model, column-grant guard
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 5/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 6/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
