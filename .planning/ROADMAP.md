@@ -38,12 +38,20 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 10: Foundation, auth & isolation** - Rôles en tables, connexion par code e-mail sur invitation, coquilles `/espace-client` et `/admin`, isolation prouvée par tests (completed 2026-10-02)
 - [x] **Phase 11: Lead attribution, pipeline & consent** - Source tracée côté serveur, journal immuable, pipeline admin, entonnoir par source, bandeau de consentement
  (completed 2026-10-02)
+
 - [x] **Phase 12: Conversion, projects & step engine** - Lead converti en client, onboarding, frise d'étapes, fichiers, moteur de mails minimal, vue projets admin
  (completed 2026-10-03)
+
 - [x] **Phase 13: Document generation** - PDF figés depuis modèles versionnés, mentions légales testées, onglet documents du client (completed 2026-10-03)
-- [x] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette (completed 2026-10-04)
-- [x] **Phase 15: Stripe payments & invoicing** - Acomptes par étape, webhook vérifié idempotent, factures sans trou et avoirs (completed 2026-10-06)
-- [x] **Phase 16: Mailing automation completion** - Relances automatiques, rebonds/plaintes, désinscription, flux séparés (completed 2026-10-06)
+- [x] **Phase 14: Electronic signature** - Signature simple par code, piste d'audit chaînée, PDF scellé, PV de recette
+ (completed 2026-10-04)
+
+- [x] **Phase 15: Stripe payments & invoicing** - Acomptes par étape, webhook vérifié idempotent, factures sans trou et avoirs
+ (completed 2026-10-06)
+
+- [x] **Phase 16: Mailing automation completion** - Relances automatiques, rebonds/plaintes, désinscription, flux séparés
+ (completed 2026-10-06)
+
 - [ ] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source
 - [ ] **Phase 18: Verified reviews** - Lien d'avis unique, lien Google sans filtrage, modération légale, JSON-LD `Review`
 - [ ] **Phase 19: Ads preparation** - Convention UTM documentée, taxonomie d'événements et échelle de conversions
@@ -302,6 +310,7 @@ Plans:
 **Wave 6** *(blocked on Wave 5 completion)*
 
 - [x] 14-19-PLAN.md — Release gate, déploiement et vérification de bout en bout sur « Test E2E Sèvalys »
+
 **UI hint**: yes
 
 ### Phase 15: Stripe payments & invoicing
@@ -366,6 +375,7 @@ Plans:
 **Wave 9** *(blocked on Wave 8 completion)*
 
 - [x] 15-20-PLAN.md — Release gate, déploiement et vérification de bout en bout en mode test Stripe sur « Test E2E Sèvalys »
+
 **UI hint**: yes
 
 ### Phase 16: Mailing automation completion
@@ -422,7 +432,46 @@ Plans:
   3. Le dashboard projette marge et trésorerie à partir des échéances de paiement et des coûts
   4. Le CA signé est ventilé par source d'acquisition du lead d'origine
 
-**Plans**: TBD
+**Plans**: 14 plans
+Plans:
+**Wave 1**
+
+- [ ] 17-01-PLAN.md — Migration 20261009000000_sv_pilotage.sql: 3 append-only cost/balance tables, RLS, 5 service_role RPCs, static lint
+- [ ] 17-02-PLAN.md — Pure periods, URL whitelist, invoiced/collected rules (deposit, cumulative refunds, test series)
+- [ ] 17-03-PLAN.md — Pure pipeline, signed-at-date with amendments, signed by frozen lead source
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 17-04-PLAN.md — Pure cost unfolding (versions, stops, voids), margins, 6-month cash projection
+- [ ] 17-05-PLAN.md — Cost zod schemas, RPC wrappers, guarded server actions
+- [ ] 17-06-PLAN.md — [BLOCKING] RLS branch sv-rls-p17 (owner-approved), migration push, helpers
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 17-07-PLAN.md — RLS loader with typed failure, dashboard view model, column-grant guard
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 17-08-PLAN.md — Formatters, SVG cash curve, tiles, pilotage.css, AdminNav "Pilotage"
+- [ ] 17-10-PLAN.md — RLS suite: append-only, isolation, RPC codes, concordance with raw SQL
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 17-09-PLAN.md — Source table, project margin table, drill-down panel (composed realized-margin detail), components guard test
+- [ ] 17-11-PLAN.md — /admin/pilotage/couts page, forms, version/stop/void panels
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
+- [ ] 17-12-PLAN.md — /admin/pilotage page, cross-links, full suite and build
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
+- [ ] 17-13-PLAN.md — Owner-approved production schema apply
+
+**Wave 8** *(blocked on Wave 7 completion)*
+
+- [ ] 17-14-PLAN.md — Owner-approved deploy, production verification (amended D-11 source column, D-12 clickable set), branch cleanup
+
 **UI hint**: yes
 
 ### Phase 18: Verified reviews

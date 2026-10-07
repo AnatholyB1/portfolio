@@ -120,7 +120,7 @@ Français uniquement, vouvoiement, voix directe, concrète. Aucune formule creus
 | Facturé | « CA facturé » | « Factures émises moins avoirs, sur la période. » | « Voir les factures » (`?detail=facture`) |
 | Encaissé | « CA encaissé » | « Paiements reçus moins remboursements confirmés, sur la période. » | « Voir les paiements » (`?detail=paiement`) |
 | Marge projetée | « Marge projetée » | « Signé (ou facturé net si supérieur) moins coûts du projet, moins coûts récurrents de la période. » | « Voir par projet » (ancre vers le tableau) |
-| Marge réalisée | « Marge réalisée » | « Encaissé moins coûts payés. » | « Voir les coûts » (`?detail=cout`) |
+| Marge réalisée | « Marge réalisée » | « Encaissé moins coûts payés. » | « Voir le calcul » (`?detail=cout` : détail composé, encaissements en positif et coûts payés en négatif, colonnes Date · Nature · Projet · Libellé · Montant ; « Total des lignes » = marge réalisée) |
 | À facturer | « Reste à facturer » | « Signé moins facturé, sans date, hors courbe. » | « Voir par projet » |
 
 Chaque valeur de tuile est elle-même un lien (`<a>` souligné, zone cliquable 44px) vers le drill-down ; le texte du lien est le montant, avec `aria-label` : « {Libellé} : {montant}. Voir le détail ». Seconde ligne de tuile possible en mode TTC/HT : « HT {montant} · TTC {montant} » désactivée ici (une seule base à la fois, choisie par la bascule).
@@ -130,7 +130,7 @@ Chaque valeur de tuile est elle-même un lien (`<a>` souligné, zone cliquable 4
 | Element | Copy |
 |---------|------|
 | Titre « par source » (`h2`) | « CA signé par source du lead » ; aide : « Source figée du lead d'origine, corrigée par vous le cas échéant. » |
-| Colonnes source | « Source » · « Campagne » · « Projets » · « CA signé » · « Part » |
+| Colonnes source | « Source figée du lead » · « Campagne » · « Projets » · « CA signé » · « Part » (D-11 amendé : colonnes `sv_leads.source_*`) |
 | Ligne spéciale | « Direct / hors lead » (projets sans lead) ; une source `direct` s'affiche « direct » : deux lignes distinctes |
 | Ligne de total | « Total » (doit égaler la tuile CA signé) |
 | Titre « par projet » (`h2`) | « Marge par projet » |
@@ -140,6 +140,7 @@ Chaque valeur de tuile est elle-même un lien (`<a>` souligné, zone cliquable 4
 | Colonnes détail facture | « Numéro » · « Date » · « Client » · « Type » · « Montant » |
 | Colonnes détail paiement | « Date » · « Facture » · « Mode » · « Montant » |
 | Colonnes détail devis | « Référence » · « Projet » · « Émis le » · « Montant » |
+| Colonnes détail marge réalisée (`?detail=cout`) | « Date » · « Nature » (« Encaissement » / « Coût ») · « Projet » · « Libellé » · « Montant » ; encaissements positifs, coûts payés négatifs (signe U+2212) |
 | Pagination du détail | « Page {n} sur {N} » ; liens « Précédente » · « Suivante » (50 lignes) |
 
 ### Graphique de trésorerie (SVG serveur, 6 mois)

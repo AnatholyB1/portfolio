@@ -449,22 +449,25 @@ async function read(run: () => PromiseLike<{ data: unknown; error: unknown }>) {
 | A6 | Catégories de coûts : sous_traitance, outils, hebergement, publicite, licences, autre | Pattern 6 | Libellés à valider avec le propriétaire (discrétion de Claude) |
 | A7 | Le total `data.totalCents` des instantanés `quote` est présent et entier pour tous les devis émis (schemaVersion 1) | Pattern 1 | Un devis sans total valide fausserait pipeline/signé ; traité comme anomalie visible |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Source figée : dernier ou premier contact ?**
    - What we know: `sv_leads.source_*` = `coalesce(p_last_touch, p_first_touch)` à la création, corrigeable ; `first_touch` jsonb existe séparément et n'est pas corrigeable (protégé, pas dans `sv_correct_lead_source`). D-11 veut « premier contact, corrigée par l'admin ».
    - What's unclear: si le propriétaire entend par « source figée » la colonne `source_*` (quel que soit son nom dans la phase 11) ou strictement `first_touch`.
    - Recommendation: ventiler sur `source_*` (cohérent avec l'entonnoir et les corrections), libellé « Source figée du lead », et noter l'écart dans le plan ; ne pas ajouter de bascule (hors périmètre). À confirmer au `discuss`/revue.
+   - RESOLVED: le propriétaire a retenu `source_*` (amendement de D-11 dans 17-CONTEXT.md, 2026-10-07).
 
 2. **Pipeline et période**
    - What we know: D-01 définit le pipeline comme un stock de devis non signés.
    - What's unclear: filtrage éventuel par période.
    - Recommendation: « à ce jour », mentionné dans l'UI.
+   - RESOLVED: pipeline « à ce jour », non filtré par période (hypothèse A3, règle de tuile dans UI-SPEC et plans).
 
 3. **Facture finale avec avoir et acompte**
    - What we know: l'avoir est plafonné au `total_incl_tax_cents` de l'origine, pas à son net.
    - What's unclear: comportement chiffré si un avoir dépasse `net_to_pay` d'une finale avec acompte.
    - Recommendation: borner par facture à `max(0, net − avoirs)` pour le « dû » et signaler l'excédent comme anomalie de réconciliation.
+   - RESOLVED: « dû » borné à zéro et excédent signalé par l'anomalie `credit_exceeds_net` (plan 17-03/17-07).
 
 ## Environment Availability
 
