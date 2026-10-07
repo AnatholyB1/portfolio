@@ -52,7 +52,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 16: Mailing automation completion** - Relances automatiques, rebonds/plaintes, désinscription, flux séparés
  (completed 2026-10-06)
 
-- [ ] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source
+- [x] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source (completed 2026-10-07)
 - [ ] **Phase 18: Verified reviews** - Lien d'avis unique, lien Google sans filtrage, modération légale, JSON-LD `Review`
 - [ ] **Phase 19: Ads preparation** - Convention UTM documentée, taxonomie d'événements et échelle de conversions
 
@@ -470,7 +470,7 @@ Plans:
 
 **Wave 8** *(blocked on Wave 7 completion)*
 
-- [ ] 17-14-PLAN.md — Owner-approved deploy, production verification (amended D-11 source column, D-12 clickable set), branch cleanup
+- [x] 17-14-PLAN.md — Owner-approved deploy, production verification (amended D-11 source column, D-12 clickable set), branch cleanup
 
 **UI hint**: yes
 
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 13/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 14/14 | Complete   | 2026-10-07 |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
