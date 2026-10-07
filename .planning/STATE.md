@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 17 UI-SPEC approved
-last_updated: "2026-10-07T13:58:10.508Z"
-last_activity: 2026-10-07 -- Phase 17 planning complete
+last_updated: "2026-10-07T14:01:13.090Z"
+last_activity: 2026-10-07
 progress:
   total_phases: 10
   completed_phases: 7
   total_plans: 141
-  completed_plans: 127
+  completed_plans: 128
   percent: 70
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 17 — admin forecast dashboard
+**Current focus:** Phase 17 — admin-forecast-dashboard
 
 ## Current Position
 
-Phase: 17
-Plan: Not started
+Phase: 17 (admin-forecast-dashboard) — EXECUTING
+Plan: 2 of 14
 Status: Ready to execute
-Last activity: 2026-10-07 -- Phase 17 planning complete
+Last activity: 2026-10-07
 
-Progress: [██████████] 98%
+Progress: [█████████░] 91%
 
 ## Performance Metrics
 
@@ -90,9 +90,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-07T12:34:32.883Z
+Last session: 2026-10-07T14:01:13.080Z
 Stopped at: Phase 17 UI-SPEC approved
-Resume file: .planning/phases/17-admin-forecast-dashboard/17-UI-SPEC.md
+Resume file: None
 
 ## Operator Next Steps
 

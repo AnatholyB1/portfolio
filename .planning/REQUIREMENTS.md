@@ -70,7 +70,7 @@
 ### Pilotage admin (ADM)
 
 - [x] **ADM-01**: L'admin voit tous les projets, leur étape en cours et ce qui les bloque
-- [ ] **ADM-02**: L'admin saisit les coûts (récurrents et par projet)
+- [x] **ADM-02**: L'admin saisit les coûts (récurrents et par projet)
 - [ ] **ADM-03**: Le dashboard affiche CA pipeline, signé, facturé et encaissé, en centimes, HT et TTC
 - [ ] **ADM-04**: Le dashboard projette marge et trésorerie à partir des échéances de paiement et des coûts
 - [ ] **ADM-05**: Le dashboard rattache le CA signé à la source d'acquisition du lead d'origine
@@ -170,7 +170,7 @@
 | PAY-05 | Phase 15 | Complete |
 | MAIL-03 | Phase 16 | Complete |
 | MAIL-04 | Phase 16 | Complete |
-| ADM-02 | Phase 17 | Pending |
+| ADM-02 | Phase 17 | Complete |
 | ADM-03 | Phase 17 | Pending |
 | ADM-04 | Phase 17 | Pending |
 | ADM-05 | Phase 17 | Pending |
