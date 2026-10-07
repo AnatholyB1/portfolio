@@ -1,9 +1,9 @@
 ---
 phase: 16-mailing-automation-completion
 verified: 2026-10-06T00:00:00Z
-status: human_needed
-score: 5/6 must-haves verified (1 partial, owner decision required)
-overrides_applied: 0
+status: passed
+score: 6/6 must-haves verified (1 by owner override)
+overrides_applied: 1
 gaps: []
 deferred:
   - truth: "Un projet livre sans avis declenche une demande d'avis envoyee"
@@ -21,7 +21,7 @@ human_verification:
 # Phase 16: Mailing automation completion - Verification Report
 
 **Phase Goal:** Les relances partent seules, et la delivrabilite et les obligations de desinscription sont maitrisees (MAIL-03, MAIL-04)
-**Status:** human_needed
+**Status:** passed (owner accepted the review-gate override and the residual cron caveat on 2026-10-07)
 **Re-verification:** No, initial verification
 
 ## Observable Truths
@@ -84,3 +84,8 @@ No TBD/FIXME/XXX blockers found in the reviewed phase files. `reviewLink: () => 
 No code gaps. Goal is achieved for document and deposit reminders, suppression, and unsubscribe/class separation, with production evidence. Status is human_needed only for two items: confirming the first scheduled cron run, and the owner's acceptance of the review-request gate against the literal roadmap wording.
 
 _Verifier: Claude (gsd-verifier)_
+
+## Owner Acceptance (2026-10-07)
+
+- **Override accepted:** must_have "Un projet livre sans avis declenche la relance prevue" is satisfied by pipeline + gate. Reason: gated by D-04 until Phase 18 supplies the unique review link and flips `REVIEW_REQUESTS_ENABLED`. Tracked for Phase 18.
+- **Cron caveat accepted, not confirmed:** the first scheduled `/api/cron/mail` run (06:00 UTC, 2026-10-07) could not be confirmed. The Vercel log view (UI and MCP) returned no entries for it, nor for `/desinscription`, which was hit the day before, so the log view is not conclusive evidence in either direction. The database shows no due mail that a run would have produced (first-run impact computed as 0 reminders, 0 review requests). Residual risk: if the cron does not run, reminders for unsigned documents will not queue. Re-check the first time a document reminder is expected.

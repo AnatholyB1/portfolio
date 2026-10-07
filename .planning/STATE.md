@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: executing
-stopped_at: Phase 16 context gathered
-last_updated: "2026-10-06T17:13:03.790Z"
-last_activity: 2026-10-06
+status: ready_to_plan
+stopped_at: Phase 16 complete (14/14) — ready to discuss Phase 17
+last_updated: 2026-10-07T11:13:22.236Z
+last_activity: 2026-10-07
 progress:
   total_phases: 10
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 127
-  completed_plans: 125
-  percent: 60
+  completed_plans: 127
+  percent: 70
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 16 — mailing-automation-completion
+**Current focus:** Phase 17 — admin forecast dashboard
 
 ## Current Position
 
-Phase: 16 (mailing-automation-completion) — EXECUTING
-Plan: 13 of 14
-Status: Ready to execute
-Last activity: 2026-10-06
+Phase: 17
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-07
 
 Progress: [██████████] 98%
 
@@ -36,7 +36,7 @@ Progress: [██████████] 98%
 
 **Velocity:**
 
-- Total plans completed: 120 (v1.0: 21, v1.1: 27)
+- Total plans completed: 134 (v1.0: 21, v1.1: 27)
 - v2.0: 0 plans executed
 
 *Updated after each plan completion*
