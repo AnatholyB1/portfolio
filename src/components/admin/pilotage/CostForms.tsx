@@ -8,7 +8,7 @@ import {
   saveBalanceAction,
   type CostFormState,
 } from '@/app/admin/pilotage/couts/actions';
-import { COST_CATEGORY_KEYS, COST_CATEGORY_LABELS } from '@/lib/server/pilotage/costSchemas';
+import { COST_CATEGORY_KEYS, COST_CATEGORY_LABELS } from './costCategories';
 import '../leads/leads.css';
 import './pilotage.css';
 

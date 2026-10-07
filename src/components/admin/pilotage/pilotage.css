@@ -115,3 +115,42 @@
     transition: none;
   }
 }
+
+/* Page /admin/pilotage/couts */
+.pt-admin .pt-pilot-costs-zone {
+  margin-top: 16px; /* 32px de gap + 16px = 48px entre zones */
+}
+.pt-admin .pt-pilot-costs-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+.pt-admin .pt-pilot-costs-form > .pt-btn-primary,
+.pt-admin .pt-pilot-costs-form > p {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.pt-admin .pt-pilot-costs-buttons {
+  display: flex;
+  gap: 8px;
+}
+.pt-admin .pt-pilot-costs-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-admin .pt-pilot-costs-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  border: 1px solid var(--pt-border-strong);
+}
+@media (max-width: 767px) {
+  .pt-admin .pt-pilot-costs-form {
+    grid-template-columns: 1fr;
+  }
+}
