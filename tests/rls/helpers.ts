@@ -668,3 +668,122 @@ export async function cleanup() {
     await svc().auth.admin.deleteUser(id);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Phase 17 (pilotage) helpers
+// Cost rows are append-only: cleanup() never deletes them.
+// ---------------------------------------------------------------------------
+
+/** Phase 17: add a recurring-cost version through the service role. Returns { data, error }. */
+export async function addRecurringCostRpc(args: {
+  seriesId?: string | null;
+  label?: string;
+  category?: string;
+  amountCents: number;
+  frequency?: 'monthly' | 'yearly';
+  startsOn: string;
+  endsOn?: string | null;
+  actor?: string | null;
+}) {
+  return svc().rpc('sv_add_recurring_cost', {
+    p_series_id: args.seriesId ?? null,
+    p_label: args.label ?? 'RLS coût',
+    p_category: args.category ?? 'outils',
+    p_amount_cents: args.amountCents,
+    p_frequency: args.frequency ?? 'monthly',
+    p_starts_on: args.startsOn,
+    p_ends_on: args.endsOn ?? null,
+    p_actor: args.actor ?? null,
+  });
+}
+
+/** Phase 17: stop a recurring-cost series from a date. Returns { data, error }. */
+export async function stopRecurringCostRpc(seriesId: string, from: string, actor?: string | null) {
+  return svc().rpc('sv_stop_recurring_cost', {
+    p_series_id: seriesId,
+    p_from: from,
+    p_actor: actor ?? null,
+  });
+}
+
+/** Phase 17: add a project cost. Returns { data, error }. */
+export async function addProjectCostRpc(args: {
+  projectId: string;
+  incurredOn: string;
+  category?: string;
+  label?: string;
+  amountCents: number;
+  vatCents?: number;
+  actor?: string | null;
+}) {
+  return svc().rpc('sv_add_project_cost', {
+    p_project_id: args.projectId,
+    p_incurred_on: args.incurredOn,
+    p_category: args.category ?? 'outils',
+    p_label: args.label ?? 'RLS coût',
+    p_amount_cents: args.amountCents,
+    p_vat_cents: args.vatCents ?? 0,
+    p_actor: args.actor ?? null,
+  });
+}
+
+/** Phase 17: void a project cost (appends a void row). Returns { data, error }. */
+export async function voidProjectCostRpc(costId: number | string, actor?: string | null) {
+  return svc().rpc('sv_void_project_cost', {
+    p_cost_id: costId,
+    p_actor: actor ?? null,
+  });
+}
+
+/** Phase 17: record a starting cash balance. Returns { data, error }. */
+export async function addCashBalanceRpc(
+  asOf: string,
+  amountCents: number,
+  note?: string | null,
+  actor?: string | null,
+) {
+  return svc().rpc('sv_add_cash_balance', {
+    p_as_of: asOf,
+    p_amount_cents: amountCents,
+    p_note: note ?? null,
+    p_actor: actor ?? null,
+  });
+}
+
+/** Phase 17: convert a lead into a client + project through the service role. Returns the project id (throws on error). */
+export async function convertTestLead(leadId: string, actorId?: string | null): Promise<string> {
+  const user = await makeUser('convert');
+  const { data, error } = await svc().rpc('sv_convert_lead', {
+    p_lead_id: leadId,
+    p_actor: actorId ?? null,
+    p_user_id: user.id,
+    p_email: user.email,
+    p_name: 'Client Converti',
+    p_siret: randomSiret(),
+    p_company: { name: 'Client Converti' },
+    p_company_source: 'manual',
+    p_project_title: 'Projet converti',
+    p_offer: 'site-vitrine',
+  });
+  if (error) throw new Error(`convertTestLead failed: ${error.message}`);
+  const row = (Array.isArray(data) ? data[0] : data) as { project_id: string };
+  return row.project_id;
+}
+
+/** Phase 17: correct a lead source with a journaled reason. Returns { data, error }. */
+export async function correctTestLeadSource(
+  leadId: string,
+  source: string,
+  campaign: string | null,
+  reason: string,
+  actorId: string,
+) {
+  return svc().rpc('sv_correct_lead_source', {
+    p_lead_id: leadId,
+    p_actor: actorId,
+    p_source: source,
+    p_medium: 'cpc',
+    p_campaign: campaign,
+    p_reason: reason,
+  });
+}
