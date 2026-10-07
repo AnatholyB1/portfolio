@@ -8,8 +8,11 @@ import { describe, expect, it } from 'vitest';
 const read = (rel: string) => readFileSync(new URL(rel, import.meta.url), 'utf8');
 
 const migrations =
+  read('../../../../supabase/migrations/20261004000000_sv_projects_engine.sql') +
+  read('../../../../supabase/migrations/20261005000000_sv_documents.sql') +
   read('../../../../supabase/migrations/20261007000000_sv_invoices.sql') +
-  read('../../../../supabase/migrations/20261007010000_sv_payments.sql');
+  read('../../../../supabase/migrations/20261007010000_sv_payments.sql') +
+  read('../../../../supabase/migrations/20261009000000_sv_pilotage.sql');
 
 /** Colonnes accordées à `authenticated` : Set de colonnes, `'all'` si toute la table, `undefined` si hors migrations de la phase. */
 function grantsFor(table: string): Set<string> | 'all' | undefined {
@@ -42,6 +45,7 @@ const FILES = [
   '../stripe/checkout.ts',
   '../stripe/customers.ts',
   '../stripe/refund.ts',
+  '../pilotage/load.ts',
   '../../../app/admin/projets/actions.ts',
 ];
 
@@ -99,6 +103,10 @@ describe('RLS column grants guard', () => {
       }
     });
   }
+
+  it('the pilotage loader is covered by the guard (not vacuous)', () => {
+    expect(rlsSelects(read('../pilotage/load.ts')).length).toBeGreaterThanOrEqual(11);
+  });
 
   it('INVOICE_COLS is a subset of the sv_invoices grant', () => {
     const m = read('./read.ts').match(/export const INVOICE_COLS =\s*'([^']+)'/);
