@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
-status: ready_to_plan
-stopped_at: Phase 16 complete (14/14) — ready to discuss Phase 17
-last_updated: 2026-10-07T11:13:22.236Z
+status: planning
+stopped_at: Phase 17 context gathered
+last_updated: "2026-10-07T12:21:00.547Z"
 last_activity: 2026-10-07
 progress:
   total_phases: 10
@@ -90,9 +90,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-06T17:13:03.780Z
-Stopped at: Phase 16 context gathered
-Resume file: None
+Last session: 2026-10-07T12:21:00.492Z
+Stopped at: Phase 17 context gathered
+Resume file: .planning/phases/17-admin-forecast-dashboard/17-CONTEXT.md
 
 ## Operator Next Steps
 
