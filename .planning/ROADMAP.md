@@ -466,7 +466,7 @@ Plans:
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
-- [ ] 17-13-PLAN.md — Owner-approved production schema apply
+- [x] 17-13-PLAN.md — Owner-approved production schema apply
 
 **Wave 8** *(blocked on Wave 7 completion)*
 
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 12/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 13/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
