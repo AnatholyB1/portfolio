@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
-stopped_at: Phase 17 UI-SPEC approved
-last_updated: "2026-10-07T18:21:39.228Z"
+stopped_at: "Phase 17: 13/14 plans done; deployed to production; 17-14 Task 2 (owner verifies dashboard) + Task 3 (delete sv-rls-p17) pending"
+last_updated: "2026-10-07T18:31:00.049Z"
 last_activity: 2026-10-07
 progress:
   total_phases: 10
@@ -92,9 +92,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-07T18:21:39.219Z
-Stopped at: Phase 17 UI-SPEC approved
-Resume file: None
+Last session: 2026-10-07T18:31:00.038Z
+Stopped at: Phase 17: 13/14 plans done; deployed to production; 17-14 Task 2 (owner verifies dashboard) + Task 3 (delete sv-rls-p17) pending
+Resume file: .planning/phases/17-admin-forecast-dashboard/17-14-PLAN.md
 
 ## Operator Next Steps
 
