@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 17 UI-SPEC approved
-last_updated: "2026-10-07T14:01:13.090Z"
+last_updated: "2026-10-07T14:01:22.198Z"
 last_activity: 2026-10-07
 progress:
   total_phases: 10
@@ -70,6 +70,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 15]: 15-07: buildMail throws on invalid payment payloads; rules.test closed lists read phase-15 invoices migration
 - [Phase 15]: 15-09: Checkout amount from RLS-read invoice minus credits; webhook ignored_unresolved returns 200 (no retry)
 - [Phase ?]: 16-03: marketing sender bonjour@sevalys.com on verified sevalys.com domain (A2), no sending subdomain
+- [Phase 17]: [Phase 17-01]: latest recurring-cost version ordered by month of starts_on then id; migration has no begin/commit (17-13 wraps it)
 
 ### Pending Todos
 
