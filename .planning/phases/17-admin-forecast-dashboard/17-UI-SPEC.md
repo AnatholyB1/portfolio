@@ -1,7 +1,7 @@
 ---
 phase: 17
 slug: admin-forecast-dashboard
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-10-07
