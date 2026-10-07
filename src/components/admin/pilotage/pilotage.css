@@ -1,0 +1,117 @@
+/* Pilotage admin (UI-SPEC 17). Classes nouvelles scopées sous .pt-admin, préfixe pt-pilot-. */
+
+.pt-admin .pt-pilot-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pt-admin .pt-pilot-kpi-link {
+  display: block;
+  min-height: 44px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pt-admin .pt-pilot-kpi-link:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-pilot-kpi-link-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.pt-admin .pt-pilot-kpi-rule {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.pt-admin .pt-pilot-num {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-admin .pt-pilot-chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-admin .pt-pilot-chart {
+  width: 100%;
+  height: 240px;
+  background: var(--bg);
+}
+.pt-admin .pt-pilot-chart svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pt-admin .pt-pilot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-pilot-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pt-admin .pt-pilot-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+}
+.pt-admin .pt-pilot-swatch-line {
+  height: 0;
+  border-top: 2px solid var(--acid);
+}
+.pt-admin .pt-pilot-swatch-fill {
+  background: var(--ink-dim);
+}
+.pt-admin .pt-pilot-swatch-outline {
+  border: 1.5px solid var(--ink-dim);
+}
+
+.pt-admin .pt-pilot-overdue {
+  display: block;
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-pilot-warn-glyph {
+  color: var(--warm);
+  font-weight: 500;
+}
+
+.pt-admin .pt-pilot-table tbody tr {
+  transition: background-color 150ms;
+}
+.pt-admin .pt-pilot-table tbody tr:hover {
+  background: var(--bg-3);
+}
+.pt-admin .pt-pilot-table tfoot th,
+.pt-admin .pt-pilot-table tfoot td {
+  font-weight: 500;
+  border-top: 1px solid var(--pt-border-strong);
+}
+
+.pt-admin .pt-pilot-anomalies {
+  margin: 8px 0 0;
+  padding-left: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-admin .pt-pilot-table tbody tr {
+    transition: none;
+  }
+}
