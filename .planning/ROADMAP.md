@@ -437,7 +437,7 @@ Plans:
 **Wave 1**
 
 - [x] 17-01-PLAN.md — Migration 20261009000000_sv_pilotage.sql: 3 append-only cost/balance tables, RLS, 5 service_role RPCs, static lint
-- [ ] 17-02-PLAN.md — Pure periods, URL whitelist, invoiced/collected rules (deposit, cumulative refunds, test series)
+- [x] 17-02-PLAN.md — Pure periods, URL whitelist, invoiced/collected rules (deposit, cumulative refunds, test series)
 - [ ] 17-03-PLAN.md — Pure pipeline, signed-at-date with amendments, signed by frozen lead source
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 1/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 2/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
