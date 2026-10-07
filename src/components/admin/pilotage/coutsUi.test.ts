@@ -53,3 +53,12 @@ describe('/admin/pilotage/couts page guards', () => {
     expect(page).toContain('href="/admin/pilotage"');
   });
 });
+
+describe('cost forms are not floating dropdown panels (production defect 2026-10-07)', () => {
+  it('pilotage.css neutralises the absolute positioning of pt-lead-panel on the cost forms', () => {
+    const css = readFileSync(new URL('./pilotage.css', import.meta.url), 'utf8');
+    const rule = css.match(/\.pt-admin \.pt-lead-panel\.pt-pilot-costs-form\s*\{([^}]*)\}/);
+    expect(rule, 'override rule missing').not.toBeNull();
+    expect(rule![1]).toContain('position: static');
+  });
+});

@@ -126,6 +126,14 @@
   gap: 16px;
   align-items: end;
 }
+/* La classe pt-lead-panel (leads.css) est un menu déroulant en position absolue :
+   dans un formulaire de page elle le sortirait du flux. On la neutralise ici. */
+.pt-admin .pt-lead-panel.pt-pilot-costs-form {
+  position: static;
+  z-index: auto;
+  width: auto;
+  margin-top: 8px;
+}
 .pt-admin .pt-pilot-costs-form > .pt-btn-primary,
 .pt-admin .pt-pilot-costs-form > p {
   grid-column: 1 / -1;
