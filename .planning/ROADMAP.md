@@ -442,7 +442,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 17-04-PLAN.md — Pure cost unfolding (versions, stops, voids), margins, 6-month cash projection
+- [x] 17-04-PLAN.md — Pure cost unfolding (versions, stops, voids), margins, 6-month cash projection
 - [ ] 17-05-PLAN.md — Cost zod schemas, RPC wrappers, guarded server actions
 - [ ] 17-06-PLAN.md — [BLOCKING] RLS branch sv-rls-p17 (owner-approved), migration push, helpers
 
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 3/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 4/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
