@@ -452,12 +452,12 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 17-08-PLAN.md — Formatters, SVG cash curve, tiles, pilotage.css, AdminNav "Pilotage"
+- [x] 17-08-PLAN.md — Formatters, SVG cash curve, tiles, pilotage.css, AdminNav "Pilotage"
 - [ ] 17-10-PLAN.md — RLS suite: append-only, isolation, RPC codes, concordance with raw SQL
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 17-09-PLAN.md — Source table, project margin table, drill-down panel (composed realized-margin detail), components guard test
+- [x] 17-09-PLAN.md — Source table, project margin table, drill-down panel (composed realized-margin detail), components guard test
 - [ ] 17-11-PLAN.md — /admin/pilotage/couts page, forms, version/stop/void panels
 
 **Wave 6** *(blocked on Wave 5 completion)*
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 6/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 8/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
