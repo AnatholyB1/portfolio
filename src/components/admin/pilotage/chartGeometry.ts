@@ -29,7 +29,9 @@ export function chartGeometry(months: CashMonth[]): Geometry {
   const closings = months.map((m) => m.closingCents);
   let min = Math.min(0, ...closings, ...months.map((m) => -m.outflowCents));
   let max = Math.max(0, ...closings, ...months.map((m) => m.inflowCents));
-  if (max === min) max = min + 100;
+  // Tout est à zéro : on garde une échelle fictive pour dessiner, mais sans graduation trompeuse.
+  const flat = max === min;
+  if (flat) max = min + 100;
   // Marge de respiration pour des graduations arrondies à l'euro.
   min = Math.floor(min / 100) * 100;
   max = Math.ceil(max / 100) * 100;
@@ -64,7 +66,7 @@ export function chartGeometry(months: CashMonth[]): Geometry {
   const rawStep = span / 4;
   const step = Math.max(100, Math.round(rawStep / 100) * 100);
   const yTicks: { y: number; cents: number }[] = [];
-  for (let c = Math.ceil(min / step) * step; c <= max; c += step) {
+  for (let c = Math.ceil(min / step) * step; !flat && c <= max; c += step) {
     if (c === 0) continue;
     yTicks.push({ y: y(c), cents: c });
   }

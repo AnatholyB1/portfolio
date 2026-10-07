@@ -81,3 +81,11 @@ describe('chartGeometry', () => {
     for (const t of g.yTicks) expect(t.cents % 100).toBe(0);
   });
 });
+
+describe('flat chart (all zeros)', () => {
+  it('draws no misleading y graduation when every month is zero', () => {
+    const zero = { openingCents: 0, inflowCents: 0, outflowCents: 0, closingCents: 0 };
+    const g = chartGeometry(Array.from({ length: 6 }, (_, i) => ({ ...zero, month: `2026-${10 + i}` })) as never);
+    expect(g.yTicks).toEqual([]);
+  });
+});

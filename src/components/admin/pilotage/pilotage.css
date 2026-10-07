@@ -139,6 +139,13 @@
   grid-column: 1 / -1;
   justify-self: start;
 }
+/* admin.css force nowrap sur la colonne Action (bureau) : les panneaux de confirmation
+   doivent rester dans la colonne et passer à la ligne. */
+.pt-admin .pt-pilot-table td[data-label="Action"] form {
+  white-space: normal;
+  min-width: 240px;
+  max-width: 360px;
+}
 .pt-admin .pt-pilot-costs-buttons {
   display: flex;
   gap: 8px;

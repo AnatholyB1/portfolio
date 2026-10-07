@@ -62,3 +62,13 @@ describe('cost forms are not floating dropdown panels (production defect 2026-10
     expect(rule![1]).toContain('position: static');
   });
 });
+
+describe('confirmation panels stay inside the Action column (production defect 2026-10-07)', () => {
+  it('pilotage.css lets forms in the Action cell wrap despite admin.css nowrap', () => {
+    const css = readFileSync(new URL('./pilotage.css', import.meta.url), 'utf8');
+    const rule = css.match(/\.pt-pilot-table td\[data-label="Action"\] form\s*\{([^}]*)\}/);
+    expect(rule, 'wrap override missing').not.toBeNull();
+    expect(rule![1]).toContain('white-space: normal');
+    expect(rule![1]).toContain('max-width');
+  });
+});
