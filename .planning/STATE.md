@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 17 UI-SPEC approved
-last_updated: "2026-10-07T17:37:32.236Z"
+last_updated: "2026-10-07T17:45:02.037Z"
 last_activity: 2026-10-07
 progress:
   total_phases: 10
   completed_phases: 7
   total_plans: 141
-  completed_plans: 138
+  completed_plans: 139
   percent: 70
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 ## Current Position
 
 Phase: 17 (admin-forecast-dashboard) — EXECUTING
-Plan: 12 of 14
+Plan: 13 of 14
 Status: Ready to execute
 Last activity: 2026-10-07
 
-Progress: [██████████] 98%
+Progress: [██████████] 99%
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Full decision log lives in PROJECT.md Key Decisions table. v2.0 scoping decision
 - [Phase 15]: 15-09: Checkout amount from RLS-read invoice minus credits; webhook ignored_unresolved returns 200 (no retry)
 - [Phase ?]: 16-03: marketing sender bonjour@sevalys.com on verified sevalys.com domain (A2), no sending subdomain
 - [Phase 17]: [Phase 17-01]: latest recurring-cost version ordered by month of starts_on then id; migration has no begin/commit (17-13 wraps it)
+- [Phase 17]: 17-12: chart geometry helper renamed chartGeometry.ts (case clash with TreasuryChart.tsx on Windows)
 
 ### Pending Todos
 
@@ -91,7 +92,7 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-07T17:37:25.037Z
+Last session: 2026-10-07T17:44:54.110Z
 Stopped at: Phase 17 UI-SPEC approved
 Resume file: None
 

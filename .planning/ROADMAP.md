@@ -462,7 +462,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 17-12-PLAN.md — /admin/pilotage page, cross-links, full suite and build
+- [x] 17-12-PLAN.md — /admin/pilotage page, cross-links, full suite and build
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
@@ -521,6 +521,6 @@ Plans:
 | 14. Electronic signature | v2.0 | 19/19 | Complete   | 2026-10-04 |
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
-| 17. Admin forecast dashboard | v2.0 | 11/14 | In Progress|  |
+| 17. Admin forecast dashboard | v2.0 | 12/14 | In Progress|  |
 | 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
