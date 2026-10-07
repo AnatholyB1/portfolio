@@ -79,6 +79,9 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
   return (
     <section className="pt-card pt-pilot-stack" aria-labelledby="costs-title">
       <div>
+        <a href="/admin/pilotage" className="pt-back">
+          Retour au pilotage
+        </a>
         <h1 id="costs-title" className="pt-heading" style={{ marginBottom: 24 }}>
           Coûts et solde de départ
         </h1>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CashMonth } from '@/lib/server/pilotage/forecast';
-import { chartGeometry, VIEW_H, VIEW_W } from './treasuryChart';
+import { chartGeometry, VIEW_H, VIEW_W } from './chartGeometry';
 
 function month(i: number, o: number, inf: number, out: number): CashMonth {
   return {

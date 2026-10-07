@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { CashProjection } from '@/lib/server/pilotage/forecast';
 import { monthLongFr, monthShortFr } from '@/lib/server/pilotage/periods';
 import { formatMonthFr, formatSignedEuros } from './format';
-import { chartGeometry, VIEW_H, VIEW_W } from './treasuryChart';
+import { chartGeometry, VIEW_H, VIEW_W } from './chartGeometry';
 import './pilotage.css';
 
 type Props = { cash: CashProjection; balanceLink?: ReactNode };

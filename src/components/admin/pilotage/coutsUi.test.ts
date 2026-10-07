@@ -50,6 +50,6 @@ describe('/admin/pilotage/couts page guards', () => {
   it('handles PilotageLoadError with an error state', () => {
     expect(page).toContain('PilotageLoadError');
     expect(page).toContain('href="/admin/pilotage/couts"');
-    expect(page).not.toContain('href="/admin/pilotage"');
+    expect(page).toContain('href="/admin/pilotage"');
   });
 });
