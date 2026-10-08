@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { DetailRow, DetailView } from '@/lib/server/pilotage/dashboard';
 import { pilotageHref, type PilotageParams } from '@/lib/server/pilotage/params';
+import Pager from '@/components/admin/shared/Pager';
 import { formatDateFr, formatSignedEuros } from './format';
 import './pilotage.css';
 
@@ -57,7 +58,7 @@ export default function DetailPanel({ detail, params }: Props) {
         {`Détail : ${detail.title}`}
       </h2>
       <p className="pt-helper">
-        Total des lignes = <span className="pt-funnel-num">{formatSignedEuros(detail.totalCents)}</span>
+        Total des lignes = <span className="pt-num">{formatSignedEuros(detail.totalCents)}</span>
       </p>
       <p>
         <Link
@@ -71,11 +72,12 @@ export default function DetailPanel({ detail, params }: Props) {
         <p className="pt-empty">Aucun élément ne compose ce chiffre pour cette période.</p>
       ) : (
         <>
-          <table className="pt-table pt-admin-table">
+          <table className="pt-table pt-admin-table pt-pilot-table">
+            <caption className="pt-sr-only">{`Détail : ${detail.title}`}</caption>
             <thead>
               <tr>
-                {columns.map((c) => (
-                  <th key={c} scope="col">
+                {columns.map((c, i) => (
+                  <th key={c} scope="col" className={i === amountIndex ? 'pt-num' : undefined}>
                     {c}
                   </th>
                 ))}
@@ -90,7 +92,7 @@ export default function DetailPanel({ detail, params }: Props) {
                       <td
                         key={columns[i]}
                         data-label={columns[i]}
-                        className={i === amountIndex ? 'pt-funnel-num' : undefined}
+                        className={i === amountIndex ? 'pt-num' : undefined}
                       >
                         {v}
                       </td>
@@ -100,21 +102,13 @@ export default function DetailPanel({ detail, params }: Props) {
               })}
             </tbody>
           </table>
-          {detail.pageCount > 1 ? (
-            <nav aria-label="Pagination du détail" className="pt-pilot-pager">
-              {detail.page > 1 ? (
-                <Link className="pt-btn-ghost" href={pilotageHref(params, { page: detail.page - 1 })}>
-                  Précédente
-                </Link>
-              ) : null}
-              <span>{`Page ${detail.page} sur ${detail.pageCount}`}</span>
-              {detail.page < detail.pageCount ? (
-                <Link className="pt-btn-ghost" href={pilotageHref(params, { page: detail.page + 1 })}>
-                  Suivante
-                </Link>
-              ) : null}
-            </nav>
-          ) : null}
+          <Pager
+            page={detail.page}
+            pageCount={detail.pageCount}
+            hasNext={detail.page < detail.pageCount}
+            hrefFor={(page) => pilotageHref(params, { page })}
+            label="Pagination du détail"
+          />
         </>
       )}
     </section>
