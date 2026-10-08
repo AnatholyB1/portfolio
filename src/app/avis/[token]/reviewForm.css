@@ -1,0 +1,90 @@
+/* Formulaire d'avis (Phase 18) : classes rv-* scopées, variables existantes uniquement. */
+.pt-root .rv-card {
+  max-width: 640px;
+  overflow-wrap: anywhere;
+}
+.rv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rv-summary-empty {
+  display: none;
+}
+.rv-summary:focus {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.rv-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.rv-rating {
+  display: flex;
+  gap: 4px;
+}
+.rv-star {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.rv-star:focus-visible,
+.rv-link:focus-visible,
+.rv-choice input:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.rv-textarea {
+  min-height: 160px;
+  resize: vertical;
+  font: inherit;
+}
+.rv-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.rv-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.rv-choice input {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--acid);
+}
+.rv-link {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.rv-thanks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rv-google {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv-star {
+    transition: none;
+  }
+}
