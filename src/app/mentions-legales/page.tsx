@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Mentions Légales',
-  description: 'Mentions légales de Sèvalys, agence IA basée à Tours, France.',
+  description: 'Mentions légales de Sèvalys, agence digitale basée à Tours, France.',
   robots: { index: true, follow: true },
 };
 
@@ -41,7 +41,7 @@ export default function MentionsLegalesPage() {
           {/* 1 – Éditeur du site */}
           <Section title="1. Éditeur du site">
             <p><span className="text-[var(--ink)] font-medium">Nom :</span> Sèvalys</p>
-            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence IA — marque exploitée par Anatholy Bricon</p>
+            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence digitale — marque exploitée par Anatholy Bricon</p>
             <p><span className="text-[var(--ink)] font-medium">Adresse :</span> Tours (37), France</p>
             <p>
               <span className="text-[var(--ink)] font-medium">Contact :</span>{' '}

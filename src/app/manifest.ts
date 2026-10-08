@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Sèvalys — Agence IA · Agents vocaux & automatisations",
+    name: "Sèvalys — Agence digitale · Sites, outils sur mesure & IA",
     short_name: "Sèvalys",
     description:
-      "Agence IA à Tours : agents vocaux téléphoniques 24/7, automatisations métier et sites qui convertissent. Optimisation business par l'IA.",
+      "Agence digitale à Tours : sites et lead magnets qui convertissent, outils de gestion sur mesure, intégrations IA.",
     id: "/",
     start_url: "/",
     scope: "/",

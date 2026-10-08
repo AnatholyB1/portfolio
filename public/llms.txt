@@ -1,12 +1,14 @@
 # Sèvalys
 
-> Sèvalys est une agence IA basée à Tours (Indre-et-Loire, France). Elle conçoit des agents vocaux téléphoniques qui répondent aux clients 24/7, des automatisations métier et des sites web. Positionnement : l'optimisation business par l'intelligence artificielle. Intervention à distance partout en France.
+> Sèvalys est une agence digitale complète basée à Tours (Indre-et-Loire, France). Elle crée des sites web et des lead magnets qui convertissent, des outils de gestion sur mesure et des intégrations d'intelligence artificielle (agents vocaux téléphoniques, automatisations), ainsi que le branding et la publicité (Meta Ads, Google Ads). Intervention à distance partout en France.
 
 ## Ce que fait Sèvalys
 
 - **Agent vocal IA téléphonique** : un standard téléphonique automatisé qui décroche, comprend la demande en français naturel, prend une commande ou un rendez-vous, met à jour le CRM et notifie l'équipe — sans appel manqué, jour et nuit. Stack : VAPI + numéro Twilio, voix ElevenLabs, connexion CRM via protocole MCP.
-- **Automatisations métier** : suppression des tâches répétitives (saisie, relances, synchronisation d'outils) pour libérer du temps.
-- **Sites web** : sites vitrines et outils de gestion modernes, performants, optimisés pour convertir et pour le référencement local.
+- **Sites web et lead magnets** : sites vitrines performants, optimisés pour convertir et pour le référencement local, et outils de capture de contacts (simulateur de diagnostic, calculateur de ROI).
+- **Outils de gestion sur mesure** : espaces clients, tableaux de bord et outils internes conçus pour votre activité.
+- **Automatisations et intégrations IA** : suppression des tâches répétitives (saisie, relances, synchronisation d'outils) et IA intégrée à vos outils.
+- **Branding, community management et publicité** : identité de marque, réseaux sociaux, Meta Ads et Google Ads.
 
 ## Pour qui
 
@@ -15,7 +17,7 @@ PME, commerces, restaurants, boulangeries, écoles et services locaux qui veulen
 ## Faits clés
 
 - Nom de marque : Sèvalys (parfois écrit Sevalys)
-- Type : agence IA / agence agent IA
+- Type : agence digitale (sites, lead magnets, outils sur mesure, IA)
 - Localisation : Tours, Indre-et-Loire, France — à distance partout en France
 - Devis : sous 48h, sans engagement
 - Premier échange : audit téléphonique offert

@@ -32,15 +32,18 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sevalys.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Sèvalys — Agence IA · Agent vocal téléphonique, automatisations & sites | Tours",
+    default: "Sèvalys — Agence digitale à Tours · Sites, lead magnets, outils sur mesure & IA",
     template: "%s · Sèvalys",
   },
   description:
-    "Sèvalys, agence IA à Tours. On déploie des agents vocaux téléphoniques qui répondent à vos clients 24/7, des automatisations métier et des sites qui convertissent. Optimisation business par l'IA. Devis sous 48h.",
+    "Sèvalys, agence digitale complète à Tours. Sites et lead magnets qui convertissent, outils de gestion sur mesure, intégrations IA (agents vocaux, automatisations), branding et publicité. Devis sous 48h.",
   keywords: [
     "Sèvalys",
     "Sevalys",
+    "agence digitale",
     "agence IA",
+    "lead magnet",
+    "outils de gestion sur mesure",
     "agence agent IA",
     "agent vocal IA",
     "agent téléphonique IA",
@@ -72,9 +75,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Sèvalys — Agence IA · Agents vocaux, automatisations & sites",
+    title: "Sèvalys — Agence digitale · Sites, lead magnets, outils sur mesure & IA",
     description:
-      "Agents vocaux téléphoniques 24/7, automatisations métier et sites qui convertissent. Optimisation business par l'IA. Basé à Tours, France.",
+      "Sites et lead magnets qui convertissent, outils de gestion sur mesure, agents vocaux et automatisations IA. Basé à Tours, France.",
     type: "website",
     locale: "fr_FR",
     url: SITE_URL,
@@ -84,15 +87,15 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Sèvalys — Agence IA · Agent vocal téléphonique & automatisations",
+        alt: "Sèvalys — Agence digitale · Sites, outils sur mesure & IA",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sèvalys — Agence IA · Agents vocaux & automatisations",
+    title: "Sèvalys — Agence digitale · Sites, outils sur mesure & IA",
     description:
-      "Agents vocaux téléphoniques 24/7, automatisations et sites qui convertissent. Optimisation business par l'IA.",
+      "Sites et lead magnets qui convertissent, outils sur mesure, agents vocaux et automatisations IA.",
     images: ["/og-image.png"],
   },
   category: "technology",
@@ -112,7 +115,7 @@ export default function RootLayout({
     logo: `${SITE_URL}/icon-512.png`,
     image: `${SITE_URL}/og-image.png`,
     description:
-      "Sèvalys est une agence IA basée à Tours : agents vocaux téléphoniques, automatisations métier et sites web. Positionnement : optimisation business par l'intelligence artificielle.",
+      "Sèvalys est une agence digitale complète basée à Tours : sites web et lead magnets, outils de gestion sur mesure, intégrations d'intelligence artificielle (agents vocaux, automatisations), branding et publicité.",
     slogan: "Optimisation business par l'IA.",
     email: "contact@sevalys.com",
     telephone: "+33 6 07 18 41 33",
@@ -122,6 +125,8 @@ export default function RootLayout({
       "Automatisation des processus métier",
       "Intelligence artificielle appliquée",
       "Création de sites web",
+      "Lead magnets",
+      "Outils de gestion sur mesure",
       "Optimisation business par l'IA",
     ],
     sameAs: ["https://www.instagram.com/sevalys.ai"],
@@ -139,16 +144,21 @@ export default function RootLayout({
     name: "Sèvalys",
     parentOrganization: { "@id": `${SITE_URL}/#organization` },
     description:
-      "Agence IA à Tours — agents vocaux téléphoniques 24/7, automatisations métier et sites web pour PME, commerces, restaurants et services.",
+      "Agence digitale à Tours — sites et lead magnets, outils de gestion sur mesure, intégrations IA (agents vocaux, automatisations), branding et publicité pour PME, commerces, restaurants et services.",
     url: SITE_URL,
     logo: `${SITE_URL}/icon-192.png`,
     image: `${SITE_URL}/og-image.png`,
     telephone: "+33 6 07 18 41 33",
     email: "contact@sevalys.com",
     serviceType: [
+      "Création de site web",
+      "Lead magnet",
+      "Outils de gestion sur mesure",
       "Agent vocal IA téléphonique",
       "Automatisation métier",
-      "Création de site web",
+      "Branding",
+      "Community management",
+      "Publicité Meta Ads et Google Ads",
     ],
     address: {
       "@type": "PostalAddress",
