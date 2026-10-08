@@ -1,30 +1,5 @@
 /* Admin leads : classes nouvelles, scopées sous .pt-admin (UI-SPEC A1). */
 
-.pt-admin .pt-admin-nav ul {
-  display: flex;
-  gap: 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.pt-admin .pt-admin-nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink-dim);
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-}
-.pt-admin .pt-admin-nav a:hover {
-  color: var(--ink);
-}
-.pt-admin .pt-admin-nav a.pt-admin-nav-active {
-  color: var(--ink);
-  border-bottom-color: var(--acid);
-}
-.pt-admin .pt-admin-nav a:focus-visible,
 .pt-admin .pt-lead-pill:focus-visible,
 .pt-admin .pt-lead-pill-menu button:focus-visible,
 .pt-admin .pt-lead-filters select:focus-visible,
@@ -364,8 +339,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pt-admin .pt-lead-pill,
-  .pt-admin .pt-lead-pill-menu button,
-  .pt-admin .pt-admin-nav a {
+  .pt-admin .pt-lead-pill-menu button {
     transition: none;
   }
 }

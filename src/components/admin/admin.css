@@ -1,5 +1,213 @@
 /* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
 
+/* ---------- Coque : lien d'évitement, colonne de page, navigation ---------- */
+.pt-root .pt-skip-link {
+  position: absolute;
+  top: -120px;
+  left: 16px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--bg-2);
+  border: 1px solid var(--acid);
+  border-radius: 4px;
+}
+.pt-root .pt-skip-link:focus-visible {
+  top: 8px;
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+.pt-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pt-admin .pt-admin-nav {
+  position: relative;
+}
+.pt-admin .pt-admin-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-admin-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.pt-admin .pt-admin-nav a:hover {
+  color: var(--ink);
+}
+.pt-admin .pt-admin-nav a.pt-admin-nav-active {
+  color: var(--ink);
+  border-bottom-color: var(--acid);
+}
+.pt-admin .pt-admin-nav a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-admin-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Utilitaires de mise en page (remplacent les style={{}} des pages) ---------- */
+.pt-admin .pt-admin-title {
+  margin-bottom: 24px;
+}
+.pt-admin .pt-admin-title-tight {
+  margin-bottom: 16px;
+}
+.pt-admin .pt-admin-lede {
+  margin-bottom: 24px;
+}
+.pt-admin .pt-admin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-admin .pt-admin-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.pt-admin .pt-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-admin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+}
+.pt-admin .pt-admin-mt-16 {
+  margin-top: 16px;
+}
+.pt-admin .pt-admin-mt-24 {
+  margin-top: 24px;
+}
+
+/* États vides, erreur et chargement des pages d'administration. */
+.pt-admin .pt-admin-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.pt-admin .pt-admin-skeleton {
+  display: block;
+  height: 24px;
+  max-width: 480px;
+  background: var(--bg-3);
+  border-radius: 4px;
+}
+.pt-admin .pt-admin-skeleton-block {
+  height: 160px;
+  max-width: none;
+}
+
+/* Bouton désactivé exposé par aria-disabled (raison visible à côté). */
+.pt-admin .pt-btn-ghost[aria-disabled="true"],
+.pt-admin .pt-btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination commune (composant Pager). */
+.pt-admin .pt-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+.pt-admin .pt-pager-info {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-pager a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+/* À traiter : file de travail de la page d'accueil. */
+.pt-admin .pt-queue {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .pt-admin .pt-queue {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pt-admin .pt-queue-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+  padding: 8px 16px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-left: 2px solid var(--acid);
+  border-radius: 4px;
+}
+.pt-admin .pt-queue-link:hover {
+  background: var(--bg-3);
+}
+.pt-admin .pt-queue-link:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-queue-count {
+  min-width: 2ch;
+  font-family: var(--font-mono), monospace;
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pt-admin .pt-queue-unavailable {
+  border-left-color: var(--warm);
+}
+.pt-admin .pt-queue-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pt-admin .pt-queue-hint {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
 .pt-admin .pt-sr-only {
   position: absolute;
   width: 1px;
