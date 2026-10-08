@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../portal.css";
-import { PROJECT_COPY } from "@/lib/projects/copy";
+import SkipLink from "@/components/portal/SkipLink";
 
 // Espace privé (D-15) : jamais indexé, titre propre (le gabarit racine ajoute
 // « · Sèvalys »). `alternates: {}` supprime la canonique "/" héritée du layout racine.
@@ -19,9 +19,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="pt-root">
-      <a href="#contenu" className="pt-skip">
-        {PROJECT_COPY.boundaries.skipToContent}
-      </a>
+      <SkipLink />
       {children}
     </div>
   );

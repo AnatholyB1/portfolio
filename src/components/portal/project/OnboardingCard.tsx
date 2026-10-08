@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useId, useRef, useState, type ReactNode } from 'react';
+import { useActionState, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { Check, CircleAlert } from 'lucide-react';
 import {
   confirmCompanyAction,
@@ -27,7 +27,7 @@ type Props = { company: CompanySnapshot | null; siret: string; onboarding: Onboa
 
 function Badge({ done }: { done: boolean }) {
   return (
-    <span className="pt-status" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginLeft: 8 }}>
+    <span className="pt-status pt-onb-badge">
       {done ? <Check size={14} aria-hidden="true" /> : null}
       {done ? COPY.complete : COPY.todo}
     </span>
@@ -38,7 +38,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
     <p id={id} className="pt-error">
-      <CircleAlert size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+      <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
       <span>{message}</span>
     </p>
   );
@@ -59,7 +59,7 @@ function Field(props: {
   const describedBy = [props.error ? errId : null, props.help ? helpId : null].filter(Boolean).join(' ') || undefined;
   return (
     <div className="pt-field">
-      <label htmlFor={id}>
+      <label className="pt-label" htmlFor={id}>
         {props.label}
         {props.required ? ' (obligatoire)' : ''}
       </label>
@@ -79,14 +79,27 @@ function BlockForm(props: {
   block: OnboardingBlock;
   legend: string;
   done: boolean;
-  children: (a: { state: PortalActionState; uid: string; markDirty: () => void }) => ReactNode;
+  children: (a: { state: PortalActionState; uid: string; markDirty: (opts?: { saveNow?: boolean }) => void }) => ReactNode;
 }) {
   const uid = useId();
   const formRef = useRef<HTMLFormElement>(null);
   const [dirty, setDirty] = useState(false);
+  const [saveTick, setSaveTick] = useState(0);
   const [state, formAction, pending] = useActionState(saveOnboardingAction, INITIAL);
 
-  const markDirty = () => {
+  useEffect(() => {
+    if (saveTick > 0) formRef.current?.requestSubmit();
+  }, [saveTick]);
+
+  // Un champ texte s'enregistre à la sortie du bloc. Une case ou une option qui complète le bloc
+  // (ex. « Non assujetti ») s'enregistre tout de suite : pas de perte si l'onglet se ferme ensuite.
+  const markDirty = (opts?: { saveNow?: boolean }) => {
+    if (opts?.saveNow) {
+      setDirty(false);
+      // L'envoi part dans un effet, après le rendu de la valeur contrôlée.
+      setSaveTick((t) => t + 1);
+      return;
+    }
     setDirty(true);
   };
   const flush = () => {
@@ -118,7 +131,7 @@ function BlockForm(props: {
         </p>
         {state.status === 'error' && !state.fieldErrors ? (
           <p className="pt-error" role="alert">
-            <CircleAlert size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{state.message}</span>
           </p>
         ) : null}
@@ -155,7 +168,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
         </div>
         {confirmedAt ? (
           <p className="pt-success">
-            <Check size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <Check size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{COPY.confirmedOn(formatDateFr(confirmedAt))}</span>
           </p>
         ) : (
@@ -173,7 +186,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
         </p>
         {state.status === 'error' ? (
           <p className="pt-error" role="alert">
-            <CircleAlert size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{state.message}</span>
           </p>
         ) : null}
@@ -222,7 +235,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
   const [goal, setGoal] = useState(r.projectGoal ?? '');
 
   const blockEls = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className="pt-onb-blocks">
       <CompanyBlock company={company} siret={siret} row={row} done={blocks.societe} />
 
       <BlockForm block="signataire" legend="2. Signataire" done={blocks.signataire}>
@@ -339,7 +352,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
                 checked={same}
                 onChange={(e) => {
                   setSame(e.target.checked);
-                  markDirty();
+                  markDirty({ saveNow: e.target.checked && (vat === 'not_subject' || (vat === 'number' && vatNum.trim() !== '')) });
                 }}
               />
               <span>L&apos;adresse de facturation est celle de la société</span>
@@ -401,8 +414,8 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
                 </Field>
               </div>
             ) : null}
-            <fieldset style={{ border: 0, margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <legend>Numéro de TVA (obligatoire)</legend>
+            <fieldset className="pt-onb-vat">
+              <legend className="pt-label">Numéro de TVA (obligatoire)</legend>
               <label className="pt-consent-check">
                 <input
                   type="radio"
@@ -444,7 +457,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
                   checked={vat === 'not_subject'}
                   onChange={() => {
                     setVat('not_subject');
-                    markDirty();
+                    markDirty({ saveNow: same || (bAdr.trim() !== '' && bCp.trim() !== '' && bCom.trim() !== '') });
                   }}
                 />
                 <span>Non assujetti à la TVA</span>
@@ -539,8 +552,8 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
   );
 
   return (
-    <section className="pt-onb" aria-labelledby="onboarding" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <h2 id="onboarding">{PROJECT_COPY.onboarding.heading}</h2>
+    <section className="pt-card pt-onb" aria-labelledby="onboarding">
+      <h2 id="onboarding" tabIndex={-1} className="pt-heading">{PROJECT_COPY.onboarding.heading}</h2>
       <p className="pt-status">{COPY.helper}</p>
       <div>
         <p className="pt-status" aria-hidden="true">
@@ -554,7 +567,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
       {complete ? (
         <>
           <p className="pt-success">
-            <Check size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <Check size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{COPY.done}</span>
           </p>
           <details>

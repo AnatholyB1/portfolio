@@ -55,7 +55,7 @@ export default function PayButton({ invoiceId, label, variant, pay }: Props) {
         <CreditCard size={16} aria-hidden="true" />
         {busy ? copy.redirecting : label}
       </button>
-      <p className="pt-error" aria-live="polite">
+      <p className="pt-error pt-live" aria-live="polite">
         {error}
       </p>
     </div>

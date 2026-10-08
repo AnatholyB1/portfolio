@@ -117,10 +117,10 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
   }
 
   return (
-    <div>
+    <div className="pt-stack">
       {next ? (
         <section className="pt-pay-card" aria-labelledby={`pay-next-${next.id}`}>
-          <h2 id={`pay-next-${next.id}`}>{copy.toPayHeading}</h2>
+          <h2 id={`pay-next-${next.id}`} className="pt-subheading">{copy.toPayHeading}</h2>
           <p className="pt-doc-meta">
             {PROJECT_COPY.payments.kinds[next.kind]} <span className="pt-pay-number">{next.number}</span>
             {next.dueDate ? ` · ${formatDateFr(next.dueDate)}` : ''}
@@ -154,7 +154,7 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
           ))}
         </tbody>
       </table>
-      <p className="pt-error" aria-live="polite">
+      <p className="pt-error pt-live" aria-live="polite">
         {error}
       </p>
       <p className="pt-doc-meta">{copy.vatNote}</p>

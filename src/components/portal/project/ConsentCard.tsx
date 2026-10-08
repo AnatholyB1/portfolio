@@ -23,20 +23,20 @@ export default function ConsentCard({ projectId, current }: Props) {
   const stale = state.status === 'error' && state.message === PROJECT_COPY.errors.consentStale;
 
   return (
-    <section className="pt-consent" aria-labelledby="consent-heading" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <h2 id="consent-heading">{COPY.heading}</h2>
+    <section className="pt-card pt-consent" aria-labelledby="consent-heading">
+      <h2 id="consent-heading" className="pt-heading">{COPY.heading}</h2>
       <p className="pt-status">{COPY.intro}</p>
       <blockquote className="pt-consent-quote pt-readback">{PRESENTATION_CONSENT.text}</blockquote>
       <p className="pt-status">{COPY.version(PRESENTATION_CONSENT.version)}</p>
 
-      <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form action={formAction} className="pt-consent-form">
         <input type="hidden" name="projectId" value={projectId} />
         <input type="hidden" name="version" value={PRESENTATION_CONSENT.version} />
         {granted ? (
           <>
             <input type="hidden" name="granted" value="false" />
             <p className="pt-success">
-              <Check size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+              <Check size={16} aria-hidden="true" className="pt-msg-icon" />
               <span>{COPY.granted(formatDateFr(current?.createdAt))}</span>
             </p>
             <button type="submit" className="pt-btn-ghost" disabled={pending}>
@@ -60,13 +60,13 @@ export default function ConsentCard({ projectId, current }: Props) {
       <div aria-live="polite">
         {state.status === 'success' && state.message && !granted ? (
           <p className="pt-success">
-            <Check size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <Check size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{state.message}</span>
           </p>
         ) : null}
         {state.status === 'error' ? (
           <p className="pt-error">
-            <CircleAlert size={16} aria-hidden="true" style={{ flex: 'none', marginTop: 4 }} />
+            <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
             <span>{state.message}</span>
           </p>
         ) : null}

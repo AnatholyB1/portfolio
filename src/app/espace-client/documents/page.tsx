@@ -48,10 +48,12 @@ export default async function EspaceClientDocumentsPage() {
   }
 
   const groups: { id: string; title: string; items: DocumentListItem[] }[] = [];
-  for (const p of projects) {
+  // Les faits de chaque projet sont lus en parallèle (pas de lectures en série).
+  const withDocs = projects.filter((p) => docs.some((d) => d.projectId === p.id));
+  const bundles = await Promise.all(withDocs.map((p) => loadProjectBundle(ctx.supabase, p.id, now)));
+  for (const [i, p] of withDocs.entries()) {
     const projectDocs = docs.filter((d) => d.projectId === p.id);
-    if (projectDocs.length === 0) continue;
-    const bundle = await loadProjectBundle(ctx.supabase, p.id, now);
+    const bundle = bundles[i];
     // Sans faits, le statut n'est pas calculable : on n'affiche jamais « À signer » par défaut (WR-05).
     const facts = bundle?.facts ?? [];
     const items = sortForDisplay(withStatuses(projectDocs, facts)).map((d) => ({
@@ -72,23 +74,21 @@ export default async function EspaceClientDocumentsPage() {
     <>
       <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
       <ShellMain width="client">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-          <ClientNav current="documents" />
-          <h1 className="pt-heading">{copy.title}</h1>
-          {groups.length === 0 ? (
-            <section className="pt-card" aria-labelledby="documents-empty-title">
-              <h2 id="documents-empty-title">{PROJECT_COPY.documents.portal.emptyHeading}</h2>
-              <p className="pt-helper">{copy.emptyBody}</p>
+        <ClientNav current="documents" />
+        <h1 className="pt-heading">{copy.title}</h1>
+        {groups.length === 0 ? (
+          <section className="pt-card" aria-labelledby="documents-empty-title">
+            <h2 id="documents-empty-title" className="pt-heading">{PROJECT_COPY.documents.portal.emptyHeading}</h2>
+            <p className="pt-helper">{copy.emptyBody}</p>
+          </section>
+        ) : (
+          groups.map((g) => (
+            <section key={g.id} className="pt-card" aria-labelledby={`documents-${g.id}`}>
+              {groups.length > 1 ? <h2 id={`documents-${g.id}`} className="pt-heading">{g.title}</h2> : null}
+              <DocumentsList projectTitle={g.title} getDownloadUrl={documentDownloadAction} getSealedDownloadUrl={sealedDocumentDownloadAction} documents={g.items} />
             </section>
-          ) : (
-            groups.map((g) => (
-              <section key={g.id} className="pt-card" aria-labelledby={`documents-${g.id}`}>
-                {groups.length > 1 ? <h2 id={`documents-${g.id}`}>{g.title}</h2> : null}
-                <DocumentsList projectTitle={g.title} getDownloadUrl={documentDownloadAction} getSealedDownloadUrl={sealedDocumentDownloadAction} documents={g.items} />
-              </section>
-            ))
-          )}
-        </div>
+          ))
+        )}
       </ShellMain>
       <ShellFooter />
     </>

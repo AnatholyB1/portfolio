@@ -313,7 +313,7 @@ export const PROJECT_COPY = {
     },
     code: {
       label: 'Code à 6 chiffres',
-      sent: (maskedEmail: string) => `Code envoyé à ${maskedEmail}. Il est valable 10 minutes.`,
+      sent: (maskedEmail: string) => `Code à 6 chiffres envoyé à ${maskedEmail}. Il est valable 10 minutes.`,
       wrong: (n: number) => `Ce code n'est pas correct. Il vous reste ${n} ${n > 1 ? 'essais' : 'essai'}.`,
       tooMany: "Trop d'essais. Ce code n'est plus valable. Demandez-en un nouveau.",
       expired: 'Ce code a expiré. Demandez-en un nouveau.',

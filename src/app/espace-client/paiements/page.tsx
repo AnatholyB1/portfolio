@@ -66,38 +66,36 @@ export default async function EspaceClientPaymentsPage({ searchParams }: { searc
     <>
       <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
       <ShellMain width="client">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-          <ClientNav current="paiements" />
-          <h1 className="pt-heading">{copy.title}</h1>
-          {loadFailed ? (
-            <p className="pt-error" role="alert">
-              {copy.loadError}
-            </p>
-          ) : null}
-          {!loadFailed && retour && bannerInvoice ? (
-            <ReturnBanner retour={retour} invoice={bannerInvoice} pay={payInvoiceAction} />
-          ) : null}
-          {!loadFailed && groups.length === 0 ? (
-            <section className="pt-card" aria-labelledby="payments-empty-title">
-              <h2 id="payments-empty-title">{copy.emptyHeading}</h2>
-              <p className="pt-helper">{copy.emptyBody}</p>
-            </section>
-          ) : null}
-          {!loadFailed
-            ? groups.map((g) => (
-                <section key={g.id} className="pt-card" aria-labelledby={`payments-${g.id}`}>
-                  {groups.length > 1 ? <h2 id={`payments-${g.id}`}>{g.title}</h2> : null}
-                  {g.items.some((i) => i.isTest) ? <p className="pt-warning">{copy.testMode}</p> : null}
-                  <PaymentsList
-                    projectTitle={g.title}
-                    invoices={g.items}
-                    pay={payInvoiceAction}
-                    getDownloadUrl={invoiceDownloadAction}
-                  />
-                </section>
-              ))
-            : null}
-        </div>
+        <ClientNav current="paiements" />
+        <h1 className="pt-heading">{copy.title}</h1>
+        {loadFailed ? (
+          <p className="pt-error" role="alert">
+            {copy.loadError}
+          </p>
+        ) : null}
+        {!loadFailed && retour && bannerInvoice ? (
+          <ReturnBanner retour={retour} invoice={bannerInvoice} pay={payInvoiceAction} />
+        ) : null}
+        {!loadFailed && groups.length === 0 ? (
+          <section className="pt-card" aria-labelledby="payments-empty-title">
+            <h2 id="payments-empty-title" className="pt-heading">{copy.emptyHeading}</h2>
+            <p className="pt-helper">{copy.emptyBody}</p>
+          </section>
+        ) : null}
+        {!loadFailed
+          ? groups.map((g) => (
+              <section key={g.id} className="pt-card" aria-labelledby={`payments-${g.id}`}>
+                {groups.length > 1 ? <h2 id={`payments-${g.id}`} className="pt-heading">{g.title}</h2> : null}
+                {g.items.some((i) => i.isTest) ? <p className="pt-warning">{copy.testMode}</p> : null}
+                <PaymentsList
+                  projectTitle={g.title}
+                  invoices={g.items}
+                  pay={payInvoiceAction}
+                  getDownloadUrl={invoiceDownloadAction}
+                />
+              </section>
+            ))
+          : null}
       </ShellMain>
       <ShellFooter />
     </>

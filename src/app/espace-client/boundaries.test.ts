@@ -39,14 +39,14 @@ describe('skip link and main landmark', () => {
   it('private layouts start with a skip link to #contenu', () => {
     for (const f of ['./layout.tsx', '../connexion/layout.tsx', '../auth/layout.tsx']) {
       const src = read(f);
-      expect(src, f).toContain('href="#contenu"');
-      expect(src, f).toContain('pt-skip');
+      expect(src, f).toContain('<SkipLink />');
     }
   });
 
   it('shell main and auth card expose the target', () => {
     expect(read('../../components/portal/ShellMain.tsx')).toContain('id="contenu"');
     expect(read('../../components/portal/AuthCard.tsx')).toContain('id="contenu"');
+    expect(read('../../components/portal/SkipLink.tsx')).toContain('href="#contenu"');
     expect(read('../portal.css')).toContain('.pt-skip');
   });
 });
