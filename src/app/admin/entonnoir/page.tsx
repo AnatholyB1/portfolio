@@ -7,8 +7,10 @@ import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
 import {
+  attachNonconforming,
   averageCostPerRdv,
   groupFunnelRows,
+  monthEndExclusive,
   monthRange,
   type FunnelRow,
   type GroupBy,
@@ -78,7 +80,29 @@ export default async function AdminFunnelPage({
     .order('month', { ascending: false })
     .order('source', { ascending: true });
 
-  const rows: FunnelRow[] = ((data ?? []) as unknown as DbRow[]).map((r) => ({
+  // Leads dont la source est hors convention (D-04) : lecture RLS directe de
+  // sv_leads, sans toucher à la vue. En cas d'erreur, l'entonnoir s'affiche quand même.
+  const { data: flaggedData, error: flaggedError } = await supabase
+    .from('sv_leads')
+    .select('source_source, source_campaign, created_at')
+    .not('source_nonconformity', 'is', null)
+    .gte('created_at', `${range.from}-01`)
+    .lt('created_at', monthEndExclusive(range.to));
+  const flagged = flaggedError
+    ? []
+    : (
+        (flaggedData ?? []) as unknown as {
+          source_source: string | null;
+          source_campaign: string | null;
+          created_at: string;
+        }[]
+      ).map((f) => ({
+        source: f.source_source ?? '',
+        campaign: f.source_campaign,
+        createdAt: f.created_at,
+      }));
+
+  const baseRows: FunnelRow[] = ((data ?? []) as unknown as DbRow[]).map((r) => ({
     source: r.source,
     campaign: r.campaign ?? '',
     month: r.month,
@@ -91,6 +115,8 @@ export default async function AdminFunnelPage({
     costPerRdvCents: r.cost_per_rdv_cents,
   }));
 
+  const rows = attachNonconforming(baseRows, flagged);
+  const nonconformingTotal = rows.reduce((a, r) => a + (r.nonconformingLeads ?? 0), 0);
   const grouped = groupFunnelRows(rows, by);
   const totals = rows.reduce(
     (a, r) => ({ leads: a.leads + r.leads, rdv: a.rdv + r.rdv, signed: a.signed + r.signed }),
@@ -149,6 +175,12 @@ export default async function AdminFunnelPage({
                 </div>
               ) : (
                 <>
+                  {nonconformingTotal > 0 ? (
+                    <p className="pt-helper">
+                      {nonconformingTotal} lead(s) hors convention sur la période. Ouvrez la fiche
+                      du lead pour corriger la source.
+                    </p>
+                  ) : null}
                   <FunnelKpis
                     leads={totals.leads}
                     rdv={totals.rdv}

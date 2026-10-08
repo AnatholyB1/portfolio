@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  attachNonconforming,
   averageCostPerRdv,
   conversionRate,
   formatEuroCents,
   groupFunnelRows,
+  monthEndExclusive,
   monthRange,
   type FunnelRow,
 } from './funnel';
@@ -99,5 +101,43 @@ describe('monthRange', () => {
     const r = monthRange('2015-01', '2026-10', now);
     expect(r.to).toBe('2026-10');
     expect(r.from).toBe('2023-11');
+  });
+});
+
+describe('attachNonconforming', () => {
+  it('counts flagged leads on the matching row without mutating input', () => {
+    const rows = [row({}), row({ source: 'meta', campaign: '' })];
+    const out = attachNonconforming(rows, [
+      { source: 'google', campaign: 'a', createdAt: '2026-09-15T10:00:00Z' },
+      { source: 'google', campaign: 'a', createdAt: '2026-09-30T23:59:00Z' },
+      { source: 'meta', campaign: null, createdAt: '2026-09-02T00:00:00Z' },
+      { source: 'bing', campaign: 'x', createdAt: '2026-09-02T00:00:00Z' },
+    ]);
+    expect(out[0].nonconformingLeads).toBe(2);
+    expect(out[1].nonconformingLeads).toBe(1);
+    expect(rows[0].nonconformingLeads).toBeUndefined();
+  });
+  it('gives 0 to rows with no match', () => {
+    const out = attachNonconforming([row({})], []);
+    expect(out[0].nonconformingLeads).toBe(0);
+  });
+});
+
+describe('groupFunnelRows nonconformingLeads', () => {
+  it('sums by source and keeps for all', () => {
+    const rows = [
+      row({ campaign: 'a', nonconformingLeads: 2 }),
+      row({ campaign: 'b', nonconformingLeads: 1 }),
+      row({ campaign: 'c' }),
+    ];
+    expect(groupFunnelRows(rows, 'source')[0].nonconformingLeads).toBe(3);
+    expect(groupFunnelRows(rows, 'all')).toEqual(rows);
+  });
+});
+
+describe('monthEndExclusive', () => {
+  it('returns the first day of the next month', () => {
+    expect(monthEndExclusive('2026-11')).toBe('2026-12-01');
+    expect(monthEndExclusive('2026-12')).toBe('2027-01-01');
   });
 });

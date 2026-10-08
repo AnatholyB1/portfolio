@@ -11,6 +11,7 @@ export type FunnelRow = {
   rdv: number;
   signed: number;
   costPerRdvCents: number | null;
+  nonconformingLeads?: number;
 };
 
 export type GroupBy = 'source' | 'campaign' | 'month' | 'all';
@@ -35,9 +36,11 @@ export function groupFunnelRows(rows: FunnelRow[], by: GroupBy): FunnelRow[] {
         rdv: r.rdv,
         signed: r.signed,
         costPerRdvCents: null,
+        nonconformingLeads: r.nonconformingLeads ?? 0,
       });
     } else {
       for (const s of STAGES) acc[s] += r[s];
+      acc.nonconformingLeads = (acc.nonconformingLeads ?? 0) + (r.nonconformingLeads ?? 0);
     }
   }
   return Array.from(map.values());
@@ -92,4 +95,26 @@ export function monthRange(
   if (a > b) [a, b] = [b, a];
   if (b - a + 1 > MAX_MONTHS) a = b - (MAX_MONTHS - 1);
   return { from: fromIndex(a), to: fromIndex(b) };
+}
+
+export function monthEndExclusive(month: string): string {
+  return `${fromIndex(toIndex(month) + 1)}-01`;
+}
+
+export function attachNonconforming(
+  rows: FunnelRow[],
+  flagged: { source: string; campaign: string | null; createdAt: string }[],
+): FunnelRow[] {
+  const counts = new Map<string, number>();
+  for (const f of flagged) {
+    const d = new Date(f.createdAt);
+    if (Number.isNaN(d.getTime())) continue;
+    const month = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-01`;
+    const key = `${f.source}|${f.campaign ?? ''}|${month}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return rows.map((r) => ({
+    ...r,
+    nonconformingLeads: counts.get(`${r.source}|${r.campaign}|${r.month.slice(0, 7)}-01`) ?? 0,
+  }));
 }
