@@ -35,8 +35,8 @@ export default function Footer() {
             <Link href="/services">Services</Link>
             <Link href="/#contact">Contact</Link>
             <a href="/mentions-legales">{f.legal}</a>
-            <Link href="/avis">Avis</Link>
-            <Link href="/politique-des-avis">Politique des avis</Link>
+            <Link href="/avis">{f.reviews}</Link>
+            <Link href="/politique-des-avis">{f.reviewPolicy}</Link>
             <button type="button" onClick={openConsent}>{f.manageCookies}</button>
           </div>
         </div>

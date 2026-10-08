@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import ClientProviders from "@/components/ui/ClientProviders";
 import ConsentDialog from "@/components/consent/ConsentDialog";
+import SkipLink from "@/components/ui/SkipLink";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
 import Script from "next/script";
 import { buildServiceCatalogJsonLd } from "@/lib/serviceSchema";
@@ -28,6 +29,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sevalys.com";
+
+export const viewport: Viewport = {
+  themeColor: "#0A0B0C",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -242,6 +248,7 @@ export default function RootLayout({
       <body>
         <PostHogProvider>
           <LanguageProvider>
+            <SkipLink />
             {children}
             <ConsentDialog />
           </LanguageProvider>
