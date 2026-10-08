@@ -64,3 +64,14 @@ Decoded `sv_attr_lt` (identical `sv_attr_ft`): `p` = {utm_source: "meta", utm_me
 
 - (Superseded by production section above) release/phase-19 existed on origin only; master not pushed; production untouched; Supabase branch sv-rls-p19 and `.env.test.local` untouched.
 - Remaining: second approval, fast-forward master and push, production checks (incl. cookie decode), delete release/phase-19, Task 2 manual check, branch cleanup.
+
+## Task 2 — Manual end-to-end check (2026-10-08, run by the orchestrator in Chrome on owner request)
+
+Owner answer (verbatim): "Do the test with chrome", then phone provided for the test identity; for the capture proof: "I do it with curl".
+
+- `/admin/liens` (admin session): Meta Ads, `/simulateur`, offre `agent-vocal`, cible `restaurants`, mois 2026-10 → `https://sevalys.com/simulateur?utm_source=meta&utm_medium=paid_social&utm_campaign=agent-vocal_restaurants_202610`, "Conforme à la convention", 30/60 caractères.
+- Browser run with the alias link (`utm_source=Facebook`) inside the admin's Chrome profile: the lead attached to the existing test lead ("Revenu") but "Dernier contact" stayed "arrivée directe". Expected by design: `classifyArrival` skips attribution when an auth cookie is present (`src/lib/attribution/touch.ts`), and the plan asked for a private window.
+- Capture proof without auth cookie (curl GET of the alias link, then POST `/api/simulateur` with the returned cookies and the permanent test identity): `sv_leads.last_touch` = utm_source `meta`, utm_medium `paid_social`, utm_campaign `agent-vocal_restaurants_202610`, raw utm_source `Facebook`, event id a v4 UUID, landing `/simulateur`; `source_nonconformity` null (alias only). Admin lead detail shows Source meta, "Reçu : Facebook", no "Hors convention" notice. First touch / frozen source of the existing lead unchanged (expected).
+- Conversions card renders; the existing test lead predates the migration so its four ranks read "Non atteint" (no backfill, D-09).
+- Note for ADS-04: conversion rows of the permanent test identity must be excluded from any future sending.
+- Cleanup: Supabase branch `sv-rls-p19` deleted (branch list shows only main); `.env.test.local` deleted. Note: the test lead now has 3 contacts (2 from this check).
