@@ -1,5 +1,8 @@
 // Pure attribution parsing (no next/*, supabase or node:* imports).
 // Shared by proxy.ts and route handlers.
+// utm_source/utm_medium are canonicalised here (D-03, phase 19); the rules live
+// in the single module utm.ts.
+import { canonicaliseUtmValue, type UtmRaw } from './utm';
 
 export const ALLOWED_KEYS = [
   'utm_source',
@@ -28,20 +31,34 @@ export function isClickIdKey(key: string): boolean {
 // Whitelist parser. Values longer than 200 chars are dropped, never truncated.
 // utm_* are lowercased; click ids keep their case (case-sensitive tokens,
 // deliberate deviation from the literal wording of D-09).
-export function parseAttrParams(search: URLSearchParams, opts: { allowClickIds: boolean }): AttrParams {
+export function parseAttrParamsWithRaw(
+  search: URLSearchParams,
+  opts: { allowClickIds: boolean },
+): { params: AttrParams; raw: UtmRaw | null } {
   const out: AttrParams = {};
+  const raw: UtmRaw = {};
   for (const key of ALLOWED_KEYS) {
     const click = isClickIdKey(key);
     if (click && !opts.allowClickIds) continue;
-    const raw = search.get(key);
-    if (raw == null) continue;
+    const received = search.get(key);
+    if (received == null) continue;
     // eslint-disable-next-line no-control-regex
-    let v = raw.replace(/[\u0000-\u001f\u007f]/g, '').trim();
+    const original = received.replace(/[\u0000-\u001f\u007f]/g, '').trim();
+    let v = original;
     if (!click) v = v.toLowerCase();
     if (v.length === 0 || v.length > MAX_VALUE_LENGTH) continue;
+    if (key === 'utm_source' || key === 'utm_medium') {
+      const canonical = canonicaliseUtmValue(key, v);
+      if (canonical !== v) raw[key] = original;
+      v = canonical;
+    }
     out[key] = v;
   }
-  return out;
+  return { params: out, raw: Object.keys(raw).length > 0 ? raw : null };
+}
+
+export function parseAttrParams(search: URLSearchParams, opts: { allowClickIds: boolean }): AttrParams {
+  return parseAttrParamsWithRaw(search, opts).params;
 }
 
 export const IGNORED_REFERRER_HOSTS: readonly string[] = [
