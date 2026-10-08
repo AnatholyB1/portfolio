@@ -143,7 +143,7 @@ export default function QuoteForm({
         const qErr = err(`lines.${i}.quantity`);
         const uErr = err(`lines.${i}.unitPriceCents`);
         return (
-          <fieldset key={l.key} style={{ border: 0, padding: 0, margin: 0 }}>
+          <fieldset key={l.key} className="pt-plain">
             <legend className="pt-sr-only">{`Ligne ${n}`}</legend>
             <div className="pt-doc-lines">
               <div>
@@ -205,12 +205,11 @@ export default function QuoteForm({
               </div>
               <div>
                 <span className="pt-lead-label">{QUOTE_FORM_LABELS.amount}</span>
-                <output style={{ display: 'block', fontVariantNumeric: 'tabular-nums' }}>{amount}</output>
+                <output className="pt-out-block">{amount}</output>
               </div>
               <button
                 type="button"
-                className="pt-btn-text"
-                style={{ minWidth: 44, minHeight: 44 }}
+                className="pt-btn-text pt-touch-44"
                 aria-label={`Supprimer la ligne ${n}`}
                 disabled={lines.length === 1}
                 onClick={() => setLines((prev) => prev.filter((x) => x.key !== l.key))}
@@ -293,7 +292,7 @@ export default function QuoteForm({
       </div>
 
       {totals ? (
-        <div className="pt-doc-totals" style={{ alignItems: 'flex-end' }}>
+        <div className="pt-doc-totals pt-end">
           <span>{`${QUOTE_FORM_LABELS.total} ${formatEuros(totals.totalCents)}`}</span>
           <span>{`${QUOTE_FORM_LABELS.deposit} (${formatPercent(pct !== null && pct <= 100 ? pct : 0)}) ${formatEuros(totals.depositCents)}`}</span>
           <span>{`${QUOTE_FORM_LABELS.balance} ${formatEuros(totals.balanceCents)}`}</span>

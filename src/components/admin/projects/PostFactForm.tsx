@@ -63,7 +63,7 @@ export default function PostFactForm({
           ))}
         </select>
         {current !== '' && signedFacts.includes(current) ? (
-          <p className="pt-warning" style={{ fontSize: 14 }}>
+          <p className="pt-warning pt-text-14">
             {PROJECT_COPY.signature.admin.manualFactNotice}
           </p>
         ) : null}

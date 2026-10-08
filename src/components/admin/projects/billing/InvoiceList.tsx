@@ -4,7 +4,8 @@ import { Fragment, useEffect, useState, useTransition } from 'react';
 import { AlertTriangle, Check, Clock, Download, Lock, Receipt, Undo2 } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { formatDateFr } from '@/lib/admin/format';
-import { formatEuros } from '@/lib/documents/money';
+import { formatSignedEuros } from '@/lib/documents/money';
+import { formatQuantityMilli } from '@/lib/documents/numberFormat';
 import type { AdminBillingView, DownloadResult, InvoiceDataResult, VerifyResult } from './types';
 
 const LIST = PROJECT_COPY.payments.admin.list;
@@ -122,7 +123,7 @@ function InvoiceData({
 
   return (
     <div className="pt-doc-snapshot">
-      <h3>
+      <h3 className="pt-heading pt-subheading">
         <Lock size={16} aria-hidden="true" /> {LIST.snapshotTitle}
       </h3>
       <p className="pt-helper">{LIST.readOnly}</p>
@@ -160,15 +161,15 @@ function InvoiceData({
               <ul>
                 {data.lines.map((l, i) => (
                   <li key={i}>
-                    {str(l.designation)} : {Number(l.quantity_milli) / 1000} × {formatEuros(Number(l.unit_price_cents))} ={' '}
-                    {formatEuros(Number(l.line_total_cents))}
+                    {str(l.designation)} : {formatQuantityMilli(Number(l.quantity_milli))} × {formatSignedEuros(Number(l.unit_price_cents))} ={' '}
+                    {formatSignedEuros(Number(l.line_total_cents))}
                   </li>
                 ))}
               </ul>
             </dd>
             <dt>Totaux</dt>
             <dd>
-              Total TTC : {formatEuros(inv.totalInclTaxCents)} · Net à payer : {formatEuros(inv.netToPayCents)}
+              Total TTC : {formatSignedEuros(inv.totalInclTaxCents)} · Net à payer : {formatSignedEuros(inv.netToPayCents)}
             </dd>
             {deductions.length > 0 ? (
               <>
@@ -176,7 +177,7 @@ function InvoiceData({
                 <dd>
                   {deductions.map((d, i) => (
                     <span key={i}>
-                      {str(d.invoiceNumber)} : {formatEuros(Number(d.amountCents))}{' '}
+                      {str(d.invoiceNumber)} : {formatSignedEuros(Number(d.amountCents))}{' '}
                     </span>
                   ))}
                 </dd>
@@ -185,7 +186,7 @@ function InvoiceData({
           </dl>
           {pay.paymentIntentId ? (
             <div>
-              <h4>{payment.title}</h4>
+              <h4 className="pt-heading pt-subheading">{payment.title}</h4>
               <dl>
                 <dt>{payment.reference}</dt>
                 <dd>
@@ -205,7 +206,7 @@ function InvoiceData({
           ) : null}
         </>
       ) : error ? null : (
-        <p className="pt-helper">…</p>
+        <p className="pt-helper">Chargement du détail…</p>
       )}
       <div>
         <button type="button" className="pt-btn-ghost" onClick={onVerify} disabled={pending}>
@@ -281,14 +282,14 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
                     </span>
                     {isCredit ? <div className="pt-helper">{PROJECT_COPY.payments.portal.creditOf(parent.number)}</div> : null}
                     {!isCredit && inv.partialCreditCents > 0 ? (
-                      <div className="pt-helper">{PROJECT_COPY.payments.portal.partialCredit(formatEuros(inv.partialCreditCents))}</div>
+                      <div className="pt-helper">{PROJECT_COPY.payments.portal.partialCredit(formatSignedEuros(inv.partialCreditCents))}</div>
                     ) : null}
                     <RefundMeta inv={inv} />
                   </td>
                   <td data-label={LIST.columns.type}>{KINDS[inv.kind]}</td>
                   <td data-label={LIST.columns.issuedOn}>{formatDateFr(inv.issuedOn)}</td>
                   <td data-label={LIST.columns.amount} className="pt-bill-num">
-                    {formatEuros(inv.totalInclTaxCents)}
+                    {formatSignedEuros(inv.totalInclTaxCents)}
                   </td>
                   <td data-label={LIST.columns.status}>
                     <StatusBadge status={inv.status} />

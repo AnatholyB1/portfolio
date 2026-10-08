@@ -80,7 +80,7 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions, 
         {COPY.title}
       </h2>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="pt-stack-16">
         {view.expected.length === 0 ? (
           <p className="pt-helper">{COPY.noExpected}</p>
         ) : (
@@ -130,8 +130,8 @@ export default function DocumentsPanel({ projectId, view, projectGoal, actions, 
         )}
       </div>
 
-      <div style={{ marginTop: 32 }}>
-        <h3>{COPY.issuedCaption}</h3>
+      <div className="pt-mt-32">
+        <h3 className="pt-heading pt-subheading">{COPY.issuedCaption}</h3>
         {view.issued.length === 0 ? (
           <p className="pt-helper">{COPY.noIssued}</p>
         ) : (

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { formatDateFr } from '@/lib/admin/format';
-import { formatEuros } from '@/lib/documents/money';
+import { formatSignedEuros } from '@/lib/documents/money';
 import { SELLER_V1 } from '@/lib/documents/seller';
 import CreditNoteForm from './CreditNoteForm';
 import InvoiceList from './InvoiceList';
@@ -50,7 +50,7 @@ export default function BillingPanel({ projectId, view, actions }: BillingPanelP
   const [open, setOpen] = useState<OpenForm>(null);
   const [nonce, setNonce] = useState(0);
   const { summary, auto } = view;
-  const money = (c: number | null) => (c === null ? '—' : formatEuros(c));
+  const money = (c: number | null) => (c === null ? '—' : formatSignedEuros(c));
 
   function openPeriod() {
     setNonce((n) => n + 1);
@@ -104,7 +104,7 @@ export default function BillingPanel({ projectId, view, actions }: BillingPanelP
           <dd>
             {summary.quoteTotalCents === null || summary.depositPercent === null
               ? '—'
-              : formatEuros(Math.round((summary.quoteTotalCents * summary.depositPercent) / 100))}
+              : formatSignedEuros(Math.round((summary.quoteTotalCents * summary.depositPercent) / 100))}
           </dd>
         </div>
         <div>

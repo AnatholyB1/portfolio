@@ -2,6 +2,7 @@
 
 import { useId, useState, useTransition } from 'react';
 import { AlertTriangle, Check, Download, ShieldCheck } from 'lucide-react';
+import { actorKindLabel } from '@/lib/documents/numberFormat';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import type { ChainCheckResult, DocumentActions, SignatureView } from './types';
 
@@ -250,7 +251,7 @@ export default function SignaturePanel({
                         {t.date} {t.time}
                       </td>
                       <td data-label={COPY.trailColumns.event}>{e.label}</td>
-                      <td data-label={COPY.trailColumns.actor}>{e.actorKind}</td>
+                      <td data-label={COPY.trailColumns.actor}>{actorKindLabel(e.actorKind)}</td>
                       <td data-label={COPY.trailColumns.ip}>{e.ip ?? '—'}</td>
                     </tr>
                   );

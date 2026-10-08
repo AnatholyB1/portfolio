@@ -5,6 +5,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { STEPS } from '@/lib/projects/steps';
 import '../leads/leads.css';
+import '@/components/admin/shared/inline.css';
 import './projects.css';
 
 export interface ProjectsTableProps {
@@ -100,7 +101,9 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
         {rows.map((r) => (
           <tr key={r.projectId} role="row">
             <td role="cell" data-label="Client">
-              <Link href={`/admin/projets/${r.projectId}`}>{r.clientName}</Link>
+              <Link href={`/admin/projets/${r.projectId}`} className="pt-link-target">
+                {r.clientName}
+              </Link>
               <span className="pt-lead-sub">{r.title}</span>
             </td>
             <td role="cell" data-label="Offre">

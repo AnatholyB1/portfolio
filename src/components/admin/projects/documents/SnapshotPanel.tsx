@@ -122,7 +122,7 @@ export default function SnapshotPanel({ doc, loadSnapshot, verify }: SnapshotPan
 
   return (
     <div className="pt-doc-snapshot">
-      <h3>{COPY.title}</h3>
+      <h3 className="pt-heading pt-subheading">{COPY.title}</h3>
       <p className="pt-helper">
         {COPY.meta(doc.templateVersion, formatDateFr(doc.issuedAt), formatSize(doc.sizeBytes))}
       </p>
@@ -159,13 +159,13 @@ export default function SnapshotPanel({ doc, loadSnapshot, verify }: SnapshotPan
           <TypeDetails s={snapshot} />
           <details>
             <summary>{COPY.raw}</summary>
-            <pre className="pt-doc-hash" style={{ maxHeight: 320, overflow: 'auto' }}>
+            <pre className="pt-doc-hash pt-doc-pre">
               {JSON.stringify(snapshot, null, 2)}
             </pre>
           </details>
         </>
       ) : error ? null : (
-        <p className="pt-helper">…</p>
+        <p className="pt-helper">Chargement du détail…</p>
       )}
 
       <div>

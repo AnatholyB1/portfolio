@@ -5,6 +5,7 @@ import { Moon } from 'lucide-react';
 import AdminNav from '@/components/admin/AdminNav';
 import FactJournal from '@/components/admin/projects/FactJournal';
 import PostFactForm from '@/components/admin/projects/PostFactForm';
+import PanelUnavailable from '@/components/admin/projects/PanelUnavailable';
 import ReminderHoldCard from '@/components/admin/projects/ReminderHoldCard';
 import ReissueReviewLinkCard from '@/components/admin/reviews/ReissueReviewLinkCard';
 import {
@@ -42,6 +43,7 @@ import {
   previewPeriodInvoiceAction,
   verifyInvoiceHashAction,
 } from '@/app/admin/projets/actions';
+import { countFr } from '@/lib/documents/numberFormat';
 import { classifyProject } from '@/lib/projects/blocking';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
@@ -58,11 +60,23 @@ import { loadProjectBundle } from '@/lib/server/projects/read';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
 import '@/components/admin/projects/projects.css';
+import '@/components/admin/shared/inline.css';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Fiche projet' };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+// Une lecture qui échoue ne fait pas tomber la fiche : le panneau concerné passe à « indisponible »
+// (même principe que « Chiffres indisponibles » du pilotage) et les autres restent utilisables.
+async function settle<T>(label: string, task: () => Promise<T>): Promise<T | null> {
+  try {
+    return await task();
+  } catch (e) {
+    console.error(`[admin/projets] lecture ${label} échouée`, e);
+    return null;
+  }
+}
 
 function kindOf(filename: string): FileKind {
   const dot = filename.lastIndexOf('.');
@@ -77,24 +91,39 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   if (!UUID_RE.test(id)) notFound();
 
   const now = new Date();
-  const bundle = await loadProjectBundle(supabase, id, now);
+  const reloadHref = `/admin/projets/${id}`;
+  let bundle: Awaited<ReturnType<typeof loadProjectBundle>> = null;
+  let bundleFailed = false;
+  try {
+    bundle = await loadProjectBundle(supabase, id, now);
+  } catch (e) {
+    console.error('[admin/projets] lecture fiche échouée', e);
+    bundleFailed = true;
+  }
+  if (bundleFailed) return <SheetUnavailable reloadHref={reloadHref} />;
   if (!bundle) notFound();
-  const docsView = await loadAdminDocumentsView(supabase, bundle);
-  const billingView = await loadAdminBillingView(supabase, bundle, now);
-  const [signatureMap, reminderHold, reviewLink] = await Promise.all([
-    loadSignatureViews(supabase, id),
-    loadReminderHold(supabase, id),
-    loadReviewLinkStatus(supabase, id).catch(() => null),
+  const sheet = bundle;
+
+  const [docsView, billingView, signatureMap, reminderHold, reviewLink] = await Promise.all([
+    settle('documents', () => loadAdminDocumentsView(supabase, sheet)),
+    settle('facturation', () => loadAdminBillingView(supabase, sheet, now)),
+    settle('signatures', () => loadSignatureViews(supabase, id)),
+    settle('relances', () => loadReminderHold(supabase, id)),
+    settle("lien d'avis", () => loadReviewLinkStatus(supabase, id)),
   ]);
-  const signatures = Object.fromEntries(signatureMap);
-  const signedFacts = [
-    ...new Set(
-      docsView.issued.flatMap((d) => {
-        const fact = signatures[d.id]?.signature ? SIGNING_FACT[d.docType] : undefined;
-        return fact ? [fact] : [];
-      }),
-    ),
-  ];
+  // Sans les signatures, l'état « signé » des documents serait faux : le panneau Documents est alors indisponible.
+  const documentsReady = docsView !== null && signatureMap !== null;
+  const signatures = signatureMap ? Object.fromEntries(signatureMap) : {};
+  const signedFacts = docsView
+    ? [
+        ...new Set(
+          docsView.issued.flatMap((d) => {
+            const fact = signatures[d.id]?.signature ? SIGNING_FACT[d.docType] : undefined;
+            return fact ? [fact] : [];
+          }),
+        ),
+      ]
+    : [];
 
   const { project, client, state, facts, notes, onboarding, files, links, consents, lastActivityAt } = bundle;
   const { isDormant, daysWaiting } = classifyProject(state, lastActivityAt, now);
@@ -107,7 +136,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
     <>
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
-        <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="pt-admin pt-stack">
           <AdminNav current="projets" />
           <Link href="/admin/projets" className="pt-back">
             ‹ Projets
@@ -151,9 +180,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   <dt>{PROJECT_COPY.whoWaits.label}</dt>
                   <dd>{state.done ? PROJECT_COPY.blocage.done : state.waitingOn === 'client' ? 'Client' : 'Sèvalys'}</dd>
                   <dt>Depuis</dt>
-                  <dd>
-                    {daysWaiting} {daysWaiting > 1 ? 'jours' : 'jour'}
-                  </dd>
+                  <dd>{countFr(daysWaiting, 'jour')}</dd>
                   <dt>Action attendue</dt>
                   <dd>{state.expectedAction}</dd>
                 </dl>
@@ -175,36 +202,54 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                 confirmUpload={adminConfirmUploadAction}
                 getDownloadUrl={adminDownloadAction}
               />
-              <DocumentsPanel
-                projectId={project.id}
-                view={docsView}
-                signatures={signatures}
-                projectGoal={onboarding?.projectGoal ?? null}
-                actions={{
-                  preview: previewDocumentAction,
-                  issue: issueDocumentAction,
-                  download: adminDocumentDownloadAction,
-                  verify: verifyDocumentHashAction,
-                  loadSnapshot: loadSnapshotAction,
-                  exportTrail: exportSignatureTrailAction,
-                  verifyChain: verifySignatureChainAction,
-                  downloadSealed: adminSealedDownloadAction,
-                  resumeFinalization: adminResumeFinalizationAction,
-                }}
-              />
-              <BillingPanel
-                projectId={project.id}
-                view={billingView}
-                actions={{
-                  previewPeriod: previewPeriodInvoiceAction,
-                  issuePeriod: issuePeriodInvoiceAction,
-                  previewCredit: previewCreditNoteAction,
-                  issueCredit: issueCreditNoteAction,
-                  download: adminInvoiceDownloadAction,
-                  verifyHash: verifyInvoiceHashAction,
-                  loadData: loadInvoiceDataAction,
-                }}
-              />
+              {documentsReady ? (
+                <DocumentsPanel
+                  projectId={project.id}
+                  view={docsView}
+                  signatures={signatures}
+                  projectGoal={onboarding?.projectGoal ?? null}
+                  actions={{
+                    preview: previewDocumentAction,
+                    issue: issueDocumentAction,
+                    download: adminDocumentDownloadAction,
+                    verify: verifyDocumentHashAction,
+                    loadSnapshot: loadSnapshotAction,
+                    exportTrail: exportSignatureTrailAction,
+                    verifyChain: verifySignatureChainAction,
+                    downloadSealed: adminSealedDownloadAction,
+                    resumeFinalization: adminResumeFinalizationAction,
+                  }}
+                />
+              ) : (
+                <PanelUnavailable
+                  id="proj-docs-unavailable"
+                  title="Documents"
+                  unavailable="Documents indisponibles"
+                  reloadHref={reloadHref}
+                />
+              )}
+              {billingView ? (
+                <BillingPanel
+                  projectId={project.id}
+                  view={billingView}
+                  actions={{
+                    previewPeriod: previewPeriodInvoiceAction,
+                    issuePeriod: issuePeriodInvoiceAction,
+                    previewCredit: previewCreditNoteAction,
+                    issueCredit: issueCreditNoteAction,
+                    download: adminInvoiceDownloadAction,
+                    verifyHash: verifyInvoiceHashAction,
+                    loadData: loadInvoiceDataAction,
+                  }}
+                />
+              ) : (
+                <PanelUnavailable
+                  id="proj-billing-unavailable"
+                  title="Facturation"
+                  unavailable="Facturation indisponible"
+                  reloadHref={reloadHref}
+                />
+              )}
             </div>
             <div className="pt-lead-side">
               <InfoCard
@@ -217,10 +262,46 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
               <OnboardingSummaryCard onboarding={onboarding} />
               <ConsentCard consents={consents} />
               <ReminderHoldCard projectId={project.id} hold={reminderHold} />
-              {reviewLink ? (<ReissueReviewLinkCard projectId={project.id} status={reviewLink.status} reviewFiled={reviewLink.reviewFiled} />) : null}
+              {reviewLink ? (
+                <ReissueReviewLinkCard
+                  projectId={project.id}
+                  status={reviewLink.status}
+                  reviewFiled={reviewLink.reviewFiled}
+                />
+              ) : (
+                <PanelUnavailable
+                  id="proj-review-unavailable"
+                  title="Lien d'avis"
+                  unavailable="Lien d'avis indisponible"
+                  reloadHref={reloadHref}
+                />
+              )}
               <LinksCard projectId={project.id} links={links} />
             </div>
           </div>
+        </div>
+      </ShellMain>
+      <ShellFooter />
+    </>
+  );
+}
+
+function SheetUnavailable({ reloadHref }: { reloadHref: string }) {
+  return (
+    <>
+      <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
+      <ShellMain width="admin">
+        <div className="pt-admin pt-stack">
+          <AdminNav current="projets" />
+          <Link href="/admin/projets" className="pt-back">
+            ‹ Projets
+          </Link>
+          <PanelUnavailable
+            id="proj-sheet-unavailable"
+            title="Fiche projet"
+            unavailable="Fiche projet indisponible"
+            reloadHref={reloadHref}
+          />
         </div>
       </ShellMain>
       <ShellFooter />

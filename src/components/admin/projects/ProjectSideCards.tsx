@@ -173,7 +173,7 @@ export function LinksCard({ projectId, links }: { projectId: string; links: Link
                       <ExternalLink size={14} aria-hidden="true" />
                       <span className="pt-sr-only">{PROJECT_COPY.links.newTab}</span>
                     </a>
-                    <p style={{ fontSize: 14, color: 'var(--ink-dim)' }}>{host}</p>
+                    <p className="pt-dim-14">{host}</p>
                   </>
                 ) : (
                   <p>{l.title}</p>
