@@ -54,11 +54,12 @@ const CODES: Record<string, string[]> = {
 };
 
 describe('phase 17 pilotage migration static checks', () => {
-  it('sorts last among migrations', () => {
+  it('sorts after the mail automation migration', () => {
     const files = readdirSync(new URL('../../supabase/migrations/', import.meta.url))
       .filter((f) => f.endsWith('.sql'))
       .sort();
-    expect(files[files.length - 1]).toBe(NAME);
+    expect(files.indexOf(NAME)).toBeGreaterThan(files.indexOf('20261008000000_sv_mail_automation.sql'));
+    expect(files.indexOf(NAME)).toBeGreaterThan(-1);
   });
 
   for (const t of TABLES) {
