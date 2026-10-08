@@ -8,6 +8,8 @@ import {
   documentReminderAdminEmail,
   documentReminderEmail,
   mailSuppressionAdminEmail,
+  reviewHiddenEmail,
+  reviewPublishedAdminEmail,
   reviewRequestContent,
 } from './reminderEmails';
 
@@ -113,5 +115,48 @@ describe('mailSuppressionAdminEmail', () => {
       isLead: true,
     });
     expect(m.text).toContain('lead');
+  });
+});
+
+describe('review mails (phase 18)', () => {
+  const url = 'https://sevalys.com/avis/test-token';
+
+  it('review request has no Google link (D-11)', () => {
+    for (const stage of ['d7', 'd21'] as const) {
+      const m = buildMarketingEmail(reviewRequestContent({ projectTitle: 'P', reviewUrl: url, stage }), {
+        pageUrl: 'https://sevalys.com/desinscription?t=a.b',
+        oneClickUrl: 'https://sevalys.com/api/unsubscribe?t=a.b',
+      });
+      expect(`${m.subject}${m.html}${m.text}`).not.toMatch(/google/i);
+    }
+  });
+
+  it('reviewPublishedAdminEmail names the rating and links to admin reviews', () => {
+    const m = reviewPublishedAdminEmail({ projectTitle: 'Site X', rating: 4 });
+    expect(m.subject).toBe('Nouvel avis publié : 4 sur 5');
+    expect(m.text).toContain('Site X');
+    expect(m.text).toContain('Voir les avis');
+    expect(m.html).toContain('https://sevalys.com/admin/avis');
+    expect(JSON.stringify(m)).not.toMatch(/€|prix|tarif/i);
+  });
+
+  it.each([0, 6, 3.5, Number.NaN])('reviewPublishedAdminEmail refuses rating %j', (rating) => {
+    expect(() => reviewPublishedAdminEmail({ projectTitle: 'P', rating })).toThrow('invalid_payload');
+  });
+
+  it('refuses an empty project title', () => {
+    expect(() => reviewPublishedAdminEmail({ projectTitle: ' ', rating: 3 })).toThrow('invalid_payload');
+    expect(() => reviewHiddenEmail({ projectTitle: '' })).toThrow('invalid_payload');
+  });
+
+  it('reviewHiddenEmail is generic, says not deleted and how to contest', () => {
+    const m = reviewHiddenEmail({ projectTitle: 'Site X' });
+    expect(m.subject).toBe('Votre avis a été masqué');
+    expect(m.text).toContain('Site X');
+    expect(m.text).toContain("Il n'est pas supprimé");
+    expect(m.text).toContain('répondez simplement à cet e-mail');
+    expect(m.text).toContain('contenu illégal');
+    expect(m.html).not.toContain('<a href');
+    expect(JSON.stringify(m)).not.toMatch(/€|prix|tarif|detail|reason/i);
   });
 });

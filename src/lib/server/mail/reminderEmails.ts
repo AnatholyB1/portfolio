@@ -5,7 +5,12 @@ import 'server-only';
 import { formatDateFr } from '@/lib/admin/format';
 import { emailLayout, type BuiltBody } from './layout';
 import type { MarketingContent } from './marketingEmail';
-import { buildAdminMailUrl, buildAdminProjectUrl, buildPortalDocumentsUrl } from './urls';
+import {
+  buildAdminMailUrl,
+  buildAdminProjectUrl,
+  buildAdminReviewsUrl,
+  buildPortalDocumentsUrl,
+} from './urls';
 
 export function documentReminderEmail(p: {
   documentLabel: string;
@@ -108,5 +113,30 @@ export function mailSuppressionAdminEmail(p: {
     ],
     button: 'Ouvrir les e-mails',
     url: buildAdminMailUrl(),
+  });
+}
+
+export function reviewPublishedAdminEmail(p: { projectTitle: string; rating: number }): BuiltBody {
+  if (typeof p.projectTitle !== 'string' || p.projectTitle.trim() === '') throw new Error('invalid_payload');
+  if (!Number.isInteger(p.rating) || p.rating < 1 || p.rating > 5) throw new Error('invalid_payload');
+  const subject = `Nouvel avis publié : ${p.rating} sur 5`;
+  return emailLayout({
+    subject,
+    heading: subject,
+    paragraphs: [`Un nouvel avis a été publié pour le projet ${p.projectTitle}.`],
+    button: 'Voir les avis',
+    url: buildAdminReviewsUrl(),
+  });
+}
+
+export function reviewHiddenEmail(p: { projectTitle: string }): BuiltBody {
+  if (typeof p.projectTitle !== 'string' || p.projectTitle.trim() === '') throw new Error('invalid_payload');
+  const subject = 'Votre avis a été masqué';
+  return emailLayout({
+    subject,
+    heading: subject,
+    paragraphs: [
+      `Votre avis sur le projet « ${p.projectTitle} » a été masqué car il ne respecte pas la loi (motif général : contenu illégal). Il n'est pas supprimé. Si vous contestez cette décision, répondez simplement à cet e-mail.`,
+    ],
   });
 }
