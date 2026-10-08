@@ -35,3 +35,12 @@ export function buildUnsubscribeOneClickUrl(token: string): string {
 export function buildAdminMailUrl(): string {
   return `${getSiteUrl()}/admin/emails`;
 }
+
+/** Lien public de dépôt d'avis (le jeton est dérivé au rendu, jamais stocké en clair). */
+export function buildReviewUrl(token: string): string {
+  return `${getSiteUrl()}/avis/${encodeURIComponent(token)}`;
+}
+
+export function buildAdminReviewsUrl(): string {
+  return `${getSiteUrl()}/admin/avis`;
+}

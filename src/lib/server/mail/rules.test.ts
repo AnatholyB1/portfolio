@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { MAIL_EVENTS, MAIL_RULES, dedupeKey, type MailEvent, type Rule } from './rules';
 
 describe('MAIL_RULES', () => {
-  it('has exactly the seventeen events with expected recipients and zero delay', () => {
-    expect(MAIL_EVENTS).toHaveLength(17);
+  it('has exactly the nineteen events with expected recipients and zero delay', () => {
+    expect(MAIL_EVENTS).toHaveLength(19);
     expect(Object.keys(MAIL_RULES).sort()).toEqual([...MAIL_EVENTS].sort());
     expect(MAIL_RULES.document_issued).toEqual({
       template: 'document_issued',
@@ -34,6 +34,21 @@ describe('MAIL_RULES', () => {
     expect(MAIL_RULES.mail_suppression_admin.to).toBe('admin');
   });
 
+  it('declares the two review mails as transactional', () => {
+    expect(MAIL_RULES.review_published_admin).toEqual({
+      template: 'review_published_admin',
+      delayMs: 0,
+      to: 'admin',
+      class: 'transactional',
+    });
+    expect(MAIL_RULES.review_hidden).toEqual({
+      template: 'review_hidden',
+      delayMs: 0,
+      to: 'client',
+      class: 'transactional',
+    });
+  });
+
   it('is type-checked as Record<MailEvent, Rule>', () => {
     // @ts-expect-error missing document_issued
     const partial: Record<MailEvent, Rule> = {
@@ -53,6 +68,8 @@ describe('MAIL_RULES', () => {
       document_reminder_admin: MAIL_RULES.document_reminder_admin,
       review_request: MAIL_RULES.review_request,
       mail_suppression_admin: MAIL_RULES.mail_suppression_admin,
+      review_published_admin: MAIL_RULES.review_published_admin,
+      review_hidden: MAIL_RULES.review_hidden,
     };
     expect(partial).toBeDefined();
   });
@@ -63,9 +80,9 @@ describe('MAIL_RULES', () => {
   });
 });
 
-describe('closed lists vs phase-16 migration', () => {
+describe('closed lists vs phase-18 migration', () => {
   const sql = readFileSync(
-    new URL('../../../../supabase/migrations/20261008000000_sv_mail_automation.sql', import.meta.url),
+    new URL('../../../../supabase/migrations/20261010000000_sv_reviews.sql', import.meta.url),
     'utf8',
   )
     .split('\n')
@@ -115,6 +132,8 @@ describe('dedupeKey', () => {
     expect(dedupeKey.documentReminderAdmin('d1')).toBe('document_reminder_admin:d1:d14');
     expect(dedupeKey.reviewRequest('p1', 'd21', 'A@B.fr')).toBe('review_request:p1:d21:a@b.fr');
     expect(dedupeKey.mailSuppressionAdmin(42)).toBe('mail_suppression_admin:42');
+    expect(dedupeKey.reviewPublishedAdmin('r1')).toBe('review_published_admin:r1');
+    expect(dedupeKey.reviewHidden('m1', 'A@B.fr')).toBe('review_hidden:m1:a@b.fr');
   });
   it('caps length at 256', () => {
     const long = 'a'.repeat(300) + '@x.fr';

@@ -19,6 +19,8 @@ export const MAIL_EVENTS = [
   'document_reminder_admin',
   'review_request',
   'mail_suppression_admin',
+  'review_published_admin',
+  'review_hidden',
 ] as const;
 export type MailEvent = (typeof MAIL_EVENTS)[number];
 export type MailTemplate =
@@ -38,7 +40,9 @@ export type MailTemplate =
   | 'document_reminder'
   | 'document_reminder_admin'
   | 'review_request'
-  | 'mail_suppression_admin';
+  | 'mail_suppression_admin'
+  | 'review_published_admin'
+  | 'review_hidden';
 export type MailClass = 'transactional' | 'marketing';
 export type Rule = {
   template: MailTemplate;
@@ -65,6 +69,8 @@ export const MAIL_RULES: Record<MailEvent, Rule> = {
   document_reminder_admin: { template: 'document_reminder_admin', delayMs: 0, to: 'admin', class: 'transactional' },
   review_request: { template: 'review_request', delayMs: 0, to: 'client', class: 'marketing' },
   mail_suppression_admin: { template: 'mail_suppression_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  review_published_admin: { template: 'review_published_admin', delayMs: 0, to: 'admin', class: 'transactional' },
+  review_hidden: { template: 'review_hidden', delayMs: 0, to: 'client', class: 'transactional' },
 };
 
 export const ADMIN_NOTIFY_EMAIL = 'contact@sevalys.com';
@@ -126,5 +132,11 @@ export const dedupeKey = {
   },
   mailSuppressionAdmin(suppressionId: string | number): string {
     return clamp(`mail_suppression_admin:${suppressionId}`);
+  },
+  reviewPublishedAdmin(reviewId: string): string {
+    return clamp(`review_published_admin:${reviewId}`);
+  },
+  reviewHidden(moderationId: string, email: string): string {
+    return clamp(`review_hidden:${moderationId}:${norm(email)}`);
   },
 };
