@@ -53,7 +53,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
  (completed 2026-10-06)
 
 - [x] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source (completed 2026-10-07)
-- [ ] **Phase 18: Verified reviews** - Lien d'avis unique, lien Google sans filtrage, modération légale, JSON-LD `Review`
+- [x] **Phase 18: Verified reviews** - Lien d'avis unique, lien Google sans filtrage, modération légale, JSON-LD `Review` (completed 2026-10-08)
 - [ ] **Phase 19: Ads preparation** - Convention UTM documentée, taxonomie d'événements et échelle de conversions
 
 ## Phase Details
@@ -490,41 +490,41 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 18-01-PLAN.md — Migration 20261010000000_sv_reviews.sql: hashed links, immutable reviews, append-only moderation and reissue logs, outbox lists, 6 public service_role RPCs + private helpers, static test
-- [ ] 18-02-PLAN.md — TDD: HMAC-derived review token + sha256 hash, zod submission schema (bounded names) and display-name rule
-- [ ] 18-03-PLAN.md — TDD: Review JSON-LD builder with no-price/no-AggregateRating guard, Google URL guard
-- [ ] 18-04-PLAN.md — /avis/<token> private + noindex (robots, headers, proxy), price-scope zone api/avis, throttle kinds
+- [x] 18-01-PLAN.md — Migration 20261010000000_sv_reviews.sql: hashed links, immutable reviews, append-only moderation and reissue logs, outbox lists, 6 public service_role RPCs + private helpers, static test
+- [x] 18-02-PLAN.md — TDD: HMAC-derived review token + sha256 hash, zod submission schema (bounded names) and display-name rule
+- [x] 18-03-PLAN.md — TDD: Review JSON-LD builder with no-price/no-AggregateRating guard, Google URL guard
+- [x] 18-04-PLAN.md — /avis/<token> private + noindex (robots, headers, proxy), price-scope zone api/avis, throttle kinds
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 18-05-PLAN.md — [BLOCKING] RLS branch sv-rls-p18 (owner-approved), migration push, review helpers
-- [ ] 18-06-PLAN.md — Mail layer: real link from linkId, admin new-review alert, author hidden notice
-- [ ] 18-07-PLAN.md — Sweep creates/reuses links at J+7/J+21, stops on filed review, config fail-closed, env docs
-- [ ] 18-11-PLAN.md — Politique des avis page, footer link, sitemap and llms.txt
-- [ ] 18-12-PLAN.md — /admin/avis: legality-only hide/unhide with history, AdminNav
+- [x] 18-05-PLAN.md — [BLOCKING] RLS branch sv-rls-p18 (owner-approved), migration push, review helpers
+- [x] 18-06-PLAN.md — Mail layer: real link from linkId, admin new-review alert, author hidden notice
+- [x] 18-07-PLAN.md — Sweep creates/reuses links at J+7/J+21, stops on filed review, config fail-closed, env docs
+- [x] 18-11-PLAN.md — Politique des avis page, footer link, sitemap and llms.txt
+- [x] 18-12-PLAN.md — /admin/avis: legality-only hide/unhide with history, AdminNav
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 18-08-PLAN.md — Public data modules (paginated), POST /api/avis (single use, throttle), GET /api/avis/recent
-- [ ] 18-13-PLAN.md — Reissue link (journaled, URL shown once) on project sheet and /admin/avis
-- [ ] 18-14-PLAN.md — RLS suite: single use under concurrency, expiry, reissue, append-only moderation, isolation
+- [x] 18-08-PLAN.md — Public data modules (paginated), POST /api/avis (single use, throttle), GET /api/avis/recent
+- [x] 18-13-PLAN.md — Reissue link (journaled, URL shown once) on project sheet and /admin/avis
+- [x] 18-14-PLAN.md — RLS suite: single use under concurrency, expiry, reissue, append-only moderation, isolation
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 18-09-PLAN.md — /avis/[token] form, generic invalid state, thank-you with identical Google button for ratings 1-5
-- [ ] 18-10-PLAN.md — Paginated /avis list (complete, 50 per page) with Review JSON-LD, ReviewCard, home excerpt
+- [x] 18-09-PLAN.md — /avis/[token] form, generic invalid state, thank-you with identical Google button for ratings 1-5
+- [x] 18-10-PLAN.md — Paginated /avis list (complete, 50 per page) with Review JSON-LD, ReviewCard, home excerpt
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 18-15-PLAN.md — Release gate + production schema apply (owner approval)
+- [x] 18-15-PLAN.md — Release gate + production schema apply (owner approval)
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 18-16-PLAN.md — Owner policy decisions (retention, consent withdrawal), token secret, deploy, branch cleanup
+- [x] 18-16-PLAN.md — Owner policy decisions (retention, consent withdrawal), token secret, deploy, branch cleanup
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
-- [ ] 18-17-PLAN.md — Google Business URL and REVIEW_REQUESTS_ENABLED flip (owner approval)
+- [x] 18-17-PLAN.md — Google Business URL and REVIEW_REQUESTS_ENABLED flip (owner approval)
 **UI hint**: yes
 
 ### Phase 19: Ads preparation
@@ -560,5 +560,5 @@ Plans:
 | 15. Stripe payments & invoicing | v2.0 | 21/21 | Complete    | 2026-10-06 |
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
 | 17. Admin forecast dashboard | v2.0 | 14/14 | Complete   | 2026-10-07 |
-| 18. Verified reviews | v2.0 | 0/TBD | Not started | - |
+| 18. Verified reviews | v2.0 | 17/17 | Complete   | 2026-10-08 |
 | 19. Ads preparation | v2.0 | 0/TBD | Not started | - |
