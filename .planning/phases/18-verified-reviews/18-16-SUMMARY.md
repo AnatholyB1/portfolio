@@ -1,7 +1,7 @@
 ---
 phase: 18-verified-reviews
 plan: 16
-status: partial (Tasks 1-2 done; Task 3 pending owner approvals)
+status: partial (Tasks 1-2 done; Task 3 preview stage done, production pending second approval)
 requirements: [REV-01, REV-03, REV-04]
 ---
 
@@ -25,6 +25,30 @@ Tasks 1-2 complete. Task 3 (preview, production promotion, branch cleanup) is NO
 ## Deviations
 
 None. Note: the retention sentence was already present from 18-11; only the withdrawal sentence and tests were new.
+
+## Task 3 (preview stage), 2026-10-08
+
+First owner approval (verbatim, 2026-10-08): "Approve preview deploy" (preview only).
+
+- Pushed `release/phase-18` from master HEAD 111bfa8 (origin/release/phase-18).
+- Preview Ready: https://portfolio-fmiepm51a-anatholyb1s-projects.vercel.app (Preview, build 1m).
+- Checks run through `vercel curl` (CLI injects the protection bypass; the token was never recorded). `.env.vercel.local` pulled (gitignored, confirmed) and still in place for the production stage. Note: the preview `X-Robots-Tag: noindex` on public pages is Vercel's automatic preview header; the page-level meta robots is what production will serve.
+
+| Check | Result | Status |
+|---|---|---|
+| GET /avis | 200; meta robots `index, follow`; h1 "Avis clients"; empty-state heading "Pas encore d'avis publié"; header `X-Robots-Tag: noindex` (Vercel preview header, not app) | PASS (header caveat) |
+| GET /politique-des-avis | 200 | PASS |
+| GET /avis/AAAA...A (43 chars) | 200; "Ce lien n'est plus valide"; `X-Robots-Tag: noindex, nofollow`; meta robots `noindex, nofollow, nocache` | PASS |
+| GET /robots.txt | contains `Disallow: /avis/` | PASS |
+| GET /sitemap.xml | contains https://sevalys.com/avis and https://sevalys.com/politique-des-avis | PASS |
+| GET /admin/avis (anonymous) | 307, `Location: /connexion?next=%2Fadmin%2Favis` | PASS |
+| POST /api/avis, valid body, malformed token "bad" | 410 `{"error":"link_invalid"}` (a body without consent returned 400 first, schema validation precedes the token check) | PASS |
+
+Caveat to re-verify on production: that /avis has no `X-Robots-Tag: noindex` header (the preview header cannot prove it).
+
+Incident: one `vercel curl --debug` call printed the start of its bypass header in the tool output (truncated); no secret reached any file or commit. Consider rotating the protection bypass secret if the log is retained.
+
+Not done (awaiting second approval): fast-forward and push master, production polling and checks on https://sevalys.com, deletion of release/phase-18 (local and remote), `.env.vercel.local`, Supabase branch sv-rls-p18 and `.env.test.local`. Local master carries the unpushed docs commit of this summary (release/phase-18 is its ancestor, so master can be pushed directly).
 
 ## Pending
 
