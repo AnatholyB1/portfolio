@@ -13,7 +13,9 @@ export type ThrottleKind =
   | 'verify-email'
   | 'verify-ip'
   | 'contact-ip'
-  | 'consent-ip';
+  | 'consent-ip'
+  | 'review-ip'
+  | 'review-view-ip';
 
 export function hashKey(kind: ThrottleKind, value: string): string {
   return `${kind}:${createHash('sha256').update(value).digest('hex')}`;
