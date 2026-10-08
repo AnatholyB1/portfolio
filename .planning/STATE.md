@@ -4,12 +4,12 @@ milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
 stopped_at: Phase 19 context gathered
-last_updated: "2026-10-08T14:27:52.669Z"
-last_activity: 2026-10-08 -- Phase 18 execution started
+last_updated: "2026-10-08T15:07:46.506Z"
+last_activity: 2026-10-08 -- Phase 19 execution started
 progress:
   total_phases: 10
   completed_phases: 9
-  total_plans: 158
+  total_plans: 170
   completed_plans: 158
   percent: 90
 ---
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-01 for milestone v2.0)
 
 **Core value:** Un patron de PME arrive sur le site, comprend, fait confiance et sait comment nous contacter en moins de 60 secondes.
-**Current focus:** Phase 18 — verified-reviews
+**Current focus:** Phase 19 — ads-preparation
 
 ## Current Position
 
-Phase: 18 (verified-reviews) — EXECUTING
-Plan: 1 of 17
-Status: Executing Phase 18
-Last activity: 2026-10-08 -- Phase 18 execution started
+Phase: 19 (ads-preparation) — EXECUTING
+Plan: 1 of 12
+Status: Executing Phase 19
+Last activity: 2026-10-08 -- Phase 19 execution started
 
 Progress: [██████████] 99%
 
