@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Plateforme Sèvalys
 status: executing
-stopped_at: Phase 18 context gathered
-last_updated: "2026-10-08T10:29:36.415Z"
+stopped_at: Phase 18 UI-SPEC approved
+last_updated: "2026-10-08T10:41:19.159Z"
 last_activity: 2026-10-07
 progress:
   total_phases: 10
@@ -92,9 +92,9 @@ Carried from v1.0/v1.1, not in v2.0 scope: footer nav labels not wired to Langua
 
 ## Session Continuity
 
-Last session: 2026-10-08T10:29:36.385Z
-Stopped at: Phase 18 context gathered
-Resume file: .planning/phases/18-verified-reviews/18-CONTEXT.md
+Last session: 2026-10-08T10:41:19.143Z
+Stopped at: Phase 18 UI-SPEC approved
+Resume file: .planning/phases/18-verified-reviews/18-UI-SPEC.md
 
 ## Operator Next Steps
 
