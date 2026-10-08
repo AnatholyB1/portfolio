@@ -27,7 +27,7 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
           Invitez votre premier client avec le formulaire ci-dessus : il recevra un code de
           connexion par e-mail.
         </p>
-        <a href="#invite-title" className="pt-btn-ghost">
+        <a href="/admin#invite-title" className="pt-btn-ghost">
           Aller au formulaire d&apos;invitation
         </a>
       </div>
