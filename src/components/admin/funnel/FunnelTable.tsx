@@ -1,4 +1,5 @@
 import { conversionRate, formatEuroCents, type FunnelRow, type GroupBy } from '@/lib/admin/funnel';
+import { TriangleAlert } from 'lucide-react';
 import CostEditor from './CostEditor';
 import './funnel.css';
 
@@ -76,7 +77,22 @@ export default function FunnelTable({ rows, by }: { rows: FunnelRow[]; by: Group
         <tbody>
           {rows.map((r) => (
             <tr key={`${r.source}|${r.campaign}|${r.month}`}>
-              <th scope="row">{r.source || '—'}</th>
+              <th scope="row">
+                {r.source || '—'}
+                {(r.nonconformingLeads ?? 0) > 0 ? (
+                  <span
+                    className="pt-lead-badge"
+                    title={`${r.nonconformingLeads} lead(s) de cette ligne ont une source hors convention`}
+                  >
+                    <TriangleAlert size={16} aria-hidden="true" />
+                    Hors convention ({r.nonconformingLeads})
+                    <span className="pt-sr-only">
+                      {' '}
+                      {r.nonconformingLeads} lead(s) de cette ligne ont une source hors convention
+                    </span>
+                  </span>
+                ) : null}
+              </th>
               <td>{by === 'month' || by === 'source' ? '—' : r.campaign || '(aucune)'}</td>
               <td>{monthLabel(r.month) || '—'}</td>
               <td className="pt-funnel-num">{nf.format(r.visits)}</td>

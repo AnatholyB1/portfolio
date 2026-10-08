@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, TriangleAlert } from 'lucide-react';
 import { EM_DASH, formatDateFr } from '@/lib/admin/format';
 import StatusPill from './StatusPill';
 import './leads.css';
@@ -16,6 +16,7 @@ export interface LeadRow {
   erased_at: string | null;
   contact_nom: string | null;
   contact_email: string | null;
+  source_nonconformity: string[] | null;
 }
 
 function orDash(v: string | null | undefined): string {
@@ -27,6 +28,15 @@ function ReturnBadge() {
     <span className="pt-lead-badge">
       <RotateCcw size={14} aria-hidden="true" />
       Revenu
+    </span>
+  );
+}
+
+function OffConventionBadge() {
+  return (
+    <span className="pt-lead-badge">
+      <TriangleAlert size={16} aria-hidden="true" />
+      Hors convention
     </span>
   );
 }
@@ -61,6 +71,9 @@ export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
               <td role="cell" data-label="Source">
                 {orDash(r.source_source)} / {orDash(r.source_medium)}
                 {r.source_campaign ? <span className="pt-lead-sub">{r.source_campaign}</span> : null}
+                {r.source_nonconformity && r.source_nonconformity.length > 0 ? (
+                  <OffConventionBadge />
+                ) : null}
               </td>
               <td role="cell" data-label="Statut">
                 <StatusPill leadId={r.id} status={r.status} />
