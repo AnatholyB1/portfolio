@@ -51,7 +51,8 @@ export default function ReviewRatingInput({ value, onChange, invalid, describedB
     <div className="rv-rating-row">
       <div
         role="radiogroup"
-        aria-label="Note de 1 à 5"
+        aria-labelledby="rv-rating-label"
+        aria-required="true"
         aria-invalid={invalid ? 'true' : undefined}
         aria-describedby={describedBy}
         className="rv-rating"

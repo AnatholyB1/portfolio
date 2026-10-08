@@ -40,6 +40,16 @@ describe('thank-you view', () => {
     expect(out).toContain('href="/avis"');
   });
 
+  it('has a single focusable h1 that takes focus when the form unmounts', () => {
+    const out = html(4, GOOGLE);
+    expect(out.match(/<h1[ >]/g)).toHaveLength(1);
+    expect(out).toContain('id="rv-heading"');
+    expect(out).toContain('tabindex="-1"');
+    expect(out).not.toContain('pt-auth-title');
+    const src = readFileSync(new URL('ReviewThankYou.tsx', new URL('.', import.meta.url)), 'utf8');
+    expect(src).toMatch(/headingRef\.current\?\.focus\(\)/);
+  });
+
   it('declares no rating prop and uses no prohibited wording', () => {
     const dir = new URL('.', import.meta.url);
     const thank = readFileSync(new URL('ReviewThankYou.tsx', dir), 'utf8');

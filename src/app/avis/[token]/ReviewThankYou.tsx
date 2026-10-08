@@ -1,11 +1,22 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 // Vue de remerciement (D-10, REV-02). Volontairement SANS prop de note : le bouton Google
 // est identique pour toutes les notes.
 export default function ReviewThankYou({ googleUrl }: { googleUrl: string | null }) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // The form unmounted when this view replaced it: move focus to the new title so keyboard and
+  // screen-reader users land on the confirmation instead of <body>.
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
     <div className="rv-thanks">
-      <h1 id="pt-auth-title" className="pt-display">
+      <h1 id="rv-heading" className="pt-display" tabIndex={-1} ref={headingRef}>
         Merci pour votre avis
       </h1>
       <p className="pt-helper">Votre avis est publié sur la page Avis.</p>

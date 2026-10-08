@@ -18,27 +18,44 @@ interface AvisTokenPageProps {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="pt-auth">
+    <main className="pt-auth" id="main-content">
       <div className="pt-brand">
         <SevalysMark size={32} />
         <span>Sèvalys</span>
       </div>
-      <section className="pt-card rv-card" aria-labelledby="pt-auth-title">
+      <section className="pt-card rv-card" aria-labelledby="rv-heading">
         {children}
       </section>
     </main>
   );
 }
 
+// Same wording for an unknown, used or expired link: the page never says which one it is
+// (no oracle on link validity).
 function InvalidLink() {
   return (
     <Shell>
-      <h1 id="pt-auth-title" className="pt-heading">
+      <h1 id="rv-heading" className="pt-heading">
         Ce lien n&apos;est plus valide
       </h1>
       <p className="pt-helper">
-        Le lien a peut-être déjà été utilisé ou a expiré. Écrivez-nous à{' '}
+        Le lien a peut-être déjà été utilisé ou a expiré. Écrivez-nous à{" "}
         <a href={`mailto:${CONTACT}`}>{CONTACT}</a> et nous vous en renverrons un.
+      </p>
+    </Shell>
+  );
+}
+
+// Rate-limited view: says nothing about the link itself, so a valid link is not reported dead.
+function ThrottledView() {
+  return (
+    <Shell>
+      <h1 id="rv-heading" className="pt-heading">
+        Trop de tentatives
+      </h1>
+      <p className="pt-helper">
+        Réessayez dans quelques minutes. Si le problème persiste, écrivez-nous à{" "}
+        <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
       </p>
     </Shell>
   );
@@ -49,20 +66,13 @@ export default async function AvisTokenPage({ params }: AvisTokenPageProps) {
 
   const ip = getClientIp(await headers());
   const allowed = await hitThrottle(hashKey('review-view-ip', ip ?? 'unknown'), 600, 60);
-  if (!allowed) return <InvalidLink />;
+  if (!allowed) return <ThrottledView />;
 
   const link = await getReviewLinkState(token);
   if (link.state !== 'valid') return <InvalidLink />;
 
   return (
     <Shell>
-      <h1 id="pt-auth-title" className="pt-heading">
-        Votre avis sur votre projet
-      </h1>
-      <p className="pt-helper">
-        Votre avis est publié tel que vous l&apos;écrivez, sans validation préalable. Vous recevez
-        ce lien parce que votre projet a été livré.
-      </p>
       <ReviewForm
         token={token}
         projectTitle={link.projectTitle}
