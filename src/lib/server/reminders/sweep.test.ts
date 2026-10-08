@@ -7,10 +7,19 @@ const S = vi.hoisted(() => ({
   errorOn: null as string | null,
   queries: [] as { table: string; filters: [string, string, any][] }[],
   updates: [] as { values: any; filters: [string, string, any][] }[],
+  flagOn: false,
+  configReady: false,
+  ensure: vi.fn(),
 }));
 
 vi.mock('server-only', () => ({}));
 vi.mock('@/lib/server/mail/outbox', () => ({ enqueueMail: S.enqueue }));
+vi.mock('@/lib/server/mail/flags', () => ({
+  reviewRequestsEnabled: () => S.flagOn,
+  reviewConfigReady: () => S.configReady,
+}));
+vi.mock('@/lib/server/reviews/links', () => ({ ensureReviewLink: S.ensure }));
+vi.mock('@/lib/reviews/token', () => ({ reviewSecret: () => 'x'.repeat(40) }));
 vi.mock('@/lib/supabase/admin', () => ({
   createSupabaseAdminClient: () => ({
     from: (table: string) => {
@@ -45,7 +54,7 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
-import { planReminders, sweepReminders, type PlanInput, type PlanOpts } from './sweep';
+import { planReminders, reviewCandidates, sweepReminders, type PlanInput, type PlanOpts } from './sweep';
 
 const NOW = new Date('2026-10-20T10:00:00Z');
 const daysAgo = (n: number) => new Date(NOW.getTime() - n * 86_400_000).toISOString();
@@ -82,6 +91,7 @@ const base = (over: Partial<PlanInput> = {}): PlanInput => ({
   ],
   clients: [{ id: 'c1', name: 'Acme' }],
   openReminderRows: [],
+  reviewedProjectIds: [],
   ...over,
 });
 const plan = (input: PlanInput, opts = OFF) => planReminders(input, NOW, opts);
@@ -180,7 +190,7 @@ describe('planReminders review requests', () => {
   const signed = (days: number) => [
     fact({ id: 9, type: 'acceptance_signed', created_at: daysAgo(days) }),
   ];
-  const on: PlanOpts = { reviewEnabled: true, reviewLink: () => 'https://sevalys.com/avis/test-token', limit: 100 };
+  const on: PlanOpts = { reviewEnabled: true, reviewLink: () => 'L1', limit: 100 };
 
   it('d7, d21, and d21 again at day 30', () => {
     for (const [days, stage] of [[7, 'd7'], [21, 'd21'], [30, 'd21']] as const) {
@@ -188,20 +198,66 @@ describe('planReminders review requests', () => {
       expect(enqueues).toHaveLength(2);
       expect(enqueues[0]).toMatchObject({
         event: 'review_request',
-        payload: { projectTitle: 'Site', reviewUrl: 'https://sevalys.com/avis/test-token', stage },
+        payload: { projectTitle: 'Site', linkId: 'L1', stage },
       });
+      expect(enqueues[0].payload).not.toHaveProperty('reviewUrl');
     }
     expect(plan(base({ docs: [], facts: signed(5) }), on).enqueues).toEqual([]);
   });
 
-  it('nothing and stale when the flag is off or no link', () => {
-    const open = [{ id: 'r1', event_type: 'review_request', dedupe_key: 'review_request:p1:d7:a@x.fr', project_id: 'p1', status: 'pending' }];
-    const input = base({ docs: [], facts: signed(7), openReminderRows: open });
-    for (const o of [{ ...on, reviewEnabled: false }, { ...on, reviewLink: () => null }]) {
-      const r = plan(input, o);
-      expect(r.enqueues).toEqual([]);
-      expect(r.staleIds).toEqual(['r1']);
-    }
+  const open = [{ id: 'r1', event_type: 'review_request', dedupe_key: 'review_request:p1:d7:a@x.fr', project_id: 'p1', status: 'pending' }];
+
+  it('nothing and stale when the flag is off', () => {
+    const r = plan(base({ docs: [], facts: signed(7), openReminderRows: open }), { ...on, reviewEnabled: false });
+    expect(r.enqueues).toEqual([]);
+    expect(r.staleIds).toEqual(['r1']);
+  });
+
+  it('no link: nothing enqueued but the open row is not stale', () => {
+    const r = plan(base({ docs: [], facts: signed(7), openReminderRows: open }), { ...on, reviewLink: () => null });
+    expect(r.enqueues).toEqual([]);
+    expect(r.staleIds).toEqual([]);
+  });
+
+  it('d7 and d21 share the same link id', () => {
+    const a = plan(base({ docs: [], facts: signed(7) }), on).enqueues[0];
+    const b = plan(base({ docs: [], facts: signed(21) }), on).enqueues[0];
+    expect((a.payload as any).linkId).toBe((b.payload as any).linkId);
+  });
+
+  it('nothing after 60 days (61-day case)', () => {
+    expect(plan(base({ docs: [], facts: signed(61) }), on).enqueues).toEqual([]);
+  });
+
+  it('reviewed project: no enqueue and its open row is stale', () => {
+    const r = plan(base({ docs: [], facts: signed(7), openReminderRows: open, reviewedProjectIds: ['p1'] }), on);
+    expect(r.enqueues).toEqual([]);
+    expect(r.staleIds).toEqual(['r1']);
+  });
+
+  it('held project: no enqueue', () => {
+    const holds = [{ id: 1, project_id: 'p1', action: 'suspend', created_at: daysAgo(1) }];
+    expect(plan(base({ docs: [], facts: signed(7), holds }), on).enqueues).toEqual([]);
+  });
+});
+
+describe('reviewCandidates', () => {
+  const scope = (days: number, over: Record<string, unknown> = {}) => ({
+    facts: [fact({ id: 9, type: 'acceptance_signed', created_at: daysAgo(days) })] as any,
+    holds: [] as any,
+    projects: [{ id: 'p1', client_id: 'c1', title: 'Site' }],
+    reviewedProjectIds: [] as string[],
+    ...over,
+  });
+  it('keeps only d7/d21, non-held, non-reviewed signed projects', () => {
+    expect(reviewCandidates(scope(7), NOW)).toEqual(['p1']);
+    expect(reviewCandidates(scope(30), NOW)).toEqual(['p1']);
+    expect(reviewCandidates(scope(5), NOW)).toEqual([]);
+    expect(reviewCandidates(scope(61), NOW)).toEqual([]);
+    expect(reviewCandidates(scope(7, { reviewedProjectIds: ['p1'] }), NOW)).toEqual([]);
+    expect(
+      reviewCandidates(scope(7, { holds: [{ id: 1, project_id: 'p1', action: 'suspend', created_at: daysAgo(1) }] }), NOW),
+    ).toEqual([]);
   });
 });
 
@@ -225,7 +281,48 @@ describe('sweepReminders', () => {
     S.errorOn = null;
     S.queries = [];
     S.updates = [];
+    S.flagOn = false;
+    S.configReady = false;
+    S.ensure.mockReset();
+    S.ensure.mockResolvedValue('L1');
     errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  const signedProject = () => {
+    S.tables.sv_project_documents = [];
+    S.tables.sv_project_facts = [fact({ id: 9, type: 'acceptance_signed', created_at: daysAgo(7) })];
+  };
+
+  it('flag on with invalid config: logs review_config_invalid, no ensure, no review_request', async () => {
+    signedProject();
+    S.flagOn = true;
+    S.configReady = false;
+    await sweepReminders({ now: NOW });
+    expect(errSpy).toHaveBeenCalledWith('[reminders/sweep] review_config_invalid');
+    expect(S.ensure).not.toHaveBeenCalled();
+    expect(S.enqueue).not.toHaveBeenCalled();
+  });
+
+  it('flag on with valid config: creates the link and enqueues linkId', async () => {
+    signedProject();
+    S.flagOn = true;
+    S.configReady = true;
+    await sweepReminders({ now: NOW });
+    expect(S.ensure).toHaveBeenCalledTimes(1);
+    expect(S.ensure.mock.calls[0][1]).toBe('p1');
+    expect(S.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'review_request', payload: { projectTitle: 'Site', linkId: 'L1', stage: 'd7' } }),
+    );
+  });
+
+  it('reviewed project (sv_reviews row): no ensure, no enqueue', async () => {
+    signedProject();
+    S.flagOn = true;
+    S.configReady = true;
+    S.tables.sv_reviews = [{ project_id: 'p1' }];
+    await sweepReminders({ now: NOW });
+    expect(S.ensure).not.toHaveBeenCalled();
+    expect(S.enqueue).not.toHaveBeenCalled();
   });
 
   it('counts inserted as queued and the second run as duplicates', async () => {
