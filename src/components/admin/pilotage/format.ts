@@ -1,11 +1,9 @@
-// Formatage d'affichage du pilotage. Pur, sans React. money.ts reste intact (les PDF l'utilisent).
-import { formatEuros, NBSP } from '@/lib/documents/money';
+// Formatage d'affichage du pilotage. Pur, sans React. formatEuros (PDF) reste inchangé dans money.ts.
+import { NBSP, formatSignedEuros } from '@/lib/documents/money';
 import { monthShortFr } from '@/lib/server/pilotage/periods';
 
-/** Montant avec le signe moins typographique U+2212 pour les négatifs. */
-export function formatSignedEuros(cents: number): string {
-  return cents < 0 ? `−${formatEuros(-cents)}` : formatEuros(cents);
-}
+/** Montant avec le signe moins typographique U+2212 (défini une seule fois dans money.ts). */
+export { formatSignedEuros };
 
 /** Part en points de base (1250 = 12,5 %), arithmétique entière. */
 export function formatShareBp(bp: number): string {
