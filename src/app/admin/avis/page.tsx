@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import AdminNav from '@/components/admin/AdminNav';
+import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
 import HideReviewDialog from '@/components/admin/reviews/HideReviewDialog';
 import ReissueReviewLinkCard from '@/components/admin/reviews/ReissueReviewLinkCard';
 import UnhideReviewForm from '@/components/admin/reviews/UnhideReviewForm';
@@ -17,113 +19,148 @@ import '@/components/admin/leads/leads.css';
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Avis' };
 
-export default async function AdminAvisPage() {
+export default async function AdminAvisPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   // Lecture via le client RLS (politique admin), jamais service_role.
   const { supabase } = await requireAdmin();
+  const page = parsePage((await searchParams).page);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const hrefFor = (n: number) => (n > 1 ? `/admin/avis?page=${n}` : '/admin/avis');
 
-  let reviews: AdminReview[] | null = null;
-  try {
-    reviews = await loadAdminReviews(supabase);
-  } catch {
-    reviews = null;
-  }
-
-  let openLinks: Awaited<ReturnType<typeof loadOpenReviewLinks>> | null = null;
-  try {
-    openLinks = await loadOpenReviewLinks(supabase);
-  } catch {
-    openLinks = null;
-  }
+  // Les deux lectures sont indépendantes : en parallèle, chacune tolère son propre échec.
+  const [fetched, openLinks] = await Promise.all([
+    // Une ligne de plus que la page pour savoir s'il y a une suite.
+    loadAdminReviews(supabase, { from, to: from + ADMIN_PAGE_SIZE }).catch((): AdminReview[] | null => null),
+    loadOpenReviewLinks(supabase).catch(() => null),
+  ]);
+  const hasNext = fetched !== null && fetched.length > ADMIN_PAGE_SIZE;
+  const reviews = fetched === null ? null : fetched.slice(0, ADMIN_PAGE_SIZE);
 
   return (
     <>
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
-        <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="pt-admin">
           <AdminNav current="avis" />
           <section className="pt-card" aria-labelledby="avis-title">
-            <h1 id="avis-title" className="pt-heading" style={{ marginBottom: 16 }}>
+            <h1 id="avis-title" className="pt-heading pt-admin-title-tight">
               Avis
             </h1>
-            <p className="pt-helper" style={{ marginBottom: 24 }}>
+            <p className="pt-helper pt-admin-lede">
               Un avis ne peut être masqué que pour illégalité. Il n&apos;est jamais supprimé et
               chaque action est journalisée.
             </p>
             {reviews === null ? (
-              <p className="pt-error">Impossible de charger les avis.</p>
+              <div className="pt-empty">
+                <h2 className="pt-heading">Avis indisponibles</h2>
+                <p className="pt-helper">
+                  Les avis n&apos;ont pas pu être lus. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
+                  connexion à la base.
+                </p>
+                <Link href={hrefFor(page)} className="pt-btn-ghost">
+                  Recharger
+                </Link>
+              </div>
             ) : reviews.length === 0 ? (
               <div className="pt-empty">
-                <p className="pt-helper">Aucun avis déposé pour l&apos;instant.</p>
+                <h2 className="pt-heading">Aucun avis déposé</h2>
+                <p className="pt-helper">
+                  Les avis apparaîtront ici dès qu&apos;un client en aura publié un depuis son lien d&apos;avis.
+                </p>
+                {page > 1 ? (
+                  <Link href="/admin/avis" className="pt-btn-ghost">
+                    Revenir à la première page
+                  </Link>
+                ) : null}
               </div>
             ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {reviews.map((r) => (
-                  <li key={r.id} className="pt-card">
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'baseline' }}>
-                      <span>{formatDateFr(r.publishedAt)}</span>
-                      <strong>{r.projectTitle}</strong>
-                      <span>{r.companyName}</span>
-                      <span>{r.rating}/5</span>
-                      <span
-                        className="pt-helper"
-                        style={r.status === 'hidden' ? { color: 'var(--warm)' } : undefined}
-                      >
-                        {r.status === 'hidden' ? 'Masqué' : 'Publié'}
-                      </span>
-                    </div>
+              <>
+                <ul className="pt-admin-list">
+                  {reviews.map((r) => (
+                    <li key={r.id} className="pt-card">
+                      <div className="pt-admin-meta">
+                        <span>{formatDateFr(r.publishedAt)}</span>
+                        <strong>{r.projectTitle}</strong>
+                        <span>{r.companyName}</span>
+                        <span>{r.rating}/5</span>
+                        <span className={r.status === 'hidden' ? 'pt-helper pt-admin-hidden' : 'pt-helper'}>
+                          {r.status === 'hidden' ? 'Masqué' : 'Publié'}
+                        </span>
+                      </div>
 
-                    <details style={{ marginTop: 16 }}>
-                      <summary style={{ minHeight: 44, cursor: 'pointer' }}>Détails et historique</summary>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
-                        {r.title ? <strong>{r.title}</strong> : null}
-                        <p style={{ whiteSpace: 'pre-wrap' }}>{r.body}</p>
-                        <p className="pt-helper">Nom affiché : {r.displayName}</p>
-                        <h3 className="pt-heading">Historique de modération</h3>
-                        {r.history.length === 0 ? (
-                          <p className="pt-helper">Aucune action de modération.</p>
+                      <p className="pt-admin-clamp pt-admin-mt-16">{r.body}</p>
+
+                      <details className="pt-admin-mt-16">
+                        <summary className="pt-admin-summary">Détails et historique</summary>
+                        <div className="pt-admin-stack pt-admin-mt-8">
+                          {r.title ? <strong>{r.title}</strong> : null}
+                          <p className="pt-admin-prewrap">{r.body}</p>
+                          <p className="pt-helper">Nom affiché : {r.displayName}</p>
+                          <h3 className="pt-heading">Historique de modération</h3>
+                          {r.history.length === 0 ? (
+                            <p className="pt-helper">Aucune action de modération.</p>
+                          ) : (
+                            <ul className="pt-admin-bullets">
+                              {r.history.map((h) => (
+                                <li key={h.id}>
+                                  {h.action === 'hide' ? 'Masquage' : 'Levée du masquage'}
+                                  {h.reasonLabel ? ` · Motif : ${h.reasonLabel}` : ''}
+                                  {` · Détail : ${h.detail}`}
+                                  {` · ${h.actorEmail ?? 'Administrateur'}`}
+                                  {` · ${formatDateFr(h.createdAt)}`}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </details>
+
+                      <div className="pt-admin-mt-16">
+                        {r.status === 'published' ? (
+                          <HideReviewDialog reviewId={r.id} reasons={REVIEW_HIDE_REASONS} />
                         ) : (
-                          <ul style={{ margin: 0, paddingLeft: 20 }}>
-                            {r.history.map((h) => (
-                              <li key={h.id}>
-                                {h.action === 'hide' ? 'Masquage' : 'Levée du masquage'}
-                                {h.reasonLabel ? ` · Motif : ${h.reasonLabel}` : ''}
-                                {` · Détail : ${h.detail}`}
-                                {` · ${h.actorEmail ?? 'Administrateur'}`}
-                                {` · ${formatDateFr(h.createdAt)}`}
-                              </li>
-                            ))}
-                          </ul>
+                          <UnhideReviewForm reviewId={r.id} />
                         )}
                       </div>
-                    </details>
-
-                    <div style={{ marginTop: 16 }}>
-                      {r.status === 'published' ? (
-                        <HideReviewDialog reviewId={r.id} reasons={REVIEW_HIDE_REASONS} />
-                      ) : (
-                        <UnhideReviewForm reviewId={r.id} />
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+                <Pager page={page} hasNext={hasNext} hrefFor={hrefFor} label="avis" />
+              </>
             )}
           </section>
           <section className="pt-card" aria-labelledby="liens-title">
-            <h2 id="liens-title" className="pt-heading" style={{ marginBottom: 16 }}>
+            <h2 id="liens-title" className="pt-heading pt-admin-title-tight">
               Liens d&apos;avis
             </h2>
             {openLinks === null ? (
-              <p className="pt-error">Impossible de charger les liens d&apos;avis.</p>
+              <div className="pt-empty">
+                <p className="pt-heading">Liens d&apos;avis indisponibles</p>
+                <p className="pt-helper">
+                  Les liens en attente n&apos;ont pas pu être lus. Rechargez la page pour réessayer.
+                </p>
+                <Link href={hrefFor(page)} className="pt-btn-ghost">
+                  Recharger
+                </Link>
+              </div>
             ) : openLinks.length === 0 ? (
               <div className="pt-empty">
-                <p className="pt-helper">Aucun lien d&apos;avis en attente.</p>
+                <p className="pt-heading">Aucun lien d&apos;avis en attente</p>
+                <p className="pt-helper">
+                  Les liens d&apos;avis non utilisés apparaîtront ici tant que le client n&apos;a pas déposé son avis.
+                </p>
+                <Link href="/admin/projets" className="pt-btn-ghost">
+                  Voir les projets
+                </Link>
               </div>
             ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <ul className="pt-admin-list">
                 {openLinks.map((l) => (
                   <li key={l.projectId}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'baseline', marginBottom: 8 }}>
+                    <div className="pt-admin-meta pt-admin-mb-8">
                       <strong>{l.projectTitle}</strong>
                       <span>{l.companyName}</span>
                     </div>

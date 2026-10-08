@@ -65,6 +65,44 @@ describe('funnel page', () => {
   });
 });
 
+describe('emails, avis and liens pages', () => {
+  const emails = read('../../app/admin/emails/page.tsx');
+  const avis = read('../../app/admin/avis/page.tsx');
+  const liens = read('../../app/admin/liens/page.tsx');
+
+  it('emails table has table roles, a caption and a data-label on every cell', () => {
+    expect(emails).toContain('role="table"');
+    expect(emails).toContain('<caption className="pt-sr-only">');
+    const cells = emails.match(/<td role="cell"/g) ?? [];
+    const labelled = emails.match(/<td role="cell" data-label=/g) ?? [];
+    expect(cells.length).toBeGreaterThanOrEqual(6);
+    expect(labelled.length).toBe(cells.length);
+  });
+
+  it('emails show the lifted reason in the Statut cell and paginate', () => {
+    expect(emails).toContain('Motif : {r.liftReason}');
+    expect(emails).toContain('<Pager');
+    expect(emails).toContain('Liste indisponible');
+  });
+
+  it('avis is paginated, loads both lists in parallel and has explicit error states', () => {
+    expect(avis).toContain('<Pager');
+    expect(avis).toContain('Promise.all');
+    expect(avis).toContain('Avis indisponibles');
+    expect(avis).toContain('Liens d&apos;avis indisponibles');
+  });
+
+  it('none of the three pages uses inline styles', () => {
+    for (const src of [emails, avis, liens]) expect(src).not.toContain('style={{');
+  });
+
+  it('liens tables are pt-table card tables with labelled cells', () => {
+    expect((liens.match(/className="pt-table pt-admin-table"/g) ?? []).length).toBe(3);
+    expect(liens).not.toMatch(/<table className="pt-admin-table"/);
+    expect(liens).toContain('data-label="Valeur enregistrée"');
+  });
+});
+
 describe('shared styles', () => {
   it('lead panel is static by default and floats only from the status pill', () => {
     expect(leadsCss).toMatch(/\.pt-admin \.pt-lead-panel \{\s*position: static/);
