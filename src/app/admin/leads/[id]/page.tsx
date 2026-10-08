@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { RotateCcw, UserPlus } from 'lucide-react';
 import AdminNav from '@/components/admin/AdminNav';
 import AttributionCard from '@/components/admin/leads/AttributionCard';
+import ConversionsCard from '@/components/admin/leads/ConversionsCard';
 import ConvertDialog from '@/components/admin/leads/ConvertDialog';
 import CorrectSourceForm from '@/components/admin/leads/CorrectSourceForm';
 import EraseLeadForm from '@/components/admin/leads/EraseLeadForm';
@@ -18,6 +19,11 @@ import SignOutButton from '@/components/portal/SignOutButton';
 import { formatDateFr } from '@/lib/admin/format';
 import { OFFER_SLUGS, type OfferSlug } from '@/lib/projects/offers';
 import { PROJECT_COPY } from '@/lib/projects/copy';
+import {
+  conversionLadder,
+  loadLeadConversions,
+  type ConversionLadder,
+} from '@/lib/server/ads/conversions';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -45,6 +51,8 @@ interface LeadDetail {
   source_source: string | null;
   source_medium: string | null;
   source_campaign: string | null;
+  source_nonconformity: string[] | null;
+  source_raw: unknown;
   first_touch: unknown;
   last_touch: unknown;
   previous_lead_id: string | null;
@@ -62,7 +70,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
   const { data: leadData } = await supabase
     .from('sv_leads_admin_v')
     .select(
-      'id, status, source_source, source_medium, source_campaign, first_touch, last_touch, previous_lead_id, unseen_return, erased_at, contact_nom, contact_email',
+      'id, status, source_source, source_medium, source_campaign, source_nonconformity, source_raw, first_touch, last_touch, previous_lead_id, unseen_return, erased_at, contact_nom, contact_email',
     )
     .eq('id', id)
     .maybeSingle();
@@ -96,6 +104,13 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
     ? await supabase.from('sv_projects').select('id').eq('lead_id', id).limit(1).maybeSingle()
     : { data: null };
   const projectId = (projectData as { id?: string } | null)?.id ?? null;
+
+  let ladder: ConversionLadder | null = null;
+  try {
+    ladder = conversionLadder(await loadLeadConversions(supabase, id));
+  } catch {
+    ladder = null;
+  }
 
   const contacts = (contactData ?? []) as unknown as ContactRow[];
   const events = (eventData ?? []) as unknown as EventRow[];
@@ -188,7 +203,12 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
               <LeadJournal events={events} notes={notes} />
             </div>
             <div className="pt-lead-side">
-              <AttributionCard firstTouch={lead.first_touch} lastTouch={lead.last_touch} />
+              <AttributionCard
+                firstTouch={lead.first_touch}
+                lastTouch={lead.last_touch}
+                nonconformity={lead.source_nonconformity}
+              />
+              <ConversionsCard ladder={ladder} />
               {erased ? null : (
                 <>
                   <CorrectSourceForm

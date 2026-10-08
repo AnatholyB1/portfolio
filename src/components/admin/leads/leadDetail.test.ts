@@ -33,6 +33,24 @@ describe('admin lead detail source guards (T-11-64..67)', () => {
     expect(correct).toContain('correctSourceAction');
   });
 
+  it('page wires non-conformity and the conversions ladder (phase 19)', () => {
+    expect(page).toContain('source_nonconformity');
+    expect(page).toContain('source_raw');
+    expect(page.indexOf('requireAdmin()')).toBeLessThan(page.indexOf('loadLeadConversions('));
+    expect(page.indexOf('<ConversionsCard')).toBeGreaterThan(page.indexOf('<AttributionCard'));
+  });
+
+  it('attribution card shows the notice and raw lines', () => {
+    const attr = read('./AttributionCard.tsx');
+    expect(attr).toContain('Hors convention');
+    expect(attr).toContain('Reçu : ');
+    expect(attr).toContain(
+      'Les valeurs ont été conservées telles quelles. Corrigez la source ci-dessous si elle est erronée.',
+    );
+    expect(attr).toContain('role="note"');
+    expect(attr).toContain('NONCONFORMITY_LABELS');
+  });
+
   it('no file uses service_role or raw HTML', () => {
     const files = readdirSync(new URL('./', import.meta.url))
       .filter((f) => /\.tsx?$/.test(f) && !f.endsWith('.test.ts'))

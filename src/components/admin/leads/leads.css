@@ -117,6 +117,36 @@
   border-radius: 100px;
 }
 
+.pt-admin .pt-lead-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  color: var(--ink);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: 4px;
+}
+.pt-admin .pt-lead-notice .pt-lead-badge {
+  align-self: flex-start;
+}
+.pt-admin .pt-lead-raw {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-lead-mono {
+  display: inline-block;
+  vertical-align: bottom;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.pt-admin .pt-lead-dim {
+  color: var(--ink-dim);
+}
+
 .pt-admin .pt-lead-chip {
   display: inline-flex;
   align-items: center;
