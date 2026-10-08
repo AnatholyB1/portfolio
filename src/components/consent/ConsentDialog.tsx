@@ -24,11 +24,16 @@ export default function ConsentDialog() {
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
   const copy = CONSENT_TEXT[lang];
-  const blocked = isPrivatePath(pathname) || pathname === '/mentions-legales';
+  // Never shown on private routes. On the legal page only the AUTOMATIC first-visit prompt is
+  // suppressed (it would cover the cookie section the visitor came to read): the footer
+  // "Gérer les cookies" control must still open the dialog there, since that page is where the
+  // withdrawal route is documented.
+  const privateRoute = isPrivatePath(pathname);
+  const autoBlocked = privateRoute || pathname === '/mentions-legales';
 
   // First visit: open once the intro has ended (or after a fallback delay).
   useEffect(() => {
-    if (blocked) return;
+    if (autoBlocked) return;
     if (!needsPrompt(readConsentFromCookieHeader(document.cookie))) return;
     if (introDone) {
       openConsent();
@@ -36,18 +41,23 @@ export default function ConsentDialog() {
     }
     const id = window.setTimeout(openConsent, INTRO_FALLBACK_MS);
     return () => window.clearTimeout(id);
-  }, [blocked, introDone, pathname]);
+  }, [autoBlocked, introDone, pathname]);
 
   useEffect(() => {
     const d = dialogRef.current;
     if (!d) return;
-    if (open && !blocked) {
+    if (open && !privateRoute) {
       if (!d.open) d.showModal();
       headingRef.current?.focus();
     } else if (d.open) {
       d.close();
     }
-  }, [open, blocked]);
+  }, [open, privateRoute]);
+
+  // A stale error must not greet the visitor the next time the dialog opens.
+  useEffect(() => {
+    if (!open) setFailed(false);
+  }, [open]);
 
   const choose = useCallback(
     async (choice: ConsentChoice) => {
@@ -93,15 +103,19 @@ export default function ConsentDialog() {
       <p id="consent-body" className="consent-body">
         {copy.body}
       </p>
-      <Link href="/mentions-legales#cookies" className="consent-link">
+      {/* Closing first: the legal page must be readable, not hidden behind the modal. */}
+      <Link href="/mentions-legales#cookies" className="consent-link" onClick={closeConsent}>
         {copy.link}
       </Link>
-      {failed && (
-        <p className="consent-error" aria-live="polite">
-          <AlertCircle size={20} aria-hidden="true" />
-          <span>{copy.error}</span>
-        </p>
-      )}
+      {/* Live region mounted empty so the error is announced when it is filled in. */}
+      <div className="consent-error-region" aria-live="polite" aria-atomic="true">
+        {failed && (
+          <p className="consent-error">
+            <AlertCircle size={20} aria-hidden="true" />
+            <span>{copy.error}</span>
+          </p>
+        )}
+      </div>
       <div className="consent-actions">
         <button type="button" className="consent-btn" disabled={pending} onClick={() => choose('refused')}>
           {copy.refuse}
@@ -110,6 +124,11 @@ export default function ConsentDialog() {
           {copy.accept}
         </button>
       </div>
+      {failed && (
+        <button type="button" className="consent-link consent-dismiss" onClick={closeConsent}>
+          {copy.dismiss}
+        </button>
+      )}
     </dialog>
   );
 }
