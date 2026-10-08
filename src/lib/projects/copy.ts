@@ -77,6 +77,8 @@ export const PROJECT_COPY = {
     label: 'En attente de',
     since: (n: number) => `Depuis ${n} ${n > 1 ? 'jours' : 'jour'}`,
     cta: 'Compléter mes informations',
+    openDocuments: 'Voir mes documents',
+    openPayments: 'Voir mes paiements',
   },
   portal: {
     emptyHeading: "Votre projet n'est pas encore ouvert",
@@ -89,6 +91,14 @@ export const PROJECT_COPY = {
     upcomingSuffix: ', à venir',
     startedOn: (date: string) => `Démarré le ${date}`,
     projectSelect: 'Projet',
+    interlocutor: {
+      heading: 'Votre interlocuteur',
+      identity: 'Anatholy Bricon, Sèvalys · Tours',
+      email: 'contact@sevalys.com',
+      emailHref: 'mailto:contact@sevalys.com',
+      phone: '+33 6 07 18 41 33',
+      phoneHref: 'tel:+33607184133',
+    },
   },
   onboarding: {
     heading: 'Vos informations',
@@ -121,6 +131,15 @@ export const PROJECT_COPY = {
     preparing: 'Préparation…',
     byClient: 'Vous',
     byAdmin: 'Sèvalys',
+    adminViewClient: 'Client',
+    adminViewAdmin: 'Sèvalys',
+    columns: {
+      name: 'Nom',
+      uploadedBy: 'Déposé par',
+      addedOn: 'Ajouté le',
+      size: 'Taille',
+      action: 'Action',
+    },
   },
   links: {
     heading: 'Liens utiles',

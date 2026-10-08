@@ -99,7 +99,7 @@ describe('portal loaders', () => {
     S.tables.sv_project_facts = [fact(1, 'onboarding_completed', daysAgo(5))];
     const b = await loadProjectBundle(fake(), P1, NOW);
     expect(b!.state.currentStep).toBe(2);
-    expect(b!.state.waitingOn).toBe('admin');
+    expect(b!.state.waitingOn).toBe('client');
     expect(b!.facts[0].createdAt).toBe(daysAgo(5));
   });
 
@@ -119,13 +119,18 @@ describe('portal loaders', () => {
 });
 
 describe('loadAdminProjects', () => {
-  function seedStep2() {
+  function seedStep4() {
     S.tables.sv_projects = [project()];
-    S.tables.sv_project_facts = [fact(1, 'onboarding_completed', daysAgo(20))];
+    S.tables.sv_project_facts = [
+      fact(1, 'onboarding_completed', daysAgo(20)),
+      fact(2, 'quote_accepted', daysAgo(20)),
+      fact(3, 'contract_signed', daysAgo(20)),
+      fact(4, 'deposit_received', daysAgo(20)),
+    ];
   }
 
   it('admin-waiting and dormant with no sign-in', async () => {
-    seedStep2();
+    seedStep4();
     const rows = await loadAdminProjects(fake(), NOW);
     expect(rows).toHaveLength(1);
     expect(rows[0].blockers).toEqual(['admin', 'dormant']);
@@ -133,7 +138,7 @@ describe('loadAdminProjects', () => {
   });
 
   it('recent member sign-in removes dormant', async () => {
-    seedStep2();
+    seedStep4();
     S.rpc.mockResolvedValue({ ok: true, data: [{ client_id: C1, last_sign_in_at: daysAgo(2) }] });
     const rows = await loadAdminProjects(fake(), NOW);
     expect(rows[0].blockers).toEqual(['admin']);
@@ -141,7 +146,7 @@ describe('loadAdminProjects', () => {
   });
 
   it('rpc failure still returns rows', async () => {
-    seedStep2();
+    seedStep4();
     S.rpc.mockResolvedValue({ ok: false, code: 'unknown' });
     const rows = await loadAdminProjects(fake(), NOW);
     expect(rows).toHaveLength(1);
@@ -160,7 +165,7 @@ describe('loadAdminProjects', () => {
   });
 
   it('clientName prefers company.nom, falls back to name', async () => {
-    seedStep2();
+    seedStep4();
     expect((await loadAdminProjects(fake(), NOW))[0].clientName).toBe('ACME SAS');
     S.tables.sv_clients = [{ id: C1, name: 'Jean', siret: null, company: null }];
     expect((await loadAdminProjects(fake(), NOW))[0].clientName).toBe('Jean');

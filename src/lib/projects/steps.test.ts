@@ -34,7 +34,7 @@ describe('STEPS', () => {
       'Recette',
       'Livraison et solde',
     ]);
-    expect(STEPS.map((s) => s.waitingOn)).toEqual(['client', 'admin', 'admin', 'admin', 'client', 'client']);
+    expect(STEPS.map((s) => s.waitingOn)).toEqual(['client', 'client', 'client', 'admin', 'client', 'client']);
   });
 
   it('admin-postable facts exclude system and revoke types', () => {
@@ -55,11 +55,11 @@ describe('deriveProjectState', () => {
     expect(s.steps.slice(1).every((x) => x.state === 'upcoming')).toBe(true);
   });
 
-  it('onboarding done -> step 2, admin waits, completedBy system', () => {
+  it('onboarding done -> step 2, client waits (signs the quote), completedBy system', () => {
     const o = f('onboarding_completed', 3);
     const s = deriveProjectState([o], START);
     expect(s.currentStep).toBe(2);
-    expect(s.waitingOn).toBe('admin');
+    expect(s.waitingOn).toBe('client');
     expect(s.steps[0].state).toBe('done');
     expect(s.steps[0].completedAt).toBe(o.createdAt);
     expect(s.steps[0].completedBy).toBe('system');

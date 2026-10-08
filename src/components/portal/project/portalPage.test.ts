@@ -20,7 +20,7 @@ describe('client portal page', () => {
   });
 
   it('renders sections in the required order', () => {
-    const order = ['<WhoWaits', '<Timeline', '<OnboardingCard', '<FilesPanel', '<PortalLinks', '<ConsentCard', '<Interlocutor />\n        </div>'];
+    const order = ['<WhoWaits', '<Timeline', '<OnboardingCard', '<FilesPanel', '<PortalLinks', '<ConsentCard', '<Interlocutor />\n      </ShellMain>'];
     const idx = order.map((s) => page.indexOf(s));
     idx.forEach((i) => expect(i).toBeGreaterThan(-1));
     expect([...idx].sort((a, b) => a - b)).toEqual(idx);
@@ -59,7 +59,8 @@ describe('client portal page', () => {
 
   it('selector hides under two projects; who-waits links to onboarding', () => {
     expect(read('./ProjectSelector.tsx')).toContain('length < 2');
-    expect(read('./WhoWaits.tsx')).toContain('href="#onboarding"');
+    expect(read('../../../lib/projects/clientActions.ts')).toContain("'#onboarding'");
+    expect(read('./WhoWaits.tsx')).toContain('HashFocusLink');
   });
 
   it('nav links Projet, Documents and Paiements with aria-current', () => {

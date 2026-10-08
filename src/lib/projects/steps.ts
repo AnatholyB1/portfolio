@@ -64,17 +64,17 @@ export const STEPS: readonly {
   {
     index: 2,
     name: 'Cadrage et devis',
-    description: 'Nous cadrons votre besoin et préparons le devis.',
-    waitingOn: 'admin',
-    expectedAction: "Nous préparons votre devis. Vous serez prévenu dès qu'il est disponible.",
+    description: 'Nous cadrons votre besoin ; vous signez le devis.',
+    waitingOn: 'client',
+    expectedAction: "Signez votre devis dès qu'il est disponible dans vos documents. Nous vous prévenons par e-mail.",
     gate: ['quote_accepted'],
   },
   {
     index: 3,
     name: 'Contrat et acompte',
-    description: "Signature du contrat et règlement de l'acompte.",
-    waitingOn: 'admin',
-    expectedAction: "Nous préparons votre contrat et la demande d'acompte.",
+    description: "Vous signez le contrat et réglez l'acompte.",
+    waitingOn: 'client',
+    expectedAction: "Signez votre contrat, puis réglez l'acompte pour lancer la production.",
     gate: ['contract_signed', 'deposit_received'],
   },
   {
