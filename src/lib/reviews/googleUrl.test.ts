@@ -31,10 +31,10 @@ describe('parseGoogleReviewUrl', () => {
 describe('reviewGoogleUrl', () => {
   it('reads REVIEW_GOOGLE_URL', () => {
     expect(
-      reviewGoogleUrl({ REVIEW_GOOGLE_URL: 'https://g.page/r/abc/review' } as any),
+      reviewGoogleUrl({ REVIEW_GOOGLE_URL: 'https://g.page/r/abc/review' } as unknown as NodeJS.ProcessEnv),
     ).toBe('https://g.page/r/abc/review');
   });
   it('returns null when unset', () => {
-    expect(reviewGoogleUrl({} as any)).toBeNull();
+    expect(reviewGoogleUrl({} as unknown as NodeJS.ProcessEnv)).toBeNull();
   });
 });

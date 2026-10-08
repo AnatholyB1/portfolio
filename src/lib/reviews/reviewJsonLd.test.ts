@@ -55,6 +55,7 @@ function collectKeys(value: unknown): string[] {
   return [];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Out = Record<string, any>;
 
 describe('buildReviewsJsonLd', () => {
