@@ -13,6 +13,7 @@ import EnjeuxSection from '@/components/sections/EnjeuxSection';
 import Realisations from '@/components/sections/Realisations';
 import PhoneAgent from '@/components/sections/PhoneAgent';
 import Partners from '@/components/sections/Partners';
+import AvisExcerpt from '@/components/sections/AvisExcerpt';
 import ContactSection from '@/components/sections/ContactSection';
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
         <Realisations />
         <PhoneAgent />
         <Partners />
+        <AvisExcerpt />
         <ContactSection />
       </main>
       <Footer />

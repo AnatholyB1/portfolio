@@ -44,6 +44,8 @@ export default async function AvisPage({ searchParams }: { searchParams: SearchP
 
   const hasNext = rows.length > REVIEWS_PAGE_SIZE;
   const displayed = rows.slice(0, REVIEWS_PAGE_SIZE);
+  const olderHref = '/avis?page=' + (page + 1);
+  const newerHref = page <= 2 ? '/avis' : '/avis?page=' + (page - 1);
   const jsonLd = buildReviewsJsonLd(displayed, SITE_URL);
 
   return (
@@ -71,7 +73,7 @@ export default async function AvisPage({ searchParams }: { searchParams: SearchP
               <p className="text-[var(--ink-dim)] leading-relaxed">
                 Les avis arrivent après la livraison des projets, par un lien personnel envoyé à chaque
                 client. Vous pouvez en attendant découvrir nos{' '}
-                <Link href="/#realisations" className={linkClass}>
+                <Link href="/#work" className={linkClass}>
                   Réalisations
                 </Link>{' '}
                 ou nous écrire via la page{' '}
@@ -98,14 +100,14 @@ export default async function AvisPage({ searchParams }: { searchParams: SearchP
               {page > 1 || hasNext ? (
                 <nav aria-label="Pagination des avis" className="flex justify-between mt-10 text-sm">
                   {hasNext ? (
-                    <Link href={`/avis?page=${page + 1}`} className={linkClass}>
+                    <Link href={olderHref} className={linkClass}>
                       Avis précédents
                     </Link>
                   ) : (
                     <span />
                   )}
                   {page > 1 ? (
-                    <Link href={page === 2 ? '/avis' : `/avis?page=${page - 1}`} className={linkClass}>
+                    <Link href={newerHref} className={linkClass}>
                       Avis plus récents
                     </Link>
                   ) : null}
