@@ -441,6 +441,12 @@
     color: var(--ink-dim);
   }
 }
+.pt-admin .pt-admin-contents {
+  display: contents;
+}
+.pt-admin .pt-admin-block {
+  display: block;
+}
 .pt-admin .pt-admin-my-16 {
   margin: 16px 0;
 }

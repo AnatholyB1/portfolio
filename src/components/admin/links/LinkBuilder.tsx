@@ -299,7 +299,7 @@ export default function LinkBuilder({ origin, destinations }: { origin: string; 
             {result.ok ? (
               <dl className="pt-summary">
                 {summary.map(([k, v]) => (
-                  <div key={k} style={{ display: 'contents' }}>
+                  <div key={k} className="pt-admin-contents">
                     <dt>{k}</dt>
                     <dd className="pt-link-mono">{v}</dd>
                   </div>

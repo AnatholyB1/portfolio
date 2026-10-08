@@ -48,7 +48,7 @@ function Touch({ title, touch }: { title: string; touch: unknown }) {
           <dt>Référent</dt>
           <dd className="pt-lead-trunc" title={text(t.referrer)}>{text(t.referrer)}</dd>
           {CLICK_IDS.filter((k) => typeof params[k] === 'string' && params[k] !== '').map((k) => (
-            <div key={k} style={{ display: 'contents' }}>
+            <div key={k} className="pt-admin-contents">
               <dt>{k}</dt>
               <dd className="pt-lead-trunc" title={String(params[k])}>{String(params[k])}</dd>
             </div>

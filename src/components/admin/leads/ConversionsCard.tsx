@@ -29,7 +29,7 @@ export default function ConversionsCard({ ladder }: { ladder: ConversionLadder |
         <>
           <dl className="pt-summary">
             {ladder.ranks.map(({ rank, label, row }) => (
-              <div key={rank} style={{ display: 'contents' }}>
+              <div key={rank} className="pt-admin-contents">
                 <dt>{label}</dt>
                 <dd>
                   {!row ? (
@@ -46,7 +46,7 @@ export default function ConversionsCard({ ladder }: { ladder: ConversionLadder |
                           <>
                             {' '}
                             <span className="pt-lead-dim">Valeur manquante</span>
-                            <span className="pt-helper" style={{ display: 'block' }}>
+                            <span className="pt-helper pt-admin-block">
                               Aucun devis actif au moment du passage à Signé.
                             </span>
                           </>
