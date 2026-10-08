@@ -63,7 +63,7 @@ export default function InviteForm() {
             if (!nameDirty.current) setName(nom);
           }}
         />
-        <div className="pt-grid-2" style={{ marginTop: 16 }}>
+        <div className="pt-grid-2 pt-admin-mt-16">
           <div className="pt-field">
             <label className="pt-label" htmlFor={`${uid}-name`}>
               Nom affiché au client
@@ -105,7 +105,7 @@ export default function InviteForm() {
         </div>
       </fieldset>
 
-      <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="pt-admin-stack pt-admin-mt-24">
         <div id={msgId} aria-live="polite">
           {state.status === 'success' ? (
             <p className="pt-success">

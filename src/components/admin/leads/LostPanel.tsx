@@ -51,11 +51,9 @@ export default function LostPanel({ leadId, onClose }: { leadId: string; onClose
       <p className="pt-field-help">
         {note.length} / {NOTE_MAX}
       </p>
-      {state.status === 'error' ? (
-        <p className="pt-error" aria-live="polite">
-          {state.message}
-        </p>
-      ) : null}
+      <p className="pt-error" aria-live="polite">
+        {state.status === 'error' ? state.message : ''}
+      </p>
       <div className="pt-lead-panel-actions">
         <button type="submit" className="pt-btn-primary" disabled={!reason || pending}>
           Marquer comme perdu

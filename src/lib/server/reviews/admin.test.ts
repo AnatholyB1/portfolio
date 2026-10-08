@@ -13,6 +13,7 @@ function fakeClient(tables: Tables): SupabaseClient {
         select: () => chain,
         in: () => chain,
         order: () => chain,
+        range: () => chain,
         then: (res: (v: unknown) => unknown) => Promise.resolve(t).then(res),
       };
       return chain;

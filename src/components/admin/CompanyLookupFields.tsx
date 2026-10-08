@@ -220,7 +220,7 @@ export default function CompanyLookupFields({
       </div>
 
       {showSummary ? (
-        <section className="pt-readback" style={{ marginTop: 16 }} aria-labelledby={`${uid}-sum`}>
+        <section className="pt-readback pt-admin-mt-16" aria-labelledby={`${uid}-sum`}>
           <h3 id={`${uid}-sum`} className="pt-sr-only">
             Informations de l&apos;entreprise
           </h3>
@@ -244,7 +244,7 @@ export default function CompanyLookupFields({
       ) : null}
 
       {showInputs ? (
-        <fieldset className="pt-company" style={{ marginTop: 16 }}>
+        <fieldset className="pt-company pt-admin-mt-16">
           <legend>Informations de l&apos;entreprise</legend>
           <div className="pt-company-grid">
             <div className="pt-span-full">

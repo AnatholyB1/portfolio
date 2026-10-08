@@ -34,19 +34,36 @@ describe('toSuppressionView', () => {
 });
 
 describe('loadSuppressions', () => {
-  function client(supErr: unknown, liftErr: unknown) {
+  // Chaîne select/order/range/in : chaque étape renvoie la même chaîne thenable.
+  function client(supErr: unknown, liftErr: unknown, calls: string[] = []) {
     return {
-      from: (t: string) => ({
-        select: () => {
-          const res =
-            t === 'sv_mail_suppressions'
-              ? { data: rows, error: supErr }
-              : { data: [], error: liftErr };
-          return Object.assign(Promise.resolve(res), { order: () => Promise.resolve(res) });
-        },
-      }),
+      from: (t: string) => {
+        const res =
+          t === 'sv_mail_suppressions' ? { data: rows, error: supErr } : { data: [], error: liftErr };
+        const chain: Record<string, unknown> = {
+          select: () => chain,
+          order: () => chain,
+          range: (a: number, b: number) => {
+            calls.push('range:' + a + '-' + b);
+            return chain;
+          },
+          in: (col: string) => {
+            calls.push('in:' + col);
+            return chain;
+          },
+          then: (ok: (v: unknown) => unknown) => Promise.resolve(res).then(ok),
+        };
+        return chain;
+      },
     } as never;
   }
+
+  it('reads a bounded window and only the lifts of that window', async () => {
+    const calls: string[] = [];
+    await loadSuppressions(client(null, null, calls), { from: 25, to: 50 });
+    expect(calls).toContain('range:25-50');
+    expect(calls).toContain('in:suppression_id');
+  });
 
   it('returns views on success', async () => {
     const v = await loadSuppressions(client(null, null));

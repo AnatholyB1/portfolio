@@ -1,5 +1,259 @@
 /* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
 
+/* ---------- Coque : lien d'évitement, colonne de page, navigation ---------- */
+.pt-root .pt-skip-link {
+  position: absolute;
+  top: -120px;
+  left: 16px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--bg-2);
+  border: 1px solid var(--acid);
+  border-radius: 4px;
+}
+.pt-root .pt-skip-link:focus-visible {
+  top: 8px;
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+.pt-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pt-admin .pt-admin-nav {
+  position: relative;
+}
+.pt-admin .pt-admin-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-admin-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.pt-admin .pt-admin-nav a:hover {
+  color: var(--ink);
+}
+.pt-admin .pt-admin-nav a.pt-admin-nav-active {
+  color: var(--ink);
+  border-bottom-color: var(--acid);
+}
+.pt-admin .pt-admin-nav a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-admin-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Utilitaires de mise en page (remplacent les style={{}} des pages) ---------- */
+.pt-admin .pt-admin-title {
+  margin-bottom: 24px;
+}
+.pt-admin .pt-admin-title-tight {
+  margin-bottom: 16px;
+}
+.pt-admin .pt-admin-lede {
+  margin-bottom: 24px;
+}
+.pt-admin .pt-admin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-admin .pt-admin-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.pt-admin .pt-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pt-admin .pt-admin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+}
+.pt-admin .pt-admin-mt-16 {
+  margin-top: 16px;
+}
+.pt-admin .pt-admin-mt-24 {
+  margin-top: 24px;
+}
+.pt-admin .pt-admin-mt-8 {
+  margin-top: 8px;
+}
+.pt-admin .pt-admin-mb-8 {
+  margin-bottom: 8px;
+}
+.pt-admin .pt-admin-hidden {
+  color: var(--warm);
+}
+.pt-admin .pt-admin-prewrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-admin-bullets {
+  margin: 0;
+  padding-left: 20px;
+}
+.pt-admin .pt-admin-summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+.pt-admin .pt-admin-summary:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+/* Aperçu de l'avis : deux lignes, le texte complet est dans « Détails et historique ». */
+.pt-admin .pt-admin-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin-bottom: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+}
+.pt-admin .pt-admin-basis-full {
+  flex-basis: 100%;
+}
+
+/* États vides, erreur et chargement des pages d'administration. */
+.pt-admin .pt-admin-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.pt-admin .pt-admin-skeleton {
+  display: block;
+  height: 24px;
+  max-width: 480px;
+  background: var(--bg-3);
+  border-radius: 4px;
+}
+.pt-admin .pt-admin-skeleton-block {
+  height: 160px;
+  max-width: none;
+}
+
+/* Bouton désactivé exposé par aria-disabled (raison visible à côté). */
+.pt-admin .pt-btn-ghost[aria-disabled="true"],
+.pt-admin .pt-btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination commune (composant Pager). */
+.pt-admin .pt-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+.pt-admin .pt-pager-info {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-admin .pt-pager a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
+/* À traiter : file de travail de la page d'accueil. */
+.pt-admin .pt-queue {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .pt-admin .pt-queue {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pt-admin .pt-queue-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+  padding: 8px 16px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-left: 2px solid var(--acid);
+  border-radius: 4px;
+}
+.pt-admin .pt-queue-link:hover {
+  background: var(--bg-3);
+}
+.pt-admin .pt-queue-link:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-admin .pt-queue-count {
+  min-width: 2ch;
+  font-family: var(--font-mono), monospace;
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pt-admin .pt-queue-unavailable {
+  border-left-color: var(--warm);
+}
+.pt-admin .pt-queue-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pt-admin .pt-queue-hint {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
 .pt-admin .pt-sr-only {
   position: absolute;
   width: 1px;
@@ -112,10 +366,17 @@
 
 /* Tableau. */
 .pt-admin .pt-admin-table a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
   overflow-wrap: anywhere;
+}
+.pt-admin .pt-admin-table a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
 }
 .pt-admin .pt-admin-table td {
   vertical-align: top;
@@ -152,4 +413,48 @@
   .pt-admin .pt-admin-table a {
     overflow-wrap: break-word;
   }
+}
+
+/* En-tête de ligne (<th scope="row">) d'un tableau repliable en cartes sous 768px. */
+.pt-admin .pt-table tbody th[scope="row"] {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+@media (max-width: 767px) {
+  .pt-admin .pt-table tbody th[scope="row"] {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    border-bottom: 0;
+  }
+  .pt-admin .pt-table tbody th[scope="row"][data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-mono), monospace;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+  }
+}
+.pt-admin .pt-admin-contents {
+  display: contents;
+}
+.pt-admin .pt-admin-block {
+  display: block;
+}
+.pt-admin .pt-admin-my-16 {
+  margin: 16px 0;
+}
+.pt-admin .pt-admin-table td[data-label="Statut"] .pt-lead-sub {
+  max-width: 32ch;
+  white-space: normal;
+}
+.pt-admin .pt-empty a.pt-btn-ghost {
+  align-self: flex-start;
+  text-decoration: none;
 }

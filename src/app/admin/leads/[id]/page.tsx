@@ -133,7 +133,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
     <>
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
-        <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="pt-admin">
           <AdminNav current="leads" />
           <Link href="/admin/leads" className="pt-btn-text">
             Retour aux leads
@@ -162,22 +162,24 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
                   converted={isConverted}
                 />
               ) : null}
-              {!erased && !isConverted && lead.status === 'new' ? (
+              {!erased && !isConverted && (lead.status === 'new' || lead.status === 'lost') ? (
                 <>
-                  <button type="button" className="pt-btn-primary" aria-disabled="true">
+                  {/* Inactif et sans style principal : le motif reste visible et lu avec le bouton. */}
+                  <button
+                    type="button"
+                    className="pt-btn-ghost"
+                    disabled
+                    aria-disabled="true"
+                    aria-describedby="convert-reason"
+                  >
                     <UserPlus size={16} aria-hidden="true" />
                     {PROJECT_COPY.conversion.trigger}
                   </button>
-                  <span className="pt-helper">{PROJECT_COPY.conversion.notYetConvertible}</span>
-                </>
-              ) : null}
-              {!erased && !isConverted && lead.status === 'lost' ? (
-                <>
-                  <button type="button" className="pt-btn-primary" aria-disabled="true">
-                    <UserPlus size={16} aria-hidden="true" />
-                    {PROJECT_COPY.conversion.trigger}
-                  </button>
-                  <span className="pt-helper">{PROJECT_COPY.conversion.reopenFirst}</span>
+                  <span id="convert-reason" className="pt-helper">
+                    {lead.status === 'new'
+                      ? PROJECT_COPY.conversion.notYetConvertible
+                      : PROJECT_COPY.conversion.reopenFirst}
+                  </span>
                 </>
               ) : null}
               {lead.unseen_return ? (

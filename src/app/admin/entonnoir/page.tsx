@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import AdminNav from '@/components/admin/AdminNav';
 import FunnelKpis from '@/components/admin/funnel/FunnelKpis';
 import FunnelTable from '@/components/admin/funnel/FunnelTable';
@@ -22,6 +23,9 @@ import '@/components/admin/funnel/funnel.css';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Entonnoir' };
+
+// Plafond de lignes lues (mois x source x campagne) : au-delà, filtrer la période.
+const FUNNEL_ROW_CAP = 1000;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -70,7 +74,7 @@ export default async function AdminFunnelPage({
   const by = PAR[parKeyValid];
   const range = monthRange(one(sp.du), one(sp.au));
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('sv_funnel_v')
     .select(
       'source, campaign, month, visits, simulations, leads, qualified, rdv, signed, cost_per_rdv_cents',
@@ -78,7 +82,8 @@ export default async function AdminFunnelPage({
     .gte('month', `${range.from}-01`)
     .lte('month', `${range.to}-01`)
     .order('month', { ascending: false })
-    .order('source', { ascending: true });
+    .order('source', { ascending: true })
+    .limit(FUNNEL_ROW_CAP);
 
   // Leads dont la source est hors convention (D-04) : lecture RLS directe de
   // sv_leads, sans toucher à la vue. En cas d'erreur, l'entonnoir s'affiche quand même.
@@ -115,6 +120,7 @@ export default async function AdminFunnelPage({
     costPerRdvCents: r.cost_per_rdv_cents,
   }));
 
+  const reloadHref = `/admin/entonnoir?par=${parKeyValid}&du=${range.from}&au=${range.to}`;
   const rows = attachNonconforming(baseRows, flagged);
   const nonconformingTotal = rows.reduce((a, r) => a + (r.nonconformingLeads ?? 0), 0);
   const grouped = groupFunnelRows(rows, by);
@@ -127,13 +133,13 @@ export default async function AdminFunnelPage({
     <>
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
-        <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="pt-admin">
           <AdminNav current="entonnoir" />
           <section className="pt-card" aria-labelledby="funnel-title">
-            <h1 id="funnel-title" className="pt-heading" style={{ marginBottom: 24 }}>
+            <h1 id="funnel-title" className="pt-heading pt-admin-title">
               Entonnoir
             </h1>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div className="pt-admin-stack-lg">
               <form method="get" className="pt-funnel-controls">
                 <fieldset className="pt-seg">
                   <legend>Regrouper par</legend>
@@ -165,20 +171,34 @@ export default async function AdminFunnelPage({
                   Appliquer
                 </button>
               </form>
-              {grouped.length === 0 ? (
+              {error ? (
+                <div className="pt-empty">
+                  <h2 className="pt-heading">Chiffres indisponibles</h2>
+                  <p className="pt-helper">
+                    Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux.
+                    Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.
+                  </p>
+                  <Link href={reloadHref} className="pt-btn-ghost">
+                    Recharger
+                  </Link>
+                </div>
+              ) : grouped.length === 0 ? (
                 <div className="pt-empty">
                   <h2 className="pt-heading">Pas encore de données</h2>
                   <p className="pt-helper">
                     L&apos;entonnoir se remplit dès les premières visites avec source et les
                     premières demandes. Revenez après la prochaine campagne.
                   </p>
+                  <Link href="/admin/liens" className="pt-btn-ghost">
+                    Préparer un lien de campagne
+                  </Link>
                 </div>
               ) : (
                 <>
                   {nonconformingTotal > 0 ? (
                     <p className="pt-helper">
-                      {nonconformingTotal} lead(s) hors convention sur la période. Ouvrez la fiche
-                      du lead pour corriger la source.
+                      {nonconformingTotal} {nonconformingTotal > 1 ? 'leads hors convention' : 'lead hors convention'}{' '}
+                      sur la période. Ouvrez la fiche du lead pour corriger la source.
                     </p>
                   ) : null}
                   <FunnelKpis

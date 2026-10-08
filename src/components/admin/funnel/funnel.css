@@ -154,9 +154,12 @@
   flex-direction: column;
   align-items: flex-end;
 }
+/* Le panneau reste dans le flux de la cellule : un popover absolu serait coupé par le
+   conteneur à défilement horizontal du tableau. */
 .pt-admin .pt-funnel-cost-editor .pt-lead-panel {
-  right: 0;
-  left: auto;
+  width: 260px;
+  max-width: 100%;
+  margin-top: 8px;
   text-align: left;
   white-space: normal;
 }
@@ -206,9 +209,5 @@
   }
   .pt-admin .pt-funnel-table td::before {
     content: none;
-  }
-  .pt-admin .pt-funnel-cost-editor .pt-lead-panel {
-    position: static;
-    width: auto;
   }
 }

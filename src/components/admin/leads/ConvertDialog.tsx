@@ -79,23 +79,25 @@ export default function ConvertDialog({ leadId, defaultName, defaultEmail, defau
         </button>
       )}
 
-      {showBanner ? (
-        <div style={{ flexBasis: '100%' }} aria-live="polite">
-          <p className={state.mailSent ? 'pt-success' : 'pt-warn'}>
-            {state.mailSent ? (
-              <CheckCircle size={16} aria-hidden="true" />
-            ) : (
-              <AlertCircle size={16} aria-hidden="true" />
-            )}
-            {state.message}
-          </p>
-          {state.projectId ? (
-            <Link href={`/admin/projets/${state.projectId}`} className="pt-btn-text">
-              Voir le projet
-            </Link>
-          ) : null}
-        </div>
-      ) : null}
+      <div className="pt-admin-basis-full" aria-live="polite">
+        {showBanner ? (
+          <>
+            <p className={state.mailSent ? 'pt-success' : 'pt-warn'}>
+              {state.mailSent ? (
+                <CheckCircle size={16} aria-hidden="true" />
+              ) : (
+                <AlertCircle size={16} aria-hidden="true" />
+              )}
+              {state.message}
+            </p>
+            {state.projectId ? (
+              <Link href={`/admin/projets/${state.projectId}`} className="pt-btn-text">
+                Voir le projet
+              </Link>
+            ) : null}
+          </>
+        ) : null}
+      </div>
 
       <dialog
         ref={dialogRef}
@@ -114,16 +116,18 @@ export default function ConvertDialog({ leadId, defaultName, defaultEmail, defau
             Cela crée le client, son premier projet et envoie l&apos;invitation à son espace.
           </p>
 
-          {state.status === 'error' ? (
-            <p className="pt-error" role="alert">
-              <AlertCircle size={16} aria-hidden="true" />
-              {state.message}
-            </p>
-          ) : null}
+          <div role="alert">
+            {state.status === 'error' ? (
+              <p className="pt-error">
+                <AlertCircle size={16} aria-hidden="true" />
+                {state.message}
+              </p>
+            ) : null}
+          </div>
 
           <input type="hidden" name="leadId" value={leadId} />
 
-          <div className="pt-grid-2" style={{ marginTop: 16 }}>
+          <div className="pt-grid-2 pt-admin-mt-16">
             <div className="pt-field">
               <label className="pt-label" htmlFor={`${uid}-name`}>
                 Nom du contact
@@ -158,7 +162,7 @@ export default function ConvertDialog({ leadId, defaultName, defaultEmail, defau
             </div>
           </div>
 
-          <div style={{ marginTop: 16 }}>
+          <div className="pt-admin-mt-16">
             <CompanyLookupFields
               sourceFieldName="companySource"
               onBusyChange={(b) => {
@@ -175,7 +179,7 @@ export default function ConvertDialog({ leadId, defaultName, defaultEmail, defau
             ) : null}
           </div>
 
-          <div className="pt-grid-2" style={{ marginTop: 16 }}>
+          <div className="pt-grid-2 pt-admin-mt-16">
             <div className="pt-field">
               <label className="pt-label" htmlFor={`${uid}-offer`}>
                 Offre
@@ -219,7 +223,7 @@ export default function ConvertDialog({ leadId, defaultName, defaultEmail, defau
             </div>
           </div>
 
-          <div className="pt-form-actions" style={{ marginTop: 24, display: 'flex', gap: 16 }}>
+          <div className="pt-form-actions pt-admin-actions">
             <button type="button" className="pt-btn-text" onClick={close} disabled={pending}>
               Annuler
             </button>
