@@ -291,15 +291,15 @@ Disclose: who can review (clients with a signed PV de recette, one unique link p
 | A6 | Reviewer e-mail is not stored; hidden-notice goes to project client members | Moderation | If a single reviewer address is required, add a column and a RGPD retention rule |
 | A7 | `/api/avis` added as a price-scope zone (precedent `api/unsubscribe`) | Routing | Alternative: move enqueue into the RPC and avoid importing server mail code; still needs the sendOutboxRow call |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Consent withdrawal / RGPD erasure vs closed reason list (D-06).**
+1. **(RESOLVED: owner decision gate in plan 18-16 Task 1; D-06 unchanged) Consent withdrawal / RGPD erasure vs closed reason list (D-06).**
    - Known: closed list is four legal reasons; reviews are never deleted.
    - Unclear: how to honor a reviewer's withdrawal of consent.
    - Recommendation: hide with reason `third_party_personal_data` is inaccurate; ask the owner to add a fifth legal reason `consent_withdrawn` (legal basis, not opinion) or document it under the policy. Flag in discuss.
-2. **Reissue delivery.** Display-once + optional mail (Pitfall 3). Owner confirmation on whether reissue should auto-send.
-3. **First name + "initiale":** assume reviewer types first name and last-name initial in the form (fields `first_name`, `last_initial`); company name is read from `sv_clients.name` and snapshotted.
-4. **Google Business URL** does not exist yet (PROJECT.md): ship with flag off; final task is a human checkpoint to set `REVIEW_GOOGLE_URL`, `REVIEW_TOKEN_SECRET`, then `REVIEW_REQUESTS_ENABLED=true`.
+2. **(RESOLVED: display once to admin, plan 18-13) Reissue delivery.** Display-once + optional mail (Pitfall 3). Owner confirmation on whether reissue should auto-send.
+3. **(RESOLVED: fields first_name, last_initial, plans 18-01/18-02) First name + "initiale":** assume reviewer types first name and last-name initial in the form (fields `first_name`, `last_initial`); company name is read from `sv_clients.name` and snapshotted.
+4. **(RESOLVED: plan 18-17 human checkpoint) Google Business URL** does not exist yet (PROJECT.md): ship with flag off; final task is a human checkpoint to set `REVIEW_GOOGLE_URL`, `REVIEW_TOKEN_SECRET`, then `REVIEW_REQUESTS_ENABLED=true`.
 
 ## Environment Availability
 
