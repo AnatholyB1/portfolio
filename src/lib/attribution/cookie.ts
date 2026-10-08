@@ -1,10 +1,11 @@
 import {
   CLICK_ID_KEYS,
   MAX_VALUE_LENGTH,
-  parseAttrParams,
+  parseAttrParamsWithRaw,
   type AttrParams,
 } from './params';
 import type { Touch } from './touch';
+import type { UtmRaw } from './utm';
 
 export const ATTR_FT_COOKIE = 'sv_attr_ft';
 export const ATTR_LT_COOKIE = 'sv_attr_lt';
@@ -31,8 +32,24 @@ function fromBase64Url(s: string): string | null {
   }
 }
 
+const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function serialise(t: Touch): string {
-  return toBase64Url(JSON.stringify({ p: t.params, l: t.landing, r: t.referrer, a: t.at }));
+  const o: Record<string, unknown> = { p: t.params, l: t.landing, r: t.referrer, a: t.at };
+  if (t.raw) o.w = t.raw;
+  if (t.eid) o.e = t.eid;
+  return toBase64Url(JSON.stringify(o));
+}
+
+// Strict shape check for the client-held audit field (T-19-13).
+function validateRaw(w: unknown): UtmRaw | null {
+  if (!w || typeof w !== 'object' || Array.isArray(w)) return null;
+  const out: UtmRaw = {};
+  for (const key of ['utm_source', 'utm_medium'] as const) {
+    const v = (w as Record<string, unknown>)[key];
+    if (typeof v === 'string' && v.length >= 1 && v.length <= MAX_VALUE_LENGTH) out[key] = v;
+  }
+  return Object.keys(out).length > 0 ? out : null;
 }
 
 export function encodeTouch(touch: Touch): string {
@@ -41,7 +58,13 @@ export function encodeTouch(touch: Touch): string {
   const size = (s: string) => new TextEncoder().encode(s).length;
   if (size(out) <= MAX_COOKIE_VALUE_BYTES) return out;
 
-  // Size guard: drop the least valuable fields first.
+  // Size guard: drop the least valuable fields first (audit raw, then eid).
+  delete current.raw;
+  out = serialise(current);
+  if (size(out) <= MAX_COOKIE_VALUE_BYTES) return out;
+  delete current.eid;
+  out = serialise(current);
+  if (size(out) <= MAX_COOKIE_VALUE_BYTES) return out;
   for (const key of ['utm_term', 'utm_content'] as const) {
     delete current.params[key];
     out = serialise(current);
@@ -80,7 +103,7 @@ export function decodeTouch(
   for (const [k, v] of Object.entries(o.p as Record<string, unknown>)) {
     if (typeof v === 'string') search.set(k, v);
   }
-  const params = parseAttrParams(search, opts);
+  const { params, raw: recomputed } = parseAttrParamsWithRaw(search, opts);
 
   const landing =
     typeof o.l === 'string' && o.l.startsWith('/') && !o.l.startsWith('//') && o.l.length <= MAX_VALUE_LENGTH
@@ -89,7 +112,11 @@ export function decodeTouch(
   const referrer =
     typeof o.r === 'string' && o.r.startsWith('http') && o.r.length <= MAX_VALUE_LENGTH ? o.r : null;
 
-  return { params, landing, referrer, at: o.a };
+  const touch: Touch = { params, landing, referrer, at: o.a };
+  const auditRaw = validateRaw(o.w) ?? recomputed;
+  if (auditRaw) touch.raw = auditRaw;
+  if (typeof o.e === 'string' && UUID_V4_RE.test(o.e)) touch.eid = o.e;
+  return touch;
 }
 
 export function stripClickIds(touch: Touch): Touch {
