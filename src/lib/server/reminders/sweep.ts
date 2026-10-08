@@ -8,7 +8,9 @@ import { chainHeads, type ChainDoc } from '@/lib/documents/steps';
 import { DOC_LABELS, type DocType } from '@/lib/documents/types';
 import { effectiveFacts, type Fact } from '@/lib/projects/steps';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { reviewRequestsEnabled } from '@/lib/server/mail/flags';
+import { reviewConfigReady, reviewRequestsEnabled } from '@/lib/server/mail/flags';
+import { reviewSecret } from '@/lib/reviews/token';
+import { ensureReviewLink } from '@/lib/server/reviews/links';
 import { enqueueMail, type EnqueueInput } from '@/lib/server/mail/outbox';
 import { ADMIN_NOTIFY_EMAIL, dedupeKey } from '@/lib/server/mail/rules';
 import {
@@ -20,6 +22,7 @@ import {
 } from './cadence';
 import { heldProjectIds } from './holds';
 
+/** Retourne l'id du lien d'avis du projet (le meme pour J+7 et J+21), ou null. */
 export type ReviewLink = (projectId: string) => string | null;
 
 export type SweepDoc = {
@@ -60,6 +63,7 @@ export type PlanInput = {
   members: SweepMember[];
   clients: SweepClient[];
   openReminderRows: OpenReminderRow[];
+  reviewedProjectIds: string[];
 };
 
 export type PlanOpts = { reviewEnabled: boolean; reviewLink: ReviewLink; limit: number };
@@ -97,6 +101,33 @@ function groupBy<T>(rows: T[], key: (r: T) => string): Map<string, T[]> {
     else m.set(k, [r]);
   }
   return m;
+}
+
+type ReviewScope = Pick<PlanInput, 'facts' | 'holds' | 'projects' | 'reviewedProjectIds'>;
+
+/** Pure: projets au PV signé effectif, non suspendus, sans avis déposé -> début (date du PV). */
+function signedReviewProjects(input: ReviewScope): Map<string, string> {
+  const held = heldProjectIds(input.holds);
+  const reviewed = new Set(input.reviewedProjectIds);
+  const projectIds = new Set(input.projects.map((p) => p.id));
+  const out = new Map<string, string>();
+  for (const [projectId, rows] of groupBy(input.facts, (f) => f.project_id)) {
+    if (!projectIds.has(projectId) || held.has(projectId) || reviewed.has(projectId)) continue;
+    const signed = effectiveFacts(rows.map(toFact)).filter((f) => f.type === 'acceptance_signed');
+    if (signed.length === 0) continue;
+    out.set(projectId, signed.reduce((a, b) => (b.createdAt > a.createdAt ? b : a)).createdAt);
+  }
+  return out;
+}
+
+/** Pure: projets à solliciter maintenant (palier d7/d21, ni suspendu ni déjà noté). Aucun critère de satisfaction. */
+export function reviewCandidates(input: ReviewScope, now: Date): string[] {
+  const ids: string[] = [];
+  for (const [projectId, start] of signedReviewProjects(input)) {
+    const stage = reminderStage(parisElapsedDays(new Date(start), now), REVIEW_REQUEST_CADENCE.client);
+    if (stage === 'd7' || stage === 'd21') ids.push(projectId);
+  }
+  return ids;
 }
 
 /** Pure: décide quelles relances mettre en file et quelles lignes ouvertes ne sont plus dues. */
@@ -177,25 +208,22 @@ export function planReminders(
     }
   }
 
-  // Demandes d'avis : PV signé (fait effectif), derrière le drapeau et un lien disponible (D-04, D-05, D-06).
+  // Demandes d'avis : PV signé (fait effectif), derrière le drapeau et un lien disponible (D-04, D-09).
   if (opts.reviewEnabled) {
-    for (const [projectId, rows] of factsByProject) {
+    for (const [projectId, start] of signedReviewProjects(input)) {
       const project = projectById.get(projectId);
-      if (!project || held.has(projectId)) continue;
-      const signed = effectiveFacts(rows.map(toFact)).filter((f) => f.type === 'acceptance_signed');
-      if (signed.length === 0) continue;
-      const start = signed.reduce((a, b) => (b.createdAt > a.createdAt ? b : a)).createdAt;
-      const url = opts.reviewLink(projectId);
-      if (typeof url !== 'string' || url === '') continue;
+      if (!project) continue;
       eligibleReviewProjects.add(projectId);
       const stage = reminderStage(parisElapsedDays(new Date(start), now), REVIEW_REQUEST_CADENCE.client);
       if (stage !== 'd7' && stage !== 'd21') continue;
+      const linkId = opts.reviewLink(projectId);
+      if (typeof linkId !== 'string' || linkId === '') continue;
       for (const email of recipientsOf(project)) {
         enqueues.push({
           event: 'review_request',
           recipientEmail: email,
           dedupeKey: dedupeKey.reviewRequest(projectId, stage, email),
-          payload: { projectTitle: project.title, reviewUrl: url, stage },
+          payload: { projectTitle: project.title, linkId, stage },
           clientId: project.client_id,
           projectId,
         });
@@ -251,7 +279,6 @@ export async function sweepReminders(
   const result: SweepRemindersResult = { queued: 0, duplicates: 0, stale: 0, failed: 0 };
   const now = opts.now ?? new Date();
   const limit = opts.limit ?? 100;
-  const reviewLink: ReviewLink = opts.reviewLink ?? (() => null);
   const since = new Date(now.getTime() - WINDOW_DAYS * 86_400_000).toISOString();
 
   let plan: { enqueues: EnqueueInput[]; staleIds: string[] };
@@ -322,6 +349,11 @@ export async function sweepReminders(
       ),
     ]);
 
+    const reviewedRows = await scoped<{ project_id: string }>(projectIds, (c, a, b) =>
+      admin.from('sv_reviews').select('project_id').in('project_id', c).order('project_id').range(a, b),
+    );
+    const reviewedProjectIds = reviewedRows.map((r) => r.project_id);
+
     const clientIds = [...new Set(projects.map((p) => p.client_id))];
     const [members, clients, openReminderRows] = await Promise.all([
       scoped<SweepMember>(clientIds, (c, a, b) =>
@@ -346,11 +378,25 @@ export async function sweepReminders(
       ),
     ]);
 
-    plan = planReminders(
-      { docs, facts, submissions, holds, projects, members, clients, openReminderRows },
-      now,
-      { reviewEnabled: reviewRequestsEnabled(), reviewLink, limit },
-    );
+    const flagOn = reviewRequestsEnabled();
+    const reviewOn = flagOn && reviewConfigReady();
+    if (flagOn && !reviewOn) console.error('[reminders/sweep] review_config_invalid');
+
+    const input: PlanInput = {
+      docs, facts, submissions, holds, projects, members, clients, openReminderRows, reviewedProjectIds,
+    };
+    let reviewLink: ReviewLink = opts.reviewLink ?? (() => null);
+    const secret = reviewSecret();
+    if (reviewOn && !opts.reviewLink && secret) {
+      const linkIds = new Map<string, string>();
+      for (const id of reviewCandidates(input, now).slice(0, Math.max(0, limit))) {
+        const linkId = await ensureReviewLink(admin, id, secret);
+        if (linkId) linkIds.set(id, linkId);
+      }
+      reviewLink = (id) => linkIds.get(id) ?? null;
+    }
+
+    plan = planReminders(input, now, { reviewEnabled: reviewOn, reviewLink, limit });
   } catch {
     console.error('[reminders/sweep] read_failed');
     result.failed += 1;
