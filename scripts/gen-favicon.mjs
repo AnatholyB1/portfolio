@@ -1,4 +1,3 @@
-// Builds src/app/favicon.ico (PNG-in-ICO: 16/32/48/64) and src/app/icon.png (48px, Google-friendly) from src/app/icon.svg
 import sharp from "sharp";
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -27,5 +26,3 @@ const entries = pngs.map((buf, i) => {
 });
 
 writeFileSync("src/app/favicon.ico", Buffer.concat([header, ...entries, ...pngs]));
-writeFileSync("src/app/icon.png", await sharp(svg, { density: 384 }).resize(48, 48).png().toBuffer());
-console.log("favicon.ico + icon.png written");
