@@ -1,6 +1,15 @@
 import { CLICK_ID_KEYS, isClickIdKey, type AttrParams } from './params';
 
-export type Touch = { params: AttrParams; landing: string; referrer: string | null; at: number };
+import type { UtmRaw } from './utm';
+
+export type Touch = {
+  params: AttrParams;
+  landing: string;
+  referrer: string | null;
+  at: number;
+  raw?: UtmRaw;
+  eid?: string;
+};
 
 export type ArrivalInput = {
   method: string;

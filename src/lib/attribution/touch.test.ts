@@ -119,3 +119,25 @@ describe('enrichFirstTouchClickIds', () => {
     expect(enrichFirstTouchClickIds(ft, touch({ params: { utm_source: 'g', gclid: 'A' }, landing: '/x' }))).toBeNull();
   });
 });
+
+describe('phase 19 canonical flow', () => {
+  it('classifyChannel returns canonical source for an alias touch', async () => {
+    const { parseAttrParams } = await import('./params');
+    const params = parseAttrParams(new URLSearchParams('utm_source=fb&utm_medium=paid_social'), { allowClickIds: true });
+    const c = classifyChannel({ params, landing: '/', referrer: null, at: 1 });
+    expect(c.source).toBe('meta');
+  });
+  it('enrichFirstTouchClickIds keeps raw and eid', () => {
+    const ft: Touch = {
+      params: { utm_source: 'meta' },
+      landing: '/',
+      referrer: null,
+      at: 1,
+      raw: { utm_source: 'Facebook' },
+      eid: '3f2b8c1e-1a2b-4c3d-8e4f-123456789abc',
+    };
+    const r = enrichFirstTouchClickIds(ft, { params: { utm_source: 'meta', gclid: 'x' }, landing: '/', referrer: null, at: 2 });
+    expect(r?.raw).toEqual({ utm_source: 'Facebook' });
+    expect(r?.eid).toBe(ft.eid);
+  });
+});
