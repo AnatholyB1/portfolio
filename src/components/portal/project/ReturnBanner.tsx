@@ -75,7 +75,7 @@ export default function ReturnBanner({ retour, invoice, pay }: Props) {
 
   return (
     <section className="pt-pay-banner" aria-labelledby={`return-${invoice.id}`}>
-      <h2 id={`return-${invoice.id}`} ref={titleRef} tabIndex={-1} className="pt-pay-banner-title">
+      <h2 id={`return-${invoice.id}`} ref={titleRef} tabIndex={-1} className="pt-subheading pt-pay-banner-title">
         {icon === 'clock' ? <Clock size={16} aria-hidden="true" /> : null}
         {icon === 'check' ? <Check size={16} aria-hidden="true" /> : null}
         {title}

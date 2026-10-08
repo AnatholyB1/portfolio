@@ -123,13 +123,13 @@ export default async function SignerPage({ params }: { params: Promise<{ id: str
     <>
       <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
       <ShellMain width="client">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="pt-stack">
           <Link href="/espace-client/documents" className="pt-btn-text pt-file-action">
             <ChevronLeft size={16} aria-hidden="true" />
             {SIG.back}
           </Link>
           {showTitle && titleKey ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="pt-stack-sm">
               <h1 className="pt-heading">{SIG.titles[titleKey]}</h1>
               <p className="pt-doc-meta">{SIG.meta(doc.revision, formatDateFr(doc.issuedAt))}</p>
             </div>

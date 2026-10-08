@@ -14,9 +14,9 @@ const INVALID_LINK = "Ce lien n'est plus valide.";
 
 function ErrorState({ message }: { message: string }) {
   return (
-    <div className="pt-field" style={{ alignItems: 'flex-start' }}>
+    <div className="pt-field pt-field-start">
       <p className="pt-error" role="alert">
-        <AlertCircle size={16} aria-hidden="true" style={{ flexShrink: 0, marginTop: 4 }} />
+        <AlertCircle size={16} aria-hidden="true" className="pt-msg-icon" />
         <span>{message}</span>
       </p>
       <Link href="/connexion" className="pt-btn-primary">
@@ -38,7 +38,7 @@ export default function ConfirmForm({ tokenHash, next }: ConfirmFormProps) {
       <input type="hidden" name="token_hash" value={tokenHash} />
       <input type="hidden" name="next" value={next ?? ''} />
       <button type="submit" className="pt-btn-primary" disabled={pending}>
-        {pending ? 'Connexion en cours...' : 'Me connecter'}
+        {pending ? 'Connexion en cours…' : 'Me connecter'}
       </button>
     </form>
   );

@@ -52,6 +52,28 @@ describe('LoginForm and OtpInput', () => {
     expect(login).not.toMatch(/<input[^>]*\bvalue=\{email\}/);
   });
 
+  it('shares one OTP component with the signing flow (length prop, optional auto-submit, no 1px focus shift)', () => {
+    expect(otp).toContain('length = OTP_LENGTH');
+    expect(otp).toContain('autoSubmit');
+    expect(otp).toContain('Code à ${length} chiffres');
+    expect(css).not.toMatch(/\.pt-otp-cell\[data-active\] \{[^}]*border-width/);
+    expect(read('../portal/project/SigningFlow.tsx')).toContain('<OtpInput');
+  });
+
+  it('states the digit count in the code-step copy', () => {
+    expect(login).toContain('chiffres reçus');
+    expect(login).toContain('${OTP_LENGTH}');
+  });
+
+  it('does not steal focus on the email field and uses the … character in loading labels', () => {
+    expect(login).not.toMatch(/<input[^>]*id="pt-email"[\s\S]*?autoFocus/);
+    for (const src of [login, confirm]) expect(src).not.toMatch(/en cours\.\.\.|Vérification\.\.\./);
+  });
+
+  it('mounts the status notice region before its text', () => {
+    expect(login).toContain('className="pt-status pt-live" role="status"');
+  });
+
   it('has a single heading per step and the delivery status line', () => {
     expect(login).not.toContain('<h2');
     expect(login).toContain('Saisissez votre code');

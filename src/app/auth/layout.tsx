@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../portal.css";
+import SkipLink from "@/components/portal/SkipLink";
 
 // Espace privé (D-15) : jamais indexé, titre propre (le gabarit racine ajoute
 // « · Sèvalys »). `alternates: {}` supprime la canonique "/" héritée du layout racine.
@@ -16,5 +17,10 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="pt-root">{children}</div>;
+  return (
+    <div className="pt-root">
+      <SkipLink />
+      {children}
+    </div>
+  );
 }

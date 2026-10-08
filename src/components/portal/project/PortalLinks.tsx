@@ -29,7 +29,7 @@ export default function PortalLinks({ links }: { links: LinkView[] }) {
               {host ? (
                 <a href={l.url} target="_blank" rel="noopener noreferrer">
                   {l.title}
-                  <ExternalLink size={14} aria-hidden="true" style={{ marginLeft: 6 }} />
+                  <ExternalLink size={14} aria-hidden="true" className="pt-link-icon" />
                   <span className="pt-sr-only">{PROJECT_COPY.links.newTab}</span>
                 </a>
               ) : (

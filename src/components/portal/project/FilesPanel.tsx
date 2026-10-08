@@ -29,7 +29,7 @@ function uploaderLabel(row: FileRowView, viewer: 'client' | 'admin'): string {
   if (viewer === 'client') {
     return row.uploadedByKind === 'client' ? PROJECT_COPY.files.byClient : PROJECT_COPY.files.byAdmin;
   }
-  return row.uploadedByKind === 'client' ? 'Client' : 'Sèvalys';
+  return row.uploadedByKind === 'client' ? PROJECT_COPY.files.adminViewClient : PROJECT_COPY.files.adminViewAdmin;
 }
 
 export default function FilesPanel({
@@ -140,8 +140,10 @@ export default function FilesPanel({
 
   return (
     <div className="pt-file-upload">
-      <h2>{PROJECT_COPY.files.heading}</h2>
-      <label className="pt-btn-ghost pt-file-pick" aria-disabled={uploading}>
+      <h2 id="files-title" className="pt-heading">
+        {PROJECT_COPY.files.heading}
+      </h2>
+      <label className="pt-btn-ghost pt-file-pick">
         <Upload size={16} aria-hidden="true" />
         <span>{PROJECT_COPY.files.add}</span>
         <input
@@ -191,28 +193,28 @@ export default function FilesPanel({
           <caption className="pt-sr-only">{PROJECT_COPY.files.heading}</caption>
           <thead>
             <tr>
-              <th scope="col">Nom</th>
-              <th scope="col">Déposé par</th>
-              <th scope="col">Ajouté le</th>
-              <th scope="col">Taille</th>
-              <th scope="col">Action</th>
+              <th scope="col">{PROJECT_COPY.files.columns.name}</th>
+              <th scope="col">{PROJECT_COPY.files.columns.uploadedBy}</th>
+              <th scope="col">{PROJECT_COPY.files.columns.addedOn}</th>
+              <th scope="col">{PROJECT_COPY.files.columns.size}</th>
+              <th scope="col">{PROJECT_COPY.files.columns.action}</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((f) => (
               <tr key={f.id}>
-                <td data-label="Nom">
+                <td data-label={PROJECT_COPY.files.columns.name}>
                   <span className="pt-file-name">
                     <KindIcon kind={f.kind} />
                     {f.filename}
                   </span>
                 </td>
-                <td data-label="Déposé par">{uploaderLabel(f, viewer)}</td>
-                <td data-label="Ajouté le">{formatDateFr(f.createdAt)}</td>
-                <td data-label="Taille" className="pt-file-size">
+                <td data-label={PROJECT_COPY.files.columns.uploadedBy}>{uploaderLabel(f, viewer)}</td>
+                <td data-label={PROJECT_COPY.files.columns.addedOn}>{formatDateFr(f.createdAt)}</td>
+                <td data-label={PROJECT_COPY.files.columns.size} className="pt-file-size">
                   {formatSize(f.sizeBytes)}
                 </td>
-                <td data-label="Action">
+                <td data-label={PROJECT_COPY.files.columns.action}>
                   <button
                     type="button"
                     className="pt-btn-text pt-file-action"

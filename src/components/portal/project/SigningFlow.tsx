@@ -12,6 +12,7 @@ import type {
 import { DOC_LABELS, type DocType } from '@/lib/documents/types';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { CONSENT_TEXTS, CONSENT_VERSION } from '@/lib/signature/consentText';
+import OtpInput from '../OtpInput';
 import type { DownloadResult } from './types';
 import './project.css';
 
@@ -86,6 +87,9 @@ export default function SigningFlow(props: SigningFlowProps) {
     initialPhase === 'finalize' ? SIG.code.finalizePending : null,
   );
   const [announce, setAnnounce] = useState<string | null>(null);
+  // La région live du code existe avant son texte : le statut « Code envoyé » est posé un instant
+  // après le montage du formulaire, sinon les lecteurs d'écran ne l'annoncent pas.
+  const [statusReady, setStatusReady] = useState(false);
   const [cooldown, setCooldown] = useState(initialPhase === 'code' ? props.codeState.cooldownS : 0);
   const [sendsLeft, setSendsLeft] = useState(props.codeState.sendsLeft);
   const [codeDead, setCodeDead] = useState(false);
@@ -125,6 +129,15 @@ export default function SigningFlow(props: SigningFlowProps) {
     }, 1000);
     return () => clearTimeout(t);
   }, [cooldown]);
+
+  useEffect(() => {
+    if (phase !== 'code') return;
+    const t = setTimeout(() => setStatusReady(true), 150);
+    return () => {
+      clearTimeout(t);
+      setStatusReady(false);
+    };
+  }, [phase]);
 
   useEffect(() => {
     if (phase === 'code') otpRef.current?.focus();
@@ -330,7 +343,7 @@ export default function SigningFlow(props: SigningFlowProps) {
 
       {!signer.matches ? (
         <section className="pt-card pt-sign-mismatch" aria-labelledby="sign-mismatch-title">
-          <h2 id="sign-mismatch-title">{SIG.mismatch.title}</h2>
+          <h2 id="sign-mismatch-title" className="pt-subheading">{SIG.mismatch.title}</h2>
           <p className="pt-helper">{SIG.mismatch.body(signer.name ?? '')}</p>
           <div className="pt-sign-actions">
             {props.signOutSlot}
@@ -408,28 +421,21 @@ export default function SigningFlow(props: SigningFlowProps) {
 
           {phase === 'code' ? (
             <form className="pt-card pt-sign-code-block" onSubmit={onVerify}>
-              <div className="pt-field">
-                <label className="pt-label" htmlFor="sign-otp">
-                  {SIG.code.label}
-                </label>
-                <input
-                  id="sign-otp"
-                  ref={otpRef}
-                  className="pt-sign-otp"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={OTP_LEN}
-                  pattern="[0-9]*"
-                  value={code}
-                  disabled={codeDead || pending}
-                  aria-invalid={error && !codeDead ? 'true' : undefined}
-                  aria-describedby="sign-code-messages"
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, OTP_LEN))}
-                />
-              </div>
+              <OtpInput
+                name="signCode"
+                length={OTP_LEN}
+                label={SIG.code.label}
+                autoSubmit={false}
+                value={code}
+                onValueChange={setCode}
+                inputRef={otpRef}
+                pending={pending}
+                disabled={codeDead}
+                invalid={Boolean(error) && !codeDead}
+                describedBy="sign-code-messages"
+              />
               <div id="sign-code-messages" aria-live="polite">
-                {status && !error ? <p className="pt-status">{status}</p> : null}
+                {status && statusReady && !error ? <p className="pt-status">{status}</p> : null}
                 {error ? <p className="pt-error">{error}</p> : null}
               </div>
               <p className="pt-sr-only" aria-live="polite">

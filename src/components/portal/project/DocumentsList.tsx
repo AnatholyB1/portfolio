@@ -58,7 +58,7 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
   }
 
   return (
-    <div>
+    <div className="pt-stack">
       <table className="pt-table">
         <caption className="pt-sr-only">{copy.caption(projectTitle)}</caption>
         <thead>
@@ -118,7 +118,7 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
           ))}
         </tbody>
       </table>
-      <p className="pt-error" aria-live="polite">
+      <p className="pt-error pt-live" aria-live="polite">
         {error}
       </p>
     </div>

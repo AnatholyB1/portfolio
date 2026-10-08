@@ -17,6 +17,7 @@ import '@/components/portal/project/project.css';
 import { confirmUploadAction, downloadAction, requestUploadAction } from '@/app/espace-client/actions';
 import { formatDateFr } from '@/lib/admin/format';
 import type { CompanySnapshot } from '@/lib/admin/inviteSchema';
+import { buildClientActions } from '@/lib/projects/clientActions';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
@@ -24,6 +25,7 @@ import { isOnboardingComplete } from '@/lib/projects/onboardingSchema';
 import { withStatuses } from '@/lib/documents/status';
 import { requireClient } from '@/lib/server/auth/dal';
 import { loadProjectDocuments } from '@/lib/server/documents/read';
+import { InvoicesLoadError, loadInvoicesForProjects } from '@/lib/server/invoices/read';
 import {
   latestConsent,
   loadClientProjects,
@@ -40,14 +42,15 @@ function kindOf(filename: string): FileKind {
 }
 
 function Interlocutor() {
+  const who = PROJECT_COPY.portal.interlocutor;
   return (
     <section className="pt-card pt-client" aria-labelledby="interlocutor-title">
       <div className="pt-client-block">
-        <h2 id="interlocutor-title">Votre interlocuteur</h2>
-        <p className="pt-helper">Anatholy Bricon, Sèvalys · Tours</p>
+        <h2 id="interlocutor-title">{who.heading}</h2>
+        <p className="pt-helper">{who.identity}</p>
         <div className="pt-client-contact">
-          <a href="mailto:contact@sevalys.com">contact@sevalys.com</a>
-          <a href="tel:+33607184133">+33 6 07 18 41 33</a>
+          <a href={who.emailHref}>{who.email}</a>
+          <a href={who.phoneHref}>{who.phone}</a>
         </div>
       </div>
     </section>
@@ -99,41 +102,56 @@ export default async function EspaceClientPage({
 
   const { project, client, state, onboarding, files, links, consents } = bundle;
   const offer = OFFER_LABELS[project.offer as OfferSlug] ?? project.offer;
-  const showOnboardingCta = state.currentStep === 1 && !(onboarding && isOnboardingComplete(onboarding));
+  const onboardingComplete = !!(onboarding && isOnboardingComplete(onboarding));
   const company = (client.company ?? null) as CompanySnapshot | null;
   const current = latestConsent(consents);
-  // Un document de tête à signer (statut dérivé des faits) déclenche l'avis sous l'étape courante.
+  // Statut des documents dérivé des faits : alimente l'action « signer » du panneau « En attente de ».
   const projectDocs = await loadProjectDocuments(ctx.supabase, project.id);
-  const awaitingSignature = withStatuses(projectDocs, bundle.facts).some((d) => d.status === 'to_sign');
+  const toSignDocs = withStatuses(projectDocs, bundle.facts).filter((d) => d.status === 'to_sign');
+  const awaitingSignature = toSignDocs.length > 0;
+  let toPayInvoices: { kind: string }[] = [];
+  try {
+    const invoices = await loadInvoicesForProjects(ctx.supabase, [project.id]);
+    toPayInvoices = invoices.filter((i) => i.status === 'to_pay');
+  } catch (e) {
+    // Les factures ne bloquent pas la page projet : la page Paiements affiche l'erreur de lecture.
+    if (!(e instanceof InvoicesLoadError)) throw e;
+  }
+  const actions = buildClientActions({
+    state,
+    onboardingComplete,
+    toSignDocs: toSignDocs.map((d) => ({ id: d.id, docType: d.docType })),
+    toPayInvoices,
+  });
 
   return (
     <>
       <ShellHeader variant="client" title={ctx.client.name} actions={<SignOutButton />} />
       <ShellMain width="client">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-          <ClientNav current="projet" />
-          <ProjectSelector projects={projects.map((p) => ({ id: p.id, title: p.title }))} activeId={project.id} />
-          <section className="pt-card" aria-labelledby="project-title">
-            <h1 id="project-title" className="pt-heading">
-              {project.title}
-            </h1>
-            <p className="pt-helper">
-              {offer} · {PROJECT_COPY.portal.startedOn(formatDateFr(project.startedAt))}
+        <ClientNav current="projet" />
+        <ProjectSelector projects={projects.map((p) => ({ id: p.id, title: p.title }))} activeId={project.id} />
+        <section className="pt-card" aria-labelledby="project-title">
+          <h1 id="project-title" className="pt-display">
+            {project.title}
+          </h1>
+          <p className="pt-helper">
+            {offer} · {PROJECT_COPY.portal.startedOn(formatDateFr(project.startedAt))}
+          </p>
+          <WhoWaits state={state} now={now} actions={actions} />
+          {awaitingSignature && actions.length === 0 ? (
+            <p className="pt-who-since">
+              {PROJECT_COPY.signature.documentsTab.awaiting}{' '}
+              <Link href="/espace-client/documents" className="pt-btn-text">
+                {PROJECT_COPY.signature.documentsTab.goToDocuments}
+              </Link>
             </p>
-            <WhoWaits state={state} now={now} showOnboardingCta={showOnboardingCta} />
-            {awaitingSignature ? (
-              <p className="pt-helper" style={{ fontSize: 14, color: 'var(--ink-dim)' }}>
-                {PROJECT_COPY.signature.documentsTab.awaiting}{' '}
-                <Link href="/espace-client/documents" className="pt-btn-text">
-                  {PROJECT_COPY.signature.documentsTab.goToDocuments}
-                </Link>
-              </p>
-            ) : null}
-          </section>
-          <section className="pt-card" aria-label={PROJECT_COPY.portal.timelineLabel}>
-            <Timeline state={state} variant="client" />
-          </section>
-          <OnboardingCard company={company} siret={client.siret ?? ''} onboarding={onboarding} />
+          ) : null}
+        </section>
+        <section className="pt-card" aria-label={PROJECT_COPY.portal.timelineLabel}>
+          <Timeline state={state} variant="client" />
+        </section>
+        <OnboardingCard company={company} siret={client.siret ?? ''} onboarding={onboarding} />
+        <section className="pt-card" aria-labelledby="files-title">
           <FilesPanel
             projectId={project.id}
             viewer="client"
@@ -149,13 +167,13 @@ export default async function EspaceClientPage({
             confirmUpload={confirmUploadAction}
             getDownloadUrl={downloadAction}
           />
-          <PortalLinks links={links.map((l) => ({ id: l.id, title: l.title, url: l.url }))} />
-          <ConsentCard
-            projectId={project.id}
-            current={current ? { granted: current.granted, createdAt: current.createdAt, version: current.textVersion } : null}
-          />
-          <Interlocutor />
-        </div>
+        </section>
+        <PortalLinks links={links.map((l) => ({ id: l.id, title: l.title, url: l.url }))} />
+        <ConsentCard
+          projectId={project.id}
+          current={current ? { granted: current.granted, createdAt: current.createdAt, version: current.textVersion } : null}
+        />
+        <Interlocutor />
       </ShellMain>
       <ShellFooter />
     </>

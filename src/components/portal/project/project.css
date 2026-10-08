@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border: 2px solid var(--ink-faint);
+  border: 2px solid var(--pt-border-strong);
   background: transparent;
   color: var(--ink);
 }
@@ -137,6 +137,18 @@
   font-size: 14px;
   color: var(--ink-dim);
 }
+.pt-root .pt-who-icon {
+  flex: none;
+  margin-top: 4px;
+}
+.pt-root .pt-who-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pt-root .pt-link-icon {
+  margin-left: 8px;
+}
 
 /* ---------- Onboarding ---------- */
 .pt-root .pt-onb-block {
@@ -181,6 +193,72 @@
 @media (min-width: 768px) {
   .pt-root .pt-onb-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pt-root .pt-onb,
+.pt-root .pt-consent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-root .pt-onb-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-root .pt-onb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+.pt-root .pt-onb-vat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pt-root .pt-onb-vat legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+/* La cible de « Compléter mes informations » reçoit le focus : marge pour ne pas coller au bord. */
+.pt-root #onboarding {
+  scroll-margin-top: 16px;
+}
+.pt-root .pt-onb summary {
+  cursor: pointer;
+}
+.pt-root .pt-consent-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Lecture seule société (read-back) : étiquette / valeur, même rendu que l'admin. */
+.pt-root .pt-onb .pt-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 24px;
+  margin: 0;
+}
+.pt-root .pt-onb .pt-summary dt {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-onb .pt-summary dd {
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+@media (min-width: 768px) {
+  .pt-root .pt-onb .pt-summary {
+    grid-template-columns: max-content 1fr;
+  }
+  .pt-root .pt-onb .pt-summary dd {
+    margin: 0;
   }
 }
 
@@ -306,8 +384,7 @@
   padding: 0;
   list-style: none;
 }
-.pt-root .pt-client-nav a,
-.pt-root .pt-client-nav-off {
+.pt-root .pt-client-nav a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -324,9 +401,6 @@
 .pt-root .pt-client-nav a:focus-visible {
   outline: 2px solid var(--acid);
   outline-offset: 2px;
-}
-.pt-root .pt-client-nav-off {
-  opacity: 0.6;
 }
 .pt-root .pt-project-select {
   display: flex;
@@ -455,7 +529,7 @@
   width: 20px;
   height: 20px;
   margin: 2px 0 0;
-  accent-color: var(--acid);
+  accent-color: var(--ink);
 }
 .pt-root .pt-sign-consent:focus-within,
 .pt-root .pt-sign-radio:focus-within {
@@ -468,30 +542,6 @@
   font-family: var(--font-mono), monospace;
   font-size: 14px;
   color: var(--ink-dim);
-}
-.pt-root .pt-sign-otp {
-  width: 100%;
-  max-width: 320px;
-  height: 56px;
-  box-sizing: border-box;
-  padding: 0 8px;
-  background: var(--bg-3);
-  color: var(--ink);
-  border: 1px solid var(--pt-border-strong);
-  border-radius: 8px;
-  font-family: var(--font-mono), monospace;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: 0.5em;
-  text-align: center;
-  transition: border-color 150ms ease;
-}
-.pt-root .pt-sign-otp:focus-visible {
-  border: 2px solid var(--acid);
-  outline: none;
-}
-.pt-root .pt-sign-otp[aria-invalid='true'] {
-  border-color: var(--warm);
 }
 .pt-root .pt-sign-bar {
   display: flex;
@@ -598,11 +648,6 @@
     bottom: 0;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .pt-root .pt-sign-otp {
-    transition: none;
-  }
-}
 .pt-root .pt-sign-frame-empty {
   border-style: dashed;
 }
@@ -613,7 +658,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  margin-bottom: 24px;
   padding: 24px;
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -640,6 +684,12 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* Tableau empilé en cartes (mobile) : le montant s'aligne à gauche sous son étiquette. */
+@media (max-width: 767px) {
+  .pt-root .pt-pay-amount-cell {
+    text-align: left;
+  }
+}
 .pt-root .pt-pay-action {
   display: flex;
   flex-direction: column;
@@ -659,7 +709,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 24px;
   padding: 24px;
   background: var(--bg-2);
   border: 1px solid var(--line);
