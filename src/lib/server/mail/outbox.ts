@@ -22,11 +22,13 @@ import {
   paymentReminderEmail,
   paymentRequestEmail,
 } from './paymentEmails';
+import { deriveReviewToken, reviewSecret } from '@/lib/reviews/token';
 import {
   buildAdminProjectUrl,
   buildLoginUrl,
   buildPortalDocumentsUrl,
   buildPortalUrl,
+  buildReviewUrl,
   buildUnsubscribeOneClickUrl,
   buildUnsubscribePageUrl,
 } from './urls';
@@ -35,6 +37,8 @@ import {
   documentReminderAdminEmail,
   documentReminderEmail,
   mailSuppressionAdminEmail,
+  reviewHiddenEmail,
+  reviewPublishedAdminEmail,
   reviewRequestContent,
 } from './reminderEmails';
 import { buildMarketingEmail } from './marketingEmail';
@@ -99,9 +103,14 @@ export function buildMail(row: OutboxRow): BuiltMail {
     if (!secret) throw new Error('unsubscribe_unavailable');
     const token = signUnsubscribeToken(row.recipient_email, secret);
     if (row.template !== 'review_request') throw new Error('unknown_template');
+    // D-09 : le payload ne porte que linkId ; le jeton est dérivé au rendu (jamais stocké).
+    const linkId = str(p.linkId);
+    if (!linkId) throw new Error('invalid_payload');
+    const rs = reviewSecret();
+    if (!rs) throw new Error('review_token_unavailable');
     const content = reviewRequestContent({
       projectTitle: str(p.projectTitle),
-      reviewUrl: str(p.reviewUrl),
+      reviewUrl: buildReviewUrl(deriveReviewToken(linkId, rs)),
       stage: oneOf(p.stage, ['d7', 'd21'] as const),
     });
     return buildMarketingEmail(content, {
@@ -259,6 +268,16 @@ export function buildMail(row: OutboxRow): BuiltMail {
         clientName: str(p.clientName) || null,
         isLead: p.isLead === true,
       });
+      break;
+    case 'review_published_admin': {
+      const rating = p.rating;
+      if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5)
+        throw new Error('invalid_payload');
+      mail = reviewPublishedAdminEmail({ projectTitle: str(p.projectTitle), rating });
+      break;
+    }
+    case 'review_hidden':
+      mail = reviewHiddenEmail({ projectTitle: str(p.projectTitle) });
       break;
     default:
       throw new Error('unknown_template');

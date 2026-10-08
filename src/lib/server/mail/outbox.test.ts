@@ -88,6 +88,7 @@ vi.mock('resend', () => ({
 import { INVITE_SUBJECT } from './inviteEmail';
 import { MAIL_EVENTS, MAIL_RULES } from './rules';
 import { verifyUnsubscribeToken } from './unsubscribeToken';
+import { deriveReviewToken } from '@/lib/reviews/token';
 import { buildMail, enqueueAndSend, enqueueMail, processDueMail, sendOutboxRow } from './outbox';
 
 const input = {
@@ -131,6 +132,7 @@ beforeEach(() => {
   state.scopeCalls = 0;
   vi.stubEnv('UNSUBSCRIBE_SECRET', SECRET);
   vi.stubEnv('REVIEW_REQUESTS_ENABLED', 'true');
+  vi.stubEnv('REVIEW_TOKEN_SECRET', REVIEW_SECRET);
   process.env.RESEND_API_KEY = 're_test';
   errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -379,6 +381,9 @@ describe('buildMail', () => {
   });
 });
 
+const REVIEW_SECRET = 'r'.repeat(48);
+const LINK_ID = '11111111-1111-4111-8111-111111111111';
+
 const payRow = {
   ...claimedRow,
   event_type: 'payment_requested',
@@ -389,7 +394,7 @@ const reviewRow = {
   ...claimedRow,
   event_type: 'review_request',
   template: 'review_request',
-  payload: { projectTitle: 'Site', reviewUrl: 'https://sevalys.com/avis', stage: 'd7' },
+  payload: { projectTitle: 'Site', linkId: LINK_ID, stage: 'd7' },
 };
 const adminRow = {
   ...claimedRow,
@@ -540,3 +545,58 @@ describe('new templates and marketing parity', () => {
     }
   });
 });
+
+describe('review mails (phase 18)', () => {
+  const row = (template: string, payload: Record<string, unknown>, extra: Record<string, unknown> = {}) =>
+    ({ ...claimedRow, event_type: template, template, payload, ...extra }) as any;
+
+  it('renders the link derived from linkId, identical for d7 and d21', () => {
+    const token = deriveReviewToken(LINK_ID, REVIEW_SECRET);
+    const a = buildMail(row('review_request', { projectTitle: 'Site', linkId: LINK_ID, stage: 'd7' }));
+    const b = buildMail(row('review_request', { projectTitle: 'Site', linkId: LINK_ID, stage: 'd21' }));
+    for (const m of [a, b]) {
+      expect(m.html).toContain(`/avis/${token}`);
+      expect(m.text).toContain(`https://sevalys.com/avis/${token}`);
+      expect(`${m.html}${m.text}`).not.toMatch(/google/i);
+    }
+  });
+
+  it('fails closed without REVIEW_TOKEN_SECRET', async () => {
+    vi.stubEnv('REVIEW_TOKEN_SECRET', '');
+    expect(() => buildMail(reviewRow as any)).toThrow('review_token_unavailable');
+    state.claim = { data: reviewRow, error: null };
+    expect(await sendOutboxRow('row1')).toBe('failed');
+    expect(mocks.updates.at(-1)).toMatchObject({ status: 'failed', last_error: 'render_error' });
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
+  it('rejects the old reviewUrl payload shape', () => {
+    expect(() =>
+      buildMail(
+        row('review_request', { projectTitle: 'S', reviewUrl: 'https://sevalys.com/avis/x', stage: 'd7' }),
+      ),
+    ).toThrow('invalid_payload');
+  });
+
+  it('renders review_published_admin and review_hidden with the contact reply-to', () => {
+    const a = buildMail(
+      row('review_published_admin', { projectTitle: 'Site', rating: 5 }, { recipient_kind: 'admin' }),
+    );
+    expect(a.subject).toBe('Nouvel avis publié : 5 sur 5');
+    expect(a.replyTo).toBe('contact@sevalys.com');
+    const h = buildMail(row('review_hidden', { projectTitle: 'Site' }));
+    expect(h.subject).toBe('Votre avis a été masqué');
+    expect(h.replyTo).toBe('contact@sevalys.com');
+    expect(h.headers).toBeUndefined();
+  });
+
+  it('rejects an invalid rating', () => {
+    expect(() => buildMail(row('review_published_admin', { projectTitle: 'S', rating: 9 }))).toThrow(
+      'invalid_payload',
+    );
+    expect(() => buildMail(row('review_published_admin', { projectTitle: 'S' }))).toThrow(
+      'invalid_payload',
+    );
+  });
+});
+
