@@ -28,7 +28,12 @@ describe('sitemap (SEO-01)', () => {
   it('has unique urls and the expected count', () => {
     const u = urls()
     expect(new Set(u).size).toBe(u.length)
-    expect(u.length).toBe(5 + services.length + 1)
+    expect(u.length).toBe(5 + services.length + 3)
+  })
+
+  it('lists /avis and /politique-des-avis', () => {
+    expect(urls()).toContain(`${base}/avis`)
+    expect(urls()).toContain(`${base}/politique-des-avis`)
   })
 
   it('never lists a token subpath', () => {

@@ -36,6 +36,12 @@ describe('llms.txt (SEO-01)', () => {
     }
   })
 
+  it('links /avis and the review policy, never a token path (D-13)', () => {
+    expect(lines).toContain('- Avis clients vérifiés : https://sevalys.com/avis')
+    expect(lines).toContain('- Politique des avis : https://sevalys.com/politique-des-avis')
+    expect(llms).not.toContain('https://sevalys.com/avis/')
+  })
+
   it('has no Différenciation section', () => {
     expect(llms).not.toContain('## Différenciation')
   })
