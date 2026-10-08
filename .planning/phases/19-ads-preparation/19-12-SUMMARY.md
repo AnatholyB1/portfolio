@@ -29,7 +29,38 @@ Status: PARTIAL. Task 1 preview stage done 2026-10-08. Production promotion, Tas
 
 `src/lib/attribution/touch.ts` `classifyArrival` returns `skip` when `request.nextUrl.hostname !== canonicalHost`, and canonicalHost comes from `NEXT_PUBLIC_SITE_URL` (default sevalys.com). The preview host (`portfolio-5izljrcdj-...vercel.app`) differs, so the proxy deliberately sets no cookie (this is the intended guard, not a regression). The Host header cannot be spoofed through Vercel routing. The decoded cookie fields (p.utm_source 'meta', p.utm_medium 'paid_social', w.utm_source 'Facebook', e v4 UUID) therefore must be checked on production (https://sevalys.com) after the second approval. The unit/integration suites from 19-11 cover the logic.
 
+## Production promotion (2026-10-08)
+
+### Second approval (verbatim, 2026-10-08)
+
+"Approve production deploy" (fast-forward and push master, production checks, delete release/phase-19; sv-rls-p19 and `.env.test.local` kept).
+
+### Deploy
+
+- Fast-forward push `c8e8598..a86bc3a master -> master` (plain, no force).
+- Production deployment https://portfolio-csf4ld9y4-anatholyb1s-projects.vercel.app: Ready (build 2m).
+
+### Production checks (plain curl on https://sevalys.com, no form submitted, no lead created)
+
+| Check | Result | Status |
+|---|---|---|
+| GET / | 200 | PASS |
+| GET /simulateur | 200 | PASS |
+| GET /avis | 200; no X-Robots-Tag header; meta robots `index, follow` | PASS |
+| GET /politique-des-avis | 200 | PASS |
+| GET /sitemap.xml | 200; includes sevalys.com/avis | PASS |
+| GET /robots.txt | 200; Disallow /api/, /espace-client, /admin, /connexion, /auth, /desinscription, /avis/ | PASS |
+| GET /admin/liens (anonymous) | 307, `Location: /connexion?next=%2Fadmin%2Fliens` (`X-Robots-Tag: noindex, nofollow`, expected on admin) | PASS |
+| GET `/?utm_source=Facebook&utm_medium=paid_social&utm_campaign=agent-vocal_restaurants_202611` with accepted `sv_consent` cookie (synthetic UUID id) and browser-like Sec-Fetch headers/UA | 200; `Set-Cookie: sv_attr_lt` and `sv_attr_ft` set (Path=/, Max-Age=2592000, Secure, HttpOnly, SameSite=lax) | PASS |
+
+Decoded `sv_attr_lt` (identical `sv_attr_ft`): `p` = {utm_source: "meta", utm_medium: "paid_social", utm_campaign: "agent-vocal_restaurants_202611"}, `l` "/", `r` null, `w` = {utm_source: "Facebook"}, `e` = f58dd7e6-f296-45a9-8127-0165dc7b76c8 (valid v4 UUID). The cookie check deferred from preview is now verified.
+
+### Cleanup
+
+- `release/phase-19` deleted on origin (it never existed locally).
+- Supabase branch `sv-rls-p19` and `.env.test.local` kept for the owner's manual end-to-end check (deleted in a later step).
+
 ## State
 
-- release/phase-19 exists on origin only; master not pushed; production untouched; Supabase branch sv-rls-p19 and `.env.test.local` untouched.
+- (Superseded by production section above) release/phase-19 existed on origin only; master not pushed; production untouched; Supabase branch sv-rls-p19 and `.env.test.local` untouched.
 - Remaining: second approval, fast-forward master and push, production checks (incl. cookie decode), delete release/phase-19, Task 2 manual check, branch cleanup.
