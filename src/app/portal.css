@@ -30,6 +30,7 @@
 
 /* ---------- Typographie ---------- */
 .pt-heading {
+  text-wrap: balance;
   font-family: var(--font-display), sans-serif;
   font-size: 24px;
   font-weight: 500;
@@ -39,6 +40,7 @@
   margin: 0;
 }
 .pt-display {
+  text-wrap: balance;
   font-family: var(--font-display), sans-serif;
   font-size: 32px;
   font-weight: 500;
@@ -512,6 +514,7 @@
 .pt-table td {
   padding: 16px;
   border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 .pt-table tbody tr {

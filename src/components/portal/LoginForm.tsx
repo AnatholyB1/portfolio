@@ -7,6 +7,7 @@ import {
   verifyCodeAction,
   type LoginState,
 } from '@/app/connexion/actions';
+import { OTP_LENGTH } from '@/lib/auth/schemas';
 import OtpInput from './OtpInput';
 
 const INITIAL: LoginState = { step: 'email' };
@@ -25,7 +26,7 @@ function ErrorMessage({ id, error }: { id: string; error?: string }) {
     <div id={id} aria-live="polite">
       {error ? (
         <p className="pt-error">
-          <AlertCircle size={16} aria-hidden="true" style={{ flexShrink: 0, marginTop: 4 }} />
+          <AlertCircle size={16} aria-hidden="true" className="pt-msg-icon" />
           <span>{error}</span>
         </p>
       ) : null}
@@ -75,11 +76,9 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
           Connexion
         </h1>
         <p className="pt-helper">Saisissez l&apos;adresse e-mail avec laquelle vous avez été invité.</p>
-        {notice ? (
-          <p className="pt-status" role="status">
-            {notice}
-          </p>
-        ) : null}
+        <p className="pt-status pt-live" role="status">
+          {notice}
+        </p>
         <form
           action={reqAction}
           noValidate
@@ -102,7 +101,8 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
               onChange={(e) => setLastEmail(e.target.value)}
               autoComplete="email"
               inputMode="email"
-              autoFocus
+              autoCapitalize="off"
+              spellCheck={false}
               required
               aria-invalid={reqState.error ? 'true' : undefined}
               aria-describedby="pt-email-error"
@@ -110,7 +110,7 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
           </div>
           <ErrorMessage id="pt-email-error" error={reqState.error} />
           <button type="submit" className="pt-btn-primary" disabled={reqPending}>
-            {reqPending ? 'Envoi en cours...' : 'Recevoir mon code'}
+            {reqPending ? 'Envoi en cours…' : 'Recevoir mon code'}
           </button>
         </form>
       </>
@@ -131,10 +131,10 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
       </h1>
       <p className="pt-helper">
         {'Code envoyé à '}
-        <span style={{ color: 'var(--ink)', fontWeight: 500, overflowWrap: 'anywhere' }}>
+        <span className="pt-code-email">
           {codeEmail}
         </span>
-        {'. Il arrive en général en moins d’une minute. Pensez à vérifier vos courriers indésirables.'}
+        {`. Saisissez les ${OTP_LENGTH} chiffres reçus. Il arrive en général en moins d’une minute. Pensez à vérifier vos courriers indésirables.`}
       </p>
       <form action={verAction}>
         <input type="hidden" name="next" value={next ?? ''} />
@@ -147,7 +147,7 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
         />
         <ErrorMessage id="pt-code-error" error={error} />
         <button type="submit" className="pt-btn-primary" disabled={verPending}>
-          {verPending ? 'Vérification...' : 'Se connecter'}
+          {verPending ? 'Vérification…' : 'Se connecter'}
         </button>
         <button
           type="submit"

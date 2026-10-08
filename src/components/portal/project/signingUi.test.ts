@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 // Gardes source de la page de signature et de la recette (SIGN-01, SIGN-02, SIGN-05, 14-UI-SPEC A et B).
 const read = (rel: string) => readFileSync(new URL(rel, import.meta.url), 'utf8');
 const flow = read('./SigningFlow.tsx');
+const otp = read('../OtpInput.tsx');
 const checklist = read('./AcceptanceChecklist.tsx');
 const page = read('../../../app/espace-client/documents/[id]/signer/page.tsx');
 const css = read('./project.css');
@@ -11,11 +12,18 @@ const copy = read('../../../lib/projects/copy.ts');
 
 describe('signing flow source contract', () => {
   it('uses a single one-time-code numeric field, never type=number', () => {
-    expect(flow).toContain('autoComplete="one-time-code"');
-    expect(flow).toContain('inputMode="numeric"');
-    expect(flow).toContain('maxLength={OTP_LEN}');
-    expect(flow).toContain('pattern="[0-9]*"');
+    // Même composant que la connexion : un seul vrai input, jamais type=number.
+    expect(flow).toContain('<OtpInput');
+    expect(flow).toContain('length={OTP_LEN}');
+    expect(flow).toContain('autoSubmit={false}');
+    for (const attr of ['autoComplete="one-time-code"', 'inputMode="numeric"', 'maxLength={length}', 'readOnly={pending}']) {
+      expect(otp).toContain(attr);
+    }
+    expect(otp).not.toContain('type="number"');
     expect(flow).not.toContain('type="number"');
+    // Le champ reste monté et focalisé pendant la vérification : pas de disabled lié à pending.
+    expect(flow).not.toContain('disabled={codeDead || pending}');
+    expect(flow).toContain('pending={pending}');
   });
 
   it('never prechecks a consent or a criterion', () => {
