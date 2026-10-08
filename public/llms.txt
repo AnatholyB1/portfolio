@@ -39,6 +39,8 @@ PME, commerces, restaurants, boulangeries, écoles et services locaux qui veulen
 - Calculateur de ROI (agent vocal) : https://sevalys.com/calculateur-roi
 - Démo agent vocal : https://sevalys.com/demo
 - Mentions légales : https://sevalys.com/mentions-legales
+- Avis clients vérifiés : https://sevalys.com/avis
+- Politique des avis : https://sevalys.com/politique-des-avis
 
 ## Contact
 
