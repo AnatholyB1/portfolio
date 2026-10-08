@@ -317,3 +317,190 @@ left join lateral (
 ) c on true;
 revoke all on public.sv_leads_admin_v from anon;
 grant select on public.sv_leads_admin_v to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Section B : journal des conversions (D-07 à D-11)
+-- ---------------------------------------------------------------------------
+-- Résultat du contrôle (Open Question 3) : sv_set_lead_status est le seul écrivain de
+-- sv_leads.status (sv_ingest_lead laisse le défaut 'new'), vérifié par recherche dans
+-- supabase/migrations et src. Le déclencheur sur sv_lead_events couvre donc tous les changements.
+
+create table if not exists public.sv_conversion_events (
+  id bigint generated always as identity primary key,
+  lead_id uuid not null references public.sv_leads (id) on delete restrict,
+  event_name text not null check (event_name in (
+    'lead_submitted', 'lead_qualified', 'rdv_booked', 'quote_sent', 'deal_signed', 'lead_lost'
+  )),
+  rank smallint null,
+  event_id uuid not null unique,
+  source_event_id bigint null references public.sv_lead_events (id) on delete restrict,
+  occurred_at timestamptz not null,
+  source_source text not null,
+  source_medium text not null,
+  source_campaign text null,
+  click_ids jsonb null check (click_ids is null or jsonb_typeof(click_ids) = 'object'),
+  value_cents bigint null check (value_cents is null or value_cents >= 0),
+  currency text null check (currency is null or currency = 'EUR'),
+  created_at timestamptz not null default now(),
+  check ((value_cents is null) = (currency is null)),
+  check (value_cents is null or event_name = 'deal_signed'),
+  check (
+    (event_name = 'lead_submitted' and rank = 1)
+    or (event_name = 'lead_qualified' and rank = 2)
+    or (event_name = 'rdv_booked' and rank = 3)
+    or (event_name = 'deal_signed' and rank = 4)
+    or (event_name in ('quote_sent', 'lead_lost') and rank is null)
+  )
+);
+alter table public.sv_conversion_events enable row level security;
+revoke all on public.sv_conversion_events from anon, authenticated, service_role;
+grant select on public.sv_conversion_events to authenticated;
+grant select on public.sv_conversion_events to service_role;
+create index if not exists sv_conversion_events_lead_idx on public.sv_conversion_events (lead_id, occurred_at);
+create unique index if not exists sv_conversion_events_lead_name_uidx
+  on public.sv_conversion_events (lead_id, event_name)
+  where event_name <> 'lead_lost';
+
+drop policy if exists sv_conversion_events_admin_read on public.sv_conversion_events;
+create policy sv_conversion_events_admin_read on public.sv_conversion_events
+  for select to authenticated
+  using ((select sv_private.is_admin()));
+
+drop trigger if exists sv_conversion_events_no_upd_del on public.sv_conversion_events;
+create trigger sv_conversion_events_no_upd_del
+  before update or delete on public.sv_conversion_events
+  for each row execute function sv_private.deny_mutation();
+
+drop trigger if exists sv_conversion_events_no_truncate on public.sv_conversion_events;
+create trigger sv_conversion_events_no_truncate
+  before truncate on public.sv_conversion_events
+  for each statement execute function sv_private.deny_mutation();
+
+-- Identifiant d'événement déterministe (D-10) : seul endroit où l'espace de noms et l'extension
+-- apparaissent. La disponibilité de uuid-ossp dans le schéma extensions est sondée sur la
+-- branche en 19-06 ; le repli (digest pgcrypto) ne remplacerait que ce corps.
+create or replace function sv_private.conversion_event_id(p_lead_id uuid, p_name text)
+returns uuid
+language sql
+immutable
+set search_path = ''
+as $$
+  select extensions.uuid_generate_v5('87713031-3054-582f-9073-0aa58d13d20e'::uuid, lower(p_lead_id::text) || ':' || p_name);
+$$;
+revoke all on function sv_private.conversion_event_id(uuid, text) from public, anon, authenticated;
+
+-- Émission atomique (D-09) : chaque lead_created / status_changed émet, dans la même
+-- transaction, les rangs manquants jusqu'au rang cible avec les horodatages d'étapes
+-- historiques. Un retour en arrière n'émet rien, perdu n'annule rien, les rejeux sont sans effet.
+create or replace function sv_private.emit_conversions()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_lead public.sv_leads%rowtype;
+  v_click jsonb;
+  v_touch jsonb;
+  v_target integer := 0;
+  v_quote boolean := false;
+  v_signed boolean := false;
+  v_value bigint;
+begin
+  if NEW.type not in ('lead_created', 'status_changed') then
+    return NEW;
+  end if;
+
+  select * into v_lead from public.sv_leads where id = NEW.lead_id;
+  if not found then
+    return NEW;
+  end if;
+
+  -- Identifiants de clic : uniquement ceux déjà présents dans les touches stockées,
+  -- donc posés après consentement (D-08, D-12).
+  v_touch := coalesce(v_lead.last_touch, v_lead.first_touch);
+  v_click := nullif(jsonb_strip_nulls(jsonb_build_object(
+    'gclid', case when jsonb_typeof(v_touch->'params'->'gclid') = 'string' then v_touch->'params'->'gclid' end,
+    'fbclid', case when jsonb_typeof(v_touch->'params'->'fbclid') = 'string' then v_touch->'params'->'fbclid' end,
+    'ttclid', case when jsonb_typeof(v_touch->'params'->'ttclid') = 'string' then v_touch->'params'->'ttclid' end
+  )), '{}'::jsonb);
+
+  if NEW.type = 'lead_created' then
+    v_target := 1;
+  elsif NEW.to_status = 'lost' then
+    insert into public.sv_conversion_events (
+      lead_id, event_name, rank, event_id, source_event_id, occurred_at,
+      source_source, source_medium, source_campaign, click_ids
+    ) values (
+      v_lead.id, 'lead_lost', null,
+      sv_private.conversion_event_id(v_lead.id, 'lead_lost:' || NEW.id),
+      NEW.id, coalesce(v_lead.lost_at, NEW.created_at),
+      v_lead.source_source, v_lead.source_medium, v_lead.source_campaign, v_click
+    )
+    on conflict do nothing;
+    return NEW;
+  else
+    v_target := case NEW.to_status
+      when 'qualified' then 2
+      when 'rdv' then 3
+      when 'quote_sent' then 3
+      when 'signed' then 4
+      else 0
+    end;
+    v_quote := NEW.to_status in ('quote_sent', 'signed');
+    v_signed := NEW.to_status = 'signed';
+  end if;
+
+  -- Retour en arrière (new) ou statut sans rang : rien à émettre.
+  if v_target = 0 then
+    return NEW;
+  end if;
+
+  -- Valeur : total du devis actif (tête de chaîne), sans estimation. NULL si aucun devis valide (D-11).
+  if v_signed then
+    select (s.data->>'totalCents')::bigint into v_value
+    from public.sv_project_documents d
+    join public.sv_projects p on p.id = d.project_id
+    join public.sv_document_snapshots s on s.document_id = d.id
+    where p.lead_id = NEW.lead_id
+      and d.doc_type = 'quote'
+      and not exists (
+        select 1 from public.sv_project_documents r where r.replaces_document_id = d.id
+      )
+      and s.data->>'docType' = 'quote'
+      and jsonb_typeof(s.data->'totalCents') = 'number'
+      and (s.data->>'totalCents') ~ '^[0-9]{1,15}$'
+    order by d.revision desc, d.issued_at desc
+    limit 1;
+  end if;
+
+  insert into public.sv_conversion_events (
+    lead_id, event_name, rank, event_id, source_event_id, occurred_at,
+    source_source, source_medium, source_campaign, click_ids, value_cents, currency
+  )
+  select
+    v_lead.id, v.name, v.rank::smallint,
+    sv_private.conversion_event_id(v_lead.id, v.name),
+    NEW.id, v.ts,
+    v_lead.source_source, v_lead.source_medium, v_lead.source_campaign, v_click,
+    case when v.name = 'deal_signed' then v_value end,
+    case when v.name = 'deal_signed' and v_value is not null then 'EUR' end
+  from (values
+    ('lead_submitted', 1, v_lead.created_at, true),
+    ('lead_qualified', 2, v_lead.qualified_at, v_target >= 2),
+    ('rdv_booked', 3, v_lead.rdv_at, v_target >= 3),
+    ('quote_sent', null::integer, v_lead.quote_sent_at, v_quote),
+    ('deal_signed', 4, v_lead.signed_at, v_signed)
+  ) as v(name, rank, ts, wanted)
+  where v.wanted and v.ts is not null
+  on conflict do nothing;
+
+  return NEW;
+end;
+$$;
+revoke all on function sv_private.emit_conversions() from public, anon, authenticated;
+
+drop trigger if exists sv_lead_events_emit_conversions on public.sv_lead_events;
+create trigger sv_lead_events_emit_conversions
+  after insert on public.sv_lead_events
+  for each row execute function sv_private.emit_conversions();
