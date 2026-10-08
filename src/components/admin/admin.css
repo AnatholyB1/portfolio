@@ -108,6 +108,15 @@
 .pt-admin .pt-admin-mt-24 {
   margin-top: 24px;
 }
+.pt-admin .pt-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+}
+.pt-admin .pt-admin-basis-full {
+  flex-basis: 100%;
+}
 
 /* États vides, erreur et chargement des pages d'administration. */
 .pt-admin .pt-admin-state {
@@ -320,10 +329,17 @@
 
 /* Tableau. */
 .pt-admin .pt-admin-table a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
   overflow-wrap: anywhere;
+}
+.pt-admin .pt-admin-table a:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
 }
 .pt-admin .pt-admin-table td {
   vertical-align: top;
@@ -360,4 +376,9 @@
   .pt-admin .pt-admin-table a {
     overflow-wrap: break-word;
   }
+}
+
+.pt-admin .pt-empty a.pt-btn-ghost {
+  align-self: flex-start;
+  text-decoration: none;
 }

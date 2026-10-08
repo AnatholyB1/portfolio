@@ -51,11 +51,19 @@ export function deriveStatus(history: ReadonlyArray<{ action: string }>): 'publi
   return history[0]?.action === 'hide' ? 'hidden' : 'published';
 }
 
-export async function loadAdminReviews(supabase: SupabaseClient): Promise<AdminReview[]> {
+/** Fenêtre de lecture (index inclusifs, comme `range` de PostgREST). Sans fenêtre : plafond de sécurité. */
+export type ReviewWindow = { from: number; to: number };
+const DEFAULT_WINDOW: ReviewWindow = { from: 0, to: 199 };
+
+export async function loadAdminReviews(
+  supabase: SupabaseClient,
+  range: ReviewWindow = DEFAULT_WINDOW,
+): Promise<AdminReview[]> {
   const { data: reviews, error } = await supabase
     .from('sv_reviews')
     .select(REVIEW_COLS)
-    .order('published_at', { ascending: false });
+    .order('published_at', { ascending: false })
+    .range(range.from, range.to);
   if (error) throw new Error('reviews_read_failed');
   const revs = (reviews ?? []) as Row[];
   if (revs.length === 0) return [];

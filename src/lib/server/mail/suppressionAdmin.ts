@@ -60,23 +60,37 @@ export function toSuppressionView(rows: SuppressionRow[], lifts: LiftRow[]): Sup
     });
 }
 
+/** Fenêtre de lecture (index inclusifs, comme `range` de PostgREST). Sans fenêtre : plafond de sécurité. */
+export type SuppressionWindow = { from: number; to: number };
+const DEFAULT_WINDOW: SuppressionWindow = { from: 0, to: 199 };
+
 /** RLS-scoped read (admin policy). Returns null on error; no address in logs. */
 export async function loadSuppressions(
   supabase: SupabaseClient,
+  range: SuppressionWindow = DEFAULT_WINDOW,
 ): Promise<SuppressionView[] | null> {
-  const [sup, lifts] = await Promise.all([
-    supabase
-      .from('sv_mail_suppressions')
-      .select('id, email_norm, scope, cause, source, created_at')
-      .order('created_at', { ascending: false }),
-    supabase.from('sv_mail_suppression_lifts').select('suppression_id, reason, created_at'),
-  ]);
-  if (sup.error || lifts.error) {
+  const sup = await supabase
+    .from('sv_mail_suppressions')
+    .select('id, email_norm, scope, cause, source, created_at')
+    .order('created_at', { ascending: false })
+    .range(range.from, range.to);
+  if (sup.error) {
     console.error('[admin/emails] loadSuppressions failed');
     return null;
   }
-  return toSuppressionView(
-    (sup.data ?? []) as unknown as SuppressionRow[],
-    (lifts.data ?? []) as unknown as LiftRow[],
-  );
+  const rows = (sup.data ?? []) as unknown as SuppressionRow[];
+  if (rows.length === 0) return [];
+  // Les réactivations ne sont lues que pour les lignes de la fenêtre.
+  const lifts = await supabase
+    .from('sv_mail_suppression_lifts')
+    .select('suppression_id, reason, created_at')
+    .in(
+      'suppression_id',
+      rows.map((r) => r.id),
+    );
+  if (lifts.error) {
+    console.error('[admin/emails] loadSuppressions failed');
+    return null;
+  }
+  return toSuppressionView(rows, (lifts.data ?? []) as unknown as LiftRow[]);
 }
