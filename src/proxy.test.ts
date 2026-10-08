@@ -220,6 +220,47 @@ describe('proxy public attribution branch', () => {
   });
 });
 
+describe('proxy canonical arrival touch (raw + pre-lead event id)', () => {
+  const V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+  it('canonicalises aliases, keeps raw and sets an eid', async () => {
+    const res = await proxy(req('/?utm_source=Facebook&utm_medium=paid'), event);
+    const t = decodeTouch(ftOf(res, 'sv_attr_lt')!.value, { allowClickIds: true })!;
+    expect(t.params.utm_source).toBe('meta');
+    expect(t.params.utm_medium).toBe('paid_social');
+    expect(t.raw).toEqual({ utm_source: 'Facebook', utm_medium: 'paid' });
+    expect(t.eid).toMatch(V4);
+    const v = vi.mocked(recordVisit).mock.calls[0][0];
+    expect(v.source).toBe('meta');
+    expect(v.medium).toBe('paid_social');
+  });
+
+  it('has no raw for canonical values but still an eid; eids differ per arrival', async () => {
+    const r1 = await proxy(req('/?utm_source=google&utm_medium=cpc'), event);
+    const r2 = await proxy(req('/?utm_source=google&utm_medium=cpc'), event);
+    const t1 = decodeTouch(ftOf(r1, 'sv_attr_lt')!.value, { allowClickIds: true })!;
+    const t2 = decodeTouch(ftOf(r2, 'sv_attr_lt')!.value, { allowClickIds: true })!;
+    expect(t1.raw).toBeUndefined();
+    expect(t1.eid).toMatch(V4);
+    expect(t1.eid).not.toBe(t2.eid);
+  });
+
+  it('keeps the first touch eid while the last touch gets a new one', async () => {
+    const ft = encoded({
+      params: { utm_source: 'google' },
+      landing: '/',
+      referrer: null,
+      at: 1000,
+      eid: '11111111-1111-4111-8111-111111111111',
+    });
+    const res = await proxy(req('/?utm_source=bing', { cookie: `sv_attr_ft=${ft}` }), event);
+    expect(setCookies(res)).not.toContain('sv_attr_ft');
+    const lt = decodeTouch(ftOf(res, 'sv_attr_lt')!.value, { allowClickIds: true })!;
+    expect(lt.eid).toMatch(V4);
+    expect(lt.eid).not.toBe('11111111-1111-4111-8111-111111111111');
+  });
+});
+
 describe('proxy first-touch click id enrichment', () => {
   const ft = () =>
     encoded({ params: { utm_source: 'g' }, landing: '/', referrer: null, at: 1234 });

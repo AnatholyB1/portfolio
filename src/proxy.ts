@@ -1,7 +1,7 @@
 import { NextResponse, type NextFetchEvent, type NextRequest } from 'next/server';
 import { PROTECTED_PREFIXES, isPrivatePath } from '@/lib/privateRoutes';
 import { updateSession } from '@/lib/supabase/proxy';
-import { parseAttrParams, parseReferrer } from '@/lib/attribution/params';
+import { parseAttrParamsWithRaw, parseReferrer } from '@/lib/attribution/params';
 import {
   CLICK_ID_ENRICH_WINDOW_MS,
   classifyArrival,
@@ -20,6 +20,7 @@ import {
 import { ATTR_COOKIE_BEFORE_CONSENT, CONSENT_COOKIE } from '@/lib/consent/constants';
 import { consentStatus, parseConsentCookie } from '@/lib/consent/state';
 import { recordVisit } from '@/lib/leads/visits';
+import { newPreLeadEventId } from '@/lib/ads/events';
 
 // Branche privée : le proxy rafraîchit uniquement les cookies de session et
 // redirige les anonymes. Aucune décision de rôle ici : l'autorisation vit dans le DAL.
@@ -50,7 +51,9 @@ function attributionBranch(request: NextRequest, event: NextFetchEvent) {
   const accepted = consentStatus(consent) === 'accepted';
 
   const canonicalHost = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sevalys.com').hostname;
-  const params = parseAttrParams(request.nextUrl.searchParams, { allowClickIds: accepted });
+  const { params, raw } = parseAttrParamsWithRaw(request.nextUrl.searchParams, {
+    allowClickIds: accepted,
+  });
   const referrer = parseReferrer(request.headers.get('referer'), canonicalHost);
   const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith('sb-'));
 
@@ -72,6 +75,9 @@ function attributionBranch(request: NextRequest, event: NextFetchEvent) {
     landing: request.nextUrl.pathname.slice(0, 200),
     referrer,
     at: Date.now(),
+    // Id d'évènement page_view_attributed posé par le proxy (D-10), sans évènement navigateur (D-07).
+    eid: newPreLeadEventId(),
+    ...(raw ? { raw } : {}),
   };
   const response = NextResponse.next();
 

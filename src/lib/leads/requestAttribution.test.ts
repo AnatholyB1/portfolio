@@ -56,4 +56,40 @@ describe('readAttribution', () => {
     expect(r.firstTouch).not.toBeNull();
     expect(r.source.source).toBe('google');
   });
+
+  it('has null utm assessment for no cookies', () => {
+    expect(readAttribution(null).utm).toEqual({ nonconformity: null, raw: null });
+  });
+
+  it('flags an unknown source', () => {
+    const t = { ...touch(), params: { utm_source: 'tiktok', utm_medium: 'cpc' } };
+    const r = readAttribution(`sv_attr_lt=${encodeTouch(t)}`);
+    expect(r.utm.nonconformity).toEqual(['source_unknown']);
+  });
+
+  it('flags a malformed campaign', () => {
+    const t = { ...touch(), params: { utm_source: 'meta', utm_medium: 'paid_social', utm_campaign: 'promo' } };
+    const r = readAttribution(`sv_attr_lt=${encodeTouch(t)}`);
+    expect(r.utm.nonconformity).toEqual(['campaign_malformed']);
+  });
+
+  it('canonicalises a legacy facebook cookie without flagging it', () => {
+    const t = { ...touch(), params: { utm_source: 'facebook', utm_medium: 'paid_social' } };
+    const r = readAttribution(`sv_attr_lt=${encodeTouch(t)}`);
+    expect(r.source.source).toBe('meta');
+    expect(r.utm.nonconformity).toBeNull();
+    expect(r.utm.raw).toEqual({ utm_source: 'facebook' });
+  });
+
+  it('does not flag a referrer-only touch', () => {
+    const t: Touch = { params: {}, landing: '/', referrer: 'google.com', at: 1 };
+    const r = readAttribution(`sv_attr_lt=${encodeTouch(t)}`);
+    expect(r.utm.nonconformity).toBeNull();
+  });
+
+  it('assesses lastTouch over firstTouch', () => {
+    const ft = { ...touch(), params: { utm_source: 'tiktok' } };
+    const r = readAttribution(`sv_attr_ft=${encodeTouch(ft)}; sv_attr_lt=${encodeTouch(touch())}`);
+    expect(r.utm.nonconformity).toBeNull();
+  });
 });

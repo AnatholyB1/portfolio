@@ -28,7 +28,7 @@ export async function ingestLead(input: IngestInput): Promise<IngestResult> {
       p_phone_norm: normalisePhone(input.telephone),
       p_payload: input.payload,
       p_consent_rgpd: input.consentRgpd,
-      p_source: a.source,
+      p_source: { ...a.source, nonconformity: a.utm.nonconformity, raw: a.utm.raw },
       p_first_touch: a.firstTouch,
       p_last_touch: a.lastTouch,
       p_ip_hash: input.ipHash,

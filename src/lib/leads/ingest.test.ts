@@ -40,11 +40,15 @@ describe('ingestLead', () => {
     expect(rpc).toHaveBeenCalledTimes(1);
     const [name, args] = rpc.mock.calls[0];
     expect(name).toBe('sv_ingest_lead');
+    expect(args.p_source).toEqual({
+      ...i.attribution.source,
+      nonconformity: i.attribution.utm.nonconformity,
+      raw: i.attribution.utm.raw,
+    });
     expect(args).toMatchObject({
       p_channel: 'contact',
       p_email_norm: 'anatholyb+sv-test@gmail.com',
       p_phone_norm: '+33612345678',
-      p_source: i.attribution.source,
       p_first_touch: null,
       p_last_touch: null,
       p_consent: null,
