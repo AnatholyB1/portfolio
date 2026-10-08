@@ -31,4 +31,10 @@ describe('admin leads UI source guards (T-11-57..60)', () => {
     expect(page).toContain('Aucun lead ne correspond');
     expect(page).toContain('à revoir');
   });
+
+  it('shows the off-convention badge and selects the flag column (D-04)', () => {
+    expect(table).toContain('Hors convention');
+    expect(table).toContain('TriangleAlert');
+    expect(page).toContain('source_nonconformity');
+  });
 });

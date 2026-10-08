@@ -55,7 +55,7 @@ export default async function AdminLeadsPage({
   let query = supabase
     .from('sv_leads_admin_v')
     .select(
-      'id, status, source_source, source_medium, source_campaign, created_at, last_contact_at, unseen_return, erased_at, contact_nom, contact_email',
+      'id, status, source_source, source_medium, source_campaign, created_at, last_contact_at, unseen_return, erased_at, contact_nom, contact_email, source_nonconformity',
       { count: 'exact' },
     )
     .order('last_contact_at', { ascending: false })
