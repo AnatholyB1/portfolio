@@ -1,5 +1,6 @@
 import 'server-only';
 import { ATTR_FT_COOKIE, ATTR_LT_COOKIE, decodeTouch } from '@/lib/attribution/cookie';
+import { assessUtm, type NonConformity, type UtmRaw } from '@/lib/attribution/utm';
 import { classifyChannel, type ChannelSource, type Touch } from '@/lib/attribution/touch';
 import {
   consentStatus,
@@ -14,6 +15,7 @@ export type RequestAttribution = {
   source: ChannelSource;
   consent: ConsentState | null;
   consentStatus: ConsentStatus;
+  utm: { nonconformity: NonConformity[] | null; raw: UtmRaw | null };
 };
 
 function readCookie(header: string, name: string): string | null {
@@ -42,11 +44,18 @@ export function readAttribution(cookieHeader: string | null): RequestAttribution
   const header = cookieHeader ?? '';
   const firstTouch = decodeTouch(readCookie(header, ATTR_FT_COOKIE), { allowClickIds });
   const lastTouch = decodeTouch(readCookie(header, ATTR_LT_COOKIE), { allowClickIds });
+  // Même touch que la source figée : lastTouch ?? firstTouch.
+  const t = lastTouch ?? firstTouch;
+  const assessment = t ? assessUtm(t.params) : null;
   return {
     firstTouch,
     lastTouch,
     source: classifyChannel(lastTouch ?? firstTouch),
     consent,
     consentStatus: status,
+    utm: {
+      nonconformity: assessment && assessment.reasons.length > 0 ? assessment.reasons : null,
+      raw: t?.raw ?? null,
+    },
   };
 }
