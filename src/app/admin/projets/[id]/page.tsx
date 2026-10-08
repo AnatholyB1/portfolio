@@ -6,6 +6,7 @@ import AdminNav from '@/components/admin/AdminNav';
 import FactJournal from '@/components/admin/projects/FactJournal';
 import PostFactForm from '@/components/admin/projects/PostFactForm';
 import ReminderHoldCard from '@/components/admin/projects/ReminderHoldCard';
+import ReissueReviewLinkCard from '@/components/admin/reviews/ReissueReviewLinkCard';
 import {
   ConsentCard,
   InfoCard,
@@ -51,6 +52,7 @@ import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
 import { loadAdminBillingView } from '@/lib/server/invoices/adminView';
 import { loadSignatureViews } from '@/lib/server/signature/adminView';
 import { loadReminderHold } from '@/lib/server/reminders/holds';
+import { loadReviewLinkStatus } from '@/lib/server/reviews/linksAdmin';
 import { SIGNING_FACT } from '@/lib/documents/steps';
 import { loadProjectBundle } from '@/lib/server/projects/read';
 import '@/components/admin/admin.css';
@@ -79,9 +81,10 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   if (!bundle) notFound();
   const docsView = await loadAdminDocumentsView(supabase, bundle);
   const billingView = await loadAdminBillingView(supabase, bundle, now);
-  const [signatureMap, reminderHold] = await Promise.all([
+  const [signatureMap, reminderHold, reviewLink] = await Promise.all([
     loadSignatureViews(supabase, id),
     loadReminderHold(supabase, id),
+    loadReviewLinkStatus(supabase, id).catch(() => null),
   ]);
   const signatures = Object.fromEntries(signatureMap);
   const signedFacts = [
@@ -214,6 +217,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
               <OnboardingSummaryCard onboarding={onboarding} />
               <ConsentCard consents={consents} />
               <ReminderHoldCard projectId={project.id} hold={reminderHold} />
+              {reviewLink ? (<ReissueReviewLinkCard projectId={project.id} status={reviewLink.status} reviewFiled={reviewLink.reviewFiled} />) : null}
               <LinksCard projectId={project.id} links={links} />
             </div>
           </div>

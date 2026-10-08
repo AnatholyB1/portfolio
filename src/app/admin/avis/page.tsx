@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import AdminNav from '@/components/admin/AdminNav';
 import HideReviewDialog from '@/components/admin/reviews/HideReviewDialog';
+import ReissueReviewLinkCard from '@/components/admin/reviews/ReissueReviewLinkCard';
 import UnhideReviewForm from '@/components/admin/reviews/UnhideReviewForm';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -8,6 +9,7 @@ import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
 import { formatDateFr } from '@/lib/admin/format';
 import { requireAdmin } from '@/lib/server/auth/dal';
+import { loadOpenReviewLinks } from '@/lib/server/reviews/linksAdmin';
 import { REVIEW_HIDE_REASONS, loadAdminReviews, type AdminReview } from '@/lib/server/reviews/admin';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -24,6 +26,13 @@ export default async function AdminAvisPage() {
     reviews = await loadAdminReviews(supabase);
   } catch {
     reviews = null;
+  }
+
+  let openLinks: Awaited<ReturnType<typeof loadOpenReviewLinks>> | null = null;
+  try {
+    openLinks = await loadOpenReviewLinks(supabase);
+  } catch {
+    openLinks = null;
   }
 
   return (
@@ -95,6 +104,30 @@ export default async function AdminAvisPage() {
                         <UnhideReviewForm reviewId={r.id} />
                       )}
                     </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section className="pt-card" aria-labelledby="liens-title">
+            <h2 id="liens-title" className="pt-heading" style={{ marginBottom: 16 }}>
+              Liens d&apos;avis
+            </h2>
+            {openLinks === null ? (
+              <p className="pt-error">Impossible de charger les liens d&apos;avis.</p>
+            ) : openLinks.length === 0 ? (
+              <div className="pt-empty">
+                <p className="pt-helper">Aucun lien d&apos;avis en attente.</p>
+              </div>
+            ) : (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {openLinks.map((l) => (
+                  <li key={l.projectId}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'baseline', marginBottom: 8 }}>
+                      <strong>{l.projectTitle}</strong>
+                      <span>{l.companyName}</span>
+                    </div>
+                    <ReissueReviewLinkCard projectId={l.projectId} status={l.status} reviewFiled={false} />
                   </li>
                 ))}
               </ul>
