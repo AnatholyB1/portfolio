@@ -15,6 +15,7 @@ export const PRICE_ALLOWED_ZONES: readonly { path: string; reason: string }[] = 
   { path: 'src/app/api/stripe', reason: "Webhook Stripe signé (corps brut vérifié) : aucune page publique, transmet des identifiants et montants en centimes au serveur." },
   { path: 'src/app/api/resend', reason: "Webhook Resend signé (Svix, corps brut vérifié) : aucune page publique, alimente la liste de suppression et déclenche l'envoi de la file de mails." },
   { path: 'src/app/api/unsubscribe', reason: "Désinscription en un clic (jeton signé HMAC) : route serveur sans page, écrit la liste de suppression et alerte l'admin." },
+  { path: 'src/app/api/avis', reason: "Dépôt d'avis (jeton à usage unique) : route serveur sans page, écrit l'avis via RPC et envoie l'alerte admin de la file de mails." },
   { path: 'src/components/portal', reason: "Composants du portail client, qui afficheront des montants contractuels." },
   { path: 'src/components/admin', reason: "Composants de l'espace admin (tarification, suivi financier)." },
   { path: 'src/lib/server', reason: "Code serveur uniquement : accès base de données et données chiffrées, jamais embarqué côté client." },

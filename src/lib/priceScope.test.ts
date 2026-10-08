@@ -52,10 +52,11 @@ describe('price scope zones (D-17)', () => {
     }
   });
 
-  it('lists the fourteen documented zones with a rationale', () => {
+  it('lists the fifteen documented zones with a rationale', () => {
     expect(PRICE_ALLOWED_ZONES.map((z) => z.path).sort()).toEqual(
       [
         'src/app/admin',
+        'src/app/api/avis',
         'src/app/api/cron',
         'src/app/api/resend',
         'src/app/api/stripe',
@@ -72,6 +73,19 @@ describe('price scope zones (D-17)', () => {
       ].sort(),
     );
     for (const z of PRICE_ALLOWED_ZONES) expect(z.reason.length).toBeGreaterThan(10);
+  });
+
+  it('keeps the public review pages and helpers outside every zone', () => {
+    for (const f of [
+      'src/app/avis',
+      'src/app/avis/[token]/page.tsx',
+      'src/app/politique-des-avis',
+      'src/components/sections/AvisExcerpt.tsx',
+      'src/lib/reviews/token.ts',
+    ]) {
+      expect(isInPriceAllowedZone(f), f).toBe(false);
+    }
+    expect(isInPriceAllowedZone('src/app/api/avis/route.ts')).toBe(true);
   });
 
   it('(b) no code outside the allowed zones imports from an allowed zone', () => {

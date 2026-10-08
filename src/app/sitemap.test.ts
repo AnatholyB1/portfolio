@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import sitemap from './sitemap'
 import robots from './robots'
 import nextConfig from '../../next.config'
-import { PRIVATE_PREFIXES } from '@/lib/privateRoutes'
+import { PRIVATE_PREFIXES, PRIVATE_SUBPATH_PREFIXES } from '@/lib/privateRoutes'
 import { services } from '@/data/services'
 
 const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sevalys.com'
@@ -31,6 +31,13 @@ describe('sitemap (SEO-01)', () => {
     expect(u.length).toBe(5 + services.length + 1)
   })
 
+  it('never lists a token subpath', () => {
+    for (const u of urls()) {
+      const path = new URL(u).pathname
+      for (const p of PRIVATE_SUBPATH_PREFIXES) expect(path.startsWith(p)).toBe(false)
+    }
+  })
+
   it('excludes every private prefix (D-15)', () => {
     for (const u of urls()) {
       const path = new URL(u).pathname
@@ -48,6 +55,8 @@ describe('robots and noindex headers (D-15)', () => {
     const disallow = ([] as string[]).concat(rule.disallow ?? [])
     expect(disallow).toContain('/api/')
     for (const p of PRIVATE_PREFIXES) expect(disallow).toContain(p)
+    expect(disallow).toContain('/avis/')
+    expect(disallow).not.toContain('/avis')
   })
 
   it('next.config sends X-Robots-Tag noindex on every private prefix', async () => {
@@ -61,6 +70,7 @@ describe('robots and noindex headers (D-15)', () => {
       '/connexion',
       '/desinscription',
       '/auth/:path*',
+      '/avis/:path+',
     ]) {
       expect(sources).toContain(s)
     }

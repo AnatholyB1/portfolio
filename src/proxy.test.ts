@@ -139,6 +139,20 @@ describe('proxy private branch', () => {
     expect(res.headers.get('location')).toBeNull();
   });
 
+  it('treats /avis/abc as private: no redirect, no visit recorded', async () => {
+    const res = await proxy(req('/avis/abc?utm_source=g'), event);
+    expect(updateSession).toHaveBeenCalledTimes(1);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('location')).toBeNull();
+    expect(recordVisit).not.toHaveBeenCalled();
+  });
+
+  it('records the visit on the public /avis list page', async () => {
+    await proxy(req('/avis?utm_source=g'), event);
+    expect(updateSession).not.toHaveBeenCalled();
+    expect(recordVisit).toHaveBeenCalledTimes(1);
+  });
+
   it('never calls updateSession on a public page', async () => {
     await proxy(req('/?utm_source=Google'), event);
     expect(updateSession).not.toHaveBeenCalled();
