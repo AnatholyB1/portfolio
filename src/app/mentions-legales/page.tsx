@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const Section = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => (
-  <div className="mb-10" id={id}>
+  <div className="mb-10 scroll-mt-28" id={id}>
     <h2 className="text-xl font-bold text-[var(--ink)] mb-4 pb-2 border-b border-[var(--line)]">
       {title}
     </h2>
@@ -23,7 +23,7 @@ export default function MentionsLegalesPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[var(--bg)] pt-32 pb-20 px-4">
+      <main id="main-content" className="min-h-screen bg-[var(--bg)] pt-32 pb-20 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="mb-12 text-center">
@@ -34,17 +34,17 @@ export default function MentionsLegalesPage() {
               Mentions Légales
             </h1>
             <p className="text-[var(--ink-faint)] text-sm mt-3">
-              Conformément à la loi n°2004‑575 du 21 juin 2004 pour la confiance dans l&apos;économie numérique (LCEN)
+              Conformément à la loi n°&nbsp;2004‑575 du 21 juin 2004 pour la confiance dans l&apos;économie numérique (LCEN)
             </p>
           </div>
 
           {/* 1 – Éditeur du site */}
           <Section title="1. Éditeur du site">
-            <p><span className="text-[var(--ink)] font-medium">Nom :</span> Sèvalys</p>
-            <p><span className="text-[var(--ink)] font-medium">Qualité :</span> Agence digitale — marque exploitée par Anatholy Bricon</p>
-            <p><span className="text-[var(--ink)] font-medium">Adresse :</span> Tours (37), France</p>
+            <p><span className="text-[var(--ink)] font-medium">Nom&nbsp;:</span> Sèvalys</p>
+            <p><span className="text-[var(--ink)] font-medium">Qualité&nbsp;:</span> Agence digitale — marque exploitée par Anatholy Bricon</p>
+            <p><span className="text-[var(--ink)] font-medium">Adresse&nbsp;:</span> Tours (37), France</p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Contact :</span>{' '}
+              <span className="text-[var(--ink)] font-medium">Contact&nbsp;:</span>{' '}
               <a
                 href="mailto:contact@sevalys.com"
                 className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
@@ -52,12 +52,12 @@ export default function MentionsLegalesPage() {
                 contact@sevalys.com
               </a>
             </p>
-            <p><span className="text-[var(--ink)] font-medium">Directeur de la publication :</span> Anatholy Bricon</p>
+            <p><span className="text-[var(--ink)] font-medium">Directeur de la publication&nbsp;:</span> Anatholy Bricon</p>
           </Section>
 
           {/* 2 – Hébergement */}
           <Section title="2. Hébergement">
-            <p>Le présent site est hébergé par :</p>
+            <p>Le présent site est hébergé par&nbsp;:</p>
             <p className="mt-2">
               <span className="text-[var(--ink)] font-medium">Vercel Inc.</span><br />
               340 Pine Street, Suite 701<br />
@@ -90,7 +90,7 @@ export default function MentionsLegalesPage() {
           {/* 4 – Données personnelles */}
           <Section title="4. Protection des données personnelles (RGPD)">
             <p>
-              Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement EU 2016/679) et à la loi n°78-17 du 6 janvier 1978 modifiée (loi Informatique et Libertés), vous disposez des droits suivants concernant les données collectées via ce site :
+              Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement EU 2016/679) et à la loi n°&nbsp;78-17 du 6 janvier 1978 modifiée (loi Informatique et Libertés), vous disposez des droits suivants concernant les données collectées via ce site&nbsp;:
             </p>
             <ul className="list-disc list-inside space-y-1 mt-2 ml-2">
               <li>Droit d&apos;accès à vos données personnelles</li>
@@ -100,13 +100,13 @@ export default function MentionsLegalesPage() {
               <li>Droit à la portabilité de vos données</li>
             </ul>
             <p className="mt-2">
-              <span className="text-[var(--ink)] font-medium">Données collectées :</span> Le formulaire de contact collecte uniquement votre nom, votre adresse e-mail et le contenu de votre message, dans le seul but de répondre à votre demande. Ces données ne sont ni cédées ni vendues à des tiers.
+              <span className="text-[var(--ink)] font-medium">Données collectées&nbsp;:</span> Le formulaire de contact collecte uniquement votre nom, votre adresse e-mail et le contenu de votre message, dans le seul but de répondre à votre demande. Ces données ne sont ni cédées ni vendues à des tiers.
             </p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Durée de conservation :</span> Les données sont conservées le temps nécessaire au traitement de votre demande, et au maximum 3 ans à compter du dernier contact.
+              <span className="text-[var(--ink)] font-medium">Durée de conservation&nbsp;:</span> Les données sont conservées le temps nécessaire au traitement de votre demande, et au maximum 3 ans à compter du dernier contact.
             </p>
             <p>
-              Pour exercer vos droits ou pour toute question relative au traitement de vos données, vous pouvez contacter :{' '}
+              Pour exercer vos droits ou pour toute question relative au traitement de vos données, vous pouvez contacter&nbsp;:{' '}
               <a
                 href="mailto:contact@sevalys.com"
                 className="text-[var(--acid)] hover:text-[var(--acid)]/80 underline underline-offset-2 transition-colors"
@@ -137,20 +137,20 @@ export default function MentionsLegalesPage() {
               Des cookies techniques strictement nécessaires au bon fonctionnement du site (comme la préférence de langue) peuvent être utilisés. Ces derniers ne nécessitent pas de consentement préalable conformément à l&apos;article 82 de la loi Informatique et Libertés.
             </p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Bandeau et choix :</span> à votre première visite, un bandeau vous propose d&apos;accepter ou de refuser la mesure d&apos;audience et le suivi de l&apos;origine des visites. Votre choix est enregistré (date, choix, version du texte, langue, identifiant anonyme et empreinte chiffrée de votre adresse IP) afin de pouvoir en justifier. Vous pouvez le modifier à tout moment via le lien « Gérer les cookies » en pied de page.
+              <span className="text-[var(--ink)] font-medium">Bandeau et choix&nbsp;:</span> à votre première visite, un bandeau vous propose d&apos;accepter ou de refuser la mesure d&apos;audience et le suivi de l&apos;origine des visites. Votre choix est enregistré (date, choix, version du texte, langue, identifiant anonyme et empreinte chiffrée de votre adresse IP) afin de pouvoir en justifier. Vous pouvez le modifier à tout moment via le lien « Gérer les cookies » en pied de page.
             </p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Mesure d&apos;audience :</span> le site utilise PostHog (pages vues, provenance du trafic, interactions). Avant votre choix et en cas de refus, PostHog fonctionne sans cookie ni stockage local et sans collecte de votre adresse IP. Après acceptation, il utilise des cookies et un stockage local propres au site pour une durée maximale de 13 mois. Le signal « Do Not Track » de votre navigateur est respecté. Aucune publicité, aucune revente de données.
+              <span className="text-[var(--ink)] font-medium">Mesure d&apos;audience&nbsp;:</span> le site utilise PostHog (pages vues, provenance du trafic, interactions). Avant votre choix et en cas de refus, PostHog fonctionne sans cookie ni stockage local et sans collecte de votre adresse IP. Après acceptation, il utilise des cookies et un stockage local propres au site pour une durée maximale de 13 mois. Le signal « Do Not Track » de votre navigateur est respecté. Aucune publicité, aucune revente de données.
             </p>
             <p>
-              <span className="text-[var(--ink)] font-medium">Cookies déposés par Sèvalys :</span>
+              <span className="text-[var(--ink)] font-medium">Cookies déposés par Sèvalys&nbsp;:</span>
             </p>
             <ul className="list-disc pl-6 space-y-1">
-              <li>sv_consent : mémorise votre choix (13 mois).</li>
-              <li>sv_attr_ft et sv_attr_lt : origine de votre visite (paramètres de campagne et site référent), 30 jours. Ils sont actuellement déposés dès l&apos;arrivée sur le site, avant votre choix.</li>
+              <li>sv_consent&nbsp;: mémorise votre choix (13 mois).</li>
+              <li>sv_attr_ft et sv_attr_lt&nbsp;: origine de votre visite (paramètres de campagne et site référent), 30 jours. Ils sont actuellement déposés dès l&apos;arrivée sur le site, avant votre choix.</li>
             </ul>
             <p>
-              Les identifiants publicitaires de clic (gclid, fbclid, ttclid) ne sont conservés qu&apos;après votre acceptation ; un refus les supprime des cookies existants.
+              Les identifiants publicitaires de clic (gclid, fbclid, ttclid) ne sont conservés qu&apos;après votre acceptation&nbsp;; un refus les supprime des cookies existants.
             </p>
           </Section>
 
@@ -182,7 +182,7 @@ export default function MentionsLegalesPage() {
           </Section>
 
           <p className="text-center text-[var(--ink-faint)] text-xs font-mono mt-10">
-            Dernière mise à jour : juillet 2026
+            Dernière mise à jour&nbsp;: juillet 2026
           </p>
         </div>
       </main>

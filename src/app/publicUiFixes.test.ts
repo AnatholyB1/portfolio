@@ -8,6 +8,11 @@ const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const css = read('./globals.css');
 const layout = read('./layout.tsx');
 const footer = read('../components/layout/Footer.tsx');
+const wizard = read('../components/simulateur/Wizard.tsx');
+const mentions = read('./mentions-legales/page.tsx');
+const desinscription = read('./desinscription/page.tsx');
+const simPage = read('./simulateur/page.tsx');
+const home = read('./page.tsx');
 const skip = read('../components/ui/SkipLink.tsx');
 
 function luminance(hex: string): number {
@@ -68,5 +73,42 @@ describe('global tokens and a11y base', () => {
       expect(f.reviewPolicy.length).toBeGreaterThan(0);
       expect(translations[lang].nav.skipToContent.length).toBeGreaterThan(0);
     }
+  });
+
+  it("simulator contact form: labels bound to inputs, required phone with a visible hint, error described", () => {
+    for (const id of ["sim-nom", "sim-email", "sim-telephone"]) {
+      expect(wizard).toContain('htmlFor="' + id + '"');
+      expect(wizard).toContain('id="' + id + '"');
+    }
+    // Business rule: the phone number stays required.
+    expect(wizard).toMatch(/type="tel"\s+inputMode="tel"\s+required/);
+    expect(wizard).toContain('autoComplete="tel"');
+    expect(wizard).toContain('id="sim-telephone-hint"');
+    expect(wizard).toContain('t.simulateur.contact.telephoneHint');
+    expect(wizard).toContain('inputMode="email"');
+    expect(wizard).toContain("aria-describedby");
+    expect(wizard).toContain('id="sim-error"');
+    expect(wizard).toContain('aria-live="assertive"');
+    for (const lang of ["fr", "en", "th"] as const) {
+      const c = translations[lang].simulateur.contact;
+      expect(c.telephoneHint.length).toBeGreaterThan(0);
+      expect(c.requiredNote.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("legal and unsubscribe pages: main target, 44px contact links, non-breaking punctuation", () => {
+    expect(mentions).toContain('id="main-content"');
+    expect(mentions).toContain("&nbsp;:");
+    expect(mentions).toContain("n°&nbsp;");
+    expect(mentions).not.toMatch(/[a-zé] :/);
+    expect(desinscription.match(/min-h-\[44px\]/g)).toHaveLength(3);
+    expect(simPage).toContain('id="main-content"');
+  });
+
+  it("home page is a server component with a revalidated, server-fetched review excerpt", () => {
+    expect(home).not.toContain("use client");
+    expect(home).toContain("export const revalidate");
+    expect(home).toContain("<RevealsMount />");
+    expect(home).toContain('id="main-content"');
   });
 });
