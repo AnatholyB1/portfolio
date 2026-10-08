@@ -1,0 +1,1 @@
+- 19-10: src/lib/pilotageMigration.test.ts "has no internal day-rate column" fails on a migration outside this plan (pre-existing/out of scope).
