@@ -10,10 +10,15 @@ export const PRIVATE_PREFIXES = [
   '/desinscription',
 ] as const;
 
+// Sous-chemins stricts privés (jeton d'avis à usage unique, 18-04). '/avis' et
+// '/politique-des-avis' restent publics et indexables : seul '/avis/<jeton>' est privé.
+export const PRIVATE_SUBPATH_PREFIXES = ['/avis/'] as const;
+
 // Sous-ensemble qui exige une session (le proxy redirige vers /connexion).
 export const PROTECTED_PREFIXES = ['/espace-client', '/admin'] as const;
 
 export function isPrivatePath(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
-  return PRIVATE_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  if (PRIVATE_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
+  return PRIVATE_SUBPATH_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
 }

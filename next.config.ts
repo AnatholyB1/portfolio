@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
       "/connexion",
       "/desinscription",
       "/auth/:path*",
+      "/avis/:path+",
     ].map((source) => ({ source, headers: noindex }));
   },
 };
