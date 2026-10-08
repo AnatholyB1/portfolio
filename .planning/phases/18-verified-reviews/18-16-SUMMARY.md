@@ -1,7 +1,7 @@
 ---
 phase: 18-verified-reviews
 plan: 16
-status: partial (Tasks 1-2 done; Task 3 preview stage done, production pending second approval)
+status: complete (Tasks 1-3 done)
 requirements: [REV-01, REV-03, REV-04]
 ---
 
@@ -48,8 +48,22 @@ Caveat to re-verify on production: that /avis has no `X-Robots-Tag: noindex` hea
 
 Incident: one `vercel curl --debug` call printed the start of its bypass header in the tool output (truncated); no secret reached any file or commit. Consider rotating the protection bypass secret if the log is retained.
 
-Not done (awaiting second approval): fast-forward and push master, production polling and checks on https://sevalys.com, deletion of release/phase-18 (local and remote), `.env.vercel.local`, Supabase branch sv-rls-p18 and `.env.test.local`. Local master carries the unpushed docs commit of this summary (release/phase-18 is its ancestor, so master can be pushed directly).
+## Task 3 (production and cleanup), 2026-10-08
 
-## Pending
+Second owner approval (verbatim, 2026-10-08): "Approve production deploy + branch cleanup".
 
-Task 3: owner approvals (preview, then production), smoke checks, release branch / sv-rls-p18 / local env file cleanup. The flag value of REVIEW_REQUESTS_ENABLED should be verified as false at that time.
+- Fast-forward push of master to origin. Production deployment portfolio-iy9j4ytlm (https://portfolio-iy9j4ytlm-anatholyb1s-projects.vercel.app) Ready, 51s build.
+- Checks on https://sevalys.com (plain public curl):
+
+| Check | Result | Status |
+|---|---|---|
+| GET /avis | 200; meta robots `index, follow`; NO X-Robots-Tag header; "Avis clients" and "Pas encore d'avis publié" | PASS |
+| GET /politique-des-avis | 200; meta robots `index, follow` | PASS |
+| GET /avis/AAAA...A (43 chars) | 200; "n'est plus valide"; `X-Robots-Tag: noindex, nofollow`; meta `noindex, nofollow, nocache` | PASS |
+| GET /robots.txt | `Disallow: /avis/` | PASS |
+| GET /sitemap.xml | contains /avis and /politique-des-avis | PASS |
+| GET /admin/avis (anonymous) | 307 to `/connexion?next=%2Fadmin%2Favis` | PASS |
+| POST /api/avis, valid body, token "bad" | 410 `{"error":"link_invalid"}` (no review created) | PASS |
+
+- Cleanup: Supabase branch sv-rls-p18 deleted (`branches list` shows only main); release/phase-18 deleted locally and on origin; `.env.vercel.local` and `.env.test.local` removed.
+- REVIEW_REQUESTS_ENABLED untouched, REVIEW_GOOGLE_URL not set, no real review submitted.
