@@ -84,8 +84,8 @@
 
 ### Préparation acquisition (ADS)
 
-- [ ] **ADS-01**: Une convention de nommage UTM pour Meta, Google et Google Business est documentée et appliquée par la capture (LEAD-01)
-- [ ] **ADS-02**: Une taxonomie d'événements et une échelle de conversions (Lead, Qualifié, RDV, Signé) sont définies, avec un `event_id` partagé pour la déduplication
+- [x] **ADS-01**: Une convention de nommage UTM pour Meta, Google et Google Business est documentée et appliquée par la capture (LEAD-01)
+- [x] **ADS-02**: Une taxonomie d'événements et une échelle de conversions (Lead, Qualifié, RDV, Signé) sont définies, avec un `event_id` partagé pour la déduplication
 
 ## Future Requirements
 
@@ -178,8 +178,8 @@
 | REV-02 | Phase 18 | Pending |
 | REV-03 | Phase 18 | Pending |
 | REV-04 | Phase 18 | Pending |
-| ADS-01 | Phase 19 | Pending |
-| ADS-02 | Phase 19 | Pending |
+| ADS-01 | Phase 19 | Complete |
+| ADS-02 | Phase 19 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 51 total

@@ -55,7 +55,7 @@ Full details: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 17: Admin forecast dashboard** - Coûts, CA pipeline/signé/facturé/encaissé, marge et trésorerie, CA par source (completed 2026-10-07)
 - [x] **Phase 18: Verified reviews** - Lien d'avis unique, lien Google sans filtrage, modération légale, JSON-LD `Review`
  (completed 2026-10-08)
-- [ ] **Phase 19: Ads preparation** - Convention UTM documentée, taxonomie d'événements et échelle de conversions
+- [x] **Phase 19: Ads preparation** - Convention UTM documentée, taxonomie d'événements et échelle de conversions (completed 2026-10-08)
 
 ## Phase Details
 
@@ -542,33 +542,33 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 19-01-PLAN.md — Module de règles UTM pur (vocabulaire, alias, assessUtm, buildTrackedUrl) + docs/convention-utm.md
-- [ ] 19-02-PLAN.md — Taxonomie fermée, échelle des conversions, event_id UUIDv5 (uuid 14.0.2)
-- [ ] 19-09-PLAN.md — Indicateur « Hors convention » dans l'entonnoir et la liste des leads
+- [x] 19-01-PLAN.md — Module de règles UTM pur (vocabulaire, alias, assessUtm, buildTrackedUrl) + docs/convention-utm.md
+- [x] 19-02-PLAN.md — Taxonomie fermée, échelle des conversions, event_id UUIDv5 (uuid 14.0.2)
+- [x] 19-09-PLAN.md — Indicateur « Hors convention » dans l'entonnoir et la liste des leads
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 19-03-PLAN.md — Migration 20261011000000 : colonnes de marquage, sv_ingest_lead, journal sv_conversion_events + trigger + valeur à Signé
-- [ ] 19-04-PLAN.md — Canonicalisation dans params/touch/cookie (valeur brute, eid pré-lead)
-- [ ] 19-08-PLAN.md — Générateur de liens /admin/liens + entrée AdminNav
-- [ ] 19-10-PLAN.md — Fiche lead : avis hors convention, « Reçu : », carte Conversions
+- [x] 19-03-PLAN.md — Migration 20261011000000 : colonnes de marquage, sv_ingest_lead, journal sv_conversion_events + trigger + valeur à Signé
+- [x] 19-04-PLAN.md — Canonicalisation dans params/touch/cookie (valeur brute, eid pré-lead)
+- [x] 19-08-PLAN.md — Générateur de liens /admin/liens + entrée AdminNav
+- [x] 19-10-PLAN.md — Fiche lead : avis hors convention, « Reçu : », carte Conversions
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 19-05-PLAN.md — Proxy, requestAttribution et ingest (p_source avec non-conformité et brut)
-- [ ] 19-06-PLAN.md — Branche RLS sv-rls-p19 (accord propriétaire), sonde uuid_generate_v5, push [BLOCKING]
+- [x] 19-05-PLAN.md — Proxy, requestAttribution et ingest (p_source avec non-conformité et brut)
+- [x] 19-06-PLAN.md — Branche RLS sv-rls-p19 (accord propriétaire), sonde uuid_generate_v5, push [BLOCKING]
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 19-07-PLAN.md — Suite RLS ads.rls.test.ts (marquage, échelle, parité event_id, valeur, isolation)
+- [x] 19-07-PLAN.md — Suite RLS ads.rls.test.ts (marquage, échelle, parité event_id, valeur, isolation)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 19-11-PLAN.md — Porte de release + application production approuvée (enveloppe, hash, preflight)
+- [x] 19-11-PLAN.md — Porte de release + application production approuvée (enveloppe, hash, preflight)
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 19-12-PLAN.md — Déploiement preview puis production, vérification manuelle, suppression de la branche
+- [x] 19-12-PLAN.md — Déploiement preview puis production, vérification manuelle, suppression de la branche
 
 ## Progress
 
@@ -592,4 +592,4 @@ Plans:
 | 16. Mailing automation completion | v2.0 | 14/14 | Complete    | 2026-10-07 |
 | 17. Admin forecast dashboard | v2.0 | 14/14 | Complete   | 2026-10-07 |
 | 18. Verified reviews | v2.0 | 17/17 | Complete   | 2026-10-08 |
-| 19. Ads preparation | v2.0 | 0/12 | Planned | - |
+| 19. Ads preparation | v2.0 | 12/12 | Complete    | 2026-10-08 |
