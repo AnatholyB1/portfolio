@@ -46,6 +46,15 @@ describe('politique des avis page (D-12)', () => {
     expect(text).toContain('/avis')
   })
 
+  it('contains the owner-confirmed retention and withdrawal wording', () => {
+    const flat = text.replace(/\s+/g, ' ')
+    expect(flat).toContain(
+      "Les avis restent publiés tant que l'activité de Sèvalys est maintenue ; ils sont conservés trois ans après la dernière action de modération.",
+    )
+    expect(flat).toContain('Pour retirer votre consentement ou exercer vos droits sur vos données (accès, rectification, opposition, effacement)')
+    expect(flat).toContain('sous un mois')
+  })
+
   it('contains none of the prohibited words', () => {
     const lower = text.toLowerCase()
     for (const w of [

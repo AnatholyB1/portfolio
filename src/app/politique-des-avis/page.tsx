@@ -113,6 +113,14 @@ export default function PolitiqueDesAvisPage() {
               date de publication et la date de l&apos;expérience (livraison) sont affichées. Le consentement à la
               publication est obligatoire.
             </p>
+            <p>
+              Pour retirer votre consentement ou exercer vos droits sur vos données (accès, rectification,
+              opposition, effacement), écrivez à{' '}
+              <a href="mailto:contact@sevalys.com" className={linkClass}>
+                contact@sevalys.com
+              </a>{' '}
+              ; nous vous répondons sous un mois.
+            </p>
           </Section>
 
           <Section title="Lien Google">
