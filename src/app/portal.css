@@ -390,6 +390,32 @@
   }
 }
 
+/* ---------- Lien d'évitement : visible au focus clavier uniquement ---------- */
+.pt-skip {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 8px 16px;
+  background: var(--bg-2);
+  color: var(--ink);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 8px;
+  transform: translateY(-200%);
+}
+.pt-skip:focus {
+  transform: none;
+}
+.pt-root main[id='contenu']:focus {
+  outline: none;
+}
+.pt-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
 /* ---------- Contenu et pied de page ---------- */
 .pt-main {
   flex: 1;

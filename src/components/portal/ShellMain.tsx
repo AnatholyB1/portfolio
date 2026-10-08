@@ -6,7 +6,7 @@ interface ShellMainProps {
 
 export default function ShellMain({ width, children }: ShellMainProps) {
   return (
-    <main className="pt-main" data-width={width}>
+    <main id="contenu" tabIndex={-1} className="pt-main" data-width={width}>
       {children}
     </main>
   );

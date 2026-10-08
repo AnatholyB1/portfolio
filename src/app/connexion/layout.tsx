@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../portal.css";
+import { PROJECT_COPY } from "@/lib/projects/copy";
 
 // Espace privé (D-15) : jamais indexé, titre propre (le gabarit racine ajoute
 // « · Sèvalys »). `alternates: {}` supprime la canonique "/" héritée du layout racine.
@@ -16,5 +17,12 @@ export default function ConnexionLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="pt-root">{children}</div>;
+  return (
+    <div className="pt-root">
+      <a href="#contenu" className="pt-skip">
+        {PROJECT_COPY.boundaries.skipToContent}
+      </a>
+      {children}
+    </div>
+  );
 }

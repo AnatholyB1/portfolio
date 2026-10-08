@@ -13,7 +13,7 @@ interface AuthCardProps {
 
 export default function AuthCard({ title, helper, notes, children }: AuthCardProps) {
   return (
-    <main className="pt-auth">
+    <main id="contenu" tabIndex={-1} className="pt-auth">
       <div className="pt-brand">
         <SevalysMark size={32} />
         <span>Sèvalys</span>

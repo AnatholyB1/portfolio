@@ -16,6 +16,18 @@ export const PROJECT_COPY = {
     consentStale:
       'Le texte a été mis à jour. Rechargez la page pour le relire avant de confirmer.',
   },
+  boundaries: {
+    loading: 'Chargement…',
+    errorTitle: 'Un problème est survenu',
+    errorBody:
+      "Cette page n'a pas pu s'afficher. Vos informations n'ont pas été modifiées. Réessayez ; si le problème continue, écrivez-nous à contact@sevalys.com.",
+    retry: 'Réessayer',
+    backToProject: 'Retour à mon projet',
+    notFoundTitle: 'Page introuvable',
+    notFoundBody: "Ce document n'existe pas ou n'est pas accessible avec ce compte.",
+    backToDocuments: 'Retour à mes documents',
+    skipToContent: 'Aller au contenu',
+  },
   conversion: {
     emailTaken: 'Cette adresse e-mail est déjà utilisée par un compte. Utilisez une autre adresse pour ce client.',
     alreadyConverted: 'Ce lead est déjà converti en client.',
