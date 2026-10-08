@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 const src = readFileSync(new URL('./page.tsx', import.meta.url), 'utf8')
 // Normalise JSX apostrophe entities so titles and prose can be matched literally
-const text = src.replace(/&apos;/g, "'")
+const text = src.replace(/&apos;/g, "'").replace(/&nbsp;/g, " ")
 
 const TITLES = [
   'Qui peut déposer un avis',
@@ -63,6 +63,30 @@ describe('politique des avis page (D-12)', () => {
     ]) {
       expect(lower, w).not.toContain(w)
     }
+  })
+
+  it('matches the /avis typography: medium weight, 16px body, left-aligned, no bold titles', () => {
+    expect(src).not.toMatch(/font-bold|text-4xl|text-center/)
+    expect(src).toContain('text-[32px] font-medium')
+    expect(src).toContain('text-base')
+    expect(src).not.toMatch(/text-sm leading|leading-relaxed text-sm/)
+    expect(src).toContain('max-w-3xl')
+    expect(src).toContain('id="main-content"')
+  })
+
+  it('uses only text-safe colours, no --ink-faint', () => {
+    expect(src).not.toContain('ink-faint')
+  })
+
+  it('states the rights/contact paragraph once, with 44px contact links and non-breaking punctuation', () => {
+    const flat = text.replace(/\s+/g, ' ')
+    expect(flat.match(/exercer vos droits/g)).toHaveLength(1)
+    expect(flat).not.toContain("droits d'accès, de rectification ou d'opposition")
+    expect(src.match(/mailto:contact@sevalys\.com/g)).toHaveLength(2)
+    expect(src.match(/className=\{mailClass\}/g)).toHaveLength(2)
+    expect(src).toContain('min-h-[44px]')
+    expect(src).toContain('&nbsp;:')
+    expect(src).toContain('&nbsp;;')
   })
 
   it('is indexable and server-free', () => {

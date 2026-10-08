@@ -91,6 +91,8 @@ const ALLOWED_TEMPLATES = [
   '`/admin/projets/${r.projectId}`',
   // Portal documents list: sign link, resolved by /espace-client/documents/[id]/signer (plan 14-16).
   '`/espace-client/documents/${d.id}/signer`',
+  // Home excerpt cards: anchor to the full review on /avis (article id review-<id>).
+  '`/avis#review-${review.id}`',
   // Signing page: link to the replacing document, resolved by the same /signer route.
   '`/espace-client/documents/${sctx.replacedBy.id}/signer`',
   // Portal onboarding card: external mailto with an encoded subject (not a route).

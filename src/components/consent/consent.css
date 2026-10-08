@@ -24,7 +24,8 @@
 }
 .consent-title:focus { outline: none; }
 .consent-body { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink-dim); }
-.consent-link { font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--ink); text-decoration: underline; align-self: flex-start; }
+.consent-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--ink); text-decoration: underline; align-self: flex-start; }
+.consent-dismiss { padding: 0; background: none; border: 0; font-family: inherit; cursor: pointer; }
 .consent-actions { display: flex; gap: 8px; }
 @media (max-width: 399px) {
   .consent-actions { flex-direction: column; }
@@ -47,6 +48,7 @@
 .consent-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .consent-btn:focus-visible,
 .consent-link:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+.consent-error-region:empty { margin-top: -16px; }
 .consent-error {
   display: flex; align-items: flex-start; gap: 8px;
   margin: 0; font-size: 16px; line-height: 1.5; color: var(--warm);

@@ -317,6 +317,8 @@ export default function Wizard() {
   if (step.kind === 'contact') {
     const isSending = status === 'sending';
     const submitDisabled = isSending || !canSubmit({ contact, consent, answers });
+    // The send error is form-level: every field points at it while it is displayed.
+    const describedByError = status === 'error' ? 'sim-error' : undefined;
 
     return (
       <div className="sim-wizard">
@@ -324,11 +326,15 @@ export default function Wizard() {
         <h2 className="svc-h2">{t.simulateur.contact.heading}</h2>
         <p className="sim-contact-sub">{t.simulateur.contact.sub}</p>
         <form className="form" onSubmit={handleSubmit}>
+          <p className="sim-hint">{t.simulateur.contact.requiredNote}</p>
           <div className="field">
-            <label>{t.simulateur.contact.nomLabel}</label>
+            <label htmlFor="sim-nom">{t.simulateur.contact.nomLabel}</label>
             <input
+              id="sim-nom"
+              name="name"
               type="text"
               required
+              aria-describedby={describedByError}
               autoComplete="name"
               placeholder={t.simulateur.contact.nomPlaceholder}
               value={contact.nom}
@@ -336,26 +342,39 @@ export default function Wizard() {
             />
           </div>
           <div className="field">
-            <label>{t.simulateur.contact.emailLabel}</label>
+            <label htmlFor="sim-email">{t.simulateur.contact.emailLabel}</label>
             <input
+              id="sim-email"
+              name="email"
               type="email"
+              inputMode="email"
               required
+              aria-describedby={describedByError}
               autoComplete="email"
+              autoCapitalize="none"
+              spellCheck={false}
               placeholder={t.simulateur.contact.emailPlaceholder}
               value={contact.email}
               onChange={(e) => setContact({ ...contact, email: e.target.value })}
             />
           </div>
           <div className="field">
-            <label>{t.simulateur.contact.telephoneLabel}</label>
+            <label htmlFor="sim-telephone">{t.simulateur.contact.telephoneLabel}</label>
             <input
+              id="sim-telephone"
+              name="tel"
               type="tel"
+              inputMode="tel"
               required
+              aria-describedby={'sim-telephone-hint' + (status === 'error' ? ' sim-error' : '')}
               autoComplete="tel"
               placeholder={t.simulateur.contact.telephonePlaceholder}
               value={contact.telephone}
               onChange={(e) => setContact({ ...contact, telephone: e.target.value })}
             />
+            <p id="sim-telephone-hint" className="sim-hint">
+              {t.simulateur.contact.telephoneHint}
+            </p>
           </div>
 
           {/* Honeypot: uncontrolled, always empty for a legitimate visitor.
@@ -400,12 +419,15 @@ export default function Wizard() {
             </button>
           </div>
 
-          {status === 'error' && (
-            <div className="sim-error">
-              <h3>{t.simulateur.contact.errorHeading}</h3>
-              <p>{t.simulateur.contact.errorBody}</p>
-            </div>
-          )}
+          {/* Live region mounted empty, then filled: announced when the send fails. */}
+          <div aria-live="assertive" aria-atomic="true">
+            {status === 'error' && (
+              <div className="sim-error" id="sim-error">
+                <h3>{t.simulateur.contact.errorHeading}</h3>
+                <p>{t.simulateur.contact.errorBody}</p>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     );

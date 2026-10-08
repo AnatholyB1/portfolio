@@ -71,6 +71,9 @@ export interface SimulateurContent {
     emailPlaceholder: string;
     telephoneLabel: string;
     telephonePlaceholder: string;
+    telephoneHint: string;
+    requiredNote: string;
+    errorSummary: string;
     consentLabel: string;
     rgpdHeading: string;
     rgpdMentions: { k: string; v: string }[];
@@ -98,6 +101,7 @@ export interface Translations {
     contact: string;
     manifeste: string;
     work: string;
+    skipToContent: string;
   };
   services: {
     problem: {
@@ -278,6 +282,8 @@ export interface Translations {
       built: string;
       legal: string;
       manageCookies: string;
+      reviews: string;
+      reviewPolicy: string;
       rights: string;
     };
   };
@@ -289,6 +295,7 @@ const fr: Translations = {
     contact: 'Contact',
     manifeste: 'Manifeste',
     work: 'Réalisations',
+    skipToContent: 'Aller au contenu principal',
   },
   services: {
     problem: {
@@ -867,6 +874,9 @@ const fr: Translations = {
       emailPlaceholder: 'vous@entreprise.fr',
       telephoneLabel: 'Téléphone',
       telephonePlaceholder: '06 00 00 00 00',
+      telephoneHint: 'Obligatoire, pour que nous puissions vous rappeler.',
+      requiredNote: 'Tous les champs sont obligatoires.',
+      errorSummary: 'Corrigez les champs signalés pour continuer.',
       consentLabel: "J'accepte que Sèvalys utilise mes réponses pour me recontacter dans le cadre de ce diagnostic.",
       rgpdHeading: 'Traitement de vos données',
       rgpdMentions: [
@@ -1051,6 +1061,8 @@ const fr: Translations = {
       built: 'Conçu et codé à Tours.',
       legal: 'Mentions légales',
       manageCookies: 'Gérer les cookies',
+      reviews: 'Avis',
+      reviewPolicy: 'Politique des avis',
       rights: 'Tous droits réservés.',
     },
   },
@@ -1062,6 +1074,7 @@ const en: Translations = {
     contact: 'Contact',
     manifeste: 'Manifesto',
     work: 'Work',
+    skipToContent: 'Skip to main content',
   },
   services: {
     problem: {
@@ -1633,6 +1646,9 @@ const en: Translations = {
       emailPlaceholder: "you@business.com",
       telephoneLabel: "Phone",
       telephonePlaceholder: "06 00 00 00 00",
+      telephoneHint: "Required, so that we can call you back.",
+      requiredNote: "All fields are required.",
+      errorSummary: "Fix the highlighted fields to continue.",
       consentLabel: "I agree that Sèvalys may use my answers to contact me again about this diagnostic.",
       rgpdHeading: "How we handle your data",
       rgpdMentions: [
@@ -1817,6 +1833,8 @@ const en: Translations = {
       built: 'Designed and coded in Tours.',
       legal: 'Legal notice',
       manageCookies: 'Manage cookies',
+      reviews: 'Reviews',
+      reviewPolicy: 'Review policy',
       rights: 'All rights reserved.',
     },
   },
@@ -1828,6 +1846,7 @@ const th: Translations = {
     contact: 'ติดต่อ',
     manifeste: 'แถลงการณ์',
     work: 'ผลงาน',
+    skipToContent: 'ข้ามไปยังเนื้อหาหลัก',
   },
   services: {
     problem: {
@@ -2399,6 +2418,9 @@ const th: Translations = {
       emailPlaceholder: "you@business.com",
       telephoneLabel: "โทรศัพท์",
       telephonePlaceholder: "06 00 00 00 00",
+      telephoneHint: "จำเป็นต้องระบุ เพื่อให้เราโทรกลับหาคุณได้",
+      requiredNote: "ทุกช่องจำเป็นต้องกรอก",
+      errorSummary: "โปรดแก้ไขช่องที่ระบุเพื่อดำเนินการต่อ",
       consentLabel: "ฉันยินยอมให้ Sèvalys ใช้คำตอบของฉันเพื่อติดต่อฉันกลับเกี่ยวกับแบบวิเคราะห์นี้",
       rgpdHeading: "การจัดการข้อมูลของคุณ",
       rgpdMentions: [
@@ -2583,6 +2605,8 @@ const th: Translations = {
       built: 'ออกแบบและเขียนโค้ดที่ตูร์',
       legal: 'ข้อกำหนดทางกฎหมาย',
       manageCookies: 'จัดการคุกกี้',
+      reviews: 'รีวิว',
+      reviewPolicy: 'นโยบายรีวิว',
       rights: 'สงวนลิขสิทธิ์',
     },
   },

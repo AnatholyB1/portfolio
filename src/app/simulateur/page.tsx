@@ -18,7 +18,7 @@ export default function SimulateurPage() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main-content">
         <section className="svc-hero">
           <div className="wrap">
             <span className="label">{s.badge}</span>

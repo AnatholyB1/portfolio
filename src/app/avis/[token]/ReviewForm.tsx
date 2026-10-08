@@ -46,6 +46,15 @@ export function thankYouFor(_submission: { rating: number }, googleUrl: string |
   return <ReviewThankYou googleUrl={googleUrl} />;
 }
 
+// Visible required marker; the "obligatoires" note above the form is the text equivalent.
+function Req() {
+  return (
+    <span aria-hidden="true" className="rv-req">
+      {' *'}
+    </span>
+  );
+}
+
 const isCode = (c: unknown): c is ReviewFieldCode =>
   typeof c === 'string' && Object.prototype.hasOwnProperty.call(REVIEW_FIELD_ERRORS, c);
 
@@ -53,7 +62,6 @@ export default function ReviewForm({ token, projectTitle, companyName, googleUrl
   const [rating, setRating] = useState<number | null>(null);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [bodyBlurred, setBodyBlurred] = useState(false);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('first_company');
   const [firstName, setFirstName] = useState('');
   const [lastInitial, setLastInitial] = useState('');
@@ -71,7 +79,7 @@ export default function ReviewForm({ token, projectTitle, companyName, googleUrl
       ? composeDisplayName(displayMode, firstName, lastInitial, companyName)
       : null;
   const counterStatus =
-    bodyLen >= REVIEW_BODY_MAX ? 'Limite de 2 000 caractères atteinte.' : bodyLen >= REVIEW_BODY_MIN ? 'Minimum atteint.' : '';
+    bodyLen >= REVIEW_BODY_MAX ? 'Limite de 2\u00a0000\u00a0caractères atteinte.' : bodyLen >= REVIEW_BODY_MIN ? 'Minimum atteint.' : '';
 
   function fail(next: Partial<Record<FieldKey, string>>, message: string | null) {
     setErrors(next);
@@ -150,168 +158,190 @@ export default function ReviewForm({ token, projectTitle, companyName, googleUrl
     ) : null;
 
   return (
-    <form onSubmit={onSubmit} noValidate className="rv-form">
-      <p className="pt-helper">Projet : {projectTitle}</p>
-
-      <div
-        ref={summaryRef}
-        tabIndex={-1}
-        role="alert"
-        className={summary ? 'pt-error rv-summary' : 'rv-summary-empty'}
-      >
-        {summary}
-      </div>
-
-      <div className="pt-field">
-        <span className="pt-label" id="rv-rating-label">
-          Note (de 1 à 5)
-        </span>
-        <ReviewRatingInput
-          value={rating}
-          onChange={setRating}
-          invalid={Boolean(errors.rating)}
-          describedBy={errors.rating ? 'rv-err-rating' : undefined}
-        />
-        {errorLine('rating')}
-      </div>
-
-      <div className="pt-field">
-        <label className="pt-label" htmlFor="rv-title">
-          Titre
-        </label>
-        <input
-          id="rv-title"
-          className="pt-input"
-          type="text"
-          maxLength={REVIEW_TITLE_MAX}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          aria-describedby={errors.title ? 'rv-err-title' : 'rv-help-title'}
-          {...err('title')}
-        />
-        <p id="rv-help-title" className="pt-helper">
-          Facultatif
-        </p>
-        {errorLine('title')}
-      </div>
-
-      <div className="pt-field">
-        <label className="pt-label" htmlFor="rv-body">
-          Votre avis
-        </label>
-        <textarea
-          id="rv-body"
-          className="pt-input rv-textarea"
-          maxLength={REVIEW_BODY_MAX}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          onBlur={() => setBodyBlurred(true)}
-          aria-describedby={errors.body ? 'rv-err-body rv-help-body' : 'rv-help-body'}
-          {...err('body')}
-        />
-        <p id="rv-help-body" className="pt-helper">
-          20 caractères minimum. Les liens et le balisage ne sont pas acceptés.
-        </p>
-        <p className="pt-helper">
-          {body.length} / {REVIEW_BODY_MAX}
-          {!bodyBlurred && missing > 0 && bodyLen > 0 ? ` · Encore ${missing} caractères minimum` : ''}
-        </p>
-        <span className="pt-sr-only" role="status" aria-live="polite">
-          {counterStatus}
-        </span>
-        {errorLine('body')}
-      </div>
-
-      <fieldset className="pt-field rv-fieldset">
-        <legend className="pt-label">Affichage de votre nom</legend>
-        {(
-          [
-            ['first_company', 'Prénom et société'],
-            ['first_initial', "Prénom et initiale du nom"],
-            ['company_only', 'Société seule'],
-          ] as Array<[DisplayMode, string]>
-        ).map(([mode, label]) => (
-          <label key={mode} className="rv-choice">
-            <input
-              type="radio"
-              name="displayMode"
-              value={mode}
-              checked={displayMode === mode}
-              onChange={() => setDisplayMode(mode)}
-            />
-            <span>{label}</span>
-          </label>
-        ))}
-
-        {displayMode !== 'company_only' ? (
-          <div className="pt-field">
-            <label className="pt-label" htmlFor="rv-first">
-              Prénom
-            </label>
-            <input
-              id="rv-first"
-              className="pt-input"
-              type="text"
-              autoComplete="given-name"
-              maxLength={40}
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              {...err('firstName')}
-            />
-            {errorLine('firstName')}
-          </div>
-        ) : null}
-
-        {displayMode === 'first_initial' ? (
-          <div className="pt-field">
-            <label className="pt-label" htmlFor="rv-initial">
-              Initiale du nom
-            </label>
-            <input
-              id="rv-initial"
-              className="pt-input"
-              type="text"
-              maxLength={1}
-              value={lastInitial}
-              onChange={(e) => setLastInitial(e.target.value)}
-              {...err('lastInitial')}
-            />
-            {errorLine('lastInitial')}
-          </div>
-        ) : null}
-
-        {preview ? <p className="pt-helper rv-preview">Affiché publiquement : {preview}</p> : null}
-      </fieldset>
-
-      <div className="pt-field">
-        <label className="rv-choice">
-          <input
-            type="checkbox"
-            checked={consent}
-            onChange={(e) => setConsent(e.target.checked)}
-            {...err('consent')}
-          />
-          <span>
-            J&apos;accepte que mon avis soit publié sur le site de Sèvalys, avec l&apos;affichage du
-            nom choisi ci-dessus.
-          </span>
-        </label>
-        {errorLine('consent')}
-      </div>
-
+    <>
+      <h1 id="rv-heading" className="pt-heading">
+        Votre avis sur votre projet
+      </h1>
       <p className="pt-helper">
-        <Link href="/politique-des-avis" className="rv-link">
-          Lire la politique des avis
-        </Link>
+        Votre avis est publié tel que vous l&apos;écrivez, sans validation préalable. Vous recevez
+        ce lien parce que votre projet a été livré.
       </p>
+      <form onSubmit={onSubmit} noValidate className="rv-form">
+        <p className="pt-helper">Projet&nbsp;: {projectTitle}</p>
+        <p className="pt-helper">
+          Les champs marqués d&apos;un astérisque (<span aria-hidden="true">*</span>
+          <span className="pt-sr-only">étoile</span>) sont obligatoires.
+        </p>
 
-      <button type="submit" className="pt-btn-primary" disabled={submitting}>
-        {submitting ? 'Publication en cours…' : 'Publier mon avis'}
-      </button>
-      <p className="pt-status" role="status">
-        {submitting ? 'Publication en cours…' : ''}
-      </p>
-    </form>
+        <div
+          ref={summaryRef}
+          tabIndex={-1}
+          role="alert"
+          className={summary ? 'pt-error rv-summary' : 'rv-summary-empty'}
+        >
+          {summary}
+        </div>
+
+        <div className="pt-field">
+          <span className="pt-label" id="rv-rating-label">
+            Note (de 1 à 5)<Req />
+          </span>
+          <ReviewRatingInput
+            value={rating}
+            onChange={setRating}
+            invalid={Boolean(errors.rating)}
+            describedBy={errors.rating ? 'rv-err-rating' : undefined}
+          />
+          {errorLine('rating')}
+        </div>
+
+        <div className="pt-field">
+          <label className="pt-label" htmlFor="rv-title">
+            Titre
+          </label>
+          <input
+            id="rv-title"
+            className="pt-input"
+            type="text"
+            maxLength={REVIEW_TITLE_MAX}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            aria-describedby={errors.title ? 'rv-err-title' : 'rv-help-title'}
+            {...err('title')}
+          />
+          <p id="rv-help-title" className="pt-helper">
+            Facultatif
+          </p>
+          {errorLine('title')}
+        </div>
+
+        <div className="pt-field">
+          <label className="pt-label" htmlFor="rv-body">
+            Votre avis<Req />
+          </label>
+          <textarea
+            id="rv-body"
+            className="pt-input rv-textarea"
+            maxLength={REVIEW_BODY_MAX}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            aria-required="true"
+            aria-describedby={errors.body ? 'rv-err-body rv-help-body' : 'rv-help-body'}
+            {...err('body')}
+          />
+          <p id="rv-help-body" className="pt-helper">
+            20 caractères minimum. Les liens et le balisage ne sont pas acceptés.
+          </p>
+          <p className="pt-helper tabular">
+            {body.length}&nbsp;/&nbsp;{REVIEW_BODY_MAX}
+            {missing > 0 && bodyLen > 0 ? ` · Encore ${missing}\u00a0caractères minimum` : ''}
+          </p>
+          <span className="pt-sr-only" role="status" aria-live="polite">
+            {counterStatus}
+          </span>
+          {errorLine('body')}
+        </div>
+
+        <fieldset className="pt-field rv-fieldset">
+          <legend className="pt-label">Affichage de votre nom</legend>
+          {(
+            [
+              ['first_company', 'Prénom et société'],
+              ['first_initial', "Prénom et initiale du nom"],
+              ['company_only', 'Société seule'],
+            ] as Array<[DisplayMode, string]>
+          ).map(([mode, label]) => (
+            <label key={mode} className="rv-choice">
+              <input
+                type="radio"
+                name="displayMode"
+                value={mode}
+                checked={displayMode === mode}
+                onChange={() => setDisplayMode(mode)}
+              />
+              <span>{label}</span>
+            </label>
+          ))}
+
+          {displayMode !== 'company_only' ? (
+            <div className="pt-field">
+              <label className="pt-label" htmlFor="rv-first">
+                Prénom<Req />
+              </label>
+              <input
+                id="rv-first"
+                className="pt-input"
+                type="text"
+                autoComplete="given-name"
+                maxLength={40}
+                aria-required="true"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                {...err('firstName')}
+              />
+              {errorLine('firstName')}
+            </div>
+          ) : null}
+
+          {displayMode === 'first_initial' ? (
+            <div className="pt-field">
+              <label className="pt-label" htmlFor="rv-initial">
+                Initiale du nom<Req />
+              </label>
+              <input
+                id="rv-initial"
+                className="pt-input"
+                type="text"
+                maxLength={1}
+                autoCapitalize="characters"
+                autoComplete="off"
+                aria-required="true"
+                value={lastInitial}
+                onChange={(e) => setLastInitial(e.target.value)}
+                {...err('lastInitial')}
+                aria-describedby={errors.lastInitial ? 'rv-err-lastInitial rv-help-initial' : 'rv-help-initial'}
+              />
+              <p id="rv-help-initial" className="pt-helper">
+                Une seule lettre, la première de votre nom.
+              </p>
+              {errorLine('lastInitial')}
+            </div>
+          ) : null}
+
+          {preview ? <p className="pt-helper rv-preview">Affiché publiquement&nbsp;: {preview}</p> : null}
+        </fieldset>
+
+        <div className="pt-field">
+          <label className="rv-choice">
+            <input
+              type="checkbox"
+              checked={consent}
+              aria-required="true"
+              onChange={(e) => setConsent(e.target.checked)}
+              {...err('consent')}
+            />
+            <span>
+              J&apos;accepte que mon avis soit publié sur le site de Sèvalys, avec l&apos;affichage du
+              nom choisi ci-dessus.<Req />
+            </span>
+          </label>
+          {errorLine('consent')}
+        </div>
+
+        <p className="pt-helper">
+          <Link href="/politique-des-avis" className="rv-link">
+            Lire la politique des avis
+          </Link>
+        </p>
+
+        <button type="submit" className="pt-btn-primary" disabled={submitting}>
+          {submitting ? 'Publication en cours…' : 'Publier mon avis'}
+        </button>
+        <p className="pt-status" role="status">
+          {submitting ? 'Publication en cours…' : ''}
+        </p>
+      </form>
+    </>
   );
 }
 

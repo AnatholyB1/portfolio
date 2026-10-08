@@ -8,6 +8,7 @@ export type ConsentCopy = {
   accept: string;
   refuse: string;
   error: string;
+  dismiss: string;
 };
 
 export const CONSENT_TEXT_VERSION = CONSENT_VERSION;
@@ -19,7 +20,8 @@ export const CONSENT_TEXT: Record<Lang, ConsentCopy> = {
     link: 'En savoir plus',
     accept: 'Accepter',
     refuse: 'Refuser',
-    error: "Votre choix n'a pas pu être enregistré. Réessayez.",
+    error: "Votre choix n'a pas pu être enregistré. Réessayez, ou continuez sans l'enregistrer.",
+    dismiss: 'Continuer sans enregistrer',
   },
   en: {
     heading: 'Your cookie choice',
@@ -27,7 +29,8 @@ export const CONSENT_TEXT: Record<Lang, ConsentCopy> = {
     link: 'Learn more',
     accept: 'Accept',
     refuse: 'Refuse',
-    error: 'Your choice could not be saved. Please try again.',
+    error: 'Your choice could not be saved. Please try again, or continue without saving it.',
+    dismiss: 'Continue without saving',
   },
   th: {
     heading: 'ตัวเลือกคุกกี้ของคุณ',
@@ -35,6 +38,7 @@ export const CONSENT_TEXT: Record<Lang, ConsentCopy> = {
     link: 'ดูรายละเอียด',
     accept: 'ยอมรับ',
     refuse: 'ปฏิเสธ',
-    error: 'ไม่สามารถบันทึกตัวเลือกของคุณได้ โปรดลองอีกครั้ง',
+    error: 'ไม่สามารถบันทึกตัวเลือกของคุณได้ โปรดลองอีกครั้ง หรือดำเนินการต่อโดยไม่บันทึก',
+    dismiss: 'ดำเนินการต่อโดยไม่บันทึก',
   },
 };
