@@ -2,13 +2,9 @@
 // Colonnes explicites uniquement : le hash du jeton n'est jamais sélectionné.
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { ReviewLinkStatus } from '@/lib/reviews/linkStatus';
 
-export type ReviewLinkStatus =
-  | { kind: 'none' }
-  | { kind: 'active'; expiresAt: string }
-  | { kind: 'used'; usedAt: string }
-  | { kind: 'expired'; expiresAt: string }
-  | { kind: 'invalidated'; invalidatedAt: string };
+export type { ReviewLinkStatus };
 
 export type ReviewLinkRow = {
   id?: string;

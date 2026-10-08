@@ -3,7 +3,7 @@
 import { useActionState, useId, useState } from 'react';
 import { reissueReviewLinkAction, type ReissueState } from '@/app/admin/avis/reissue.actions';
 import { formatDateFr } from '@/lib/admin/format';
-import type { ReviewLinkStatus } from '@/lib/server/reviews/linksAdmin';
+import type { ReviewLinkStatus } from '@/lib/reviews/linkStatus';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
 
