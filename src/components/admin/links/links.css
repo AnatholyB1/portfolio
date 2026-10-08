@@ -1,0 +1,140 @@
+/* Générateur de liens de campagne (19-08). Variables existantes uniquement. */
+.pt-admin .pt-link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pt-admin .pt-link-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.pt-admin .pt-link-field label,
+.pt-admin .pt-link-result-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pt-admin .pt-link-req {
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+.pt-admin .pt-link-field select,
+.pt-admin .pt-link-field input {
+  min-height: 44px;
+  font-size: 16px;
+  padding: 8px 12px;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 0;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 150ms;
+}
+.pt-admin .pt-link-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .pt-admin .pt-link-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pt-admin .pt-link-path {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-admin .pt-link-origin,
+.pt-admin .pt-link-mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.pt-admin .pt-link-origin {
+  color: var(--ink-dim);
+}
+.pt-admin .pt-link-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.pt-admin .pt-link-url {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--pt-border-strong);
+  border-radius: 0;
+  resize: vertical;
+}
+.pt-admin .pt-link-ok,
+.pt-admin .pt-link-errors li {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+.pt-admin .pt-link-ok svg {
+  color: var(--acid);
+}
+.pt-admin .pt-link-errors {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink);
+}
+.pt-admin .pt-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.pt-admin .pt-link-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 150ms, color 150ms, background-color 150ms;
+}
+.pt-admin .pt-link-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pt-admin .pt-link-scroll {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.pt-admin .pt-link-form select:focus-visible,
+.pt-admin .pt-link-form input:focus-visible,
+.pt-admin .pt-link-form textarea:focus-visible,
+.pt-admin .pt-link-form button:focus-visible,
+.pt-admin .pt-link-form a:focus-visible,
+.pt-admin .pt-link-scroll:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-admin .pt-link-field select,
+  .pt-admin .pt-link-field input,
+  .pt-admin .pt-link-btn {
+    transition: none;
+  }
+}

@@ -37,6 +37,43 @@ describe('admin /liens page source guards (T-19-24..26)', () => {
     }
   });
 
+  it('LinkBuilder is a client component driven by the shared rules module', () => {
+    const lb = read('./LinkBuilder.tsx');
+    expect(lb.startsWith("'use client';")).toBe(true);
+    expect(lb).toContain("from '@/lib/attribution/utm'");
+    expect(lb).toContain('buildTrackedUrl');
+    for (const banned of ['@/lib/server', 'server-only', '@/lib/supabase']) expect(lb).not.toContain(banned);
+    for (const s of [
+      'Copier le lien',
+      'Ouvrir le lien',
+      'Préremplir pour la fiche Google',
+      'Conforme à la convention',
+      'Lien copié',
+      'Copiez le lien manuellement (Ctrl+C).',
+      'Aucun lien généré',
+      'Lien à utiliser',
+      '(obligatoire)',
+      'noopener noreferrer',
+      "Raccourcissez l'offre ou la cible.",
+      "Indiquez l'offre : elle sert à nommer la campagne.",
+      'Indiquez la cible : elle sert à nommer la campagne.',
+      'Choisissez un mois valide (aaaa-mm).',
+    ]) {
+      expect(lb).toContain(s);
+    }
+  });
+
+  it('destination is a select, never a free text input', () => {
+    const lb = read('./LinkBuilder.tsx');
+    expect(lb).toContain('<select id="lk-path"');
+    expect(lb).not.toContain('name="destination"');
+    expect(lb).not.toMatch(/id="lk-path"[^>]*type="text"/);
+  });
+
+  it('stylesheet uses variables only', () => {
+    expect(read('./links.css')).not.toMatch(/#[0-9a-fA-F]{3,6}\b/);
+  });
+
   it('convention doc exists', () => {
     expect(existsSync(new URL('../../../../docs/convention-utm.md', import.meta.url))).toBe(true);
   });
