@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import './leads/leads.css';
 
-export type AdminNavItem = 'clients' | 'leads' | 'projets' | 'entonnoir' | 'pilotage' | 'emails';
+export type AdminNavItem = 'clients' | 'leads' | 'projets' | 'entonnoir' | 'pilotage' | 'avis' | 'emails';
 
 const ITEMS: { key: AdminNavItem; href: string; label: string }[] = [
   { key: 'clients', href: '/admin', label: 'Clients' },
@@ -9,6 +9,7 @@ const ITEMS: { key: AdminNavItem; href: string; label: string }[] = [
   { key: 'projets', href: '/admin/projets', label: 'Projets' },
   { key: 'entonnoir', href: '/admin/entonnoir', label: 'Entonnoir' },
   { key: 'pilotage', href: '/admin/pilotage', label: 'Pilotage' },
+  { key: 'avis', href: '/admin/avis', label: 'Avis' },
   { key: 'emails', href: '/admin/emails', label: 'E-mails' },
 ];
 
