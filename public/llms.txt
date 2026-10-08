@@ -5,7 +5,7 @@
 ## Ce que fait Sèvalys
 
 - **Agent vocal IA téléphonique** : un standard téléphonique automatisé qui décroche, comprend la demande en français naturel, prend une commande ou un rendez-vous, met à jour le CRM et notifie l'équipe — sans appel manqué, jour et nuit. Stack : VAPI + numéro Twilio, voix ElevenLabs, connexion CRM via protocole MCP.
-- **Sites web et lead magnets** : sites vitrines performants, optimisés pour convertir et pour le référencement local, et outils de capture de contacts (simulateur de diagnostic, calculateur de ROI).
+- **Sites web et lead magnets** : sites vitrines performants, optimisés pour convertir et pour le référencement local, et outils de capture de contacts (simulateur de diagnostic).
 - **Outils de gestion sur mesure** : espaces clients, tableaux de bord et outils internes conçus pour votre activité.
 - **Automatisations et intégrations IA** : suppression des tâches répétitives (saisie, relances, synchronisation d'outils) et IA intégrée à vos outils.
 - **Branding, community management et publicité** : identité de marque, réseaux sociaux, Meta Ads et Google Ads.
@@ -38,7 +38,6 @@ PME, commerces, restaurants, boulangeries, écoles et services locaux qui veulen
 - Meta Ads à Tours : https://sevalys.com/services/meta-ads
 - Google Ads à Tours : https://sevalys.com/services/google-ads
 - Simulateur de diagnostic : https://sevalys.com/simulateur
-- Calculateur de ROI (agent vocal) : https://sevalys.com/calculateur-roi
 - Démo agent vocal : https://sevalys.com/demo
 - Mentions légales : https://sevalys.com/mentions-legales
 - Avis clients vérifiés : https://sevalys.com/avis

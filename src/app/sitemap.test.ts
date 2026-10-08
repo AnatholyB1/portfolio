@@ -19,8 +19,8 @@ describe('sitemap (SEO-01)', () => {
     expect(urls()).toContain(`${base}/simulateur`)
   })
 
-  it('keeps the 5 original URLs', () => {
-    for (const p of ['/', '/services', '/calculateur-roi', '/demo', '/mentions-legales']) {
+  it('keeps the 4 original URLs', () => {
+    for (const p of ['/', '/services', '/demo', '/mentions-legales']) {
       expect(urls()).toContain(`${base}${p}`)
     }
   })
@@ -28,7 +28,11 @@ describe('sitemap (SEO-01)', () => {
   it('has unique urls and the expected count', () => {
     const u = urls()
     expect(new Set(u).size).toBe(u.length)
-    expect(u.length).toBe(5 + services.length + 3)
+    expect(u.length).toBe(4 + services.length + 3)
+  })
+
+  it('does not list the noindex /calculateur-roi field tool', () => {
+    expect(urls()).not.toContain(`${base}/calculateur-roi`)
   })
 
   it('lists /avis and /politique-des-avis', () => {
