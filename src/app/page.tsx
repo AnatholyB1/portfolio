@@ -1,7 +1,4 @@
-'use client';
-// page.tsx must be 'use client' because useReveals() calls IntersectionObserver (browser API)
-
-import { useReveals } from '@/hooks/useReveals';
+import RevealsMount from '@/components/ui/RevealsMount';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
@@ -16,14 +13,17 @@ import Partners from '@/components/sections/Partners';
 import AvisExcerpt from '@/components/sections/AvisExcerpt';
 import ContactSection from '@/components/sections/ContactSection';
 
-export default function Home() {
-  // Mount scroll-reveal system — sweeps all [data-reveal] elements across all child sections
-  useReveals();
+// Server component: AvisExcerpt reads the published reviews on the server (no client fetch, no
+// layout shift). The page is regenerated every 5 minutes.
+export const revalidate = 300;
 
+export default function Home() {
   return (
     <>
+      {/* Scroll-reveal system: sweeps all [data-reveal] elements across all child sections */}
+      <RevealsMount />
       <Navbar />
-      <main>
+      <main id="main-content">
         <HeroSection />
         <Manifeste />
         <ProblemSection />

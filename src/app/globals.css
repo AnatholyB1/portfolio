@@ -381,6 +381,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
 .foot-brand { display: flex; align-items: center; gap: 12px; font-family: var(--font-display), serif; font-weight: 700; font-size: 18px; }
 .foot-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
+.avis-excerpt { padding: 48px 0; }
 .foot-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--ink-dim); font-size: 14px; text-decoration: none; transition: color .2s; }
 .foot-links a:hover { color: var(--acid); }
 .foot-links a:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }

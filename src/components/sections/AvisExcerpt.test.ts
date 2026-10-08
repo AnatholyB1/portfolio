@@ -3,6 +3,9 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 
+vi.mock('server-only', () => ({}))
+vi.mock('@/lib/reviews/publicReviews', () => ({ getPublishedReviews: vi.fn() }))
+
 vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }: { href: string; children: unknown }) =>
     createElement('a', { href, ...rest }, children as never),
@@ -11,6 +14,7 @@ vi.mock('next/link', () => ({
 import { AvisExcerptView } from './AvisExcerpt'
 
 const src = readFileSync(new URL('./AvisExcerpt.tsx', import.meta.url), 'utf8')
+const cardSrc = readFileSync(new URL('../reviews/ReviewCard.tsx', import.meta.url), 'utf8')
 const pageSrc = readFileSync(new URL('../../app/page.tsx', import.meta.url), 'utf8')
 
 const mk = (i: number) => ({
@@ -24,8 +28,13 @@ const html = (n: number) =>
   renderToStaticMarkup(createElement(AvisExcerptView, { reviews: Array.from({ length: n }, (_, i) => mk(i)) }))
 
 describe('AvisExcerpt', () => {
-  it('renders nothing for an empty list', () => {
-    expect(html(0)).toBe('')
+  it('renders a visible, error-free empty state instead of vanishing', () => {
+    const h = html(0)
+    expect(h).toContain('Ce que disent nos clients')
+    expect(h).toContain('Les avis arrivent après la livraison des projets')
+    expect(h).toContain('href="/avis"')
+    expect(h).not.toContain('<article')
+    expect(h.toLowerCase()).not.toContain('erreur')
   })
 
   it('renders the section with links for 1-3 reviews', () => {
@@ -42,9 +51,24 @@ describe('AvisExcerpt', () => {
     expect(html(5).split('<article').length - 1).toBe(3)
   })
 
-  it('fetches recent reviews and keeps state empty on error', () => {
-    expect(src).toContain("fetch('/api/avis/recent'")
-    expect(src).toContain('.catch(')
+  it('reads on the server through the cached data module, with no client fetch', () => {
+    expect(src).not.toContain('use client')
+    expect(src).not.toMatch(/fetch\(|useEffect|useState/)
+    expect(src).toContain("getPublishedReviews(3)")
+    expect(src).toContain('async function AvisExcerpt')
+    expect(pageSrc).toContain('export const revalidate')
+    expect(pageSrc).not.toContain("use client")
+  })
+
+  it('cards link to the full review on /avis instead of clamping silently', () => {
+    expect(html(2)).toContain('href="/avis#review-r0"')
+    expect(html(2)).toContain("Lire l&#x27;avis complet")
+  })
+
+  it('has no inline style mixed with Tailwind and uses 44px targets', () => {
+    expect(src).not.toContain('style=')
+    expect(src).toContain('min-h-[44px]')
+    expect(cardSrc).not.toContain('style=')
   })
 
   it('has no server import, JSON-LD or price words', () => {

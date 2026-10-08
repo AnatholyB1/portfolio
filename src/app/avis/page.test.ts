@@ -60,22 +60,27 @@ describe('/avis page', () => {
     for (const s of scripts) expect(JSON.parse(s[1])['@type']).toBe('Review')
   })
 
-  it('paginates 50 per page with a previous-reviews link', async () => {
+  it('paginates 50 per page with an older-reviews link on the right', async () => {
     getPublishedReviews.mockResolvedValue(many(51))
     const html = await render()
     expect(getPublishedReviews).toHaveBeenCalledWith(51, 0)
     expect(count(html, '<article')).toBe(50)
     expect(count(html, 'application/ld+json')).toBe(50)
     expect(html).toContain('href="/avis?page=2"')
-    expect(html).toContain('Avis précédents')
+    expect(html).toContain('Plus anciens')
+    expect(html).toContain('rel="next"')
+    expect(html).not.toContain('Avis précédents')
   })
 
   it('page 2 uses offset 50 and links back to newer reviews', async () => {
     getPublishedReviews.mockResolvedValue(many(5))
     const html = await render('2')
     expect(getPublishedReviews).toHaveBeenCalledWith(51, 50)
-    expect(html).toContain('Avis plus récents')
+    expect(html).toContain('Plus récents')
     expect(html).toContain('href="/avis"')
+    expect(html).toContain('rel="prev"')
+    // newer is on the left, older on the right
+    expect(html.indexOf('Plus récents')).toBeLessThan(html.indexOf('Plus anciens') === -1 ? Infinity : html.indexOf('Plus anciens'))
   })
 
   it.each(['0', '-1', 'abc'])('treats page %s as page 1', async (p) => {
@@ -119,18 +124,35 @@ describe('/avis page', () => {
     expect(html).not.toContain('<article')
   })
 
-  it('links to the policy at least twice', async () => {
+  it('links to the policy once in the page body (the footer carries the other)', async () => {
     getPublishedReviews.mockResolvedValue(many(1))
     const html = await render()
-    expect(count(html, 'href="/politique-des-avis"')).toBeGreaterThanOrEqual(2)
+    expect(count(html, 'href="/politique-des-avis"')).toBe(1)
+    expect(html).toContain('le projet a été livré et la recette signée')
+    expect(html).not.toContain('livré et recette signée')
   })
 
-  it('is indexable with a canonical per page', async () => {
+  it('is indexable with a canonical per page when reviews exist', async () => {
+    getPublishedReviews.mockResolvedValue(many(1))
     const m1 = await generateMetadata({ searchParams: Promise.resolve({}) })
     expect(m1.robots).toEqual({ index: true, follow: true })
     expect(m1.alternates?.canonical).toBe('/avis')
     const m2 = await generateMetadata({ searchParams: Promise.resolve({ page: '3' }) })
     expect(m2.alternates?.canonical).toBe('/avis?page=3')
+  })
+
+  it('is noindex while there is no published review', async () => {
+    getPublishedReviews.mockResolvedValue([])
+    const m = await generateMetadata({ searchParams: Promise.resolve({}) })
+    expect(m.robots).toEqual({ index: false, follow: true })
+    expect(m.alternates?.canonical).toBe('/avis')
+  })
+
+  it('uses classes, not inline styles, and exposes the main landmark target', () => {
+    expect(src).not.toContain('style={{')
+    expect(src).toContain('max-w-3xl')
+    expect(src).toContain('id="main-content"')
+    expect(src).toContain('min-h-[44px]')
   })
 
   it('source has no aggregate, price words or server imports', () => {
