@@ -7,7 +7,9 @@ import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
+import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
 import { STATUS_ORDER } from '@/lib/admin/leadLabels';
+import { UTM_SOURCES } from '@/lib/attribution/utm';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
@@ -15,7 +17,8 @@ import '@/components/admin/leads/leads.css';
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Leads' };
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = ADMIN_PAGE_SIZE;
+const SOURCE_SAMPLE = 200;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -48,8 +51,7 @@ export default async function AdminLeadsPage({
   const rawSource = one(sp.source);
   const source = rawSource && rawSource.length <= 200 ? rawSource : undefined;
   const retours = one(sp.retours) === '1';
-  const pageNum = Number.parseInt(one(sp.page) ?? '1', 10);
-  const page = Number.isFinite(pageNum) && pageNum >= 1 ? pageNum : 1;
+  const page = parsePage(sp.page);
   const from = (page - 1) * PAGE_SIZE;
 
   let query = supabase
@@ -64,27 +66,36 @@ export default async function AdminLeadsPage({
   if (source) query = query.eq('source_source', source);
   if (retours) query = query.eq('unseen_return', true);
 
-  const [{ data, count }, { count: reviewCount }, { data: sourceRows }] = await Promise.all([
+  const [{ data, count, error }, { count: reviewCount }, { data: sourceRows }] = await Promise.all([
     query,
     supabase
       .from('sv_leads_admin_v')
       .select('id', { count: 'exact', head: true })
       .eq('unseen_return', true),
-    supabase.from('sv_leads_admin_v').select('source_source').limit(1000),
+    // Liste déroulante des sources : les plus récentes seulement (jamais 1000 lignes),
+    // complétée par la convention UTM et par la source déjà filtrée.
+    supabase
+      .from('sv_leads_admin_v')
+      .select('source_source')
+      .not('source_source', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(SOURCE_SAMPLE),
   ]);
 
   const rows = (data ?? []) as unknown as LeadRow[];
   const total = count ?? 0;
   const toReview = reviewCount ?? 0;
   const sources = Array.from(
-    new Set(
-      ((sourceRows ?? []) as { source_source: string | null }[])
+    new Set([
+      ...UTM_SOURCES,
+      ...((sourceRows ?? []) as { source_source: string | null }[])
         .map((r) => r.source_source)
         .filter((s): s is string => Boolean(s) && (s as string).length <= 200),
-    ),
+      ...(source ? [source] : []),
+    ]),
   )
     .sort()
-    .slice(0, 200);
+    .slice(0, 50);
 
   const hasFilters = Boolean(statut || source || retours);
   const hasNext = from + PAGE_SIZE < total;
@@ -93,13 +104,13 @@ export default async function AdminLeadsPage({
     <>
       <ShellHeader variant="admin" title="Sèvalys · Administration" actions={<SignOutButton />} />
       <ShellMain width="admin">
-        <div className="pt-admin" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="pt-admin">
           <AdminNav current="leads" />
           <section className="pt-card" aria-labelledby="leads-title">
-            <h1 id="leads-title" className="pt-heading" style={{ marginBottom: 24 }}>
+            <h1 id="leads-title" className="pt-heading pt-admin-title">
               Leads
             </h1>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="pt-admin-stack">
               {toReview > 0 ? (
                 <div>
                   <Link href="/admin/leads?retours=1" className="pt-lead-chip">
@@ -108,15 +119,26 @@ export default async function AdminLeadsPage({
                 </div>
               ) : null}
               <LeadFilters statut={statut} source={source} retours={retours} sources={sources} />
-              {rows.length === 0 ? (
+              {error ? (
+                <div className="pt-empty">
+                  <h2 className="pt-heading">Leads indisponibles</h2>
+                  <p className="pt-helper">
+                    La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
+                    connexion à la base.
+                  </p>
+                  <Link href={hrefFor(statut, source, retours, page)} className="pt-btn-ghost">
+                    Recharger
+                  </Link>
+                </div>
+              ) : rows.length === 0 ? (
                 hasFilters ? (
                   <div className="pt-empty">
                     <h2 className="pt-heading">Aucun lead ne correspond</h2>
                     <p className="pt-helper">
                       Modifiez ou réinitialisez les filtres pour voir plus de résultats.
                     </p>
-                    <Link href="/admin/leads" className="pt-btn-text">
-                      Réinitialiser
+                    <Link href="/admin/leads" className="pt-btn-ghost">
+                      Réinitialiser les filtres
                     </Link>
                   </div>
                 ) : (
@@ -126,26 +148,20 @@ export default async function AdminLeadsPage({
                       Les demandes du simulateur et du formulaire de contact apparaîtront ici avec
                       leur source.
                     </p>
+                    <Link href="/admin/liens" className="pt-btn-ghost">
+                      Préparer un lien de campagne
+                    </Link>
                   </div>
                 )
               ) : (
                 <>
                   <LeadsTable rows={rows} />
-                  <nav className="pt-lead-pager" aria-label="Pagination">
-                    {page > 1 ? (
-                      <Link className="pt-btn-text" href={hrefFor(statut, source, retours, page - 1)}>
-                        Précédent
-                      </Link>
-                    ) : (
-                      <span />
-                    )}
-                    {hasNext ? (
-                      <Link className="pt-btn-text" href={hrefFor(statut, source, retours, page + 1)}>
-                        Suivant
-                      </Link>
-                    ) : null}
-                  </nav>
-                </>
+                  <Pager
+                    page={page}
+                    hasNext={hasNext}
+                    hrefFor={(n) => hrefFor(statut, source, retours, n)}
+                    label="leads"
+                  />                </>
               )}
             </div>
           </section>

@@ -81,7 +81,7 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
         onClick={() => setOpen((o) => !o)}
       >
         {pending ? (
-          'Enregistrement...'
+          'Enregistrement…'
         ) : (
           <>
             {current === 'signed' ? <span className="pt-lead-dot" aria-hidden="true" /> : null}
@@ -123,7 +123,8 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
       <div className="pt-sr-only" aria-live="polite">
         {state.status !== 'idle' ? state.message : ''}
       </div>
-      {state.status === 'error' ? <p className="pt-error">{state.message}</p> : null}
+      {/* Texte visible de l'erreur ; l'annonce vocale passe par la région sr-only ci-dessus. */}
+      <p className="pt-error">{state.status === 'error' ? state.message : ''}</p>
       {lostOpen ? (
         <LostPanel
           leadId={leadId}

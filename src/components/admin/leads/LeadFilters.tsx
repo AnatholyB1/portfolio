@@ -17,7 +17,7 @@ export default function LeadFilters({ statut, source, retours, sources }: LeadFi
   if (retours) chips.push('Retours uniquement');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className="pt-admin-stack">
       <form method="get" action="/admin/leads" className="pt-lead-filters">
         <div>
           <label htmlFor="f-statut">Statut</label>
@@ -49,7 +49,7 @@ export default function LeadFilters({ statut, source, retours, sources }: LeadFi
           Appliquer les filtres
         </button>
         <Link href="/admin/leads" className="pt-btn-text">
-          Réinitialiser
+          Réinitialiser les filtres
         </Link>
       </form>
       {chips.length > 0 ? (

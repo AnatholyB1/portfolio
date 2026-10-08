@@ -21,6 +21,12 @@ const STAGES: { key: Stage; label: string; prev: keyof FunnelRow }[] = [
   { key: 'signed', label: 'Signés', prev: 'rdv' },
 ];
 
+function nonconformityText(n: number): string {
+  return n > 1
+    ? `${n} leads de cette ligne ont une source hors convention`
+    : `${n} lead de cette ligne a une source hors convention`;
+}
+
 function StageCell({ row, stage }: { row: FunnelRow; stage: (typeof STAGES)[number] }) {
   const n = row[stage.key];
   const rate = conversionRate(n, row[stage.prev] as number);
@@ -82,13 +88,13 @@ export default function FunnelTable({ rows, by }: { rows: FunnelRow[]; by: Group
                 {(r.nonconformingLeads ?? 0) > 0 ? (
                   <span
                     className="pt-lead-badge"
-                    title={`${r.nonconformingLeads} lead(s) de cette ligne ont une source hors convention`}
+                    title={nonconformityText(r.nonconformingLeads ?? 0)}
                   >
                     <TriangleAlert size={16} aria-hidden="true" />
                     Hors convention ({r.nonconformingLeads})
                     <span className="pt-sr-only">
                       {' '}
-                      {r.nonconformingLeads} lead(s) de cette ligne ont une source hors convention
+                      {nonconformityText(r.nonconformingLeads ?? 0)}
                     </span>
                   </span>
                 ) : null}
