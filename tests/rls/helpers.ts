@@ -787,3 +787,111 @@ export async function correctTestLeadSource(
     p_reason: reason,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Phase 18 (verified reviews) helpers
+// Tokens are computed with node:crypto directly (same rule as src/lib/reviews/token.ts:
+// token = base64url(HMAC-SHA256(secret, 'review:v1:' + linkId)), hash = sha256 hex of the token)
+// so the RLS config needs no server-only alias. Review tables are append-only:
+// cleanup() never deletes them; every run uses fresh ids and e-mails.
+// ---------------------------------------------------------------------------
+
+const REVIEW_TEST_SECRET = 'rls-review-test-secret-0123456789abcdef'; // 40 chars
+
+export function testReviewToken(linkId: string): { token: string; hash: string } {
+  const token = createHmac('sha256', REVIEW_TEST_SECRET).update(`review:v1:${linkId}`).digest('base64url');
+  const hash = createHash('sha256').update(token).digest('hex');
+  return { token, hash };
+}
+
+/** Phase 18: a client with a member and a project that reached acceptance_signed. */
+export async function makeDeliveredProject(): Promise<{ clientId: string; projectId: string; memberEmail: string }> {
+  const client = await makeClient(`RLS Avis ${randomUUID().slice(0, 8)}`);
+  const member = await makeUser('review-member');
+  await addMember(client.id, member);
+  const projectId = await makeProject(client.id);
+  await reachAcceptanceSigned(projectId);
+  return { clientId: client.id, projectId, memberEmail: member.email };
+}
+
+/** Phase 18: ensure the one-shot review link of a project. Returns { data, error, linkId, token }. */
+export async function ensureReviewLinkForTest(projectId: string) {
+  const linkId = randomUUID();
+  const { token, hash } = testReviewToken(linkId);
+  const { data, error } = await svc().rpc('sv_ensure_review_link', {
+    p_project_id: projectId,
+    p_link_id: linkId,
+    p_token_hash: hash,
+  });
+  return { data, error, linkId, token };
+}
+
+/** Phase 18: read the state of a link by its token. Returns { data, error }. */
+export async function reviewLinkState(token: string) {
+  const hash = createHash('sha256').update(token).digest('hex');
+  return svc().rpc('sv_review_link_state', { p_token_hash: hash });
+}
+
+/** Phase 18: submit a review. Defaults are valid; override any field. Returns { data, error }. */
+export async function submitReview(
+  token: string,
+  overrides: Partial<{
+    rating: number;
+    title: string | null;
+    body: string;
+    displayMode: string;
+    firstName: string;
+    lastInitial: string | null;
+    consent: boolean;
+    adminEmail: string;
+  }> = {},
+) {
+  const hash = createHash('sha256').update(token).digest('hex');
+  return svc().rpc('sv_submit_review', {
+    p_token_hash: hash,
+    p_rating: overrides.rating ?? 4,
+    p_title: overrides.title ?? null,
+    p_body: overrides.body ?? 'Un avis de test suffisamment long pour passer.',
+    p_display_mode: overrides.displayMode ?? 'first_company',
+    p_first_name: overrides.firstName ?? 'Marie',
+    p_last_initial: overrides.lastInitial ?? null,
+    p_consent: overrides.consent ?? true,
+    p_admin_email: overrides.adminEmail ?? 'contact@sevalys.com',
+  });
+}
+
+/** Phase 18: moderate a review (hide / restore). Returns { data, error }. */
+export async function moderateReview(
+  reviewId: string,
+  action: string,
+  reason: string | null,
+  detail: string,
+  actorId: string,
+) {
+  return svc().rpc('sv_moderate_review', {
+    p_review_id: reviewId,
+    p_action: action,
+    p_reason: reason,
+    p_detail: detail,
+    p_actor_id: actorId,
+  });
+}
+
+/** Phase 18: invalidate the current link and issue a new one. Returns { data, error, linkId, token }. */
+export async function reissueReviewLink(projectId: string, actorId: string, detail = 'Réémission de test') {
+  const linkId = randomUUID();
+  const { token, hash } = testReviewToken(linkId);
+  const { data, error } = await svc().rpc('sv_reissue_review_link', {
+    p_project_id: projectId,
+    p_link_id: linkId,
+    p_token_hash: hash,
+    p_actor_id: actorId,
+    p_detail: detail,
+  });
+  return { data, error, linkId, token };
+}
+
+/** Phase 18: public (non hidden) reviews. Returns { data, error }. */
+export async function publicReviews(limit = 50, offset = 0) {
+  return svc().rpc('sv_public_reviews', { p_limit: limit, p_offset: offset });
+}
