@@ -2,7 +2,8 @@
 
 import { useActionState } from 'react';
 import { liftSuppressionAction, type LiftState } from '@/app/admin/emails/actions';
-import '../leads/leads.css';
+import ConfirmAction from '@/components/admin/shared/ConfirmAction';
+import '@/components/admin/shared/inline.css';
 
 const INITIAL: LiftState = { ok: false, message: null };
 
@@ -13,22 +14,25 @@ export default function LiftSuppressionForm({ suppressionId }: { suppressionId: 
   );
   const id = `lift-reason-${suppressionId}`;
   return (
-    <form action={formAction} className="pt-lead-panel">
+    <ConfirmAction
+      triggerLabel="Réactiver cette adresse…"
+      confirmLabel="Réactiver l'envoi"
+      keepLabel="Garder la suppression"
+      pendingLabel="Réactivation…"
+      action={formAction}
+      pending={pending}
+      result={state}
+      succeeded={state.ok}
+      description="Cette adresse pourra de nouveau recevoir nos e-mails. L'action est journalisée avec votre motif."
+      message={state.message ? <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p> : null}
+    >
       <input type="hidden" name="suppressionId" value={suppressionId} />
-      <label htmlFor={id} className="pt-lead-label">
-        Motif de réactivation
-      </label>
-      <textarea id={id} name="reason" rows={2} required minLength={3} maxLength={300} />
-      <div aria-live="polite">
-        {state.message ? (
-          <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p>
-        ) : null}
+      <div>
+        <label htmlFor={id} className="pt-inline-label">
+          Motif de réactivation
+        </label>
+        <textarea id={id} name="reason" rows={2} required minLength={3} maxLength={300} />
       </div>
-      <div className="pt-lead-panel-actions">
-        <button type="submit" className="pt-btn-ghost" disabled={pending}>
-          Réactiver
-        </button>
-      </div>
-    </form>
+    </ConfirmAction>
   );
 }

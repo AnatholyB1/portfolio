@@ -51,6 +51,15 @@ describe('admin project sheet source guards (T-12-60, T-12-61, T-12-62)', () => 
     }
   });
 
+  it('degrades per panel when a loader fails (no blank page, no wrong status)', () => {
+    expect(page).toContain('PanelUnavailable');
+    expect(page).toContain('SheetUnavailable');
+    expect(page).toContain('settle(');
+    expect(page).toContain('documentsReady');
+    expect(page).not.toMatch(/style=\{\{/);
+    expect(page).not.toContain('jours\' : \'jour\'');
+  });
+
   it('renders the reminder hold card with its loader', () => {
     expect(page).toContain('<ReminderHoldCard');
     expect(page).toContain('loadReminderHold(supabase');
@@ -65,7 +74,7 @@ describe('admin project sheet source guards (T-12-60, T-12-61, T-12-62)', () => 
 
   it('journal exposes revoke entry point and the Annulé badge', () => {
     expect(journal).toContain('RevokePanel');
-    expect(journal).toContain('Annuler ce fait');
+    expect(journal).toContain('Invalider ce fait');
     expect(journal).toContain('PROJECT_COPY.facts.revoked');
   });
 

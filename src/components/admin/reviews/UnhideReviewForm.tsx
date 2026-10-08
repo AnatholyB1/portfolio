@@ -2,8 +2,9 @@
 
 import { useActionState, useId } from 'react';
 import { unhideReviewAction, type ModerationState } from '@/app/admin/avis/avis.actions';
+import ConfirmAction from '@/components/admin/shared/ConfirmAction';
 import '@/components/admin/admin.css';
-import '@/components/admin/leads/leads.css';
+import '@/components/admin/shared/inline.css';
 
 const INITIAL: ModerationState = { ok: false, message: null };
 
@@ -16,33 +17,25 @@ export default function UnhideReviewForm({ reviewId }: { reviewId: string }) {
   );
 
   return (
-    <form action={formAction} className="pt-lead-panel">
+    <ConfirmAction
+      triggerLabel="Lever le masquage…"
+      triggerVariant="ghost"
+      confirmLabel="Confirmer la levée"
+      keepLabel="Garder l'avis masqué"
+      action={formAction}
+      pending={pending}
+      result={state}
+      succeeded={state.ok}
+      description="Lever le masquage : l'avis redevient public. L'action est journalisée."
+      message={state.message ? <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p> : null}
+    >
       <input type="hidden" name="reviewId" value={reviewId} />
-      <div className="pt-field">
-        <label className="pt-label" htmlFor={`${uid}-detail`}>
+      <div>
+        <label className="pt-inline-label" htmlFor={`${uid}-detail`}>
           Détail (obligatoire, 3 à 500 caractères)
         </label>
-        <textarea
-          id={`${uid}-detail`}
-          name="detail"
-          className="pt-input"
-          required
-          minLength={3}
-          maxLength={500}
-          rows={3}
-        />
+        <textarea id={`${uid}-detail`} name="detail" required minLength={3} maxLength={500} rows={3} />
       </div>
-      <p className="pt-helper">
-        Lever le masquage : l&apos;avis redevient public. L&apos;action est journalisée.
-      </p>
-      <div role="status" aria-live="polite">
-        {state.message ? <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p> : null}
-      </div>
-      <div className="pt-lead-panel-actions">
-        <button type="submit" className="pt-btn-ghost" style={{ minHeight: 44 }} disabled={pending}>
-          Lever le masquage
-        </button>
-      </div>
-    </form>
+    </ConfirmAction>
   );
 }

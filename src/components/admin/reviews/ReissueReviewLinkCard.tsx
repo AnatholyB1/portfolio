@@ -2,10 +2,11 @@
 
 import { useActionState, useId, useState } from 'react';
 import { reissueReviewLinkAction, type ReissueState } from '@/app/admin/avis/reissue.actions';
+import ConfirmAction from '@/components/admin/shared/ConfirmAction';
 import { formatDateFr } from '@/lib/admin/format';
 import type { ReviewLinkStatus } from '@/lib/reviews/linkStatus';
 import '@/components/admin/admin.css';
-import '@/components/admin/leads/leads.css';
+import '@/components/admin/shared/inline.css';
 
 const INITIAL: ReissueState = { ok: false, message: null, url: null };
 
@@ -35,7 +36,6 @@ export default function ReissueReviewLinkCard({
   reviewFiled: boolean;
 }) {
   const uid = useId();
-  const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [state, formAction, pending] = useActionState(
     async (prev: ReissueState, fd: FormData) => reissueReviewLinkAction(prev, fd),
@@ -63,76 +63,40 @@ export default function ReissueReviewLinkCard({
         <>
           <p className="pt-lead-sub">{statusLabel(status)}</p>
           {state.ok && state.url ? (
-            <div className="pt-lead-panel">
-              <label className="pt-label" htmlFor={`${uid}-url`}>
+            <div className="pt-inline-panel">
+              <label className="pt-inline-label" htmlFor={`${uid}-url`}>
                 Nouveau lien d&apos;avis
               </label>
-              <input
-                id={`${uid}-url`}
-                className="pt-input"
-                style={{ fontFamily: 'var(--font-mono, monospace)' }}
-                readOnly
-                value={state.url}
-              />
+              <input id={`${uid}-url`} className="pt-input pt-inline-readonly" readOnly value={state.url} />
               <p className="pt-helper">Cette adresse ne sera plus affichée. Copiez-la maintenant.</p>
-              <div className="pt-lead-panel-actions">
-                <button type="button" className="pt-btn-ghost" style={{ minHeight: 44 }} onClick={copy}>
+              <div className="pt-inline-actions">
+                <button type="button" className="pt-btn-ghost" onClick={copy}>
                   Copier le lien
                 </button>
               </div>
               <div aria-live="polite">{copied ? <p className="pt-helper">Lien copié</p> : null}</div>
             </div>
-          ) : open ? (
-            <form action={formAction} className="pt-lead-panel">
+          ) : (
+            <ConfirmAction
+              triggerLabel="Réémettre le lien d'avis…"
+              triggerVariant="ghost"
+              confirmLabel="Confirmer la réémission"
+              keepLabel="Garder le lien actuel"
+              action={formAction}
+              pending={pending}
+              result={state}
+              succeeded={state.ok}
+              description="Réémettre le lien : l'ancien lien cesse de fonctionner immédiatement. Le nouveau lien est valable 60 jours. L'action est journalisée."
+              message={state.message ? <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p> : null}
+            >
               <input type="hidden" name="projectId" value={projectId} />
-              <p className="pt-helper">
-                Réémettre le lien : l&apos;ancien lien cesse de fonctionner immédiatement. Le nouveau
-                lien est valable 60 jours. L&apos;action est journalisée.
-              </p>
-              <div className="pt-field">
-                <label className="pt-label" htmlFor={`${uid}-detail`}>
+              <div>
+                <label className="pt-inline-label" htmlFor={`${uid}-detail`}>
                   Détail (obligatoire, 3 à 500 caractères)
                 </label>
-                <textarea
-                  id={`${uid}-detail`}
-                  name="detail"
-                  className="pt-input"
-                  required
-                  minLength={3}
-                  maxLength={500}
-                  rows={3}
-                />
+                <textarea id={`${uid}-detail`} name="detail" required minLength={3} maxLength={500} rows={3} />
               </div>
-              <div aria-live="polite">
-                {state.message ? (
-                  <p className={state.ok ? 'pt-helper' : 'pt-error'}>{state.message}</p>
-                ) : null}
-              </div>
-              <div className="pt-lead-panel-actions">
-                <button type="submit" className="pt-btn-ghost" style={{ minHeight: 44 }} disabled={pending}>
-                  Confirmer la réémission
-                </button>
-                <button
-                  type="button"
-                  className="pt-btn-ghost"
-                  style={{ minHeight: 44 }}
-                  onClick={() => setOpen(false)}
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="pt-lead-panel-actions">
-              <button
-                type="button"
-                className="pt-btn-ghost"
-                style={{ minHeight: 44 }}
-                onClick={() => setOpen(true)}
-              >
-                Réémettre le lien d&apos;avis
-              </button>
-            </div>
+            </ConfirmAction>
           )}
         </>
       )}
