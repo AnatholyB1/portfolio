@@ -8,8 +8,9 @@ import {
   saveBalanceAction,
   type CostFormState,
 } from '@/app/admin/pilotage/couts/actions';
+import { formatAmountInput } from '@/lib/documents/numberFormat';
 import { COST_CATEGORY_KEYS, COST_CATEGORY_LABELS } from './costCategories';
-import '../leads/leads.css';
+import '@/components/admin/shared/inline.css';
 import './pilotage.css';
 
 const INITIAL: CostFormState = { status: 'idle' };
@@ -23,22 +24,14 @@ function SubmitButton({ children }: { children: ReactNode }) {
   );
 }
 
+// Région live toujours montée : le message arrive dans un conteneur déjà annoncé par les lecteurs d'écran.
 export function FormMessage({ state }: { state: CostFormState }) {
-  if (state.status === 'error') {
-    return (
-      <p role="alert" className="pt-error">
-        {state.message}
-      </p>
-    );
-  }
-  if (state.status === 'success') {
-    return (
-      <p role="status" className="pt-success">
-        {state.message}
-      </p>
-    );
-  }
-  return null;
+  return (
+    <div aria-live="polite" className="pt-form-message">
+      {state.status === 'error' ? <p className="pt-error">{state.message}</p> : null}
+      {state.status === 'success' ? <p className="pt-success">{state.message}</p> : null}
+    </div>
+  );
 }
 
 function CategorySelect({ id, defaultValue }: { id: string; defaultValue?: string }) {
@@ -56,7 +49,7 @@ function CategorySelect({ id, defaultValue }: { id: string; defaultValue?: strin
 export function BalanceForm({ today }: { today: string }) {
   const [state, formAction] = useActionState(saveBalanceAction, INITIAL);
   return (
-    <form action={formAction} className="pt-lead-panel pt-pilot-costs-form">
+    <form action={formAction} className="pt-inline-panel pt-pilot-costs-form">
       <div className="pt-field">
         <label htmlFor="bal-amount">Solde bancaire (€)</label>
         <input id="bal-amount" name="amount" type="text" inputMode="decimal" className="pt-input" required />
@@ -105,7 +98,7 @@ export function RecurringCostForm({
   );
   const p = initial ? `rc-${initial.seriesId}` : 'rc-new';
   return (
-    <form action={formAction} className="pt-lead-panel pt-pilot-costs-form">
+    <form action={formAction} className="pt-inline-panel pt-pilot-costs-form">
       {initial ? <input type="hidden" name="seriesId" value={initial.seriesId} /> : null}
       <div className="pt-field">
         <label htmlFor={`${p}-label`}>Libellé</label>
@@ -132,7 +125,7 @@ export function RecurringCostForm({
           inputMode="decimal"
           className="pt-input"
           required
-          defaultValue={initial ? String(initial.amountCents / 100).replace('.', ',') : undefined}
+          defaultValue={initial ? formatAmountInput(initial.amountCents) : undefined}
         />
       </div>
       <fieldset className="pt-seg">
@@ -176,7 +169,7 @@ export function ProjectCostForm({
 }) {
   const [state, formAction] = useActionState(addProjectCostAction, INITIAL);
   return (
-    <form action={formAction} className="pt-lead-panel pt-pilot-costs-form">
+    <form action={formAction} className="pt-inline-panel pt-pilot-costs-form">
       <div className="pt-field">
         <label htmlFor="pc-project">Projet</label>
         <select id="pc-project" name="projectId" className="pt-input" required defaultValue="">

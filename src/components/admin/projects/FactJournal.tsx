@@ -3,15 +3,10 @@
 import { useState } from 'react';
 import { formatDateFr } from '@/lib/admin/format';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { FACT_LABELS, type ActorKind, type Fact } from '@/lib/projects/steps';
+import { actorKindLabel } from '@/lib/documents/numberFormat';
+import { FACT_LABELS, type Fact } from '@/lib/projects/steps';
 import RevokePanel from './RevokePanel';
 import '../leads/leads.css';
-
-const ACTOR_LABEL: Record<ActorKind, string> = {
-  system: 'Système',
-  admin: 'Admin',
-  client: 'Client',
-};
 
 // Journal append-only (D-09) : rien n'est retiré, les faits annulés restent listés.
 export default function FactJournal({
@@ -46,10 +41,10 @@ export default function FactJournal({
         return (
           <li key={f.id} className="pt-lead-item">
             <p className="pt-lead-sub">
-              {formatDateFr(f.createdAt)} · {ACTOR_LABEL[f.actorKind]}
+              {formatDateFr(f.createdAt)} · {actorKindLabel(f.actorKind)}
             </p>
             <p>
-              {isRevoke ? `Annule : ${target ? FACT_LABELS[target.type] : label}` : label}{' '}
+              {isRevoke ? `Invalide : ${target ? FACT_LABELS[target.type] : label}` : label}{' '}
               {isRevoked ? <span className="pt-lead-badge">{PROJECT_COPY.facts.revoked}</span> : null}
             </p>
             {note ? <p className="pt-lead-sub">Motif : {note}</p> : null}
@@ -63,7 +58,7 @@ export default function FactJournal({
                 />
               ) : (
                 <button type="button" className="pt-btn-text" onClick={() => setOpenId(f.id)}>
-                  Annuler ce fait
+                  Invalider ce fait
                 </button>
               )
             ) : null}

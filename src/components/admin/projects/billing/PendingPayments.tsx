@@ -1,7 +1,7 @@
 import { AlertTriangle, Clock, ExternalLink } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { formatDateFr } from '@/lib/admin/format';
-import { formatEuros } from '@/lib/documents/money';
+import { formatSignedEuros } from '@/lib/documents/money';
 import type { AdminBillingView } from './types';
 
 const COPY = PROJECT_COPY.payments.admin.pending;
@@ -29,7 +29,7 @@ function gapText(p: Pending): string | null {
   if (p.expectedCents === null || p.receivedCents === null) return null;
   const diff = p.receivedCents - p.expectedCents;
   if (diff === 0) return null;
-  return diff > 0 ? COPY.overpaid(formatEuros(diff)) : COPY.missing(formatEuros(-diff));
+  return diff > 0 ? COPY.overpaid(formatSignedEuros(diff)) : COPY.missing(formatSignedEuros(-diff));
 }
 
 export default function PendingPayments({ pending }: { pending: Pending[] }) {
@@ -73,10 +73,10 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
                       {p.olderThan14Days ? <div className="pt-error">{COPY.olderThan14}</div> : null}
                     </td>
                     <td data-label={COPY.columns.expected} className="pt-bill-num">
-                      {p.expectedCents === null ? '—' : formatEuros(p.expectedCents)}
+                      {p.expectedCents === null ? '—' : formatSignedEuros(p.expectedCents)}
                     </td>
                     <td data-label={COPY.columns.received} className="pt-bill-num">
-                      {p.receivedCents === null ? '—' : formatEuros(p.receivedCents)}
+                      {p.receivedCents === null ? '—' : formatSignedEuros(p.receivedCents)}
                     </td>
                     <td data-label={COPY.columns.gap}>{gap ?? '—'}</td>
                     <td data-label={COPY.columns.status}>

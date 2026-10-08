@@ -61,7 +61,7 @@ export default function AcceptanceForm({
         {spec === null ? (
           <p className="pt-helper">{COPY.needSpec}</p>
         ) : (
-          <ol style={{ fontSize: 16, paddingLeft: 24, margin: 0 }}>
+          <ol className="pt-list-plain">
             {spec.acceptanceCriteria.map((c, i) => (
               <li key={`${i}-${c}`}>{c}</li>
             ))}

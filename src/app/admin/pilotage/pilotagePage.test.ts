@@ -48,7 +48,7 @@ describe('pilotage dashboard page source guards (T-17-39..42)', () => {
       'Appliquer',
       'Gérer les coûts',
       'Chiffres indisponibles',
-      'anomalie(s) de réconciliation',
+      'de réconciliation',
       'href="/admin/pilotage/couts"',
       'href="/admin/pilotage/couts#solde"',
       'name="tests"',
@@ -56,6 +56,13 @@ describe('pilotage dashboard page source guards (T-17-39..42)', () => {
       expect(src, s).toContain(s);
     }
     expect(src).toMatch(/Rien à piloter pour l(&apos;|')instant/);
+  });
+
+  it('pluralises anomalies and uses next/link for internal links', () => {
+    expect(src).toContain("countFr(view.anomalies.length, 'anomalie')");
+    expect(src).not.toContain('anomalie(s)');
+    expect(src).toContain("import Link from 'next/link'");
+    expect(src).not.toMatch(/<a /);
   });
 
   it('renders the error branch without tiles', () => {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import AdminNav from '@/components/admin/AdminNav';
 import { BalanceForm, ProjectCostForm, RecurringCostForm } from '@/components/admin/pilotage/CostForms';
 import RecurringRowActions from '@/components/admin/pilotage/RecurringRowActions';
@@ -17,6 +18,7 @@ import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
 import '@/components/admin/funnel/funnel.css';
 import '@/components/admin/pilotage/pilotage.css';
+import '@/components/admin/shared/inline.css';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Coûts · Pilotage' };
@@ -54,9 +56,9 @@ export default async function CostsPage() {
                   Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux. Rechargez la page ;
                   si l&apos;erreur persiste, vérifiez la connexion à la base.
                 </p>
-                <a className="pt-btn-ghost" href="/admin/pilotage/couts">
+                <Link className="pt-btn-ghost" href="/admin/pilotage/couts">
                   Recharger
-                </a>
+                </Link>
               </div>
             </section>
           ) : (
@@ -79,10 +81,10 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
   return (
     <section className="pt-card pt-pilot-stack" aria-labelledby="costs-title">
       <div>
-        <a href="/admin/pilotage" className="pt-back">
+        <Link href="/admin/pilotage" className="pt-back">
           Retour au pilotage
-        </a>
-        <h1 id="costs-title" className="pt-heading" style={{ marginBottom: 24 }}>
+        </Link>
+        <h1 id="costs-title" className="pt-heading pt-mb-24">
           Coûts et solde de départ
         </h1>
         <p className="pt-helper">
@@ -100,7 +102,9 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
             <thead>
               <tr>
                 <th scope="col">Date</th>
-                <th scope="col">Montant</th>
+                <th scope="col" className="pt-num">
+                  Montant
+                </th>
                 <th scope="col">Note</th>
                 <th scope="col">Saisi le</th>
               </tr>
@@ -114,7 +118,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                       <span className="pt-pilot-costs-badge">En vigueur</span>
                     ) : null}
                   </td>
-                  <td data-label="Montant" className="pt-pilot-num">
+                  <td data-label="Montant" className="pt-num">
                     {formatSignedEuros(b.amountCents)}
                   </td>
                   <td data-label="Note">{b.note ?? '—'}</td>
@@ -143,7 +147,9 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
               <tr>
                 <th scope="col">Libellé</th>
                 <th scope="col">Catégorie</th>
-                <th scope="col">Montant</th>
+                <th scope="col" className="pt-num">
+                  Montant
+                </th>
                 <th scope="col">Fréquence</th>
                 <th scope="col">Début</th>
                 <th scope="col">Fin</th>
@@ -157,7 +163,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                   <tr key={v.id}>
                     <td data-label="Libellé">{v.label}</td>
                     <td data-label="Catégorie">{categoryLabel(v.category)}</td>
-                    <td data-label="Montant" className="pt-pilot-num">
+                    <td data-label="Montant" className="pt-num">
                       {formatSignedEuros(v.amountCents)}
                     </td>
                     <td data-label="Fréquence">{v.frequency === 'monthly' ? 'Mensuelle' : 'Annuelle'}</td>
@@ -207,7 +213,9 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                 <th scope="col">Projet</th>
                 <th scope="col">Catégorie</th>
                 <th scope="col">Libellé</th>
-                <th scope="col">Montant</th>
+                <th scope="col" className="pt-num">
+                  Montant
+                </th>
                 <th scope="col">Statut</th>
                 <th scope="col">Action</th>
               </tr>
@@ -219,7 +227,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                   <td data-label="Projet">{projectTitles.get(c.projectId) ?? '—'}</td>
                   <td data-label="Catégorie">{categoryLabel(c.category)}</td>
                   <td data-label="Libellé">{c.label}</td>
-                  <td data-label="Montant" className="pt-pilot-num">
+                  <td data-label="Montant" className="pt-num">
                     {formatSignedEuros(c.amountCents)}
                   </td>
                   <td data-label="Statut">{c.status}</td>
@@ -232,7 +240,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
       </section>
 
       <p className="pt-helper">
-        Le coût par rendez-vous se saisit dans l&apos;entonnoir. <a href="/admin/entonnoir">Ouvrir l&apos;entonnoir</a>
+        Le coût par rendez-vous se saisit dans l&apos;entonnoir. <Link href="/admin/entonnoir">Ouvrir l&apos;entonnoir</Link>
       </p>
     </section>
   );

@@ -1,10 +1,12 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useId, useState } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { eraseLeadAction, type LeadActionState } from '@/app/admin/leads/actions';
 import { ERASE_REASONS } from '@/lib/admin/leadLabels';
+import ConfirmAction from '@/components/admin/shared/ConfirmAction';
 import './leads.css';
+import '@/components/admin/shared/inline.css';
 
 const INITIAL: LeadActionState = { status: 'idle' };
 
@@ -17,6 +19,7 @@ export default function EraseLeadForm({
   nom: string;
   email: string;
 }) {
+  const uid = useId();
   const [state, formAction, pending] = useActionState(
     async (prev: LeadActionState, fd: FormData) => eraseLeadAction(prev, fd),
     INITIAL,
@@ -26,17 +29,42 @@ export default function EraseLeadForm({
   const matches = email !== '' && typed.trim().toLowerCase() === email.trim().toLowerCase();
 
   return (
-    <details className="pt-card pt-lead-disclosure">
-      <summary>Effacer les données personnelles</summary>
-      <form action={formAction} className="pt-lead-form">
+    <section className="pt-card" aria-labelledby={`${uid}-title`}>
+      <h2 id={`${uid}-title`} className="pt-heading">
+        Données personnelles
+      </h2>
+      <ConfirmAction
+        triggerLabel="Effacer les données personnelles…"
+        confirmLabel="Effacer définitivement"
+        keepLabel="Garder les données"
+        pendingLabel="Effacement…"
+        action={formAction}
+        pending={pending}
+        confirmDisabled={!reason || !matches}
+        result={state}
+        succeeded={state.status === 'success'}
+        description={
+          <>
+            Cette action est définitive. Le nom, l&apos;e-mail, le téléphone et les notes de {nom} seront
+            supprimés. La source et l&apos;historique anonymisé sont conservés pour l&apos;entonnoir. Saisissez{' '}
+            {email} pour confirmer.
+          </>
+        }
+        message={
+          state.status === 'error' ? (
+            <p className="pt-error">
+              <AlertCircle size={16} aria-hidden="true" /> {state.message}
+            </p>
+          ) : state.status === 'success' ? (
+            <p className="pt-success">
+              <CheckCircle2 size={16} aria-hidden="true" /> {state.message}
+            </p>
+          ) : null
+        }
+      >
         <input type="hidden" name="leadId" value={leadId} />
-        <p className="pt-helper">
-          Effacer les données personnelles : Cette action est définitive. Le nom, l&apos;e-mail, le
-          téléphone et les notes de {nom} seront supprimés. La source et l&apos;historique anonymisé
-          sont conservés pour l&apos;entonnoir. Saisissez {email} pour confirmer.
-        </p>
         <fieldset className="pt-plain">
-          <legend>Motif</legend>
+          <legend className="pt-inline-label">Motif</legend>
           {ERASE_REASONS.map((r) => (
             <label key={r.code} className="pt-lead-radio">
               <input
@@ -52,9 +80,11 @@ export default function EraseLeadForm({
           ))}
         </fieldset>
         <div>
-          <label htmlFor="erase-confirm" className="pt-lead-label">Confirmer l&apos;e-mail</label>
+          <label htmlFor={`${uid}-confirm`} className="pt-inline-label">
+            Confirmer l&apos;e-mail
+          </label>
           <input
-            id="erase-confirm"
+            id={`${uid}-confirm`}
             name="confirmEmail"
             type="text"
             autoComplete="off"
@@ -62,26 +92,7 @@ export default function EraseLeadForm({
             onChange={(e) => setTyped(e.target.value)}
           />
         </div>
-        <div aria-live="polite">
-          {state.status === 'error' ? (
-            <p className="pt-error">
-              <AlertCircle size={16} aria-hidden="true" /> {state.message}
-            </p>
-          ) : null}
-          {state.status === 'success' ? (
-            <p className="pt-success">
-              <CheckCircle2 size={16} aria-hidden="true" /> {state.message}
-            </p>
-          ) : null}
-        </div>
-        <button
-          type="submit"
-          className="pt-btn-ghost pt-lead-danger"
-          disabled={!reason || !matches || pending}
-        >
-          Effacer définitivement
-        </button>
-      </form>
-    </details>
+      </ConfirmAction>
+    </section>
   );
 }

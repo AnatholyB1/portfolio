@@ -14,14 +14,21 @@ export default function SourceTable({ sources }: Props) {
       {sources.rows.length === 0 ? (
         <p className="pt-empty">Aucun CA signé sur cette période. Changez de période ou consultez le pipeline.</p>
       ) : (
-        <table className="pt-table pt-admin-table">
+        <table className="pt-table pt-admin-table pt-pilot-table">
+          <caption className="pt-sr-only">CA signé par source du lead</caption>
           <thead>
             <tr>
               <th scope="col">Source figée du lead</th>
               <th scope="col">Campagne</th>
-              <th scope="col">Projets</th>
-              <th scope="col">CA signé</th>
-              <th scope="col">Part</th>
+              <th scope="col" className="pt-num">
+                Projets
+              </th>
+              <th scope="col" className="pt-num">
+                CA signé
+              </th>
+              <th scope="col" className="pt-num">
+                Part
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -29,11 +36,13 @@ export default function SourceTable({ sources }: Props) {
               <tr key={r.key}>
                 <td data-label="Source figée du lead">{r.isNoLead ? DIRECT_NO_LEAD : r.source}</td>
                 <td data-label="Campagne">{r.campaign ?? '—'}</td>
-                <td data-label="Projets">{r.projectIds.length}</td>
-                <td data-label="CA signé" className="pt-funnel-num">
+                <td data-label="Projets" className="pt-num">
+                  {r.projectIds.length}
+                </td>
+                <td data-label="CA signé" className="pt-num">
                   {formatSignedEuros(r.signedCents)}
                 </td>
-                <td data-label="Part" className="pt-funnel-num">
+                <td data-label="Part" className="pt-num">
                   {formatShareBp(r.shareBp)}
                 </td>
               </tr>
@@ -44,7 +53,7 @@ export default function SourceTable({ sources }: Props) {
               <th scope="row" colSpan={3}>
                 Total
               </th>
-              <td data-label="CA signé" className="pt-funnel-num">
+              <td data-label="CA signé" className="pt-num">
                 {formatSignedEuros(sources.totalCents)}
               </td>
               <td />

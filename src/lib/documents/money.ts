@@ -48,6 +48,18 @@ export function formatEuros(cents: number): string {
   return `${cents < 0 ? "-" : ""}${grouped},${frac}${NBSP}€`;
 }
 
+/** Signe moins typographique (U+2212), réservé à l'affichage écran. */
+export const MINUS_SIGN = "−";
+
+/**
+ * Montant pour l'écran (admin, pilotage) : négatif en U+2212. `formatEuros` garde le trait d'union
+ * ASCII, car les PDF et Factur-X s'appuient sur des polices et une extraction de texte qui ne
+ * garantissent pas ce glyphe.
+ */
+export function formatSignedEuros(cents: number): string {
+  return cents < 0 ? `${MINUS_SIGN}${formatEuros(-cents)}` : formatEuros(cents);
+}
+
 export function formatPercent(p: number): string {
   return `${p}${NBSP}%`;
 }

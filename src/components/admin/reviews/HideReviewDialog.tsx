@@ -2,8 +2,10 @@
 
 import { useActionState, useEffect, useId, useRef } from 'react';
 import { hideReviewAction, type ModerationState } from '@/app/admin/avis/avis.actions';
+import { ConfirmButtons } from '@/components/admin/shared/ConfirmAction';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
+import '@/components/admin/shared/inline.css';
 
 const INITIAL: ModerationState = { ok: false, message: null };
 
@@ -46,14 +48,8 @@ export default function HideReviewDialog({ reviewId, reasons }: Props) {
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        className="pt-btn-ghost"
-        style={{ minHeight: 44 }}
-        onClick={open}
-      >
-        Masquer cet avis
+      <button ref={triggerRef} type="button" className="pt-btn-ghost" onClick={open}>
+        Masquer cet avis…
       </button>
       <div role="status" aria-live="polite">
         {state.ok && state.message ? <p className="pt-helper">{state.message}</p> : null}
@@ -69,7 +65,7 @@ export default function HideReviewDialog({ reviewId, reasons }: Props) {
           else triggerRef.current?.focus();
         }}
       >
-        <form action={formAction}>
+        <form action={formAction} className="pt-stack-16">
           <h2 id={titleId} className="pt-heading">
             Masquer cet avis
           </h2>
@@ -80,18 +76,11 @@ export default function HideReviewDialog({ reviewId, reasons }: Props) {
 
           <input type="hidden" name="reviewId" value={reviewId} />
 
-          <div className="pt-field" style={{ marginTop: 16 }}>
+          <div className="pt-field">
             <label className="pt-label" htmlFor={`${uid}-reason`}>
               Motif
             </label>
-            <select
-              id={`${uid}-reason`}
-              name="reason"
-              className="pt-input"
-              required
-              defaultValue=""
-              style={{ minHeight: 44 }}
-            >
+            <select id={`${uid}-reason`} name="reason" className="pt-input pt-minh-44" required defaultValue="">
               <option value="" disabled>
                 Choisir un motif
               </option>
@@ -103,7 +92,7 @@ export default function HideReviewDialog({ reviewId, reasons }: Props) {
             </select>
           </div>
 
-          <div className="pt-field" style={{ marginTop: 16 }}>
+          <div className="pt-field">
             <label className="pt-label" htmlFor={`${uid}-detail`}>
               Détail (obligatoire, 3 à 500 caractères)
             </label>
@@ -118,41 +107,23 @@ export default function HideReviewDialog({ reviewId, reasons }: Props) {
             />
           </div>
 
-          <p className="pt-helper" style={{ marginTop: 16 }}>
+          <p className="pt-helper">
             Masquer cet avis : l&apos;avis ne sera plus visible publiquement ni balisé. Il reste
             conservé, l&apos;action est journalisée avec votre nom, la date et le motif, et son
             auteur sera prévenu par e-mail.
           </p>
 
-          {!state.ok && state.message ? (
-            <p className="pt-error" role="alert">
-              {state.message}
-            </p>
-          ) : null}
-
-          <div className="pt-lead-panel-actions" style={{ marginTop: 16 }}>
-            <button
-              type="button"
-              className="pt-btn-ghost"
-              style={{ minHeight: 44 }}
-              onClick={close}
-              disabled={pending}
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              className="pt-btn-ghost"
-              style={{
-                minHeight: 44,
-                color: 'var(--warm)',
-                borderColor: 'var(--warm)',
-              }}
-              disabled={pending}
-            >
-              Masquer cet avis
-            </button>
+          <div aria-live="polite">
+            {!state.ok && state.message ? <p className="pt-error">{state.message}</p> : null}
           </div>
+
+          <ConfirmButtons
+            confirmLabel="Confirmer le masquage"
+            keepLabel="Garder l'avis visible"
+            pendingLabel="Masquage…"
+            pending={pending}
+            onKeep={close}
+          />
         </form>
       </dialog>
     </>

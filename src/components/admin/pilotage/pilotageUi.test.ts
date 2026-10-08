@@ -48,6 +48,28 @@ describe('SourceTable', () => {
   });
 });
 
+describe('money columns and tables (audit v2.0)', () => {
+  const css = read('./pilotage.css');
+  it('pilotage.css defines the global right-aligned mono tabular numerals class under .pt-admin', () => {
+    expect(css).toMatch(/\.pt-admin \.pt-num,\s*\.pt-admin \.pt-pilot-num\s*\{[^}]*tabular-nums/);
+    expect(css).toMatch(/th\.pt-num[\s\S]*text-align:\s*right/);
+  });
+  it.each(['SourceTable.tsx', 'ProjectMarginTable.tsx', 'DetailPanel.tsx'])(
+    '%s uses pt-num and pt-pilot-table, never the funnel-scoped class',
+    (f) => {
+      const src = read(`./${f}`);
+      expect(src).toContain('pt-num');
+      expect(src).toContain('pt-pilot-table');
+      expect(src).not.toContain('pt-funnel-num');
+    },
+  );
+  it('ProjectMarginTable has an empty state and 44px link targets', () => {
+    const src = read('./ProjectMarginTable.tsx');
+    expect(src).toContain('projects.length === 0');
+    expect(src).toContain('pt-link-target');
+  });
+});
+
 describe('ProjectMarginTable', () => {
   const src = read('./ProjectMarginTable.tsx');
   it('renders headers, links and footer', () => {
@@ -70,10 +92,8 @@ describe('DetailPanel', () => {
       'Détail : ',
       'Total des lignes = ',
       'Fermer le détail',
-      'Page ',
-      ' sur ',
-      'Précédente',
-      'Suivante',
+      '<Pager',
+      'Pagination du détail',
       'Aucun élément ne compose ce chiffre pour cette période.',
       'Encaissement',
       'Coût',
@@ -81,6 +101,11 @@ describe('DetailPanel', () => {
     ]) {
       expect(src).toContain(s);
     }
+  });
+  it('paginates with the shared pager, no undefined pt-pilot-pager class', () => {
+    expect(src).not.toContain('pt-pilot-pager');
+    const pager = read('../shared/Pager.tsx');
+    for (const s of ['Précédent', 'Suivant', 'Page ', ' sur ', 'pt-btn-ghost']) expect(pager).toContain(s);
   });
   it('uses the view model total without summing rows', () => {
     expect(src).toContain('detail.totalCents');

@@ -103,14 +103,14 @@ export default function ContractForm({
                 {quote.lines.map((l, i) => (
                   <tr key={`${i}-${l.designation}`}>
                     <td>{l.designation}</td>
-                    <td style={{ fontVariantNumeric: 'tabular-nums' }}>{l.quantity}</td>
-                    <td style={{ fontVariantNumeric: 'tabular-nums' }}>{formatEuros(l.unitPriceCents)}</td>
-                    <td style={{ fontVariantNumeric: 'tabular-nums' }}>{formatEuros(l.totalCents)}</td>
+                    <td className="pt-tabular">{l.quantity}</td>
+                    <td className="pt-tabular">{formatEuros(l.unitPriceCents)}</td>
+                    <td className="pt-tabular">{formatEuros(l.totalCents)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="pt-doc-totals" style={{ alignItems: 'flex-end' }}>
+            <div className="pt-doc-totals pt-end">
               <span>{`${QUOTE_FORM_LABELS.total} ${formatEuros(quote.totalCents)}`}</span>
               <span>{`${QUOTE_FORM_LABELS.deposit} (${formatPercent(quote.depositPercent)}) ${formatEuros(quote.depositCents)}`}</span>
               <span>{`${QUOTE_FORM_LABELS.balance} ${formatEuros(quote.balanceCents)}`}</span>

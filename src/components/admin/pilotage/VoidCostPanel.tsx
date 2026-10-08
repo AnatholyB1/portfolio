@@ -1,47 +1,29 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState } from 'react';
 import { voidProjectCostAction, type CostFormState } from '@/app/admin/pilotage/couts/actions';
+import ConfirmAction from '@/components/admin/shared/ConfirmAction';
 import { FormMessage } from './CostForms';
-import '../leads/leads.css';
 import './pilotage.css';
 
 const INITIAL: CostFormState = { status: 'idle' };
 
 export default function VoidCostPanel({ costId }: { costId: number }) {
-  const [open, setOpen] = useState(false);
-  const [state, formAction, pending] = useActionState(
-    async (prev: CostFormState, fd: FormData) => {
-      const next = await voidProjectCostAction(prev, fd);
-      if (next.status === 'success') setOpen(false);
-      return next;
-    },
-    INITIAL,
-  );
+  const [state, formAction, pending] = useActionState(voidProjectCostAction, INITIAL);
 
-  if (!open) {
-    return (
-      <button type="button" className="pt-btn-text" aria-expanded={false} onClick={() => setOpen(true)}>
-        Annuler ce coût
-      </button>
-    );
-  }
   return (
-    <form action={formAction} className="pt-warning">
+    <ConfirmAction
+      triggerLabel="Invalider ce coût…"
+      confirmLabel="Confirmer l'invalidation"
+      keepLabel="Garder le coût"
+      action={formAction}
+      pending={pending}
+      result={state}
+      succeeded={state.status === 'success'}
+      description="Le coût sort des marges et de la trésorerie, mais reste visible dans l'historique avec le statut Annulé. Cette action est définitive."
+      message={<FormMessage state={state} />}
+    >
       <input type="hidden" name="costId" value={costId} />
-      <p>
-        Annuler ce coût : il sort des marges et de la trésorerie, mais reste visible dans l&apos;historique avec le
-        statut Annulé. Cette action ne peut pas être annulée.
-      </p>
-      <FormMessage state={state} />
-      <div className="pt-lead-panel-actions">
-        <button type="submit" className="pt-btn-primary" disabled={pending}>
-          {pending ? 'Enregistrement…' : 'Annuler ce coût'}
-        </button>
-        <button type="button" className="pt-btn-text" autoFocus onClick={() => setOpen(false)}>
-          Garder le coût
-        </button>
-      </div>
-    </form>
+    </ConfirmAction>
   );
 }

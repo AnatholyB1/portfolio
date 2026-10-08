@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import AdminNav from '@/components/admin/AdminNav';
 import DetailPanel from '@/components/admin/pilotage/DetailPanel';
 import PilotageKpis from '@/components/admin/pilotage/PilotageKpis';
@@ -9,6 +10,7 @@ import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
+import { countFr } from '@/lib/documents/numberFormat';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { buildPilotageView, type PilotageView } from '@/lib/server/pilotage/dashboard';
 import { PilotageLoadError, loadPilotageRows } from '@/lib/server/pilotage/load';
@@ -17,6 +19,7 @@ import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
 import '@/components/admin/funnel/funnel.css';
 import '@/components/admin/pilotage/pilotage.css';
+import '@/components/admin/shared/inline.css';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Pilotage' };
@@ -67,12 +70,12 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
           <section className="pt-card" aria-labelledby="pilot-title">
             <div className="pt-pilot-stack">
               <div>
-                <h1 id="pilot-title" className="pt-heading" style={{ marginBottom: 16 }}>
+                <h1 id="pilot-title" className="pt-heading pt-mb-16">
                   Pilotage
                 </h1>
-                <a className="pt-btn-ghost" href="/admin/pilotage/couts">
+                <Link className="pt-btn-ghost" href="/admin/pilotage/couts">
                   Gérer les coûts
-                </a>
+                </Link>
               </div>
 
               {view === null ? (
@@ -82,9 +85,9 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
                     Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux. Rechargez la page ;
                     si l&apos;erreur persiste, vérifiez la connexion à la base.
                   </p>
-                  <a className="pt-btn-ghost" href={pilotageHref(params, {})}>
+                  <Link className="pt-btn-ghost" href={pilotageHref(params, {})}>
                     Recharger
-                  </a>
+                  </Link>
                 </div>
               ) : (
                 <>
@@ -133,8 +136,8 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
                     <div className="pt-warning">
                       <span aria-hidden="true">!</span>
                       <div>
-                        <p>{view.anomalies.length} anomalie(s) de réconciliation</p>
-                        <ul>
+                        <p>{countFr(view.anomalies.length, 'anomalie')} de réconciliation</p>
+                        <ul className="pt-pilot-anomalies">
                           {view.anomalies.map((a, i) => (
                             <li key={`${a.kind}-${a.ref}-${i}`}>
                               {anomalyLabel(a.kind)} · {a.ref}
@@ -165,7 +168,7 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
                       {view.detail ? <DetailPanel detail={view.detail} params={params} /> : null}
                       <TreasuryChart
                         cash={view.cash}
-                        balanceLink={<a href="/admin/pilotage/couts#solde">Saisir le solde de départ</a>}
+                        balanceLink={<Link href="/admin/pilotage/couts#solde">Saisir le solde de départ</Link>}
                       />
                     </>
                   )}

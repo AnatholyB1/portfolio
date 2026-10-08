@@ -55,11 +55,31 @@ describe('/admin/pilotage/couts page guards', () => {
 });
 
 describe('cost forms are not floating dropdown panels (production defect 2026-10-07)', () => {
-  it('pilotage.css neutralises the absolute positioning of pt-lead-panel on the cost forms', () => {
+  it('the cost forms use the in-flow pt-inline-panel, never the absolute pt-lead-panel popover', () => {
+    const forms = readFileSync(new URL('./CostForms.tsx', import.meta.url), 'utf8');
+    expect(forms).not.toContain('pt-lead-panel');
+    expect((forms.match(/pt-inline-panel pt-pilot-costs-form/g) ?? []).length).toBe(3);
+  });
+
+  it('pilotage.css lays the inline cost panel out as a static grid', () => {
     const css = readFileSync(new URL('./pilotage.css', import.meta.url), 'utf8');
-    const rule = css.match(/\.pt-admin \.pt-lead-panel\.pt-pilot-costs-form\s*\{([^}]*)\}/);
-    expect(rule, 'override rule missing').not.toBeNull();
+    const rule = css.match(/\.pt-admin \.pt-inline-panel\.pt-pilot-costs-form\s*\{([^}]*)\}/);
+    expect(rule, 'inline panel rule missing').not.toBeNull();
     expect(rule![1]).toContain('position: static');
+    expect(rule![1]).toContain('display: grid');
+  });
+});
+
+describe('cost inputs and links', () => {
+  it('prefills the amount with two decimals', () => {
+    const forms = readFileSync(new URL('./CostForms.tsx', import.meta.url), 'utf8');
+    expect(forms).toContain('formatAmountInput(initial.amountCents)');
+    expect(forms).not.toContain("String(initial.amountCents / 100)");
+  });
+
+  it('internal links in the cost page use next/link', () => {
+    expect(page).toContain("import Link from 'next/link'");
+    expect(page).not.toMatch(/<a /);
   });
 });
 
