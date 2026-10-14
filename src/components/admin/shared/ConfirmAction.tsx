@@ -102,6 +102,8 @@ export interface ConfirmActionProps extends Omit<ConfirmPanelProps, 'onKeep' | '
   /** Libellé du déclencheur, différent de `confirmLabel`. */
   triggerLabel: string;
   triggerVariant?: 'text' | 'ghost';
+  /** Désactive le déclencheur (formulaire incomplet). */
+  triggerDisabled?: boolean;
   /** Message de résultat (erreur ou succès), affiché dans une région live toujours montée. */
   message?: ReactNode;
   /** Identité du dernier résultat de l'action et réussite : ferme le panneau quand elle réussit. */
@@ -114,6 +116,7 @@ export interface ConfirmActionProps extends Omit<ConfirmPanelProps, 'onKeep' | '
 export default function ConfirmAction({
   triggerLabel,
   triggerVariant = 'text',
+  triggerDisabled = false,
   message,
   result,
   succeeded = false,
@@ -163,6 +166,7 @@ export default function ConfirmAction({
         ref={triggerRef}
         type="button"
         className={triggerVariant === 'ghost' ? 'pt-btn-ghost' : 'pt-btn-text'}
+        disabled={triggerDisabled && !open}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={toggle}
