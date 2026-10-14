@@ -18,7 +18,7 @@ export default function EspaceClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="pt-root">
+    <div className="pt-root" data-own-skip-link="">
       <SkipLink />
       {children}
     </div>

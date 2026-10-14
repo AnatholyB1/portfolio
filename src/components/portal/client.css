@@ -98,8 +98,15 @@
   color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
-  display: inline-block;
-  min-height: 24px;
+  /* Zone cliquable de 44 px (e-mail, téléphone, liens utiles) : le téléphone est l'action principale sur mobile. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.pt-root .pt-client-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 .pt-client-contact {
   display: flex;

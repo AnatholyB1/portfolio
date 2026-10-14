@@ -387,6 +387,12 @@
 .pt-skip:focus {
   transform: none;
 }
+/* Un seul lien d'évitement dans l'admin et le portail client : celui du site (layout racine, cible #main-content
+   absente ici) est masqué dès qu'un de ces deux layouts pose son propre lien. L'attribut n'existe que dans les
+   layouts /admin et /espace-client : aucune page publique n'est touchée. */
+body:has([data-own-skip-link]) .skip-link {
+  display: none;
+}
 .pt-root main[id='contenu']:focus {
   outline: none;
 }
