@@ -4,6 +4,7 @@ import { pilotageHref, type PilotageParams } from '@/lib/server/pilotage/params'
 import Pager from '@/components/admin/shared/Pager';
 import { formatDateFr, formatSignedEuros } from './format';
 import './pilotage.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 type Props = { detail: DetailView; params: PilotageParams };
 
@@ -72,7 +73,8 @@ export default function DetailPanel({ detail, params }: Props) {
         <p className="pt-empty">Aucun élément ne compose ce chiffre pour cette période.</p>
       ) : (
         <>
-          <table className="pt-table pt-admin-table pt-pilot-table">
+          <TableScroll label="Détail du chiffre">
+<table className="pt-table pt-admin-table pt-pilot-table">
             <caption className="pt-sr-only">{`Détail : ${detail.title}`}</caption>
             <thead>
               <tr>
@@ -102,6 +104,7 @@ export default function DetailPanel({ detail, params }: Props) {
               })}
             </tbody>
           </table>
+</TableScroll>
           <Pager
             page={detail.page}
             pageCount={detail.pageCount}

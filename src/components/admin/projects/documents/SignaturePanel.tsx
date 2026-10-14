@@ -232,7 +232,7 @@ export default function SignaturePanel({
         {view.events.length === 0 ? (
           <p className="pt-helper">{COPY.trailEmpty}</p>
         ) : (
-          <div className="pt-doc-trail-scroll">
+          <div className="pt-doc-trail-scroll" role="region" aria-label="Journal de signature" tabIndex={0}>
             <table className="pt-table">
               <thead>
                 <tr>

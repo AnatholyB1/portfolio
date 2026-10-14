@@ -7,7 +7,7 @@ import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
-import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
+import Pager, { ADMIN_PAGE_SIZE, isPageOutOfRange, parsePage } from '@/components/admin/Pager';
 import { STATUS_ORDER } from '@/lib/admin/leadLabels';
 import { UTM_SOURCES } from '@/lib/attribution/utm';
 import { requireAdmin } from '@/lib/server/auth/dal';
@@ -99,6 +99,8 @@ export default async function AdminLeadsPage({
 
   const hasFilters = Boolean(statut || source || retours);
   const hasNext = from + PAGE_SIZE < total;
+  // Page au-delà de la dernière : état vide, pas une panne de lecture.
+  const pastEnd = isPageOutOfRange(error, page) || (!error && rows.length === 0 && page > 1);
 
   return (
     <>
@@ -119,7 +121,17 @@ export default async function AdminLeadsPage({
                 </div>
               ) : null}
               <LeadFilters statut={statut} source={source} retours={retours} sources={sources} />
-              {error ? (
+              {pastEnd ? (
+                <div className="pt-empty">
+                  <h2 className="pt-heading">Aucun résultat sur cette page</h2>
+                  <p className="pt-helper">
+                    Cette page est au-delà de la dernière page de la liste.
+                  </p>
+                  <Link href={hrefFor(statut, source, retours, 1)} className="pt-btn-ghost">
+                    Revenir à la première page
+                  </Link>
+                </div>
+              ) : error ? (
                 <div className="pt-empty">
                   <h2 className="pt-heading">Leads indisponibles</h2>
                   <p className="pt-helper">

@@ -684,11 +684,64 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-/* Tableau empilé en cartes (mobile) : le montant s'aligne à gauche sous son étiquette. */
-@media (max-width: 767px) {
+/* Tableau des paiements : six colonnes dont la largeur naturelle dépasse la carte entre 768 et
+   ~960 px. Il reste donc empilé en cartes jusqu'à 959 px (mêmes règles que portal.css
+   sous 768 px, limitées à .pt-pay-table) : le bouton Télécharger reste dans la carte et les
+   libellés ne se coupent plus au milieu d'un mot. Le montant est à gauche sous son étiquette. */
+@media (max-width: 959px) {
   .pt-root .pt-pay-amount-cell {
     text-align: left;
+    white-space: normal;
   }
+  .pt-root .pt-pay-table,
+  .pt-root .pt-pay-table tbody,
+  .pt-root .pt-pay-table tr,
+  .pt-root .pt-pay-table td {
+    display: block;
+    width: 100%;
+  }
+  .pt-root .pt-pay-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .pt-root .pt-pay-table tr {
+    margin-bottom: 16px;
+    padding: 8px 0;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+  }
+  .pt-root .pt-pay-table tr.pt-doc-replaced {
+    border-left: 2px solid var(--line-strong);
+  }
+  .pt-root .pt-pay-table tr.pt-pay-processing {
+    border-left: 2px solid var(--pt-border-strong);
+  }
+  .pt-root .pt-pay-table td {
+    padding: 8px 16px;
+    border-bottom: 0;
+  }
+  .pt-root .pt-pay-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-mono), monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+  }
+}
+/* Bureau : l'en-tête « Montant » suit l'alignement à droite des cellules ; un mot ne se coupe
+   qu'en dernier recours (break-word ne réduit pas la largeur minimale du tableau). */
+@media (min-width: 960px) {
+  .pt-root .pt-pay-table th.pt-pay-amount-head {
+    text-align: right;
+  }
+}
+.pt-root .pt-pay-table .pt-file-name {
+  overflow-wrap: break-word;
 }
 .pt-root .pt-pay-action {
   display: flex;

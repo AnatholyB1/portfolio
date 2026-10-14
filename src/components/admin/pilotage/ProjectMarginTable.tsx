@@ -4,6 +4,7 @@ import { pilotageHref, type PilotageParams } from '@/lib/server/pilotage/params'
 import { formatSignedEuros } from './format';
 import '@/components/admin/shared/inline.css';
 import './pilotage.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 type Props = { projects: ProjectLine[]; globalMarginCents: number; params: PilotageParams };
 
@@ -23,7 +24,8 @@ export default function ProjectMarginTable({ projects, globalMarginCents, params
           Aucun projet à afficher sur cette période. Changez de période ou incluez les données de test.
         </p>
       ) : (
-        <table className="pt-table pt-admin-table pt-pilot-table">
+        <TableScroll label="Marge par projet">
+<table className="pt-table pt-admin-table pt-pilot-table">
           <caption className="pt-sr-only">Marge par projet</caption>
           <thead>
             <tr>
@@ -93,6 +95,7 @@ export default function ProjectMarginTable({ projects, globalMarginCents, params
             </tr>
           </tfoot>
         </table>
+</TableScroll>
       )}
     </section>
   );

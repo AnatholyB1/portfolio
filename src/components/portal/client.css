@@ -36,6 +36,20 @@
   min-height: 44px;
   white-space: nowrap;
 }
+/* Mobile : le nom du client passe sur deux lignes au lieu d'être tronqué en « Test E2… »
+   (la déconnexion garde sa largeur). L'en-tête admin garde sa ligne unique. */
+@media (max-width: 479px) {
+  .pt-header-bar[data-variant="client"] .pt-header-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    font-size: 16px;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
 @media (min-width: 768px) {
   .pt-header.pt-header-bar {
     padding: 0 32px;
@@ -47,7 +61,6 @@
 
 /* ---------- Accueil client ---------- */
 .pt-main .pt-card.pt-client {
-  max-width: 560px;
   gap: 24px;
 }
 .pt-client h2 {

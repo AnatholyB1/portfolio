@@ -5,6 +5,12 @@ import { monthShortFr } from '@/lib/server/pilotage/periods';
 /** Montant avec le signe moins typographique U+2212 (défini une seule fois dans money.ts). */
 export { formatSignedEuros };
 
+/** Graduation d'axe : euros entiers (« 5 000 € ») pour garder des étiquettes courtes. */
+export function formatAxisEuros(cents: number): string {
+  const full = formatSignedEuros(cents);
+  return cents % 100 === 0 ? full.replace(',00', '') : full;
+}
+
 /** Part en points de base (1250 = 12,5 %), arithmétique entière. */
 export function formatShareBp(bp: number): string {
   const whole = Math.floor(bp / 100);

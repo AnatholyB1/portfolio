@@ -19,6 +19,7 @@ import '@/components/admin/leads/leads.css';
 import '@/components/admin/funnel/funnel.css';
 import '@/components/admin/pilotage/pilotage.css';
 import '@/components/admin/shared/inline.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Coûts · Pilotage' };
@@ -98,7 +99,8 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
         </h2>
         <BalanceForm today={today} />
         {balances.length > 0 ? (
-          <table className="pt-table pt-admin-table pt-pilot-table">
+          <TableScroll label="Soldes de départ">
+<table className="pt-table pt-admin-table pt-pilot-table">
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -127,6 +129,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
               ))}
             </tbody>
           </table>
+</TableScroll>
         ) : null}
       </section>
 
@@ -142,7 +145,8 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
             </p>
           </div>
         ) : (
-          <table className="pt-table pt-admin-table pt-pilot-table">
+          <TableScroll label="Charges récurrentes">
+<table className="pt-table pt-admin-table pt-pilot-table">
             <thead>
               <tr>
                 <th scope="col">Libellé</th>
@@ -191,6 +195,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
               )}
             </tbody>
           </table>
+</TableScroll>
         )}
       </section>
 
@@ -206,7 +211,8 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
             </p>
           </div>
         ) : (
-          <table className="pt-table pt-admin-table pt-pilot-table">
+          <TableScroll label="Coûts de projet">
+<table className="pt-table pt-admin-table pt-pilot-table">
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -236,6 +242,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
               ))}
             </tbody>
           </table>
+</TableScroll>
         )}
       </section>
 

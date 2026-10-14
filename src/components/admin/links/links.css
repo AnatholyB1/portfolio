@@ -28,7 +28,7 @@
   background: var(--bg);
   color: var(--ink);
   border: 1px solid var(--pt-border-strong);
-  border-radius: 0;
+  border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
   transition: border-color 150ms;
@@ -78,7 +78,7 @@
   color: var(--ink);
   background: var(--bg);
   border: 1px solid var(--pt-border-strong);
-  border-radius: 0;
+  border-radius: 4px;
   resize: vertical;
 }
 .pt-admin .pt-link-ok,

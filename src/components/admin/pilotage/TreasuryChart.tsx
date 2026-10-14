@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
 import type { CashProjection } from '@/lib/server/pilotage/forecast';
 import { monthLongFr, monthShortFr } from '@/lib/server/pilotage/periods';
-import { formatMonthFr, formatSignedEuros } from './format';
-import { chartGeometry, VIEW_H, VIEW_W } from './chartGeometry';
+import { formatAxisEuros, formatMonthFr, formatSignedEuros } from './format';
+import { AXIS_LABEL_X, chartGeometry, M_LEFT, VIEW_H, VIEW_W } from './chartGeometry';
 import './pilotage.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 type Props = { cash: CashProjection; balanceLink?: ReactNode };
 
@@ -38,7 +39,7 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           {balanceLink}
         </div>
       ) : null}
-      <div className="pt-pilot-chart">
+      <div className="pt-pilot-chart" role="region" tabIndex={0} aria-label="Courbe de trésorerie (défilement horizontal)">
         <svg
           role="img"
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -50,22 +51,22 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           {g.yTicks.map((t) => (
             <text
               key={t.cents}
-              x={56}
+              x={AXIS_LABEL_X}
               y={t.y + 5}
               textAnchor="end"
-              fontSize={14}
+              fontSize={16}
               fill="var(--ink-dim)"
               fontFamily="var(--font-mono), monospace"
             >
-              {formatSignedEuros(t.cents)}
+              {formatAxisEuros(t.cents)}
             </text>
           ))}
-          <line x1={64} x2={VIEW_W - 16} y1={g.zeroY} y2={g.zeroY} stroke="var(--ink-dim)" strokeWidth={1} strokeDasharray="4 4" />
+          <line x1={M_LEFT} x2={VIEW_W - 16} y1={g.zeroY} y2={g.zeroY} stroke="var(--ink-dim)" strokeWidth={1} strokeDasharray="4 4" />
           <text
-            x={56}
+            x={AXIS_LABEL_X}
             y={g.zeroY + 5}
             textAnchor="end"
-            fontSize={14}
+            fontSize={16}
             fill="var(--ink-dim)"
             fontFamily="var(--font-mono), monospace"
           >
@@ -87,7 +88,7 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
               >
                 <title>{`Sorties ${monthLongFr(m.month)} : ${formatSignedEuros(m.outflowCents)}`}</title>
               </rect>
-              <text x={g.xs[i]} y={VIEW_H - 4} textAnchor="middle" fontSize={14} fill="var(--ink-dim)">
+              <text x={g.xs[i]} y={VIEW_H - 4} textAnchor="middle" fontSize={16} fill="var(--ink-dim)">
                 {monthShortFr(m.month)}
               </text>
             </g>
@@ -102,7 +103,7 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
             </circle>
           ))}
           {g.negativeSegments.length > 0 ? (
-            <text x={VIEW_W - 16} y={g.zeroY + 20} textAnchor="end" fontSize={14} fill="var(--warm)">
+            <text x={VIEW_W - 16} y={g.zeroY + 20} textAnchor="end" fontSize={16} fill="var(--warm)">
               Découvert
             </text>
           ) : null}
@@ -119,7 +120,8 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           <span className="pt-pilot-swatch pt-pilot-swatch-outline" aria-hidden="true" /> Sorties
         </li>
       </ul>
-      <table className="pt-table pt-pilot-table">
+      <TableScroll label="Trésorerie mois par mois">
+<table className="pt-table pt-pilot-table">
         <thead>
           <tr>
             <th scope="col">Mois</th>
@@ -160,6 +162,7 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           ))}
         </tbody>
       </table>
+</TableScroll>
     </section>
   );
 }

@@ -77,7 +77,7 @@ export default async function AdminLiensPage() {
               Convention
             </h2>
 
-            <div className="pt-link-scroll">
+            <div className="pt-link-scroll" role="region" aria-label="Sources autorisées" tabIndex={0}>
               <table className="pt-table pt-admin-table" role="table">
                 <caption className="pt-sr-only">Sources autorisées</caption>
                 <thead role="rowgroup">
@@ -99,7 +99,7 @@ export default async function AdminLiensPage() {
               </table>
             </div>
 
-            <div className="pt-link-scroll">
+            <div className="pt-link-scroll" role="region" aria-label="Supports autorisés" tabIndex={0}>
               <table className="pt-table pt-admin-table" role="table">
                 <caption className="pt-sr-only">Supports autorisés</caption>
                 <thead role="rowgroup">
@@ -125,7 +125,7 @@ export default async function AdminLiensPage() {
               caractères.
             </p>
 
-            <div className="pt-link-scroll">
+            <div className="pt-link-scroll" role="region" aria-label="Valeurs équivalentes acceptées" tabIndex={0}>
               <table className="pt-table pt-admin-table" role="table">
                 <caption className="pt-sr-only">Valeurs équivalentes acceptées</caption>
                 <thead role="rowgroup">

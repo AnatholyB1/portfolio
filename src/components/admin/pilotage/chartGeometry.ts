@@ -5,7 +5,9 @@ export const VIEW_W = 720;
 export const VIEW_H = 240;
 const M_TOP = 24;
 const M_BOTTOM = 24;
-const M_LEFT = 64;
+export const M_LEFT = 96;
+/** Ancrage (fin) des étiquettes de l'axe vertical, à gauche du tracé. */
+export const AXIS_LABEL_X = M_LEFT - 8;
 const M_RIGHT = 16;
 
 export type Bar = { x: number; y: number; w: number; h: number };
