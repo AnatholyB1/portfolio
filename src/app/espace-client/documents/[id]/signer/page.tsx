@@ -94,9 +94,16 @@ export default async function SignerPage({ params }: { params: Promise<{ id: str
         </section>
       );
     } else {
+      const code = sctx.signable.code;
+      const message =
+        code === 'already_signed'
+          ? SIG.states.alreadySigned
+          : code === 'not_signable_type'
+            ? SIG.states.notSignableType
+            : SIG.states.notSignable;
       body = (
         <section className="pt-card">
-          <p>{SIG.states.notSignable}</p>
+          <p>{message}</p>
         </section>
       );
     }
@@ -128,9 +135,9 @@ export default async function SignerPage({ params }: { params: Promise<{ id: str
             <ChevronLeft size={16} aria-hidden="true" />
             {SIG.back}
           </Link>
-          {showTitle && titleKey ? (
+          {showTitle ? (
             <div className="pt-stack-sm">
-              <h1 className="pt-heading">{SIG.titles[titleKey]}</h1>
+              <h1 className="pt-heading">{titleKey ? SIG.titles[titleKey] : SIG.titles.generic}</h1>
               <p className="pt-doc-meta">{SIG.meta(doc.revision, formatDateFr(doc.issuedAt))}</p>
             </div>
           ) : null}

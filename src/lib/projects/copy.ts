@@ -56,7 +56,15 @@ export const PROJECT_COPY = {
     emptyJournal: 'Aucun fait enregistré pour ce projet.',
     revokeTitle: 'Annuler ce fait',
     revokeBody: (fact: string) =>
-      `Le fait « ${fact} » sera marqué comme annulé et l'étape sera recalculée. Il reste visible dans l'historique. Indiquez le motif (10 à 500 caractères).`,
+      `Le fait « ${fact} » sera marqué comme annulé et l'étape sera recalculée. Si l'étape change, le client en est informé par e-mail. Il reste visible dans l'historique. Indiquez le motif (10 à 500 caractères).`,
+    confirmTrigger: 'Enregistrer le fait…',
+    confirmRecord: "Confirmer l'enregistrement",
+    confirmKeep: 'Revenir au formulaire',
+    confirmAdvances: (stepName: string) =>
+      `Étape suivante : ${stepName}. Un e-mail sera envoyé au client. L'enregistrement est définitif (il peut seulement être annulé ensuite).`,
+    confirmDone: "Le projet passera à « Terminé ». Un e-mail sera envoyé au client. L'enregistrement est définitif (il peut seulement être annulé ensuite).",
+    confirmStays:
+      "L'étape ne change pas : aucun e-mail ne sera envoyé au client. L'enregistrement est définitif (il peut seulement être annulé ensuite).",
     revokeConfirm: "Confirmer l'annulation",
     revokeKeep: 'Garder ce fait',
     revoked: 'Annulé',
@@ -274,6 +282,7 @@ export const PROJECT_COPY = {
       contract: 'Signer le contrat',
       acceptance: 'Signer le procès-verbal de recette',
       acceptanceChecklist: 'Recette du projet',
+      generic: 'Document',
     },
     meta: (version: number, date: string) => `Version ${version} · émis le ${date}`,
     stepsLabel: 'Étapes de la signature',
@@ -339,7 +348,12 @@ export const PROJECT_COPY = {
     states: {
       replaced: (n: number) => `Cette version a été remplacée par la version ${n}.`,
       seeVersion: (n: number) => `Voir la version ${n}`,
+      // Un message par cas (F-N2) : le texte unique était faux pour un document déjà signé (y compris
+      // quand la signature a été enregistrée sur une version précédente) ou qui n'a pas à être signé.
       notSignable: "Ce document n'est pas encore à signer.",
+      alreadySigned:
+        'Ce document est déjà signé : la signature a été enregistrée pour ce projet. Rien à faire de votre part.',
+      notSignableType: "Ce document est à consulter : il n'a pas à être signé.",
     },
     success: {
       heading: 'Document signé',

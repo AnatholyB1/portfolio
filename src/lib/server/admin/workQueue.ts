@@ -8,6 +8,7 @@ import { parisDateOf } from '@/lib/documents/dates';
 import type { QueueCounts } from '@/lib/admin/workQueue';
 import { unpaidInvoices, type InvoiceRow, type PaymentEventRow } from '@/lib/server/pilotage/billing';
 import { PAYMENT_EVENT_COLS, PILOTAGE_INVOICE_COLS } from '@/lib/server/pilotage/load';
+import { loadAdminProjects } from '@/lib/server/projects/read';
 
 type Row = Record<string, unknown>;
 
@@ -58,6 +59,12 @@ async function returningLeads(supabase: SupabaseClient): Promise<number> {
       .select('id', { count: 'exact', head: true })
       .eq('unseen_return', true),
   );
+}
+
+/** Projets en cours qui attendent Sèvalys (émission d'un document ou d'une facture, production). */
+async function projectsToPrepare(supabase: SupabaseClient, now: Date): Promise<number> {
+  const projects = await loadAdminProjects(supabase, now);
+  return projects.filter((p) => !p.state.done && p.state.waitingOn === 'admin').length;
 }
 
 /** Documents signables (devis, contrat, recette) non remplacés et sans signature. */
@@ -164,7 +171,8 @@ async function recentReviews(supabase: SupabaseClient, now: Date): Promise<numbe
 
 export async function loadWorkQueue(supabase: SupabaseClient, now: Date = new Date()): Promise<QueueCounts> {
   const today = parisDateOf(now);
-  const [newL, retL, docs, inv, sup, rev] = await Promise.all([
+  const [prep, newL, retL, docs, inv, sup, rev] = await Promise.all([
+    safe('projectsToPrepare', () => projectsToPrepare(supabase, now)),
     safe('newLeads', () => newLeads(supabase)),
     safe('returningLeads', () => returningLeads(supabase)),
     safe('documentsToSign', () => documentsToSign(supabase)),
@@ -173,6 +181,7 @@ export async function loadWorkQueue(supabase: SupabaseClient, now: Date = new Da
     safe('recentReviews', () => recentReviews(supabase, now)),
   ]);
   return {
+    projectsToPrepare: prep,
     newLeads: newL,
     returningLeads: retL,
     documentsToSign: docs,

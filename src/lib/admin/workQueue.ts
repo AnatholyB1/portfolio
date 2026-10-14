@@ -1,6 +1,7 @@
 // File de travail de l'accueil admin : module pur (libellés, ordre, états), sûr côté client.
 
 export type QueueKey =
+  | 'projectsToPrepare'
   | 'overdueInvoices'
   | 'documentsToSign'
   | 'newLeads'
@@ -22,6 +23,12 @@ type Def = { href: string; one: string; many: string; unavailable: string };
 
 // Ordre = priorité : l'argent et les signatures avant les leads, l'information en dernier.
 const DEFS: Record<QueueKey, Def> = {
+  projectsToPrepare: {
+    href: '/admin/projets?blocage=admin',
+    one: 'projet attend Sèvalys (document ou facture à émettre, production)',
+    many: 'projets attendent Sèvalys (documents ou factures à émettre, production)',
+    unavailable: 'Projets qui attendent Sèvalys',
+  },
   overdueInvoices: {
     href: '/admin/pilotage',
     one: 'facture en retard de paiement',

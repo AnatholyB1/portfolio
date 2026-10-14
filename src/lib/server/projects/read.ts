@@ -5,7 +5,18 @@ import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { callRpc } from '@/lib/server/rpc';
 import { PENDING_UPLOAD_HIDE_HOURS } from '@/lib/projects/fileRules';
-import { deriveProjectState, type ActorKind, type Fact, type FactType, type ProjectState } from '@/lib/projects/steps';
+import {
+  deriveProjectState,
+  resolveWaiting,
+  type ActorKind,
+  type Fact,
+  type FactType,
+  type PendingClientWork,
+  type ProjectState,
+} from '@/lib/projects/steps';
+import { withStatuses } from '@/lib/documents/status';
+import { DocumentsLoadError, loadDocumentsForProjectsStrict } from '@/lib/server/documents/read';
+import { InvoicesLoadError, loadInvoicesForProjects } from '@/lib/server/invoices/read';
 import { classifyProject, lastActivity, type AdminProjectRow } from '@/lib/projects/blocking';
 import type { OnboardingRow } from '@/lib/projects/onboardingSchema';
 
@@ -232,6 +243,31 @@ function clientDisplayName(c: ClientInfo | undefined): string {
   return c?.name ?? '';
 }
 
+/** Travail en attente côté client par projet, ou null si une lecture a échoué (garder alors l'état statique). */
+export async function loadPendingClientWork(
+  rls: SupabaseClient,
+  projectIds: string[],
+  factsBy: Map<string, Fact[]>,
+): Promise<Map<string, PendingClientWork> | null> {
+  try {
+    const [docs, invoices] = await Promise.all([
+      loadDocumentsForProjectsStrict(rls, projectIds),
+      loadInvoicesForProjects(rls, projectIds),
+    ]);
+    const out = new Map<string, PendingClientWork>();
+    for (const id of projectIds) {
+      const mine = docs.filter((d) => d.projectId === id);
+      const toSign = withStatuses(mine, factsBy.get(id) ?? []).filter((d) => d.status === 'to_sign').length;
+      const toPay = invoices.filter((i) => i.projectId === id && i.status === 'to_pay').length;
+      out.set(id, { toSign, toPay });
+    }
+    return out;
+  } catch (e) {
+    if (e instanceof DocumentsLoadError || e instanceof InvoicesLoadError) return null;
+    throw e;
+  }
+}
+
 /** PRECONDITION : requireAdmin() a déjà été exécuté par l'appelant (D-21, T-12-40). */
 export async function loadAdminProjects(rls: SupabaseClient, now: Date): Promise<AdminProjectRow[]> {
   const [pr, fr, fi, li, co, ob, cl] = await Promise.all([
@@ -286,10 +322,16 @@ export async function loadAdminProjects(rls: SupabaseClient, now: Date): Promise
     for (const r of rpc.data) if (r.last_sign_in_at) signIns.set(r.client_id, r.last_sign_in_at);
   }
 
+  // Documents à signer et factures à payer par projet : affinent « qui attend » (F-D1). Si l'une des
+  // lectures échoue, on garde la valeur statique plutôt que de basculer tous les projets chez Sèvalys.
+  const pendingBy = await loadPendingClientWork(rls, projects.map((p) => p.id), factsBy);
+
   return projects.map((p) => {
     const facts = factsBy.get(p.id) ?? [];
     const files = filesBy.get(p.id) ?? [];
-    const state = deriveProjectState(facts, p.startedAt);
+    const nominal = deriveProjectState(facts, p.startedAt);
+    const pending = pendingBy?.get(p.id);
+    const state = pending ? resolveWaiting(nominal, pending) : nominal;
     const lastActivityAt = lastActivity({
       startedAt: p.startedAt,
       dates: [

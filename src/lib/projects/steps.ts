@@ -202,3 +202,29 @@ export function isFactAhead(facts: Fact[], type: FactType): boolean {
   if (cur === null) return true;
   return !STEPS[cur - 1].gate.includes(type);
 }
+
+/** Ce que le client a réellement à faire à l'instant : documents à signer et factures à payer. */
+export type PendingClientWork = { toSign: number; toPay: number };
+
+// Étapes dont la porte dépend d'un document ou d'une facture à émettre par Sèvalys avant que
+// le client puisse agir (F-D1). Les étapes 1 (onboarding) et 4 (production) n'en ont pas.
+const PREPARING: Partial<Record<StepIndex, string>> = {
+  2: "Nous préparons votre devis. Vous recevrez un e-mail dès qu'il est disponible.",
+  3: "Nous préparons votre contrat ou la facture d'acompte. Vous recevrez un e-mail dès qu'il est disponible.",
+  5: "Nous préparons le procès-verbal de recette. Vous recevrez un e-mail dès qu'il est disponible.",
+  6: "Nous préparons votre facture de solde. Vous recevrez un e-mail dès qu'elle est disponible.",
+};
+
+/**
+ * Affine « qui attend » : `STEPS[].waitingOn` reste la valeur nominale, mais aux étapes 2, 3, 5 et 6
+ * le client n'attend que s'il a un document à signer ou une facture à payer. Sinon c'est Sèvalys
+ * qui doit émettre le document ou la facture. Pure : à n'appeler que si les deux listes ont été lues
+ * avec succès (sinon conserver l'état statique).
+ */
+export function resolveWaiting(state: ProjectState, pending: PendingClientWork): ProjectState {
+  if (state.done || state.currentStep === null) return state;
+  const text = PREPARING[state.currentStep];
+  if (!text) return state;
+  if (pending.toSign + pending.toPay > 0) return { ...state, waitingOn: 'client' };
+  return { ...state, waitingOn: 'admin', expectedAction: text };
+}

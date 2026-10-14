@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INVITE_COPY, inviteSchema } from './inviteSchema';
+import { INVITE_COPY, inviteInvalidMessage, inviteSchema } from './inviteSchema';
 
 const base = {
   name: 'Acme',
@@ -29,5 +29,19 @@ describe('inviteSchema', () => {
 
   it('builds the success message', () => {
     expect(INVITE_COPY.success('a@b.fr')).toBe('Invitation envoyée à a@b.fr.');
+  });
+});
+
+describe('inviteInvalidMessage (F-X1)', () => {
+  const ok = { name: 'Atelier Dupont', email: 'contact@atelier.fr', siret: '12345678901234' };
+  it('names the invalid email instead of a generic outage message', () => {
+    expect(inviteInvalidMessage({ ...ok, email: 'contact@atelier' })).toBe(INVITE_COPY.emailInvalid);
+  });
+  it('names the missing client name', () => {
+    expect(inviteInvalidMessage({ ...ok, name: '   ' })).toBe(INVITE_COPY.nameInvalid);
+  });
+  it('reports the SIRET first, and falls back to generic when nothing explains the rejection', () => {
+    expect(inviteInvalidMessage({ ...ok, siret: '123' })).toBe(INVITE_COPY.siretInvalid);
+    expect(inviteInvalidMessage(ok)).toBe(INVITE_COPY.generic);
   });
 });
