@@ -8,6 +8,7 @@ import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
 import Pager, { ADMIN_PAGE_SIZE, isPageOutOfRange, parsePage } from '@/components/admin/Pager';
+import { ignoredFilterNotice } from '@/lib/admin/filterNotice';
 import { STATUS_ORDER } from '@/lib/admin/leadLabels';
 import { UTM_SOURCES } from '@/lib/attribution/utm';
 import { requireAdmin } from '@/lib/server/auth/dal';
@@ -48,6 +49,7 @@ export default async function AdminLeadsPage({
   const rawStatut = one(sp.statut);
   const statut =
     rawStatut && (STATUS_ORDER as readonly string[]).includes(rawStatut) ? rawStatut : undefined;
+  const statutNotice = ignoredFilterNotice('Statut', rawStatut, STATUS_ORDER);
   const rawSource = one(sp.source);
   const source = rawSource && rawSource.length <= 200 ? rawSource : undefined;
   const retours = one(sp.retours) === '1';
@@ -120,7 +122,7 @@ export default async function AdminLeadsPage({
                   </Link>
                 </div>
               ) : null}
-              <LeadFilters statut={statut} source={source} retours={retours} sources={sources} />
+              <LeadFilters statut={statut} source={source} retours={retours} sources={sources} notice={statutNotice} />
               {pastEnd ? (
                 <div className="pt-empty">
                   <h2 className="pt-heading">Aucun résultat sur cette page</h2>

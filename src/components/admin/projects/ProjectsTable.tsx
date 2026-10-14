@@ -8,6 +8,7 @@ import '../leads/leads.css';
 import '@/components/admin/shared/inline.css';
 import './projects.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
+import { SORT_COLUMNS } from './sortColumns';
 
 export interface ProjectsTableProps {
   rows: AdminProjectRow[];
@@ -16,14 +17,6 @@ export interface ProjectsTableProps {
   etape?: string;
   blocage?: string;
 }
-
-const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: 'client', label: 'Client' },
-  { key: 'offre', label: 'Offre' },
-  { key: 'etape', label: 'Étape' },
-  { key: 'attente', label: 'Qui attend' },
-  { key: 'depuis', label: 'Depuis' },
-];
 
 function stepLabel(r: AdminProjectRow): string {
   if (r.state.done || !r.state.currentStep) return PROJECT_COPY.blocage.done;
@@ -75,7 +68,7 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
       <caption className="pt-sr-only">Projets</caption>
       <thead role="rowgroup">
         <tr role="row">
-          {COLUMNS.map((c) => {
+          {SORT_COLUMNS.map((c) => {
             const active = tri === c.key;
             return (
               <th

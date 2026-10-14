@@ -7,10 +7,12 @@ export interface LeadFiltersProps {
   source?: string;
   retours: boolean;
   sources: string[];
+  /** Paramètre d'URL refusé (ex. ?statut=xxx) : dit à l'admin que la liste n'est pas filtrée. */
+  notice?: string | null;
 }
 
 // Filtres en GET (fonctionnent sans JS, état partageable dans l'URL).
-export default function LeadFilters({ statut, source, retours, sources }: LeadFiltersProps) {
+export default function LeadFilters({ statut, source, retours, sources, notice }: LeadFiltersProps) {
   const chips: string[] = [];
   if (statut) chips.push(`Statut : ${STATUS_LABELS[statut as keyof typeof STATUS_LABELS]}`);
   if (source) chips.push(`Source : ${source}`);
@@ -52,6 +54,11 @@ export default function LeadFilters({ statut, source, retours, sources }: LeadFi
           Réinitialiser les filtres
         </Link>
       </form>
+      {notice ? (
+        <p className="pt-warning" role="status">
+          {notice}
+        </p>
+      ) : null}
       {chips.length > 0 ? (
         <div className="pt-lead-chips">
           {chips.map((c) => (
