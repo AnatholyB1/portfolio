@@ -60,7 +60,7 @@ export default async function AdminEmailsPage({
               </div>
             ) : rows.length === 0 ? (
               <div className="pt-empty">
-                <h2 className="pt-heading">Aucune adresse bloquée</h2>
+                <h2 className="pt-heading">{page > 1 ? "Aucun résultat sur cette page" : "Aucune adresse bloquée"}</h2>
                 <p className="pt-helper">
                   Les plaintes, désinscriptions et rebonds définitifs apparaîtront ici avec leur cause.
                 </p>

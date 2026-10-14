@@ -3,7 +3,7 @@ import Link from 'next/link';
 import AdminNav from '@/components/admin/AdminNav';
 import InviteForm from '@/components/admin/InviteForm';
 import ClientsTable, { type ClientRow } from '@/components/admin/ClientsTable';
-import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
+import Pager, { ADMIN_PAGE_SIZE, isPageOutOfRange, parsePage } from '@/components/admin/Pager';
 import WorkQueue from '@/components/admin/WorkQueue';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -46,7 +46,8 @@ export default async function AdminPage({
       .range(from, from + ADMIN_PAGE_SIZE),
     loadWorkQueue(supabase),
   ]);
-  const loadFailed = Boolean(clientsRes.error);
+  const pastEnd = isPageOutOfRange(clientsRes.error, page);
+  const loadFailed = Boolean(clientsRes.error) && !pastEnd;
 
   const fetched = (clientsRes.data ?? []) as unknown as Row[];
   const hasNext = fetched.length > ADMIN_PAGE_SIZE;
@@ -97,7 +98,15 @@ export default async function AdminPage({
             <h2 id="clients-title" className="pt-heading pt-admin-title">
               Clients invités
             </h2>
-            {loadFailed ? (
+            {pastEnd ? (
+              <div className="pt-admin-state">
+                <p className="pt-heading">Aucun résultat sur cette page</p>
+                <p className="pt-helper">Cette page est au-delà de la dernière page de la liste.</p>
+                <Link href="/admin" className="pt-btn-ghost">
+                  Revenir à la première page
+                </Link>
+              </div>
+            ) : loadFailed ? (
               <div className="pt-admin-state">
                 <p className="pt-heading">Clients indisponibles</p>
                 <p className="pt-helper">

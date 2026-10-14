@@ -66,7 +66,7 @@ export default async function AdminAvisPage({
               </div>
             ) : reviews.length === 0 ? (
               <div className="pt-empty">
-                <h2 className="pt-heading">Aucun avis déposé</h2>
+                <h2 className="pt-heading">{page > 1 ? "Aucun résultat sur cette page" : "Aucun avis déposé"}</h2>
                 <p className="pt-helper">
                   Les avis apparaîtront ici dès qu&apos;un client en aura publié un depuis son lien d&apos;avis.
                 </p>

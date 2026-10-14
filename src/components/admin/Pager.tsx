@@ -10,6 +10,19 @@ export function parsePage(raw: string | string[] | undefined): number {
   return Number.isFinite(n) && n >= 1 ? n : 1;
 }
 
+/**
+ * Une page au-delà de la dernière fait répondre PostgREST « Requested range not satisfiable »
+ * (PGRST103, HTTP 416). Ce n'est pas une panne : la page doit afficher un état vide avec un
+ * lien vers la première page, et non « indisponible ».
+ */
+export function isPageOutOfRange(
+  error: { code?: string | null; message?: string | null } | null | undefined,
+  page: number,
+): boolean {
+  if (!error || page <= 1) return false;
+  return error.code === 'PGRST103' || /range not satisfiable/i.test(error.message ?? '');
+}
+
 export interface PagerProps {
   /** Page courante (1 = première). */
   page: number;
