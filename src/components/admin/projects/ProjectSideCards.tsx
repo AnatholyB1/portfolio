@@ -1,5 +1,5 @@
 import { Check, ExternalLink } from 'lucide-react';
-import { EM_DASH, formatDateFr, formatSiret } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr, formatSiret } from '@/lib/admin/format';
 import { daysSince } from '@/lib/projects/blocking';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
@@ -18,7 +18,7 @@ const BLOCK_LABELS: Record<OnboardingBlock, string> = {
 
 function companyName(c: ClientInfo): string {
   const nom = (c.company as { nom?: unknown } | null)?.nom;
-  return typeof nom === 'string' && nom.trim() ? nom : c.name || EM_DASH;
+  return typeof nom === 'string' && nom.trim() ? nom : c.name || NOT_SET;
 }
 
 export function InfoCard({
@@ -35,7 +35,7 @@ export function InfoCard({
   now: Date;
 }) {
   const contact =
-    onboarding?.projectContactName?.trim() || onboarding?.signatoryName?.trim() || EM_DASH;
+    onboarding?.projectContactName?.trim() || onboarding?.signatoryName?.trim() || NOT_SET;
   return (
     <section className="pt-card" aria-labelledby="proj-info-title">
       <h2 id="proj-info-title" className="pt-heading">
@@ -65,11 +65,11 @@ export function InfoCard({
 function blockValue(block: OnboardingBlock, o: OnboardingRow): string {
   switch (block) {
     case 'societe':
-      return o.companyConfirmedAt ? `Confirmée le ${formatDateFr(o.companyConfirmedAt)}` : EM_DASH;
+      return o.companyConfirmedAt ? `Confirmée le ${formatDateFr(o.companyConfirmedAt)}` : NOT_SET;
     case 'signataire':
-      return [o.signatoryName, o.signatoryRole].filter(Boolean).join(', ') || EM_DASH;
+      return [o.signatoryName, o.signatoryRole].filter(Boolean).join(', ') || NOT_SET;
     case 'contact':
-      return [o.projectContactName, o.projectContactEmail, o.projectContactPhone].filter(Boolean).join(', ') || EM_DASH;
+      return [o.projectContactName, o.projectContactEmail, o.projectContactPhone].filter(Boolean).join(', ') || NOT_SET;
     case 'facturation': {
       const vat =
         o.vatStatus === 'number' ? `TVA ${o.vatNumber ?? ''}`.trim() : o.vatStatus === 'not_subject' ? 'Non assujetti à la TVA' : 'TVA non renseignée';
@@ -81,7 +81,7 @@ function blockValue(block: OnboardingBlock, o: OnboardingRow): string {
       return `${vat} · ${addr}`;
     }
     case 'projet':
-      return o.projectGoal?.trim() || EM_DASH;
+      return o.projectGoal?.trim() || NOT_SET;
   }
 }
 
@@ -104,7 +104,7 @@ export function OnboardingSummaryCard({ onboarding }: { onboarding: OnboardingRo
                   {ok ? PROJECT_COPY.onboarding.complete : PROJECT_COPY.onboarding.todo}
                 </span>
               </p>
-              <p className="pt-lead-sub">{onboarding ? blockValue(b, onboarding) : EM_DASH}</p>
+              <p className="pt-lead-sub">{onboarding ? blockValue(b, onboarding) : NOT_SET}</p>
             </li>
           );
         })}

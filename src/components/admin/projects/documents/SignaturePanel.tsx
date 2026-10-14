@@ -5,6 +5,7 @@ import { AlertTriangle, Check, Download, ShieldCheck } from 'lucide-react';
 import { actorKindLabel } from '@/lib/documents/numberFormat';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import type { ChainCheckResult, DocumentActions, SignatureView } from './types';
+import { NOT_SET } from '@/lib/admin/format';
 
 const COPY = PROJECT_COPY.signature.admin;
 const PORTAL_SIG = PROJECT_COPY.signature;
@@ -170,7 +171,7 @@ export default function SignaturePanel({
             {paris.date} {paris.time} (Paris) · {utc.date} {utc.time} (UTC)
           </dd>
           <dt>{COPY.block.ip}</dt>
-          <dd>{sig.ip ?? '—'}</dd>
+          <dd>{sig.ip ?? NOT_SET}</dd>
           <dt>{COPY.block.templateVersion}</dt>
           <dd>{templateVersion}</dd>
           <dt>{COPY.block.consentVersion}</dt>
@@ -252,7 +253,7 @@ export default function SignaturePanel({
                       </td>
                       <td data-label={COPY.trailColumns.event}>{e.label}</td>
                       <td data-label={COPY.trailColumns.actor}>{actorKindLabel(e.actorKind)}</td>
-                      <td data-label={COPY.trailColumns.ip}>{e.ip ?? '—'}</td>
+                      <td data-label={COPY.trailColumns.ip}>{e.ip ?? NOT_SET}</td>
                     </tr>
                   );
                 })}

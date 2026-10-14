@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { EM_DASH, formatDateFr, formatSiret, normalizeSiretInput } from './format';
+import { NOT_SET, formatDateFr, formatSiret, normalizeSiretInput } from './format';
 
 describe('format', () => {
   it('formats a 14-digit SIRET in groups', () => {
     expect(formatSiret('12345678900012')).toBe('123 456 789 00012');
   });
   it('returns an em dash for empty values', () => {
-    expect(formatSiret('')).toBe(EM_DASH);
-    expect(formatSiret(null)).toBe(EM_DASH);
-    expect(formatDateFr('')).toBe(EM_DASH);
-    expect(formatDateFr('nope')).toBe(EM_DASH);
+    expect(formatSiret('')).toBe(NOT_SET);
+    expect(formatSiret(null)).toBe(NOT_SET);
+    expect(formatDateFr('')).toBe(NOT_SET);
+    expect(formatDateFr('nope')).toBe(NOT_SET);
   });
   it('keeps malformed values as is', () => {
     expect(formatSiret('123')).toBe('123');

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { RotateCcw, TriangleAlert } from 'lucide-react';
-import { EM_DASH, formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import StatusPill from './StatusPill';
 import './leads.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
@@ -21,7 +21,7 @@ export interface LeadRow {
 }
 
 function orDash(v: string | null | undefined): string {
-  return v && v.trim() ? v : EM_DASH;
+  return v && v.trim() ? v : NOT_SET;
 }
 
 function ReturnBadge() {
@@ -83,7 +83,7 @@ export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
               <td role="cell" data-label="Arrivé le">{formatDateFr(r.created_at)}</td>
               <td role="cell" data-label="Dernier contact">{formatDateFr(r.last_contact_at)}</td>
               <td role="cell" data-label="Retour">
-                {r.unseen_return ? <ReturnBadge /> : EM_DASH}
+                {r.unseen_return ? <ReturnBadge /> : 'Aucun'}
               </td>
             </tr>
           );

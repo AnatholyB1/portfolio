@@ -312,7 +312,7 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
                         </button>
                       </>
                     ) : (
-                      '—'
+                      'Aucune action'
                     )}
                   </td>
                   <td data-label={LIST.columns.actions}>

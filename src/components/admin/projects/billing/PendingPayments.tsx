@@ -1,6 +1,6 @@
 import { AlertTriangle, Clock, ExternalLink } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import { formatSignedEuros } from '@/lib/documents/money';
 import type { AdminBillingView } from './types';
 import TableScroll from '@/components/admin/shared/TableScroll';
@@ -69,18 +69,18 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
                 const gap = gapText(p);
                 return (
                   <tr key={`${p.stripeRef ?? 'none'}-${i}`}>
-                    <td data-label={COPY.columns.invoice}>{p.invoiceNumber ?? '—'}</td>
+                    <td data-label={COPY.columns.invoice}>{p.invoiceNumber ?? NOT_SET}</td>
                     <td data-label={COPY.columns.receivedOn}>
                       {formatDateFr(p.receivedAt)}
                       {p.olderThan14Days ? <div className="pt-error">{COPY.olderThan14}</div> : null}
                     </td>
                     <td data-label={COPY.columns.expected} className="pt-bill-num">
-                      {p.expectedCents === null ? '—' : formatSignedEuros(p.expectedCents)}
+                      {p.expectedCents === null ? NOT_SET : formatSignedEuros(p.expectedCents)}
                     </td>
                     <td data-label={COPY.columns.received} className="pt-bill-num">
-                      {p.receivedCents === null ? '—' : formatSignedEuros(p.receivedCents)}
+                      {p.receivedCents === null ? NOT_SET : formatSignedEuros(p.receivedCents)}
                     </td>
-                    <td data-label={COPY.columns.gap}>{gap ?? '—'}</td>
+                    <td data-label={COPY.columns.gap}>{gap ?? NOT_SET}</td>
                     <td data-label={COPY.columns.status}>
                       <span className="pt-doc-badge">
                         <Icon size={16} aria-hidden="true" />
@@ -88,7 +88,7 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
                       </span>
                     </td>
                     <td data-label={COPY.columns.reference}>
-                      {p.stripeRef ? <span className="pt-doc-hash">{p.stripeRef}</span> : '—'}
+                      {p.stripeRef ? <span className="pt-doc-hash">{p.stripeRef}</span> : NOT_SET}
                     </td>
                     <td data-label={COPY.columns.action}>
                       {p.stripeRef ? (
@@ -102,7 +102,7 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
                           <ExternalLink size={16} aria-hidden="true" />
                         </a>
                       ) : (
-                        '—'
+                        'Aucune action'
                       )}
                     </td>
                   </tr>

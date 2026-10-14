@@ -5,7 +5,7 @@ import {
   STATUS_LABELS,
   type LeadStatus,
 } from '@/lib/admin/leadLabels';
-import { EM_DASH, formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 
 export interface EventRow {
   id: number;
@@ -24,7 +24,7 @@ export interface NoteRow {
 }
 
 function statusLabel(s: string | null): string {
-  return s && s in STATUS_LABELS ? STATUS_LABELS[s as LeadStatus] : EM_DASH;
+  return s && s in STATUS_LABELS ? STATUS_LABELS[s as LeadStatus] : NOT_SET;
 }
 
 function reasonLabel(code: string | null): string | null {
@@ -43,9 +43,9 @@ type Src = { source?: unknown; medium?: unknown; campaign?: unknown } | null;
 
 function srcText(s: unknown): string {
   const o = (s && typeof s === 'object' ? s : null) as Src;
-  if (!o) return EM_DASH;
+  if (!o) return NOT_SET;
   const parts = [o.source, o.medium, o.campaign].filter((p): p is string => typeof p === 'string' && p !== '');
-  return parts.length ? parts.join(' / ') : EM_DASH;
+  return parts.length ? parts.join(' / ') : NOT_SET;
 }
 
 // Journal en lecture seule (LEAD-03) : aucune commande de modification ou de suppression.
