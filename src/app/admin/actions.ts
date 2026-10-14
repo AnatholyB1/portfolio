@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { INVITE_COPY } from '@/lib/admin/inviteSchema';
+import { INVITE_COPY, inviteInvalidMessage } from '@/lib/admin/inviteSchema';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { createHash } from 'node:crypto';
 import { hitThrottle } from '@/lib/server/auth/throttle';
@@ -54,9 +54,11 @@ export async function inviteClientAction(
     case 'invalid':
       return {
         status: 'error',
-        message: /^\d{14}$/.test(siretRaw.replace(/\s/g, ''))
-          ? INVITE_COPY.generic
-          : INVITE_COPY.siretInvalid,
+        message: inviteInvalidMessage({
+          name: field(formData, 'name'),
+          email: field(formData, 'email'),
+          siret: siretRaw,
+        }),
       };
     default:
       console.error(`[admin/invite] ${result.code}`);

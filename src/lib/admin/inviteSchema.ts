@@ -33,6 +33,8 @@ export type InviteInput = z.infer<typeof inviteSchema>;
 
 export const INVITE_COPY = {
   siretInvalid: 'Le SIRET doit contenir 14 chiffres.',
+  emailInvalid: "Cette adresse e-mail n'est pas valide. Vérifiez la saisie (exemple : nom@societe.fr).",
+  nameInvalid: 'Le nom du client est requis.',
   siretNotFound:
     'Entreprise introuvable ou service indisponible. Renseignez les informations manuellement.',
   siretInactive: 'Cet établissement est signalé comme fermé. Vérifiez le SIRET avant d\'inviter.',
@@ -47,3 +49,11 @@ export const INVITE_COPY = {
   resendNotFound: 'Invitation introuvable pour ce client.',
   generic: 'Une erreur est survenue. Réessayez dans un instant ou écrivez à contact@sevalys.com.',
 } as const;
+
+/** Message précis pour un rejet `invalid` : SIRET, puis e-mail, puis nom ; `generic` si rien ne l'explique. */
+export function inviteInvalidMessage(input: { name: string; email: string; siret: string }): string {
+  if (!/^\d{14}$/.test(input.siret.replace(/\s/g, ''))) return INVITE_COPY.siretInvalid;
+  if (!inviteSchema.shape.email.safeParse(input.email).success) return INVITE_COPY.emailInvalid;
+  if (!inviteSchema.shape.name.safeParse(input.name).success) return INVITE_COPY.nameInvalid;
+  return INVITE_COPY.generic;
+}
