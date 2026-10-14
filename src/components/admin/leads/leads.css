@@ -29,7 +29,8 @@
   border-radius: 100px;
   cursor: pointer;
 }
-.pt-admin .pt-lead-pill:disabled {
+.pt-admin .pt-lead-pill:disabled,
+.pt-admin .pt-lead-pill[aria-disabled="true"] {
   cursor: default;
   color: var(--ink-dim);
 }

@@ -7,7 +7,7 @@ import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
 import ShellMain from '@/components/portal/ShellMain';
 import SignOutButton from '@/components/portal/SignOutButton';
-import { EM_DASH, formatDateFr } from '@/lib/admin/format';
+import { formatDateFr } from '@/lib/admin/format';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadSuppressions } from '@/lib/server/mail/suppressionAdmin';
 import '@/components/admin/admin.css';
@@ -104,7 +104,7 @@ export default async function AdminEmailsPage({
                           )}
                         </td>
                         <td role="cell" data-label="Action">
-                          {r.active ? <LiftSuppressionForm suppressionId={r.id} /> : EM_DASH}
+                          <LiftSuppressionForm suppressionId={r.id} active={r.active} />
                         </td>
                       </tr>
                     ))}

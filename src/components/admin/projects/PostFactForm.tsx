@@ -124,6 +124,7 @@ export default function PostFactForm({
         triggerLabel={PROJECT_COPY.facts.confirmTrigger}
         triggerVariant="ghost"
         triggerDisabled={!current || pending}
+        successFocusId={`pf-type-${projectId}`}
         confirmLabel={PROJECT_COPY.facts.confirmRecord}
         keepLabel={PROJECT_COPY.facts.confirmKeep}
         pending={pending}
