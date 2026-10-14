@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatEuros, NBSP } from '@/lib/documents/money';
-import { formatDateFr, formatMonthFr, formatShareBp, formatSignedEuros } from './format';
+import { formatAxisEuros, formatDateFr, formatMonthFr, formatShareBp, formatSignedEuros } from './format';
 
 describe('formatSignedEuros', () => {
   it('uses U+2212 for negatives', () => {
@@ -26,5 +26,15 @@ describe('dates', () => {
   });
   it('formats a month short', () => {
     expect(formatMonthFr('2026-10')).toBe('oct. 2026');
+  });
+});
+
+describe('formatAxisEuros', () => {
+  it('drops the zero cents of whole-euro ticks', () => {
+    expect(formatAxisEuros(500000)).toBe(`5${NBSP}000${NBSP}€`);
+    expect(formatAxisEuros(-1200000)).toBe(`−12${NBSP}000${NBSP}€`);
+  });
+  it('keeps cents when they are not zero', () => {
+    expect(formatAxisEuros(12345)).toBe(formatSignedEuros(12345));
   });
 });
