@@ -2,8 +2,9 @@
 
 import { Fragment, useState, useTransition } from 'react';
 import { Check, Clock, CreditCard, Download, Receipt, Undo2 } from 'lucide-react';
-import { formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import { formatEuros } from '@/lib/documents/money';
+import { nameWithSubject } from '@/lib/projects/accessibleNames';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 
 import PayButton, { type PayResult } from './PayButton';
@@ -65,6 +66,10 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
       <button
         type="button"
         className="pt-btn-text pt-file-action"
+        aria-label={nameWithSubject(
+          downloadingId === inv.id ? copy.preparing : copy.download,
+          inv.kind === 'credit_note' ? copy.creditLabel(inv.number) : `${PROJECT_COPY.payments.kinds[inv.kind]} ${inv.number}`,
+        )}
         onClick={() => onDownload(inv.id)}
         disabled={downloadingId === inv.id}
       >
@@ -88,7 +93,7 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
         </td>
         <td data-label={copy.columns.issuedOn}>{formatDateFr(inv.issuedOn)}</td>
         <td data-label={copy.columns.period}>
-          {inv.periodStart && inv.periodEnd ? copy.period(formatDateFr(inv.periodStart), formatDateFr(inv.periodEnd)) : '—'}
+          {inv.periodStart && inv.periodEnd ? copy.period(formatDateFr(inv.periodStart), formatDateFr(inv.periodEnd)) : NOT_SET}
         </td>
         <td data-label={copy.columns.amount} className="pt-pay-amount-cell">
           {formatEuros(inv.totalInclTaxCents)}
@@ -101,7 +106,13 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
         </td>
         <td data-label={copy.columns.action}>
           {inv.status === 'to_pay' && !isNext ? (
-            <PayButton invoiceId={inv.id} label={copy.pay} variant="ghost" pay={pay} />
+            <PayButton
+              invoiceId={inv.id}
+              label={copy.pay}
+              subject={`${PROJECT_COPY.payments.kinds[inv.kind]} ${inv.number}`}
+              variant="ghost"
+              pay={pay}
+            />
           ) : null}
           {inv.status === 'processing' ? <span className="pt-doc-meta">{copy.waiting}</span> : null}
           {inv.status === 'paid' && inv.paidAt ? (

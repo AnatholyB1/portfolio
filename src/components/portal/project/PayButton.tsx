@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CreditCard } from 'lucide-react';
+import { nameWithSubject } from '@/lib/projects/accessibleNames';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import './project.css';
 
@@ -11,12 +12,14 @@ export type PayResult = { ok: true; url: string } | { ok: false; message: string
 type Props = {
   invoiceId: string;
   label: string;
+  /** Facture concernée : sert au nom accessible quand plusieurs boutons « Payer » sont affichés. */
+  subject?: string;
   variant: 'primary' | 'ghost';
   pay: (invoiceId: string) => Promise<PayResult>;
 };
 
 // Seul l'identifiant de facture part du navigateur : le serveur résout le montant (D-05).
-export default function PayButton({ invoiceId, label, variant, pay }: Props) {
+export default function PayButton({ invoiceId, label, subject, variant, pay }: Props) {
   const copy = PROJECT_COPY.payments.portal;
   const router = useRouter();
   const inFlight = useRef(false);
@@ -49,6 +52,7 @@ export default function PayButton({ invoiceId, label, variant, pay }: Props) {
       <button
         type="button"
         className={`${variant === 'primary' ? 'pt-btn-primary' : 'pt-btn-ghost'} pt-pay-btn`}
+        aria-label={subject ? nameWithSubject(busy ? copy.redirecting : label, subject) : undefined}
         onClick={onClick}
         disabled={busy}
       >
