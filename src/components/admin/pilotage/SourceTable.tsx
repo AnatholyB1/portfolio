@@ -1,6 +1,7 @@
 import { DIRECT_NO_LEAD, type SourceRow } from '@/lib/server/pilotage/attribution';
 import { formatShareBp, formatSignedEuros } from './format';
 import './pilotage.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 type Props = { sources: { rows: SourceRow[]; totalCents: number } };
 
@@ -14,7 +15,8 @@ export default function SourceTable({ sources }: Props) {
       {sources.rows.length === 0 ? (
         <p className="pt-empty">Aucun CA signé sur cette période. Changez de période ou consultez le pipeline.</p>
       ) : (
-        <table className="pt-table pt-admin-table pt-pilot-table">
+        <TableScroll label="Chiffre d'affaires signé par source">
+<table className="pt-table pt-admin-table pt-pilot-table">
           <caption className="pt-sr-only">CA signé par source du lead</caption>
           <thead>
             <tr>
@@ -60,6 +62,7 @@ export default function SourceTable({ sources }: Props) {
             </tr>
           </tfoot>
         </table>
+</TableScroll>
       )}
     </section>
   );

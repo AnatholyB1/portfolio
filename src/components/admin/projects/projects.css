@@ -56,6 +56,10 @@
   font-size: 14px;
   word-break: break-all;
 }
+.pt-admin .pt-doc-hash.pt-bill-number {
+  word-break: normal;
+  white-space: nowrap;
+}
 .pt-admin .pt-doc-snapshot {
   display: flex;
   flex-direction: column;

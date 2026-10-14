@@ -3,6 +3,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { formatDateFr } from '@/lib/admin/format';
 import { formatSignedEuros } from '@/lib/documents/money';
 import type { AdminBillingView } from './types';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 const COPY = PROJECT_COPY.payments.admin.pending;
 
@@ -42,7 +43,8 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
         <p className="pt-helper">{COPY.none}</p>
       ) : (
         <>
-          <table className="pt-table pt-bill-table">
+          <TableScroll label="Paiements en attente">
+<table className="pt-table pt-bill-table">
             <caption className="pt-sr-only">{COPY.caption}</caption>
             <thead>
               <tr>
@@ -108,6 +110,7 @@ export default function PendingPayments({ pending }: { pending: Pending[] }) {
               })}
             </tbody>
           </table>
+</TableScroll>
           <p className="pt-helper">{COPY.readOnlyHelper}</p>
         </>
       )}

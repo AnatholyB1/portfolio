@@ -229,12 +229,12 @@
 /* Détail du lead (UI-SPEC A2). */
 .pt-admin .pt-lead-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 32px;
 }
 @media (min-width: 1024px) {
   .pt-admin .pt-lead-grid {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 }
 .pt-admin .pt-lead-main,
@@ -296,6 +296,7 @@
   margin-top: 16px;
 }
 .pt-admin .pt-lead-form input[type="text"],
+.pt-admin .pt-lead-form select,
 .pt-admin .pt-lead-form textarea {
   width: 100%;
   min-height: 44px;
@@ -308,6 +309,7 @@
   border-radius: 4px;
 }
 .pt-admin .pt-lead-form input:focus-visible,
+.pt-admin .pt-lead-form select:focus-visible,
 .pt-admin .pt-lead-form textarea:focus-visible,
 .pt-admin .pt-lead-disclosure summary:focus-visible {
   outline: 2px solid var(--acid);

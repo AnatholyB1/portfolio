@@ -3,6 +3,7 @@ import { RotateCcw, TriangleAlert } from 'lucide-react';
 import { EM_DASH, formatDateFr } from '@/lib/admin/format';
 import StatusPill from './StatusPill';
 import './leads.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 export interface LeadRow {
   id: string;
@@ -44,7 +45,8 @@ function OffConventionBadge() {
 // Tableau des leads (UI-SPEC A1). Données lues via le client RLS par la page.
 export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
   return (
-    <table className="pt-table pt-admin-table" role="table">
+    <TableScroll label="Leads">
+<table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Leads</caption>
       <thead role="rowgroup">
         <tr role="row">
@@ -88,5 +90,6 @@ export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
         })}
       </tbody>
     </table>
+</TableScroll>
   );
 }

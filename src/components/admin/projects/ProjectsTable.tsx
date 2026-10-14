@@ -7,6 +7,7 @@ import { STEPS } from '@/lib/projects/steps';
 import '../leads/leads.css';
 import '@/components/admin/shared/inline.css';
 import './projects.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 export interface ProjectsTableProps {
   rows: AdminProjectRow[];
@@ -69,7 +70,8 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
   };
 
   return (
-    <table className="pt-table pt-admin-table" role="table">
+    <TableScroll label="Projets">
+<table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Projets</caption>
       <thead role="rowgroup">
         <tr role="row">
@@ -130,5 +132,6 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
         ))}
       </tbody>
     </table>
+</TableScroll>
   );
 }

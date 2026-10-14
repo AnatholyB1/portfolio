@@ -4,6 +4,7 @@ import { monthLongFr, monthShortFr } from '@/lib/server/pilotage/periods';
 import { formatAxisEuros, formatMonthFr, formatSignedEuros } from './format';
 import { AXIS_LABEL_X, chartGeometry, M_LEFT, VIEW_H, VIEW_W } from './chartGeometry';
 import './pilotage.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 type Props = { cash: CashProjection; balanceLink?: ReactNode };
 
@@ -119,7 +120,8 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           <span className="pt-pilot-swatch pt-pilot-swatch-outline" aria-hidden="true" /> Sorties
         </li>
       </ul>
-      <table className="pt-table pt-pilot-table">
+      <TableScroll label="Trésorerie mois par mois">
+<table className="pt-table pt-pilot-table">
         <thead>
           <tr>
             <th scope="col">Mois</th>
@@ -160,6 +162,7 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           ))}
         </tbody>
       </table>
+</TableScroll>
     </section>
   );
 }

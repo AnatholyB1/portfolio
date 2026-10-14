@@ -8,6 +8,7 @@ import { DOC_LABELS, STATUS_LABELS } from '@/lib/documents/types';
 import type { DocumentActions, IssuedDocView, SignatureView } from './types';
 import SnapshotPanel from './SnapshotPanel';
 import SignaturePanel from './SignaturePanel';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 const ADMIN = PROJECT_COPY.documents.admin;
 const PORTAL = PROJECT_COPY.documents.portal;
@@ -51,7 +52,8 @@ export default function IssuedDocumentsList({ documents, actions, signatures = {
 
   return (
     <div>
-      <table className="pt-table">
+      <TableScroll label="Documents émis">
+<table className="pt-table">
         <caption className="pt-sr-only">{ADMIN.issuedCaption}</caption>
         <thead>
           <tr>
@@ -170,6 +172,7 @@ export default function IssuedDocumentsList({ documents, actions, signatures = {
           })}
         </tbody>
       </table>
+</TableScroll>
       <div aria-live="polite">{error ? <p className="pt-error">{error}</p> : null}</div>
     </div>
   );

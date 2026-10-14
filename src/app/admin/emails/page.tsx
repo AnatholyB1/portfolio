@@ -12,6 +12,7 @@ import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadSuppressions } from '@/lib/server/mail/suppressionAdmin';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'E-mails' };
@@ -72,7 +73,8 @@ export default async function AdminEmailsPage({
             ) : (
               <>
                 {/* Rôles explicites : sur mobile le CSS passe les éléments en display:block. */}
-                <table className="pt-table pt-admin-table" role="table">
+                <TableScroll label="Adresses bloquées">
+<table className="pt-table pt-admin-table" role="table">
                   <caption className="pt-sr-only">Adresses de la liste de suppression</caption>
                   <thead role="rowgroup">
                     <tr role="row">
@@ -108,6 +110,7 @@ export default async function AdminEmailsPage({
                     ))}
                   </tbody>
                 </table>
+</TableScroll>
                 <Pager page={page} hasNext={hasNext} hrefFor={hrefFor} label="liste de suppression" />
               </>
             )}

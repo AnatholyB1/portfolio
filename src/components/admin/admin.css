@@ -364,6 +364,18 @@
   width: auto;
 }
 
+/* Conteneur de défilement horizontal des tableaux (composant TableScroll). Le tableau garde
+   sa largeur naturelle et c'est le conteneur, focusable, qui défile : plus de colonne coupée
+   par le overflow-x: hidden du body. */
+.pt-admin .pt-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.pt-admin .pt-table-scroll:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+
 /* Tableau. */
 .pt-admin .pt-admin-table a {
   display: inline-flex;

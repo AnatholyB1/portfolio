@@ -1,6 +1,7 @@
 import { EM_DASH, formatDateFr, formatSiret } from '@/lib/admin/format';
 import ResendButton from './ResendButton';
 import './admin.css';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 // Tableau des clients invités (UI-SPEC S4). Composant serveur : les données
 // arrivent déjà lues via le client RLS par la page ; `status` est un libellé
@@ -37,7 +38,8 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
   // Rôles explicites : sur mobile le CSS passe les éléments en display:block,
   // ce qui retire leur sémantique de tableau dans certains navigateurs.
   return (
-    <table className="pt-table pt-admin-table" role="table">
+    <TableScroll label="Clients">
+<table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Clients invités</caption>
       <thead role="rowgroup">
         <tr role="row">
@@ -68,5 +70,6 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
         ))}
       </tbody>
     </table>
+</TableScroll>
   );
 }

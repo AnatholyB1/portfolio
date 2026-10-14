@@ -7,6 +7,7 @@ import { formatDateFr } from '@/lib/admin/format';
 import { formatSignedEuros } from '@/lib/documents/money';
 import { formatQuantityMilli } from '@/lib/documents/numberFormat';
 import type { AdminBillingView, DownloadResult, InvoiceDataResult, VerifyResult } from './types';
+import TableScroll from '@/components/admin/shared/TableScroll';
 
 const LIST = PROJECT_COPY.payments.admin.list;
 const CREDIT = PROJECT_COPY.payments.admin.credit;
@@ -252,7 +253,8 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
 
   return (
     <div>
-      <table className="pt-table pt-bill-table">
+      <TableScroll label="Factures du projet">
+<table className="pt-table pt-bill-table">
         <caption className="pt-sr-only">{LIST.caption}</caption>
         <thead>
           <tr>
@@ -277,7 +279,7 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
               <Fragment key={inv.id}>
                 <tr className={isCredit ? 'pt-doc-replaced' : undefined}>
                   <td data-label={LIST.columns.number}>
-                    <span className="pt-doc-hash">
+                    <span className="pt-doc-hash pt-bill-number">
                       <Receipt size={16} aria-hidden="true" /> {inv.number}
                     </span>
                     {isCredit ? <div className="pt-helper">{PROJECT_COPY.payments.portal.creditOf(parent.number)}</div> : null}
@@ -355,6 +357,7 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
           })}
         </tbody>
       </table>
+</TableScroll>
       <div aria-live="polite">{error ? <p className="pt-error">{error}</p> : null}</div>
     </div>
   );
