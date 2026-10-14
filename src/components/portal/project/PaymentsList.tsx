@@ -133,14 +133,14 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
         </section>
       ) : null}
 
-      <table className="pt-table">
+      <table className="pt-table pt-pay-table">
         <caption className="pt-sr-only">{copy.caption(projectTitle)}</caption>
         <thead>
           <tr>
             <th scope="col">{copy.columns.invoice}</th>
             <th scope="col">{copy.columns.issuedOn}</th>
             <th scope="col">{copy.columns.period}</th>
-            <th scope="col">{copy.columns.amount}</th>
+            <th scope="col" className="pt-pay-amount-head">{copy.columns.amount}</th>
             <th scope="col">{copy.columns.status}</th>
             <th scope="col">{copy.columns.action}</th>
           </tr>
