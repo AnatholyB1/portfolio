@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { Check, Download, FileText, PenLine, ShieldCheck } from 'lucide-react';
 import { formatDateFr } from '@/lib/admin/format';
+import { documentSubject, nameWithSubject } from '@/lib/projects/accessibleNames';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { DOC_LABELS, STATUS_LABELS, type DocType, type DocumentStatus } from '@/lib/documents/types';
 import type { DownloadResult } from './types';
@@ -104,15 +105,25 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
                     {sig.readAndSign}
                   </Link>
                 ) : null}
-                <button
-                  type="button"
-                  className="pt-btn-text pt-file-action"
-                  onClick={() => onDownload(d.id, d.status === 'signed' && d.signedAt !== null)}
-                  disabled={downloadingId === d.id}
-                >
-                  <Download size={16} aria-hidden="true" />
-                  {downloadingId === d.id ? copy.preparing : d.status === 'signed' && d.signedAt ? sig.downloadSigned : copy.download}
-                </button>
+                {(() => {
+                  const visible =
+                    downloadingId === d.id ? copy.preparing : d.status === 'signed' && d.signedAt ? sig.downloadSigned : copy.download;
+                  return (
+                    <button
+                      type="button"
+                      className="pt-btn-text pt-file-action"
+                      aria-label={nameWithSubject(
+                        visible,
+                        documentSubject(DOC_LABELS[d.docType], d.revision, formatDateFr(d.issuedAt)),
+                      )}
+                      onClick={() => onDownload(d.id, d.status === 'signed' && d.signedAt !== null)}
+                      disabled={downloadingId === d.id}
+                    >
+                      <Download size={16} aria-hidden="true" />
+                      {visible}
+                    </button>
+                  );
+                })()}
               </td>
             </tr>
           ))}

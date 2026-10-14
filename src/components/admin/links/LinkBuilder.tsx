@@ -16,6 +16,7 @@ import {
   type UtmSource,
 } from '@/lib/attribution/utm';
 import './links.css';
+import { NOT_SET } from '@/lib/admin/format';
 
 type Destination = { path: string; label: string };
 
@@ -139,8 +140,8 @@ export default function LinkBuilder({ origin, destinations }: { origin: string; 
         ['Source', result.params.utm_source ?? ''],
         ['Support', result.params.utm_medium ?? ''],
         ['Campagne', result.params.utm_campaign ?? ''],
-        ['Contenu', result.params.utm_content ?? '—'],
-        ['Terme', result.params.utm_term ?? '—'],
+        ['Contenu', result.params.utm_content ?? NOT_SET],
+        ['Terme', result.params.utm_term ?? NOT_SET],
       ]
     : [];
 

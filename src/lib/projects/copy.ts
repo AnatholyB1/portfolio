@@ -530,6 +530,11 @@ export const PROJECT_COPY = {
       cancelledBody:
         "Aucun montant n'a été débité. Vous pouvez reprendre le paiement quand vous le souhaitez.",
       resume: 'Reprendre le paiement',
+      unknownSuccessTitle: 'Retour de paiement reçu',
+      unknownSuccessBody:
+        "Nous ne retrouvons pas la facture concernée dans votre espace. Si votre règlement a abouti, elle apparaîtra comme payée dans la liste ci-dessous et vous recevrez un e-mail de confirmation.",
+      unknownCancelledBody:
+        "Aucun montant n'a été débité. Vous pouvez reprendre le paiement depuis la liste ci-dessous.",
       failed: "Le paiement n'a pas abouti. Aucun montant n'a été débité. Vous pouvez réessayer.",
       close: 'Fermer',
     },

@@ -473,3 +473,9 @@
   align-self: flex-start;
   text-decoration: none;
 }
+
+/* Anneau de focus de la charte sur les <summary> de l'admin (Historique, Corriger la source, etc.). */
+.pt-admin summary:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}

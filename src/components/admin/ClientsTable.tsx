@@ -1,4 +1,4 @@
-import { EM_DASH, formatDateFr, formatSiret } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr, formatSiret } from '@/lib/admin/format';
 import ResendButton from './ResendButton';
 import './admin.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
@@ -16,7 +16,7 @@ export interface ClientRow {
 }
 
 function orDash(v: string): string {
-  return v && v.trim() ? v : EM_DASH;
+  return v && v.trim() ? v : NOT_SET;
 }
 
 export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
@@ -59,12 +59,12 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
             <td role="cell" data-label="Client">{orDash(r.client)}</td>
             <td role="cell" data-label="SIRET">{formatSiret(r.siret)}</td>
             <td role="cell" data-label="E-mail invité">
-              {r.email ? <a href={'mailto:' + r.email}>{r.email}</a> : EM_DASH}
+              {r.email ? <a href={'mailto:' + r.email}>{r.email}</a> : NOT_SET}
             </td>
             <td role="cell" data-label="Invité le">{formatDateFr(r.invitedAt)}</td>
             <td role="cell" data-label="Statut">{orDash(r.status)}</td>
             <td role="cell" data-label="Action">
-              {r.email ? <ResendButton clientId={r.id} clientName={r.client} /> : EM_DASH}
+              {r.email ? <ResendButton clientId={r.id} clientName={r.client} /> : 'Aucune action'}
             </td>
           </tr>
         ))}

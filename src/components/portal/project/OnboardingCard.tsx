@@ -8,7 +8,7 @@ import {
   type PortalActionState,
 } from '@/app/espace-client/actions';
 import type { CompanySnapshot } from '@/lib/admin/inviteSchema';
-import { formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import {
   blockCompletion,
@@ -34,13 +34,32 @@ function Badge({ done }: { done: boolean }) {
   );
 }
 
+// Région d'alerte montée AVANT son texte : l'erreur arrive après la sortie du champ (enregistrement au blur),
+// un <p> monté déjà rempli ne serait jamais annoncé. Le <p> porte l'id reçu par aria-describedby.
 function FieldError({ id, message }: { id: string; message?: string }) {
-  if (!message) return null;
   return (
-    <p id={id} className="pt-error">
-      <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
-      <span>{message}</span>
-    </p>
+    <div role="alert" className="pt-live">
+      {message ? (
+        <p id={id} className="pt-error">
+          <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
+          <span>{message}</span>
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+// Alerte de bloc ou de société : même principe, la région existe avant le message.
+function AlertSlot({ message }: { message?: string | null }) {
+  return (
+    <div role="alert" className="pt-live">
+      {message ? (
+        <p className="pt-error">
+          <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
+          <span>{message}</span>
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -129,12 +148,7 @@ function BlockForm(props: {
         <p className="pt-status" aria-live="polite">
           {pending ? COPY.saving : state.status === 'success' ? state.message : null}
         </p>
-        {state.status === 'error' && !state.fieldErrors ? (
-          <p className="pt-error" role="alert">
-            <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
-            <span>{state.message}</span>
-          </p>
-        ) : null}
+        <AlertSlot message={state.status === 'error' && !state.fieldErrors ? state.message : null} />
       </fieldset>
     </form>
   );
@@ -157,13 +171,13 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
         <div className="pt-readback">
           <dl className="pt-summary">
             <dt>SIRET</dt>
-            <dd>{siret || '—'}</dd>
+            <dd>{siret || NOT_SET}</dd>
             <dt>Raison sociale</dt>
-            <dd>{company?.nom || '—'}</dd>
+            <dd>{company?.nom || NOT_SET}</dd>
             <dt>Adresse</dt>
-            <dd>{address || '—'}</dd>
-            <dt>Forme juridique</dt>
-            <dd>{company?.forme_juridique_code || '—'}</dd>
+            <dd>{address || NOT_SET}</dd>
+            {/* Le snapshot ne contient que le code INSEE (nature_juridique), sans table de libellés dans le dépôt :
+                on ne l'affiche pas tel quel (« 1000 » ne dit rien au client). */}
           </dl>
         </div>
         {confirmedAt ? (
@@ -184,12 +198,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
         <p className="pt-status" aria-live="polite">
           {pending ? COPY.saving : null}
         </p>
-        {state.status === 'error' ? (
-          <p className="pt-error" role="alert">
-            <CircleAlert size={16} aria-hidden="true" className="pt-msg-icon" />
-            <span>{state.message}</span>
-          </p>
-        ) : null}
+        <AlertSlot message={state.status === 'error' ? state.message : null} />
       </fieldset>
     </form>
   );

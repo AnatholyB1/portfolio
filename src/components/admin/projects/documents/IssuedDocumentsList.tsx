@@ -3,7 +3,7 @@
 import { Fragment, useState, useTransition } from 'react';
 import { Check, Download } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import { DOC_LABELS, STATUS_LABELS } from '@/lib/documents/types';
 import type { DocumentActions, IssuedDocView, SignatureView } from './types';
 import SnapshotPanel from './SnapshotPanel';
@@ -87,7 +87,7 @@ export default function IssuedDocumentsList({ documents, actions, signatures = {
                     ) : null}
                     {sig ? (
                       <p className="pt-doc-signed-line">
-                        {SIGN.signedBy(sig.signerName, formatDateFr(sig.signedAtUtc), sig.ip ?? '—')}
+                        {SIGN.signedBy(sig.signerName, formatDateFr(sig.signedAtUtc), sig.ip ?? NOT_SET)}
                       </p>
                     ) : null}
                     {sv?.refusal ? (

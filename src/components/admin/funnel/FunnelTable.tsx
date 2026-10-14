@@ -2,6 +2,7 @@ import { conversionRate, formatEuroCents, type FunnelRow, type GroupBy } from '@
 import { TriangleAlert } from 'lucide-react';
 import CostEditor from './CostEditor';
 import './funnel.css';
+import { NOT_SET } from '@/lib/admin/format';
 
 const nf = new Intl.NumberFormat('fr-FR');
 const monthFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -84,7 +85,7 @@ export default function FunnelTable({ rows, by }: { rows: FunnelRow[]; by: Group
           {rows.map((r) => (
             <tr key={`${r.source}|${r.campaign}|${r.month}`}>
               <th scope="row">
-                {r.source || '—'}
+                {r.source || NOT_SET}
                 {(r.nonconformingLeads ?? 0) > 0 ? (
                   <span
                     className="pt-lead-badge"
@@ -99,8 +100,8 @@ export default function FunnelTable({ rows, by }: { rows: FunnelRow[]; by: Group
                   </span>
                 ) : null}
               </th>
-              <td>{by === 'month' || by === 'source' ? '—' : r.campaign || '(aucune)'}</td>
-              <td>{monthLabel(r.month) || '—'}</td>
+              <td>{by === 'month' || by === 'source' ? 'Sans objet' : r.campaign || '(aucune)'}</td>
+              <td>{monthLabel(r.month) || NOT_SET}</td>
               <td className="pt-funnel-num">{nf.format(r.visits)}</td>
               {STAGES.map((s) => (
                 <StageCell key={s.key} row={r} stage={s} />
@@ -119,7 +120,7 @@ export default function FunnelTable({ rows, by }: { rows: FunnelRow[]; by: Group
                     />
                   </>
                 ) : (
-                  <span className="pt-lead-dim">—</span>
+                  <span className="pt-lead-dim">Sans objet</span>
                 )}
               </td>
             </tr>

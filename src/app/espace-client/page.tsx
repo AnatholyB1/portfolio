@@ -156,9 +156,10 @@ export default async function EspaceClientPage({
             </p>
           ) : null}
         </section>
-        <section className="pt-card" aria-label={PROJECT_COPY.portal.timelineLabel}>
+        {/* Pas de second nom : la liste <ol> porte déjà « Avancement du projet » (F-C13). */}
+        <div className="pt-card">
           <Timeline state={state} variant="client" />
-        </section>
+        </div>
         <OnboardingCard company={company} siret={client.siret ?? ''} onboarding={onboarding} />
         <section className="pt-card" aria-labelledby="files-title">
           <FilesPanel

@@ -7,6 +7,7 @@ import SignOutButton from '@/components/portal/SignOutButton';
 import ClientNav from '@/components/portal/project/ClientNav';
 import PaymentsList from '@/components/portal/project/PaymentsList';
 import ReturnBanner from '@/components/portal/project/ReturnBanner';
+import ReturnNotice from '@/components/portal/project/ReturnNotice';
 import '@/components/portal/client.css';
 import '@/components/portal/project/project.css';
 import { invoiceDownloadAction, payInvoiceAction } from '@/app/espace-client/actions';
@@ -76,6 +77,7 @@ export default async function EspaceClientPaymentsPage({ searchParams }: { searc
         {!loadFailed && retour && bannerInvoice ? (
           <ReturnBanner retour={retour} invoice={bannerInvoice} pay={payInvoiceAction} />
         ) : null}
+        {!loadFailed && retour && !bannerInvoice ? <ReturnNotice retour={retour} /> : null}
         {!loadFailed && groups.length === 0 ? (
           <section className="pt-card" aria-labelledby="payments-empty-title">
             <h2 id="payments-empty-title" className="pt-heading">{copy.emptyHeading}</h2>

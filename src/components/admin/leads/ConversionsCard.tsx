@@ -1,4 +1,4 @@
-import { EM_DASH, formatDateFr } from '@/lib/admin/format';
+import { formatDateFr } from '@/lib/admin/format';
 import { formatEuroCents } from '@/lib/admin/funnel';
 import type { ConversionLadder, LeadConversion } from '@/lib/server/ads/conversions';
 
@@ -34,7 +34,7 @@ export default function ConversionsCard({ ladder }: { ladder: ConversionLadder |
                 <dd>
                   {!row ? (
                     <>
-                      {EM_DASH} <span className="pt-lead-dim">Non atteint</span>
+                      <span className="pt-lead-dim">Non atteint</span>
                     </>
                   ) : (
                     <>

@@ -92,7 +92,7 @@ export default async function AdminProjetsPage({
               {countFr(n, 'projet')}. Triez par colonne, filtrez par étape ou par blocage.
             </p>
             <div className="pt-stack-16">
-              <ProjectFilters etape={etape} blocage={blocage} />
+              <ProjectFilters etape={etape} blocage={blocage} tri={tri} ordre={ordre} />
               {n === 0 ? (
                 hasFilters ? (
                   <div className="pt-empty">

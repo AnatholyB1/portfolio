@@ -1,5 +1,5 @@
 import { CHANNEL_LABELS } from '@/lib/admin/leadLabels';
-import { EM_DASH, formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 
 export interface ContactRow {
   id: string;
@@ -36,8 +36,8 @@ function consentLine(consent: unknown): string {
     return 'Consentement cookies : aucun choix enregistré';
   }
   const label = c.choice === 'accepted' ? 'Accepté' : 'Refusé';
-  const at = typeof c.at === 'number' ? formatDateFr(new Date(c.at).toISOString()) : EM_DASH;
-  const version = typeof c.version === 'string' ? c.version : EM_DASH;
+  const at = typeof c.at === 'number' ? formatDateFr(new Date(c.at).toISOString()) : NOT_SET;
+  const version = typeof c.version === 'string' ? c.version : NOT_SET;
   return `Consentement cookies : ${label} le ${at} (version ${version})`;
 }
 

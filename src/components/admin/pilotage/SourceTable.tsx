@@ -2,6 +2,7 @@ import { DIRECT_NO_LEAD, type SourceRow } from '@/lib/server/pilotage/attributio
 import { formatShareBp, formatSignedEuros } from './format';
 import './pilotage.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
+import { NOT_SET } from '@/lib/admin/format';
 
 type Props = { sources: { rows: SourceRow[]; totalCents: number } };
 
@@ -37,7 +38,7 @@ export default function SourceTable({ sources }: Props) {
             {sources.rows.map((r) => (
               <tr key={r.key}>
                 <td data-label="Source figée du lead">{r.isNoLead ? DIRECT_NO_LEAD : r.source}</td>
-                <td data-label="Campagne">{r.campaign ?? '—'}</td>
+                <td data-label="Campagne">{r.campaign ?? NOT_SET}</td>
                 <td data-label="Projets" className="pt-num">
                   {r.projectIds.length}
                 </td>

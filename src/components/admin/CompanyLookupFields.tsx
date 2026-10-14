@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { lookupSiretAction } from '@/app/admin/actions';
-import { normalizeSiretInput } from '@/lib/admin/format';
+import { NOT_SET, normalizeSiretInput } from '@/lib/admin/format';
 import { INVITE_COPY } from '@/lib/admin/inviteSchema';
 import './admin.css';
 
@@ -226,13 +226,13 @@ export default function CompanyLookupFields({
           </h3>
           <dl className="pt-summary">
             <dt>Raison sociale</dt>
-            <dd>{company.nom || '—'}</dd>
+            <dd>{company.nom || NOT_SET}</dd>
             <dt>Adresse</dt>
-            <dd>{company.adresse || '—'}</dd>
+            <dd>{company.adresse || NOT_SET}</dd>
             <dt>Code postal et commune</dt>
-            <dd>{[company.code_postal, company.commune].filter(Boolean).join(' ') || '—'}</dd>
+            <dd>{[company.code_postal, company.commune].filter(Boolean).join(' ') || NOT_SET}</dd>
             <dt>Code NAF</dt>
-            <dd>{company.naf || '—'}</dd>
+            <dd>{company.naf || NOT_SET}</dd>
           </dl>
           <div className="pt-summary-actions">
             <button type="button" className="pt-btn-text" onClick={() => setEditing(true)}>

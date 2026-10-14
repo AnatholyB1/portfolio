@@ -276,7 +276,7 @@ function buildDetail(kind: DetailKind, params: PilotageParams, d: DetailInput): 
         id: String(c.eventId),
         date: c.date,
         number: c.number,
-        methodLabel: c.kind === 'refunded' ? 'Remboursement' : ((c.method && METHOD_LABELS[c.method]) || '—'),
+        methodLabel: c.kind === 'refunded' ? 'Remboursement' : ((c.method && METHOD_LABELS[c.method]) || 'Non renseigné'),
         amountCents: c.amountCents,
       },
     }));

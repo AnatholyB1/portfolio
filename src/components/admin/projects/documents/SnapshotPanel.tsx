@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { formatDateFr } from '@/lib/admin/format';
+import { NOT_SET, formatDateFr } from '@/lib/admin/format';
 import { formatSize } from '@/lib/projects/fileRules';
 import { formatEuros } from '@/lib/documents/money';
 import type { DocumentSnapshot, QuoteLine } from '@/lib/documents/types';
@@ -57,8 +57,8 @@ function TypeDetails({ s }: { s: DocumentSnapshot }) {
           <li>Contexte : {s.sections.context}</li>
           <li>Périmètre : {s.sections.scope}</li>
           <li>Livrables : {s.sections.deliverables}</li>
-          <li>Hors périmètre : {s.sections.outOfScope || '—'}</li>
-          <li>Planning : {s.sections.planning || '—'}</li>
+          <li>Hors périmètre : {s.sections.outOfScope || NOT_SET}</li>
+          <li>Planning : {s.sections.planning || NOT_SET}</li>
           <li>Critères d&apos;acceptation : {s.acceptanceCriteria.length}</li>
         </ul>
       );

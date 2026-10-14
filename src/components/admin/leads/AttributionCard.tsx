@@ -1,5 +1,5 @@
 import { TriangleAlert } from 'lucide-react';
-import { EM_DASH } from '@/lib/admin/format';
+import { NOT_SET } from '@/lib/admin/format';
 import { NONCONFORMITY_LABELS, type NonConformity } from '@/lib/attribution/utm';
 
 const CLICK_IDS = ['gclid', 'fbclid', 'ttclid'] as const;
@@ -9,7 +9,7 @@ function rec(v: unknown): Record<string, unknown> | null {
 }
 
 function text(v: unknown): string {
-  return typeof v === 'string' && v.trim() ? v : EM_DASH;
+  return typeof v === 'string' && v.trim() ? v : NOT_SET;
 }
 
 function rawLine(v: unknown) {

@@ -21,7 +21,8 @@ export default function RevokePanel({
   projectId: string;
   factId: number;
   factLabel: string;
-  onClose: () => void;
+  /** `done` : le fait vient d'être invalidé (le panneau se ferme parce que l'action a réussi). */
+  onClose: (done: boolean) => void;
 }) {
   const [state, formAction, pending] = useActionState(
     async (prev: ProjectActionState, fd: FormData) => revokeFactAction(prev, fd),
@@ -30,7 +31,7 @@ export default function RevokePanel({
   const [reason, setReason] = useState('');
 
   useEffect(() => {
-    if (state.status === 'success') onClose();
+    if (state.status === 'success') onClose(true);
   }, [state, onClose]);
 
   const id = `rv-reason-${factId}`;
@@ -41,7 +42,8 @@ export default function RevokePanel({
       keepLabel="Garder ce fait"
       pending={pending}
       confirmDisabled={reason.trim().length < REASON_MIN}
-      onKeep={onClose}
+      autoFocus
+      onKeep={() => onClose(false)}
       description={
         <>
           <strong>Invalider ce fait</strong> : {PROJECT_COPY.facts.revokeBody(factLabel)}

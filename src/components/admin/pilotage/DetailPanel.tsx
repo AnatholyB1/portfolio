@@ -41,7 +41,7 @@ function composedCells(row: DetailRow): string[] {
     return [
       formatDateFr(row.date),
       'Encaissement',
-      '—',
+      'Sans objet',
       `Facture ${row.number} · ${row.methodLabel}`,
       formatSignedEuros(row.amountCents),
     ];

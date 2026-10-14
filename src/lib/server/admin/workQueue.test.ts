@@ -30,19 +30,24 @@ describe('loadWorkQueue', () => {
       sv_reviews: { count: 2 },
       sv_project_documents: {
         data: [
-          { id: 'd1', replaces_document_id: null },
-          { id: 'd2', replaces_document_id: 'd1' },
-          { id: 'd3', replaces_document_id: null },
+          { id: 'd1', project_id: 'p1', doc_type: 'quote', revision: 1, replaces_document_id: null, issued_at: '2026-10-01T08:00:00Z' },
+          { id: 'd2', project_id: 'p1', doc_type: 'quote', revision: 2, replaces_document_id: 'd1', issued_at: '2026-10-02T08:00:00Z' },
+          // d3 est signé par un fait posé à la main : aucune ligne dans sv_document_signatures.
+          { id: 'd3', project_id: 'p2', doc_type: 'contract', revision: 1, replaces_document_id: null, issued_at: '2026-10-03T08:00:00Z' },
         ],
       },
-      sv_document_signatures: { data: [{ document_id: 'd3' }] },
+      sv_project_facts: {
+        data: [
+          { id: 1, project_id: 'p2', type: 'contract_signed', target_fact_id: null, actor_kind: 'admin', created_at: '2026-10-04T08:00:00Z' },
+        ],
+      },
       sv_mail_suppressions: { data: [{ id: 1 }, { id: 2 }] },
       sv_mail_suppression_lifts: { data: [{ suppression_id: 1 }] },
     });
     const q = await loadWorkQueue(client, new Date('2026-10-09T08:00:00Z'));
     expect(q.newLeads).toBe(4);
     expect(q.returningLeads).toBe(4);
-    // d1 est remplacé, d3 est signé : seul d2 attend une signature.
+    // d1 est remplacé, d3 est signé (fait manuel, sans signature électronique) : seul d2 attend une signature.
     expect(q.documentsToSign).toBe(1);
     expect(q.suppressionAnomalies).toBe(1);
     expect(q.recentReviews).toBe(2);
@@ -66,7 +71,7 @@ describe('loadWorkQueue', () => {
 
   it('refuses a truncated read instead of showing a wrong count', async () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const many = Array.from({ length: 1000 }, (_, i) => ({ id: `d${i}`, replaces_document_id: null }));
+    const many = Array.from({ length: 1000 }, (_, i) => ({ id: `d${i}`, project_id: 'p', doc_type: 'quote', revision: 1, replaces_document_id: null, issued_at: '2026-10-01T08:00:00Z' }));
     const { client } = fakeClient({ sv_project_documents: { data: many } });
     const q = await loadWorkQueue(client);
     expect(q.documentsToSign).toBeNull();

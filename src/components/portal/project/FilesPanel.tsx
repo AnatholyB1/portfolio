@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Archive, Download, FileText, Image as ImageIcon, Upload } from 'lucide-react';
 import { formatDateFr } from '@/lib/admin/format';
+import { nameWithSubject } from '@/lib/projects/accessibleNames';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, formatSize, validateUpload, type FileKind } from '@/lib/projects/fileRules';
 import type { FileRowView, FilesPanelProps } from './types';
@@ -218,6 +219,10 @@ export default function FilesPanel({
                   <button
                     type="button"
                     className="pt-btn-text pt-file-action"
+                    aria-label={nameWithSubject(
+                      downloadingId === f.id ? PROJECT_COPY.files.preparing : PROJECT_COPY.files.download,
+                      f.filename,
+                    )}
                     onClick={() => onDownload(f.id)}
                     disabled={downloadingId === f.id}
                   >

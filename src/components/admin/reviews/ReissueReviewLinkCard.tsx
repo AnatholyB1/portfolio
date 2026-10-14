@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useId, useState } from 'react';
+import { useActionState, useEffect, useId, useRef, useState } from 'react';
 import { reissueReviewLinkAction, type ReissueState } from '@/app/admin/avis/reissue.actions';
 import ConfirmAction from '@/components/admin/shared/ConfirmAction';
 import { formatDateFr } from '@/lib/admin/format';
@@ -37,10 +37,20 @@ export default function ReissueReviewLinkCard({
 }) {
   const uid = useId();
   const [copied, setCopied] = useState(false);
+  const urlRef = useRef<HTMLInputElement>(null);
   const [state, formAction, pending] = useActionState(
     async (prev: ReissueState, fd: FormData) => reissueReviewLinkAction(prev, fd),
     INITIAL,
   );
+
+  // Le panneau de confirmation est démonté à la réussite : le focus passe sur le nouveau lien (sélectionné)
+  // et la région live, montée avant, annonce que le lien est prêt.
+  useEffect(() => {
+    if (state.ok && state.url) {
+      urlRef.current?.focus();
+      urlRef.current?.select();
+    }
+  }, [state.ok, state.url]);
 
   async function copy() {
     if (!state.url) return;
@@ -62,12 +72,22 @@ export default function ReissueReviewLinkCard({
       ) : (
         <>
           <p className="pt-lead-sub">{statusLabel(status)}</p>
+          <div className="pt-sr-only" role="status" aria-live="polite">
+            {state.ok && state.url ? "Nouveau lien d'avis prêt, valable 60 jours. Copiez-le maintenant." : ''}
+          </div>
           {state.ok && state.url ? (
             <div className="pt-inline-panel">
               <label className="pt-inline-label" htmlFor={`${uid}-url`}>
                 Nouveau lien d&apos;avis
               </label>
-              <input id={`${uid}-url`} className="pt-input pt-inline-readonly" readOnly value={state.url} />
+              <input
+                id={`${uid}-url`}
+                ref={urlRef}
+                type="text"
+                className="pt-input pt-inline-readonly"
+                readOnly
+                value={state.url}
+              />
               <p className="pt-helper">Cette adresse ne sera plus affichée. Copiez-la maintenant.</p>
               <div className="pt-inline-actions">
                 <button type="button" className="pt-btn-ghost" onClick={copy}>

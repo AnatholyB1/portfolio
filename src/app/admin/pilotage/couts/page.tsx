@@ -20,6 +20,7 @@ import '@/components/admin/funnel/funnel.css';
 import '@/components/admin/pilotage/pilotage.css';
 import '@/components/admin/shared/inline.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
+import { NOT_SET } from '@/lib/admin/format';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Coûts · Pilotage' };
@@ -123,7 +124,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                   <td data-label="Montant" className="pt-num">
                     {formatSignedEuros(b.amountCents)}
                   </td>
-                  <td data-label="Note">{b.note ?? '—'}</td>
+                  <td data-label="Note">{b.note ?? NOT_SET}</td>
                   <td data-label="Saisi le">{formatDateFr(b.createdAt)}</td>
                 </tr>
               ))}
@@ -172,7 +173,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
                     </td>
                     <td data-label="Fréquence">{v.frequency === 'monthly' ? 'Mensuelle' : 'Annuelle'}</td>
                     <td data-label="Début">{formatDateFr(v.startsOn)}</td>
-                    <td data-label="Fin">{v.endsOn ? formatDateFr(v.endsOn) : '—'}</td>
+                    <td data-label="Fin">{v.endsOn ? formatDateFr(v.endsOn) : 'Sans date de fin'}</td>
                     <td data-label="Statut">{v.status}</td>
                     <td data-label="Action">
                       {i === 0 && v.status !== 'Remplacée' ? (
@@ -230,7 +231,7 @@ function CostsBody({ data, today }: { data: CostsRegisterRows; today: string }) 
               {projectCosts.map((c) => (
                 <tr key={c.id}>
                   <td data-label="Date">{formatDateFr(c.incurredOn)}</td>
-                  <td data-label="Projet">{projectTitles.get(c.projectId) ?? '—'}</td>
+                  <td data-label="Projet">{projectTitles.get(c.projectId) ?? NOT_SET}</td>
                   <td data-label="Catégorie">{categoryLabel(c.category)}</td>
                   <td data-label="Libellé">{c.label}</td>
                   <td data-label="Montant" className="pt-num">

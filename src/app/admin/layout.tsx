@@ -20,7 +20,7 @@ export default function AdminLayout({
   // Lien d'évitement : la cible `#admin-contenu` est posée par AdminNav (présent sur
   // chaque page), le <main> vient de ShellMain.
   return (
-    <div className="pt-root">
+    <div className="pt-root" data-own-skip-link="">
       <a href="#admin-contenu" className="pt-skip-link">
         Aller au contenu
       </a>

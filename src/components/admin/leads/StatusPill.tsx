@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useId, useRef, useState } from 'react';
 import {
   BadgeCheck,
   CalendarCheck,
@@ -13,6 +13,7 @@ import {
 import { setStatusAction, type LeadActionState } from '@/app/admin/leads/actions';
 import { STATUS_LABELS, STATUS_ORDER, type LeadStatus } from '@/lib/admin/leadLabels';
 import LostPanel from './LostPanel';
+import { isOutside, menuNavTarget } from './menuNav';
 import './leads.css';
 
 const ICONS: Record<LeadStatus, LucideIcon> = {
@@ -42,12 +43,29 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
   };
   const pillRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const menuId = `${useId()}-menu`;
 
   const Icon = ICONS[current];
 
   useEffect(() => {
     if (open) menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
   }, [open]);
+
+  // Clic ou toucher hors de la pastille : le menu se ferme, le focus reste là où l'utilisateur a cliqué.
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (isOutside(wrapRef.current, e.target)) setOpenedAt(null);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [open]);
+
+  // Après un choix (succès ou erreur), le focus revient à la pastille : le menu qui le portait est démonté.
+  useEffect(() => {
+    if (state.status !== 'idle') pillRef.current?.focus();
+  }, [state]);
 
   function closeMenu() {
     setOpen(false);
@@ -57,28 +75,26 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
   function onMenuKey(e: React.KeyboardEvent<HTMLDivElement>) {
     const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('button') ?? []);
     const idx = items.indexOf(document.activeElement as HTMLButtonElement);
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      closeMenu();
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      items[(idx + 1) % items.length]?.focus();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      items[(idx - 1 + items.length) % items.length]?.focus();
-    }
+    const target = menuNavTarget(e.key, idx, items.length);
+    if (target === null) return;
+    e.preventDefault();
+    if (target === 'close') closeMenu();
+    else items[target]?.focus();
   }
 
   return (
-    <div className="pt-lead-pill-wrap">
+    <div className="pt-lead-pill-wrap" ref={wrapRef}>
       <button
         ref={pillRef}
         type="button"
         className="pt-lead-pill"
         aria-haspopup="menu"
         aria-expanded={open}
-        disabled={pending}
-        onClick={() => setOpen((o) => !o)}
+        aria-controls={open ? menuId : undefined}
+        aria-disabled={pending || undefined}
+        onClick={() => {
+          if (!pending) setOpen((o) => !o);
+        }}
       >
         {pending ? (
           'Enregistrement…'
@@ -93,13 +109,21 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
         )}
       </button>
       {open ? (
-        <div ref={menuRef} className="pt-lead-pill-menu" role="menu" onKeyDown={onMenuKey}>
+        <div
+          ref={menuRef}
+          id={menuId}
+          className="pt-lead-pill-menu"
+          role="menu"
+          aria-label="Changer le statut"
+          onKeyDown={onMenuKey}
+        >
           {STATUS_ORDER.filter((s) => s !== current).map((s) =>
             s === 'lost' ? (
               <button
                 key={s}
                 type="button"
                 role="menuitem"
+                tabIndex={-1}
                 onClick={() => {
                   setOpen(false);
                   setLostOpen(true);
@@ -108,10 +132,10 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
                 {STATUS_LABELS[s]}
               </button>
             ) : (
-              <form key={s} action={formAction}>
+              <form key={s} action={formAction} role="none">
                 <input type="hidden" name="leadId" value={leadId} />
                 <input type="hidden" name="status" value={s} />
-                <button type="submit" role="menuitem">
+                <button type="submit" role="menuitem" tabIndex={-1}>
                   {STATUS_LABELS[s]}
                   {s === 'quote_sent' ? <span className="pt-lead-badge">Manuel</span> : null}
                 </button>
