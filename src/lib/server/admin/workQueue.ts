@@ -5,6 +5,9 @@
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { parisDateOf } from '@/lib/documents/dates';
+import { countDocumentsToSign, type PendingDoc, type ProjectFact } from '@/lib/documents/pendingSignatures';
+import type { DocType } from '@/lib/documents/types';
+import type { ActorKind, FactType } from '@/lib/projects/steps';
 import type { QueueCounts } from '@/lib/admin/workQueue';
 import { unpaidInvoices, type InvoiceRow, type PaymentEventRow } from '@/lib/server/pilotage/billing';
 import { PAYMENT_EVENT_COLS, PILOTAGE_INVOICE_COLS } from '@/lib/server/pilotage/load';
@@ -14,7 +17,7 @@ type Row = Record<string, unknown>;
 
 // Au-delà de ces plafonds un décompte serait faux : la tuile passe en « lecture impossible ».
 const DOC_CAP = 1000;
-const SIGNATURE_CAP = 2000;
+const FACT_CAP = 5000;
 const INVOICE_CAP = 300;
 const EVENT_CAP = 3000;
 const SUPPRESSION_CAP = 500;
@@ -67,22 +70,40 @@ async function projectsToPrepare(supabase: SupabaseClient, now: Date): Promise<n
   return projects.filter((p) => !p.state.done && p.state.waitingOn === 'admin').length;
 }
 
-/** Documents signables (devis, contrat, recette) non remplacés et sans signature. */
+/**
+ * Documents signables (devis, contrat, recette) non remplacés et dont le fait de signature n'est pas en vigueur.
+ * Même règle que le portail et la fiche projet (statut dérivé des faits) : un fait posé à la main, sans ligne de
+ * signature électronique, ferme bien le document.
+ */
 async function documentsToSign(supabase: SupabaseClient): Promise<number> {
-  const [docRes, sigRes] = await Promise.all([
+  const [docRes, factRes] = await Promise.all([
     supabase
       .from('sv_project_documents')
-      .select('id, replaces_document_id')
+      .select('id, project_id, doc_type, revision, replaces_document_id, issued_at')
       .in('doc_type', ['quote', 'contract', 'acceptance'])
       .limit(DOC_CAP),
-    supabase.from('sv_document_signatures').select('document_id').limit(SIGNATURE_CAP),
+    supabase
+      .from('sv_project_facts')
+      .select('id, project_id, type, target_fact_id, actor_kind, created_at')
+      .limit(FACT_CAP),
   ]);
-  const docs = rows(docRes, DOC_CAP);
-  const signed = new Set(rows(sigRes, SIGNATURE_CAP).map((r) => String(r.document_id)));
-  const replaced = new Set(
-    docs.map((d) => d.replaces_document_id).filter((v): v is string => typeof v === 'string'),
-  );
-  return docs.filter((d) => !replaced.has(String(d.id)) && !signed.has(String(d.id))).length;
+  const docs: PendingDoc[] = rows(docRes, DOC_CAP).map((d) => ({
+    id: String(d.id),
+    projectId: String(d.project_id),
+    docType: d.doc_type as DocType,
+    revision: Number(d.revision),
+    replacesDocumentId: typeof d.replaces_document_id === 'string' ? d.replaces_document_id : null,
+    issuedAt: String(d.issued_at),
+  }));
+  const facts: ProjectFact[] = rows(factRes, FACT_CAP).map((f) => ({
+    id: Number(f.id),
+    projectId: String(f.project_id),
+    type: f.type as FactType,
+    targetFactId: f.target_fact_id === null || f.target_fact_id === undefined ? null : Number(f.target_fact_id),
+    actorKind: f.actor_kind as ActorKind,
+    createdAt: String(f.created_at),
+  }));
+  return countDocumentsToSign(docs, facts);
 }
 
 function toInvoice(r: Row): InvoiceRow {
