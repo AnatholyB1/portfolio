@@ -22,6 +22,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { isOnboardingComplete } from '@/lib/projects/onboardingSchema';
+import { resolveWaiting } from '@/lib/projects/steps';
 import { withStatuses } from '@/lib/documents/status';
 import { requireClient } from '@/lib/server/auth/dal';
 import { loadProjectDocuments } from '@/lib/server/documents/read';
@@ -100,7 +101,7 @@ export default async function EspaceClientPage({
     );
   }
 
-  const { project, client, state, onboarding, files, links, consents } = bundle;
+  const { project, client, state: nominalState, onboarding, files, links, consents } = bundle;
   const offer = OFFER_LABELS[project.offer as OfferSlug] ?? project.offer;
   const onboardingComplete = !!(onboarding && isOnboardingComplete(onboarding));
   const company = (client.company ?? null) as CompanySnapshot | null;
@@ -110,13 +111,21 @@ export default async function EspaceClientPage({
   const toSignDocs = withStatuses(projectDocs, bundle.facts).filter((d) => d.status === 'to_sign');
   const awaitingSignature = toSignDocs.length > 0;
   let toPayInvoices: { kind: string }[] = [];
+  let invoicesRead = true;
   try {
     const invoices = await loadInvoicesForProjects(ctx.supabase, [project.id]);
     toPayInvoices = invoices.filter((i) => i.status === 'to_pay');
   } catch (e) {
     // Les factures ne bloquent pas la page projet : la page Paiements affiche l'erreur de lecture.
     if (!(e instanceof InvoicesLoadError)) throw e;
+    invoicesRead = false;
   }
+  // Qui attend vraiment : le client seulement s'il a un document à signer ou une facture à payer.
+  // Si la lecture des factures a échoué, on garde la valeur statique plutôt que d'annoncer à tort
+  // « Nous préparons votre facture ».
+  const state = invoicesRead
+    ? resolveWaiting(nominalState, { toSign: toSignDocs.length, toPay: toPayInvoices.length })
+    : nominalState;
   const actions = buildClientActions({
     state,
     onboardingComplete,

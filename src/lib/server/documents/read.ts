@@ -64,21 +64,34 @@ export async function loadProjectDocuments(rls: SupabaseClient, projectId: strin
   return ((res.data ?? []) as Row[]).map(toDocument);
 }
 
-export async function loadDocumentsForProjects(rls: SupabaseClient, projectIds: string[]): Promise<DocumentRow[]> {
+/** Lève DocumentsLoadError si la lecture échoue (liste vide et échec ne doivent pas être confondus). */
+export async function loadDocumentsForProjectsStrict(
+  rls: SupabaseClient,
+  projectIds: string[],
+): Promise<DocumentRow[]> {
   if (projectIds.length === 0) return [];
+  let res;
   try {
-    const res = await rls
+    res = await rls
       .from('sv_project_documents')
       .select(DOCUMENT_COLS)
       .in('project_id', projectIds)
       .order('issued_at', { ascending: true });
-    if (res.error) {
-      console.error('[documents/read] list failed');
-      return [];
-    }
-    return ((res.data ?? []) as Row[]).map(toDocument);
   } catch {
     console.error('[documents/read] list failed');
+    throw new DocumentsLoadError();
+  }
+  if (res.error) {
+    console.error('[documents/read] list failed');
+    throw new DocumentsLoadError();
+  }
+  return ((res.data ?? []) as Row[]).map(toDocument);
+}
+
+export async function loadDocumentsForProjects(rls: SupabaseClient, projectIds: string[]): Promise<DocumentRow[]> {
+  try {
+    return await loadDocumentsForProjectsStrict(rls, projectIds);
+  } catch {
     return [];
   }
 }

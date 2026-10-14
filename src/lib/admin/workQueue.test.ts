@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildQueueTiles, QUEUE_ORDER, type QueueCounts } from './workQueue';
 
 const zero: QueueCounts = {
+  projectsToPrepare: 0,
   overdueInvoices: 0,
   documentsToSign: 0,
   newLeads: 0,
@@ -32,8 +33,14 @@ describe('buildQueueTiles', () => {
     expect(tiles[0].label).toContain('lecture impossible');
   });
 
+  it('lists the projects waiting for Sèvalys first, linking to the blocage=admin filter', () => {
+    const { tiles } = buildQueueTiles({ ...zero, projectsToPrepare: 2, overdueInvoices: 1 });
+    expect(tiles.map((t) => t.key)).toEqual(['projectsToPrepare', 'overdueInvoices']);
+    expect(tiles[0].href).toBe('/admin/projets?blocage=admin');
+  });
+
   it('covers every key in the declared order', () => {
-    expect(QUEUE_ORDER).toHaveLength(6);
-    expect(new Set(QUEUE_ORDER).size).toBe(6);
+    expect(QUEUE_ORDER).toHaveLength(7);
+    expect(new Set(QUEUE_ORDER).size).toBe(7);
   });
 });

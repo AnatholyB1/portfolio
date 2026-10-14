@@ -48,7 +48,7 @@ import { classifyProject } from '@/lib/projects/blocking';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
-import { STEPS } from '@/lib/projects/steps';
+import { STEPS, resolveWaiting } from '@/lib/projects/steps';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
 import { loadAdminBillingView } from '@/lib/server/invoices/adminView';
@@ -56,7 +56,7 @@ import { loadSignatureViews } from '@/lib/server/signature/adminView';
 import { loadReminderHold } from '@/lib/server/reminders/holds';
 import { loadReviewLinkStatus } from '@/lib/server/reviews/linksAdmin';
 import { SIGNING_FACT } from '@/lib/documents/steps';
-import { loadProjectBundle } from '@/lib/server/projects/read';
+import { loadPendingClientWork, loadProjectBundle } from '@/lib/server/projects/read';
 import '@/components/admin/admin.css';
 import '@/components/admin/leads/leads.css';
 import '@/components/admin/projects/projects.css';
@@ -125,7 +125,11 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
       ]
     : [];
 
-  const { project, client, state, facts, notes, onboarding, files, links, consents, lastActivityAt } = bundle;
+  const { project, client, facts, notes, onboarding, files, links, consents, lastActivityAt } = bundle;
+  // Qui attend vraiment (F-D1) : garde la valeur statique si les documents ou factures sont illisibles.
+  const pending = await loadPendingClientWork(supabase, [project.id], new Map([[project.id, facts]]));
+  const pendingWork = pending?.get(project.id);
+  const state = pendingWork ? resolveWaiting(bundle.state, pendingWork) : bundle.state;
   const { isDormant, daysWaiting } = classifyProject(state, lastActivityAt, now);
   const nom = (client.company as { nom?: unknown } | null)?.nom;
   const name = typeof nom === 'string' && nom.trim() ? nom : client.name || 'Client';
