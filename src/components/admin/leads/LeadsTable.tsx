@@ -45,7 +45,7 @@ function OffConventionBadge() {
 // Tableau des leads (UI-SPEC A1). Données lues via le client RLS par la page.
 export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
   return (
-    <TableScroll label="Leads">
+    <TableScroll label="Leads" className="pt-table-sticky">
 <table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Leads</caption>
       <thead role="rowgroup">
@@ -65,7 +65,7 @@ export default function LeadsTable({ rows }: { rows: LeadRow[] }) {
           return (
             <tr key={r.id} role="row">
               <td role="cell" data-label="Lead">
-                <Link href={`/admin/leads/${r.id}`}>{name}</Link>
+                <Link href={`/admin/leads/${r.id}`} className="pt-row-link">{name}</Link>
                 {!erased && r.contact_nom && r.contact_email ? (
                   <span className="pt-lead-sub">{r.contact_email}</span>
                 ) : null}

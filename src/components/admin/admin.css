@@ -1,4 +1,5 @@
 @import "./motion.css";
+@import "./tables.css";
 
 /* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
 

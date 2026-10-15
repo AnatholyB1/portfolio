@@ -38,7 +38,7 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
   // Rôles explicites : sur mobile le CSS passe les éléments en display:block,
   // ce qui retire leur sémantique de tableau dans certains navigateurs.
   return (
-    <TableScroll label="Clients">
+    <TableScroll label="Clients" className="pt-table-sticky">
 <table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Clients invités</caption>
       <thead role="rowgroup">

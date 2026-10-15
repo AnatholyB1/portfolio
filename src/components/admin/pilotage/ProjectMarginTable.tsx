@@ -42,7 +42,7 @@ export default function ProjectMarginTable({ projects, globalMarginCents, params
             {projects.map((r) => (
               <tr key={r.projectId}>
                 <td data-label="Projet">
-                  <Link href={`/admin/projets/${r.projectId}`} className="pt-link-target">
+                  <Link href={`/admin/projets/${r.projectId}`} className="pt-link-target pt-row-link">
                     {r.title}
                   </Link>
                 </td>
