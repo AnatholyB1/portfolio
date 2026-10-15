@@ -976,3 +976,8 @@
     padding-bottom: 16px;
   }
 }
+.pt-root .pt-doc-meta svg {
+  display: inline-block;
+  vertical-align: -3px;
+  margin-right: 4px;
+}
