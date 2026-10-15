@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Inbox } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import ProjectFilters from '@/components/admin/projects/ProjectFilters';
 import ProjectsTable from '@/components/admin/projects/ProjectsTable';
@@ -95,20 +97,24 @@ export default async function AdminProjetsPage({
               <ProjectFilters etape={etape} blocage={blocage} tri={tri} ordre={ordre} />
               {n === 0 ? (
                 hasFilters ? (
-                  <div className="pt-empty">
-                    <h2 className="pt-heading">{PROJECT_COPY.admin.noMatch}</h2>
-                    <Link href="/admin/projets" className="pt-btn-text">
+                  <EmptyState
+                    headingLevel={2}
+                    icon={<Inbox size={32} />}
+                    title={PROJECT_COPY.admin.noMatch}
+                    action={<Link href="/admin/projets" className="pt-btn-text">
                       {PROJECT_COPY.admin.resetFilters}
-                    </Link>
-                  </div>
+                    </Link>}
+                  />
                 ) : (
-                  <div className="pt-empty">
-                    <h2 className="pt-heading">{PROJECT_COPY.admin.emptyHeading}</h2>
-                    <p className="pt-helper">{PROJECT_COPY.admin.emptyBody}</p>
-                    <Link href="/admin/leads" className="pt-btn-text">
+                  <EmptyState
+                    headingLevel={2}
+                    icon={<Inbox size={32} />}
+                    title={PROJECT_COPY.admin.emptyHeading}
+                    description={<>{PROJECT_COPY.admin.emptyBody}</>}
+                    action={<Link href="/admin/leads" className="pt-btn-text">
                       {PROJECT_COPY.admin.goToLeads}
-                    </Link>
-                  </div>
+                    </Link>}
+                  />
                 )
               ) : (
                 <>

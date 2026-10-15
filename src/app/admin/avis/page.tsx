@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, SearchX, Inbox } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
 import HideReviewDialog from '@/components/admin/reviews/HideReviewDialog';
@@ -54,28 +56,27 @@ export default async function AdminAvisPage({
               chaque action est journalisée.
             </p>
             {reviews === null ? (
-              <div className="pt-empty">
-                <h2 className="pt-heading">Avis indisponibles</h2>
-                <p className="pt-helper">
-                  Les avis n&apos;ont pas pu être lus. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
-                  connexion à la base.
-                </p>
-                <Link href={hrefFor(page)} className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={2}
+                icon={<TriangleAlert size={32} />}
+                title="Avis indisponibles"
+                description={<>Les avis n&apos;ont pas pu être lus. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                action={<Link href={hrefFor(page)} className="pt-btn-ghost">
                   Recharger
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : reviews.length === 0 ? (
-              <div className="pt-empty">
-                <h2 className="pt-heading">{page > 1 ? "Aucun résultat sur cette page" : "Aucun avis déposé"}</h2>
-                <p className="pt-helper">
-                  Les avis apparaîtront ici dès qu&apos;un client en aura publié un depuis son lien d&apos;avis.
-                </p>
-                {page > 1 ? (
+              <EmptyState
+                headingLevel={2}
+                icon={<SearchX size={32} />}
+                title={page > 1 ? "Aucun résultat sur cette page" : "Aucun avis déposé"}
+                description={<>Les avis apparaîtront ici dès qu&apos;un client en aura publié un depuis son lien d&apos;avis.</>}
+                action={page > 1 ? (
                   <Link href="/admin/avis" className="pt-btn-ghost">
                     Revenir à la première page
                   </Link>
                 ) : null}
-              </div>
+              />
             ) : (
               <>
                 <ul className="pt-admin-list">
@@ -137,25 +138,25 @@ export default async function AdminAvisPage({
               Liens d&apos;avis
             </h2>
             {openLinks === null ? (
-              <div className="pt-empty">
-                <p className="pt-heading">Liens d&apos;avis indisponibles</p>
-                <p className="pt-helper">
-                  Les liens en attente n&apos;ont pas pu être lus. Rechargez la page pour réessayer.
-                </p>
-                <Link href={hrefFor(page)} className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={3}
+                icon={<TriangleAlert size={32} />}
+                title="Liens d&apos;avis indisponibles"
+                description={<>Les liens en attente n&apos;ont pas pu être lus. Rechargez la page pour réessayer.</>}
+                action={<Link href={hrefFor(page)} className="pt-btn-ghost">
                   Recharger
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : openLinks.length === 0 ? (
-              <div className="pt-empty">
-                <p className="pt-heading">Aucun lien d&apos;avis en attente</p>
-                <p className="pt-helper">
-                  Les liens d&apos;avis non utilisés apparaîtront ici tant que le client n&apos;a pas déposé son avis.
-                </p>
-                <Link href="/admin/projets" className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={3}
+                icon={<Inbox size={32} />}
+                title="Aucun lien d&apos;avis en attente"
+                description={<>Les liens d&apos;avis non utilisés apparaîtront ici tant que le client n&apos;a pas déposé son avis.</>}
+                action={<Link href="/admin/projets" className="pt-btn-ghost">
                   Voir les projets
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : (
               <ul className="pt-admin-list">
                 {openLinks.map((l) => (

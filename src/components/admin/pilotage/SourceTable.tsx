@@ -1,5 +1,6 @@
 import { DIRECT_NO_LEAD, type SourceRow } from '@/lib/server/pilotage/attribution';
 import { formatShareBp, formatSignedEuros } from './format';
+import EmptyState from '@/components/ui/EmptyState';
 import './pilotage.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
 import { NOT_SET } from '@/lib/admin/format';
@@ -14,7 +15,7 @@ export default function SourceTable({ sources }: Props) {
       </h2>
       <p className="pt-helper">Source figée du lead d&apos;origine, corrigée par vous le cas échéant.</p>
       {sources.rows.length === 0 ? (
-        <p className="pt-empty">Aucun CA signé sur cette période. Changez de période ou consultez le pipeline.</p>
+        <EmptyState compact title="Aucun CA signé sur cette période" description="Changez de période ou consultez le pipeline." />
       ) : (
         <TableScroll label="Chiffre d'affaires signé par source">
 <table className="pt-table pt-admin-table pt-pilot-table">

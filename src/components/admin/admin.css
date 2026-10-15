@@ -2,6 +2,7 @@
 @import "./tables.css";
 @import "./controls.css";
 @import "./kpi.css";
+@import "./queue.css";
 
 /* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
 

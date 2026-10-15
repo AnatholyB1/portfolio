@@ -3,6 +3,7 @@ import type { ProjectLine } from '@/lib/server/pilotage/dashboard';
 import { pilotageHref, type PilotageParams } from '@/lib/server/pilotage/params';
 import { formatSignedEuros } from './format';
 import '@/components/admin/shared/inline.css';
+import EmptyState from '@/components/ui/EmptyState';
 import './pilotage.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
 
@@ -20,9 +21,7 @@ export default function ProjectMarginTable({ projects, globalMarginCents, params
         Montants de la période ; le reste à facturer porte sur toute la durée du projet.
       </p>
       {projects.length === 0 ? (
-        <p className="pt-empty">
-          Aucun projet à afficher sur cette période. Changez de période ou incluez les données de test.
-        </p>
+        <EmptyState compact title="Aucun projet à afficher sur cette période" description="Changez de période ou incluez les données de test." />
       ) : (
         <TableScroll label="Marge par projet">
 <table className="pt-table pt-admin-table pt-pilot-table">
