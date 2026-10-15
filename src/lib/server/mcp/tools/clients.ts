@@ -1,7 +1,7 @@
 import 'server-only';
 import { z } from 'zod';
 import { companySnapshotSchema } from '@/lib/admin/inviteSchema';
-import { inviteClientCore, lookupSiretCore } from '@/lib/server/admin/core/clients';
+import { inviteClientCore, lookupSiretCore, resendInvitationCore } from '@/lib/server/admin/core/clients';
 import { maskEmail } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
 import { cleanCompany } from './leads';
@@ -47,10 +47,54 @@ const inviteClient = defineTool({
       company: input.company ?? null,
       companySource: input.companySource,
     });
+    // Succès partiel : client et compte créés, e-mail non parti. Ce n'est ni un succès complet ni un refus :
+    // l'appelant doit le savoir (renvoyer l'invitation avec resend_invitation).
+    if (!res.ok && res.data?.mailSent === false) {
+      return {
+        invited: false,
+        partial: true,
+        clientCreated: true,
+        mailSent: false,
+        clientId: res.data.clientId ?? null,
+        email: maskEmail(res.data.email),
+        message: res.message,
+        next: "Le client existe mais l'e-mail n'est pas parti : utiliser resend_invitation avec son identifiant.",
+      };
+    }
     // Refus : renvoyé tel quel (le registre l'audite en erreur). Succès : e-mail masqué.
     if (!res.ok) return res;
     return { invited: true, email: maskEmail(res.data?.email) };
   },
 });
 
-export const clientTools: ToolDef[] = [lookupSiret, inviteClient];
+const resendInvitation = defineTool({
+  name: 'resend_invitation',
+  description:
+    "Renvoie par e-mail l'invitation existante d'un client (identifiant uuid). Ne crée ni client ni compte ; limité à 3 renvois par client et 20 par administrateur sur 10 minutes.",
+  covers: ['resendInvitationAction'],
+  destructive: true,
+  input: z.object({ clientId: z.string().uuid() }),
+  preview: async (ctx, input) => {
+    const member = await ctx.supabase
+      .from('sv_client_members')
+      .select('invited_email')
+      .eq('client_id', input.clientId)
+      .order('created_at', { ascending: true })
+      .limit(1);
+    const client = await ctx.supabase.from('sv_clients').select('name').eq('id', input.clientId).maybeSingle();
+    const email = (member.data?.[0] as { invited_email?: string | null } | undefined)?.invited_email;
+    return {
+      action: "Renvoi de l'e-mail d'invitation au client",
+      clientId: input.clientId,
+      clientName: (client.data as { name?: string } | null)?.name ?? null,
+      mail: email ? `Invitation renvoyée à ${maskEmail(email)}` : 'Aucune invitation trouvée pour ce client',
+    };
+  },
+  run: async (ctx, input) => {
+    const res = await resendInvitationCore(ctx, input);
+    if (!res.ok) return res;
+    return { resent: true, email: maskEmail(res.data?.email) };
+  },
+});
+
+export const clientTools: ToolDef[] = [lookupSiret, inviteClient, resendInvitation];

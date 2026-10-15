@@ -3,15 +3,30 @@ import { INVITE_COPY } from '@/lib/admin/inviteSchema';
 import { runTool } from '../registry';
 
 const siret = vi.hoisted(() => ({ lookupSiret: vi.fn() }));
-const invite = vi.hoisted(() => ({ inviteClient: vi.fn() }));
+const invite = vi.hoisted(() => ({ inviteClient: vi.fn(), resendInvitation: vi.fn() }));
+const throttle = vi.hoisted(() => ({ hitThrottle: vi.fn() }));
 vi.mock('@/lib/server/clients/siret', () => siret);
 vi.mock('@/lib/server/clients/invite', () => invite);
+vi.mock('@/lib/server/auth/throttle', () => throttle);
 
 import { clientTools } from './clients';
 
 const principal = { tokenId: 't1', userId: 'admin-1' };
 const audit = vi.fn();
-const ctx = { supabase: {} as never, user: { id: 'admin-1' } as never };
+const CID = '11111111-1111-4111-8111-111111111111';
+function makeCtx(rows: Record<string, unknown> = { sv_client_members: { invited_email: 'client@acme.fr' }, sv_clients: { name: 'Acme' } }) {
+  const from = vi.fn((table: string) => {
+    const b: Record<string, ReturnType<typeof vi.fn>> = {};
+    b.select = vi.fn(() => b);
+    b.eq = vi.fn(() => b);
+    b.order = vi.fn(() => b);
+    b.limit = vi.fn(() => Promise.resolve({ data: rows[table] ? [rows[table]] : [], error: null }));
+    b.maybeSingle = vi.fn(() => Promise.resolve({ data: rows[table] ?? null, error: null }));
+    return b;
+  });
+  return { supabase: { from } as never, user: { id: 'admin-1' } as never };
+}
+let ctx = makeCtx();
 const tool = (name: string) => {
   const t = clientTools.find((x) => x.name === name);
   if (!t) throw new Error(`missing tool ${name}`);
@@ -22,6 +37,10 @@ beforeEach(() => {
   audit.mockReset();
   siret.lookupSiret.mockReset();
   invite.inviteClient.mockReset();
+  invite.resendInvitation.mockReset();
+  throttle.hitThrottle.mockReset();
+  throttle.hitThrottle.mockResolvedValue(true);
+  ctx = makeCtx();
   vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
@@ -30,8 +49,9 @@ describe('clientTools metadata', () => {
     expect(Object.fromEntries(clientTools.map((t) => [t.name, t.covers]))).toEqual({
       lookup_siret: ['lookupSiretAction'],
       invite_client: ['inviteClientAction'],
+      resend_invitation: ['resendInvitationAction'],
     });
-    expect(clientTools.filter((t) => t.destructive).map((t) => t.name)).toEqual(['invite_client']);
+    expect(clientTools.filter((t) => t.destructive).map((t) => t.name)).toEqual(['invite_client', 'resend_invitation']);
   });
 });
 
@@ -81,5 +101,47 @@ describe('invite_client', () => {
     const r = await runTool(tool('invite_client'), { ...args, confirm: true }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: INVITE_COPY.alreadyMember });
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'invite_client', outcome: 'error' }));
+  });
+});
+
+describe('invite_client partial success', () => {
+  const args = { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234', confirm: true as const };
+  it('tells the caller the client was created but the mail was not sent', async () => {
+    invite.inviteClient.mockResolvedValue({ ok: true, clientId: 'c1', email: 'client@acme.fr', mailSent: false });
+    const r = await runTool(tool('invite_client'), args, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { invited: false, partial: true, clientCreated: true, mailSent: false, clientId: 'c1' } });
+    expect(JSON.stringify(r)).not.toContain('client@acme.fr');
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'invite_client', outcome: 'ok' }));
+  });
+});
+
+describe('resend_invitation', () => {
+  it('without confirm never sends and previews a masked address', async () => {
+    const r = await runTool(tool('resend_invitation'), { clientId: CID }, ctx, principal, audit);
+    expect(invite.resendInvitation).not.toHaveBeenCalled();
+    expect(throttle.hitThrottle).not.toHaveBeenCalled();
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    const json = JSON.stringify(r);
+    expect(json).toContain('c***@a***.fr');
+    expect(json).not.toContain('client@acme.fr');
+    expect(json).toContain('Acme');
+  });
+  it('previews without address when the client has no invitation', async () => {
+    ctx = makeCtx({});
+    const r = await runTool(tool('resend_invitation'), { clientId: CID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+  });
+  it('with confirm resends and never returns the clear e-mail', async () => {
+    invite.resendInvitation.mockResolvedValue({ ok: true, email: 'client@acme.fr' });
+    const r = await runTool(tool('resend_invitation'), { clientId: CID, confirm: true }, ctx, principal, audit);
+    expect(invite.resendInvitation).toHaveBeenCalledWith(CID);
+    expect(r).toMatchObject({ ok: true, data: { resent: true, email: 'c***@a***.fr' } });
+    expect(JSON.stringify(r)).not.toContain('client@acme.fr');
+  });
+  it('rate limiting is an audited error', async () => {
+    throttle.hitThrottle.mockResolvedValue(false);
+    const r = await runTool(tool('resend_invitation'), { clientId: CID, confirm: true }, ctx, principal, audit);
+    expect(r).toEqual({ ok: false, error: INVITE_COPY.resendRateLimited });
+    expect(invite.resendInvitation).not.toHaveBeenCalled();
   });
 });
