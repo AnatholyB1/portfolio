@@ -1,8 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
+import { createHash } from 'node:crypto';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { defineTool, runTool } from './registry';
 
 const audit = vi.fn();
+beforeEach(() => {
+  audit.mockReset();
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+});
 const ctx = { supabase: {} as never, user: { id: 'u1' } as never };
 const principal = { tokenId: 't1', userId: 'u1' };
 
@@ -37,3 +42,49 @@ describe('runTool', () => {
     expect(r).toEqual({ ok: false, error: 'tool_failed' });
   });
 });
+
+describe('runTool hardening', () => {
+  it('records a digest of the validated input without confirm, never raw args', async () => {
+    await runTool(danger, { id: 'a', confirm: true }, ctx, principal, audit);
+    const expected = createHash('sha256').update('{"id":"a"}').digest('hex');
+    const calls = audit.mock.calls.map((c) => c[0]);
+    expect(calls.map((e) => e.outcome)).toEqual(['attempt', 'ok']);
+    for (const e of calls) {
+      expect(e.argsDigest).toBe(expected);
+      expect(JSON.stringify(e)).not.toContain('"a"');
+    }
+  });
+  it('digest is independent of key order', async () => {
+    const two = defineTool({ name: 't', description: 'd', covers: [], input: z.object({ a: z.string(), b: z.string() }), run: async () => 1 });
+    await runTool(two, { a: '1', b: '2' }, ctx, principal, audit);
+    await runTool(two, { b: '2', a: '1' }, ctx, principal, audit);
+    expect(audit.mock.calls[0][0].argsDigest).toBe(audit.mock.calls[1][0].argsDigest);
+  });
+  it('returns the real data when the audit write fails after a run', async () => {
+    audit.mockRejectedValue(new Error('db down'));
+    expect(await runTool(safe, {}, ctx, principal, audit)).toEqual({ ok: true, data: { pong: true } });
+  });
+  it('refuses to run a destructive tool when the attempt cannot be audited', async () => {
+    audit.mockRejectedValue(new Error('db down'));
+    const run = vi.fn(async () => 1);
+    const t = defineTool({ name: 'x', description: 'd', covers: [], destructive: true, input: z.object({}), run });
+    expect(await runTool(t, { confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'audit_unavailable' });
+    expect(run).not.toHaveBeenCalled();
+  });
+  it('does not reject when auditing a rejected input fails', async () => {
+    audit.mockRejectedValue(new Error('db down'));
+    expect(await runTool(danger, {}, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+  it('logs the error message server-side without returning it', async () => {
+    const boom = defineTool({ name: 'b', description: 'd', covers: [], input: z.object({}), run: async () => { throw new Error('secret'); } });
+    const r = await runTool(boom, {}, ctx, principal, audit);
+    expect(JSON.stringify(r)).not.toContain('secret');
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('b'), expect.stringContaining('secret'));
+  });
+  it('rejects a destructive tool whose schema already has confirm', () => {
+    expect(() =>
+      defineTool({ name: 'c', description: 'd', covers: [], destructive: true, input: z.object({ confirm: z.string() }), run: async () => 1 }),
+    ).toThrow(/confirm/);
+  });
+});
+

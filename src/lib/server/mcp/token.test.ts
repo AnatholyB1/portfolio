@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { generateToken, hashToken, isUsable } from './token';
+import { describe, expect, it, vi } from 'vitest';
+import { generateToken, hashToken, isUsable, resolveToken } from './token';
 
 describe('mcp token', () => {
   it('generates a prefixed high-entropy token and a stable sha256 hash', () => {
@@ -15,5 +15,26 @@ describe('mcp token', () => {
     expect(isUsable(ok, now)).toBe(true);
     expect(isUsable({ ...ok, revoked_at: '2026-10-01T00:00:00Z' }, now)).toBe(false);
     expect(isUsable({ ...ok, expires_at: '2026-10-15T09:59:59Z' }, now)).toBe(false);
+  });
+});
+
+describe('resolveToken header parsing', () => {
+  const svc = vi.hoisted(() => ({ from: vi.fn() }));
+  vi.mock('@/lib/supabase/admin', () => ({ createSupabaseAdminClient: () => svc }));
+
+  it('rejects a malformed token without touching the database', async () => {
+    svc.from.mockClear();
+    expect(await resolveToken('Bearer svmcp_short')).toBeNull();
+    expect(await resolveToken('Bearer SVMCP_' + 'a'.repeat(43))).toBeNull();
+    expect(svc.from).not.toHaveBeenCalled();
+  });
+  it('accepts the Bearer scheme in any case', async () => {
+    svc.from.mockClear();
+    svc.from.mockReturnValue({
+      select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null }) }) }),
+    });
+    await resolveToken('bearer ' + generateToken());
+    await resolveToken('BEARER ' + generateToken());
+    expect(svc.from).toHaveBeenCalledTimes(2);
   });
 });

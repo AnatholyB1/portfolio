@@ -19,9 +19,9 @@ export function isUsable(
 
 export type McpPrincipal = { tokenId: string; userId: string };
 
-// Résout « Authorization: Bearer svmcp_… » en admin. Fail-closed : tout échec = null.
+// Résout « Authorization: Bearer svmcp_… » en admin (schéma insensible à la casse, jeton strict). Fail-closed : tout échec = null.
 export async function resolveToken(authorization: string | null): Promise<McpPrincipal | null> {
-  const m = /^Bearer (svmcp_[A-Za-z0-9_-]{43})$/.exec(authorization ?? '');
+  const m = /^[Bb][Ee][Aa][Rr][Ee][Rr] (svmcp_[A-Za-z0-9_-]{43})$/.exec(authorization ?? '');
   if (!m) return null;
   const svc = createSupabaseAdminClient();
   const { data: row } = await svc
