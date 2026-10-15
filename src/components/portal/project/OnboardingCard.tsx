@@ -24,7 +24,13 @@ const COPY = PROJECT_COPY.onboarding;
 const MAX_SOCIAL = 4;
 const MAX_GOAL = 1000;
 
-type Props = { company: CompanySnapshot | null; siret: string; onboarding: OnboardingRow | null };
+type Props = {
+  company: CompanySnapshot | null;
+  siret: string;
+  onboarding: OnboardingRow | null;
+  /** false une fois le devis établi ou le projet livré : le message ne promet plus « votre devis ». */
+  quotePending?: boolean;
+};
 
 function Badge({ done }: { done: boolean }) {
   return (
@@ -205,7 +211,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
   );
 }
 
-export default function OnboardingCard({ company, siret, onboarding }: Props) {
+export default function OnboardingCard({ company, siret, onboarding, quotePending = true }: Props) {
   const row = onboarding;
   const empty: OnboardingRow = {
     companyConfirmedAt: null,
@@ -578,7 +584,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
         <>
           <p className="pt-success">
             <Check size={16} aria-hidden="true" className="pt-msg-icon" />
-            <span>{COPY.done}</span>
+            <span>{quotePending ? COPY.done : COPY.doneAfterQuote}</span>
           </p>
           <details>
             <summary className="pt-btn-text">{COPY.edit}</summary>
