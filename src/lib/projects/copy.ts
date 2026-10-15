@@ -119,6 +119,8 @@ export const PROJECT_COPY = {
     confirmedOn: (date: string) => `Confirmé le ${date}`,
     reportError: 'Signaler une erreur',
     done: 'Merci, votre onboarding est complet. Nous préparons votre devis.',
+    /** Variante une fois le devis passé (étape 3 ou projet livré) : plus de « préparons votre devis ». */
+    doneAfterQuote: 'Merci, votre onboarding est complet.',
     edit: 'Modifier mes informations',
     saving: 'Enregistrement…',
     savedAt: (time: string) => `Enregistré à ${time}`,

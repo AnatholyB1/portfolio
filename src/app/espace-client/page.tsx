@@ -160,7 +160,12 @@ export default async function EspaceClientPage({
         <div className="pt-card">
           <Timeline state={state} variant="client" />
         </div>
-        <OnboardingCard company={company} siret={client.siret ?? ''} onboarding={onboarding} />
+        <OnboardingCard
+          company={company}
+          siret={client.siret ?? ''}
+          onboarding={onboarding}
+          quotePending={!nominalState.done && nominalState.currentStep !== null && nominalState.currentStep <= 2}
+        />
         <section className="pt-card pt-card-quiet" aria-labelledby="files-title">
           <FilesPanel
             projectId={project.id}
