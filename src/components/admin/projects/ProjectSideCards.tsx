@@ -5,6 +5,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { ONBOARDING_BLOCKS, blockCompletion, type OnboardingBlock, type OnboardingRow } from '@/lib/projects/onboardingSchema';
 import type { ClientInfo, ConsentRow, LinkRow, ProjectSummary } from '@/lib/server/projects/read';
+import CollapseCard from '@/components/admin/shared/CollapseCard';
 import LinkForm from './LinkForm';
 import '../leads/leads.css';
 
@@ -87,11 +88,13 @@ function blockValue(block: OnboardingBlock, o: OnboardingRow): string {
 
 export function OnboardingSummaryCard({ onboarding }: { onboarding: OnboardingRow | null }) {
   const done = onboarding ? blockCompletion(onboarding) : null;
+  const complete = done ? ONBOARDING_BLOCKS.filter((b) => done[b]).length : 0;
   return (
-    <section className="pt-card" aria-labelledby="proj-onb-title">
-      <h2 id="proj-onb-title" className="pt-heading">
-        Onboarding
-      </h2>
+    <CollapseCard
+      titleId="proj-onb-title"
+      title="Onboarding"
+      preview={`${complete} / ${ONBOARDING_BLOCKS.length} ${PROJECT_COPY.onboarding.complete.toLowerCase()}`}
+    >
       <ul className="pt-lead-list">
         {ONBOARDING_BLOCKS.map((b) => {
           const ok = done ? done[b] : false;
@@ -109,7 +112,7 @@ export function OnboardingSummaryCard({ onboarding }: { onboarding: OnboardingRo
           );
         })}
       </ul>
-    </section>
+    </CollapseCard>
   );
 }
 
@@ -122,11 +125,7 @@ export function ConsentCard({ consents }: { consents: ConsentRow[] }) {
       ? `Accord donné le ${formatDateFr(latest.createdAt)} (version ${latest.textVersion})`
       : `Accord retiré le ${formatDateFr(latest.createdAt)}`;
   return (
-    <section className="pt-card" aria-labelledby="proj-consent-title">
-      <h2 id="proj-consent-title" className="pt-heading">
-        Accord de présentation
-      </h2>
-      <p>{line}</p>
+    <CollapseCard titleId="proj-consent-title" title="Accord de présentation" preview={line}>
       {consents.length > 0 ? (
         <details>
           <summary>Historique</summary>
@@ -140,8 +139,10 @@ export function ConsentCard({ consents }: { consents: ConsentRow[] }) {
             ))}
           </ol>
         </details>
-      ) : null}
-    </section>
+      ) : (
+        <p>{line}</p>
+      )}
+    </CollapseCard>
   );
 }
 

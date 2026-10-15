@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, Inbox } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import FunnelKpis from '@/components/admin/funnel/FunnelKpis';
 import FunnelTable from '@/components/admin/funnel/FunnelTable';
@@ -172,27 +174,25 @@ export default async function AdminFunnelPage({
                 </button>
               </form>
               {error ? (
-                <div className="pt-empty">
-                  <h2 className="pt-heading">Chiffres indisponibles</h2>
-                  <p className="pt-helper">
-                    Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux.
-                    Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.
-                  </p>
-                  <Link href={reloadHref} className="pt-btn-ghost">
+                <EmptyState
+                  headingLevel={2}
+                  icon={<TriangleAlert size={32} />}
+                  title="Chiffres indisponibles"
+                  description={<>Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                  action={<Link href={reloadHref} className="pt-btn-ghost">
                     Recharger
-                  </Link>
-                </div>
+                  </Link>}
+                />
               ) : grouped.length === 0 ? (
-                <div className="pt-empty">
-                  <h2 className="pt-heading">Pas encore de données</h2>
-                  <p className="pt-helper">
-                    L&apos;entonnoir se remplit dès les premières visites avec source et les
-                    premières demandes. Revenez après la prochaine campagne.
-                  </p>
-                  <Link href="/admin/liens" className="pt-btn-ghost">
+                <EmptyState
+                  headingLevel={2}
+                  icon={<Inbox size={32} />}
+                  title="Pas encore de données"
+                  description={<>L&apos;entonnoir se remplit dès les premières visites avec source et les premières demandes. Revenez après la prochaine campagne.</>}
+                  action={<Link href="/admin/liens" className="pt-btn-ghost">
                     Préparer un lien de campagne
-                  </Link>
-                </div>
+                  </Link>}
+                />
               ) : (
                 <>
                   {nonconformingTotal > 0 ? (

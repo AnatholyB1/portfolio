@@ -1,4 +1,6 @@
 import { NOT_SET, formatDateFr, formatSiret } from '@/lib/admin/format';
+import { UsersRound } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import ResendButton from './ResendButton';
 import './admin.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
@@ -22,23 +24,23 @@ function orDash(v: string): string {
 export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
   if (rows.length === 0) {
     return (
-      <div className="pt-empty">
-        <h3 className="pt-heading">Aucun client invité</h3>
-        <p className="pt-helper">
-          Invitez votre premier client avec le formulaire ci-dessus : il recevra un code de
-          connexion par e-mail.
-        </p>
-        <a href="/admin#invite-title" className="pt-btn-ghost">
-          Aller au formulaire d&apos;invitation
-        </a>
-      </div>
+      <EmptyState
+        icon={<UsersRound size={32} />}
+        title="Aucun client invité"
+        description="Invitez votre premier client avec le formulaire ci-dessus : il recevra un code de connexion par e-mail."
+        action={
+          <a href="/admin#invite-title" className="pt-btn-ghost">
+            Aller au formulaire d&apos;invitation
+          </a>
+        }
+      />
     );
   }
 
   // Rôles explicites : sur mobile le CSS passe les éléments en display:block,
   // ce qui retire leur sémantique de tableau dans certains navigateurs.
   return (
-    <TableScroll label="Clients">
+    <TableScroll label="Clients" className="pt-table-sticky">
 <table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Clients invités</caption>
       <thead role="rowgroup">

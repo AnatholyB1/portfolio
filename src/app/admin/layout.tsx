@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../portal.css";
 import "@/components/admin/admin.css";
+import { ToastProvider } from "@/components/ui/Toast";
 
 // Espace privé (D-15) : jamais indexé, titre propre (le gabarit racine ajoute
 // « · Sèvalys »). `alternates: {}` supprime la canonique "/" héritée du layout racine.
@@ -24,7 +25,8 @@ export default function AdminLayout({
       <a href="#admin-contenu" className="pt-skip-link">
         Aller au contenu
       </a>
-      {children}
+      {/* Retours d'action (succès) : régions live montées une fois, avant l'arrivée du texte. */}
+      <ToastProvider>{children}</ToastProvider>
     </div>
   );
 }

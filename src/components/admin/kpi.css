@@ -1,0 +1,162 @@
+/* Admin : tuiles KPI, graphique de trésorerie et file « À traiter » (V14, tableau de bord de travail).
+   Couleurs sobres : aucune valeur en accent, --warm réservé aux anomalies, jamais la couleur seule. */
+
+/* ---------- Tuiles KPI ---------- */
+.pt-root .pt-admin .pt-funnel-kpi {
+  position: relative;
+  gap: 4px;
+  padding: 16px 16px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--pt-radius-md);
+  transition:
+    border-color var(--pt-dur-base) var(--pt-ease-out),
+    background-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-funnel-kpi-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-funnel-kpi-value {
+  margin-top: 4px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.pt-root .pt-admin .pt-funnel-kpi-sub {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+/* Tuile de pilotage : le lien de chiffre couvre toute la tuile (une seule cible de 44 px minimum). */
+.pt-root .pt-admin .pt-funnel-kpi:has(.pt-pilot-kpi-link) {
+  cursor: pointer;
+}
+.pt-root .pt-admin .pt-pilot-kpi-link {
+  text-decoration: none;
+}
+.pt-root .pt-admin .pt-pilot-kpi-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--pt-radius-md);
+}
+.pt-root .pt-admin .pt-pilot-kpi-link:focus-visible {
+  outline: none;
+}
+.pt-root .pt-admin .pt-pilot-kpi-link:focus-visible::after {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
+.pt-root .pt-admin .pt-pilot-kpi-link-text {
+  margin-top: 6px;
+  color: var(--ink-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--pt-border-strong, #6f6b64);
+  transition: color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-pilot-kpi-link-text::after {
+  content: " →";
+  content: " →" / "";
+}
+.pt-root .pt-admin .pt-funnel-kpi:has(.pt-pilot-kpi-link):hover {
+  border-color: var(--ink-dim);
+  background: var(--bg-3);
+}
+.pt-root .pt-admin .pt-funnel-kpi:has(.pt-pilot-kpi-link):hover .pt-pilot-kpi-link-text {
+  color: var(--ink);
+}
+.pt-root .pt-admin .pt-funnel-kpi:has(.pt-pilot-kpi-link):active {
+  background: var(--bg-2);
+}
+.pt-root .pt-admin .pt-pilot-kpi-rule {
+  margin-top: 2px;
+}
+
+/* Pilotage : sept tuiles, 2 colonnes mobile, 4 ensuite (la dernière ligne reste alignée à gauche). */
+@media (min-width: 1280px) {
+  .pt-root .pt-admin .pt-funnel-kpis {
+    gap: 24px 16px;
+  }
+}
+
+/* ---------- Graphique de trésorerie ---------- */
+.pt-root .pt-admin .pt-pilot-chart {
+  padding: 8px 8px 0;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--pt-radius-md);
+}
+.pt-root .pt-admin .pt-pilot-legend {
+  gap: 8px 24px;
+  padding: 0 4px;
+}
+.pt-root .pt-admin .pt-pilot-swatch-line {
+  position: relative;
+  height: 0;
+  border-top: 2px solid var(--acid);
+}
+.pt-root .pt-admin .pt-pilot-swatch-line::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  background: var(--acid);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  box-sizing: content-box;
+  transform: translate(0, -0px);
+}
+.pt-root .pt-admin .pt-pilot-chart-section > .pt-helper {
+  max-width: 72ch;
+  font-size: 14px;
+}
+
+/* Tableaux de pilotage : colonnes d'argent resserrées pour tenir sans défilement dès ~1100 px. */
+@media (min-width: 768px) {
+  .pt-root .pt-admin .pt-pilot-table th,
+  .pt-root .pt-admin .pt-pilot-table td {
+    padding-inline: 10px;
+  }
+  .pt-root .pt-admin .pt-pilot-table th {
+    letter-spacing: 0.04em;
+  }
+}
+
+/* ---------- Tableau de l'entonnoir : mêmes en-têtes et alignements que les autres tableaux ---------- */
+.pt-root .pt-admin .pt-funnel-table th,
+.pt-root .pt-admin .pt-funnel-table td {
+  padding: 12px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--line);
+}
+.pt-root .pt-admin .pt-funnel-table thead th {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-funnel-table tbody tr {
+  transition: background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-funnel-table tbody tr:hover,
+.pt-root .pt-admin .pt-funnel-table tbody tr:hover th[scope="row"] {
+  background: rgba(236, 234, 227, 0.04);
+}
+.pt-root .pt-admin .pt-funnel-table tbody tr:hover th[scope="row"] {
+  background: color-mix(in srgb, var(--bg-2) 96%, var(--ink));
+}
+.pt-root .pt-admin .pt-funnel-table tbody th[scope="row"] .pt-lead-badge {
+  margin-left: 8px;
+}
+.pt-root .pt-admin .pt-funnel-table td.pt-funnel-num {
+  font-family: var(--font-mono), monospace;
+}
+.pt-root .pt-admin .pt-funnel-rate {
+  font-family: var(--font-body), sans-serif;
+}

@@ -1,0 +1,177 @@
+/* Admin : boutons, pastilles, filtres, champs (:hover / :active / :focus-visible soignés).
+   Transitions explicites sur les propriétés utiles, jamais `transition: all`.
+   Portée .pt-admin : le portail et la connexion gardent leur rendu. */
+
+/* ---------- Boutons ---------- */
+.pt-root .pt-admin :is(.pt-btn-primary, .pt-btn-ghost, .pt-btn-text) {
+  transition:
+    color var(--pt-dur-fast) var(--pt-ease-out),
+    background-color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-btn-ghost:hover:not(:disabled):not([aria-disabled="true"]),
+.pt-root .pt-admin .pt-btn-text:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: rgba(236, 234, 227, 0.06);
+}
+.pt-root .pt-admin .pt-btn-ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+  border-color: var(--ink-dim);
+}
+/* Appui : léger retrait + teinte plus marquée. Aucun effet sur un bouton inactif. */
+.pt-root .pt-admin :is(.pt-btn-primary, .pt-btn-ghost, .pt-btn-text):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.pt-root .pt-admin .pt-btn-primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--acid) 82%, var(--bg));
+}
+.pt-root .pt-admin .pt-btn-ghost:active:not(:disabled):not([aria-disabled="true"]),
+.pt-root .pt-admin .pt-btn-text:active:not(:disabled):not([aria-disabled="true"]) {
+  background: rgba(236, 234, 227, 0.1);
+}
+.pt-root .pt-admin .pt-confirm-btn:active:not(:disabled) {
+  background: color-mix(in srgb, var(--warm) 20%, transparent);
+}
+/* Bouton en cours d'action (aria-busy ou disabled pendant l'envoi) : curseur d'attente. */
+.pt-root .pt-admin :is(button, a)[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* ---------- Navigation ---------- */
+.pt-root .pt-admin .pt-admin-nav a {
+  justify-content: center;
+  min-width: 44px;
+  padding: 0 2px;
+  transition:
+    color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-admin-nav a:hover:not(.pt-admin-nav-active) {
+  border-bottom-color: var(--pt-border-strong, #6f6b64);
+}
+.pt-root .pt-admin .pt-admin-nav a:active {
+  color: var(--acid);
+}
+
+/* ---------- Pastilles de statut interactives et puces ---------- */
+.pt-root .pt-admin .pt-lead-pill {
+  transition:
+    background-color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-lead-pill:hover:not([aria-disabled="true"]) {
+  background: var(--bg-2);
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-lead-pill:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.pt-root .pt-admin .pt-lead-pill[aria-expanded="true"] {
+  border-color: var(--ink-dim);
+  background: var(--bg-2);
+}
+.pt-root .pt-admin .pt-lead-pill-menu {
+  box-shadow: var(--pt-shadow-md);
+  border-radius: var(--pt-radius-sm);
+  animation: pt-admin-pop var(--pt-dur-fast) var(--pt-ease-out) backwards;
+}
+.pt-root .pt-admin .pt-lead-pill-menu button {
+  transition: background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-lead-pill-menu button:active {
+  background: rgba(236, 234, 227, 0.1);
+}
+@keyframes pt-admin-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.pt-root .pt-admin a.pt-lead-chip {
+  transition:
+    background-color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin a.pt-lead-chip:hover {
+  background: var(--bg-2);
+  border-color: var(--ink-dim);
+  border-left-color: var(--acid);
+}
+.pt-root .pt-admin a.pt-lead-chip:active {
+  transform: scale(0.98);
+}
+
+/* ---------- Sélecteurs segmentés (Période, Montants, Regrouper par) ---------- */
+.pt-root .pt-admin .pt-seg label {
+  border-radius: var(--pt-radius-sm);
+  transition:
+    background-color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-seg label:hover {
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-seg label:active {
+  transform: scale(0.97);
+}
+.pt-root .pt-admin .pt-seg label:has(input:checked) {
+  border-color: var(--ink-dim);
+  border-left-color: var(--acid);
+  background: var(--bg-2);
+  box-shadow: inset 2px 0 0 var(--acid);
+}
+/* Le choix actif porte aussi une coche : jamais la seule couleur. */
+.pt-root .pt-admin .pt-seg label:has(input:checked)::before {
+  content: "✓";
+  content: "✓" / "";
+  margin-right: 8px;
+  font-size: 14px;
+  color: var(--acid);
+}
+
+/* ---------- Champs ---------- */
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input) {
+  border-radius: var(--pt-radius-sm);
+  transition:
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):hover {
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):focus-visible {
+  border-color: var(--acid);
+}
+.pt-root .pt-admin .pt-input {
+  transition:
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-input:hover:not(:disabled) {
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-input:focus-visible {
+  border-color: var(--acid);
+}
+.pt-root .pt-admin :is(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--acid);
+}
+
+/* ---------- Pagination, résumés repliables ---------- */
+.pt-root .pt-admin .pt-pager .pt-btn-ghost[aria-disabled="true"] {
+  pointer-events: none;
+}
+.pt-root .pt-admin summary {
+  transition: color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin summary:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-root .pt-admin .pt-lead-pill-menu {
+    animation: none;
+  }
+}

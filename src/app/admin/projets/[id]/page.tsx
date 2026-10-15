@@ -177,8 +177,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                 <h2 id="proj-steps-title" className="pt-heading">
                   Étape et faits
                 </h2>
-                <Timeline state={state} variant="admin" />
-                <dl className="pt-summary">
+                <dl className="pt-summary pt-proj-brief">
                   <dt>Étape en cours</dt>
                   <dd>{state.done || !step ? PROJECT_COPY.blocage.done : `${step.index}/6 ${step.name}`}</dd>
                   <dt>{PROJECT_COPY.whoWaits.label}</dt>
@@ -188,6 +187,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   <dt>Action attendue</dt>
                   <dd>{state.expectedAction}</dd>
                 </dl>
+                <Timeline state={state} variant="admin" />
                 <PostFactForm projectId={project.id} facts={facts} signedFacts={signedFacts} />
                 <FactJournal projectId={project.id} facts={facts} notes={notes} />
               </section>

@@ -1,23 +1,32 @@
 import Link from 'next/link';
+import { CircleCheck } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import { buildQueueTiles, type QueueCounts } from '@/lib/admin/workQueue';
 import './admin.css';
 
 // « À traiter » : ce qui attend l'admin, chaque ligne mène à la liste concernée.
 // `counts` vient de loadWorkQueue (une lecture par tuile, `null` si elle a échoué).
+// Le total n'additionne que les lectures réussies : une tuile en échec n'est jamais comptée comme zéro.
 export default function WorkQueue({ counts }: { counts: QueueCounts }) {
   const { tiles, empty } = buildQueueTiles(counts);
+  const total = tiles.reduce((sum, t) => sum + (t.count ?? 0), 0);
   return (
-    <section className="pt-card" aria-labelledby="queue-title">
-      <h2 id="queue-title" className="pt-heading pt-admin-title-tight">
-        À traiter
-      </h2>
+    <section className="pt-card pt-queue-card" aria-labelledby="queue-title">
+      <div className="pt-queue-head">
+        <h2 id="queue-title" className="pt-heading">
+          À traiter
+        </h2>
+        {empty ? null : (
+          <p className="pt-queue-total">{total === 1 ? '1 élément en attente' : `${total} éléments en attente`}</p>
+        )}
+      </div>
       {empty ? (
-        <div className="pt-empty">
-          <p className="pt-heading">Rien à traiter</p>
-          <p className="pt-helper">
-            Aucun lead à qualifier, aucune signature ni facture en retard. Les nouveautés apparaîtront ici.
-          </p>
-        </div>
+        <EmptyState
+          compact
+          icon={<CircleCheck size={32} />}
+          title="Rien à traiter"
+          description="Aucun lead à qualifier, aucune signature ni facture en retard. Les nouveautés apparaîtront ici."
+        />
       ) : (
         <ul className="pt-queue">
           {tiles.map((t) => (

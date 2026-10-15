@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, SearchX } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import InviteForm from '@/components/admin/InviteForm';
 import ClientsTable, { type ClientRow } from '@/components/admin/ClientsTable';
@@ -87,36 +89,41 @@ export default async function AdminPage({
           <AdminNav current="clients" />
           <h1 className="pt-heading">Clients</h1>
           <WorkQueue counts={queue} />
-          <section className="pt-card" aria-labelledby="invite-title">
-            <h2 id="invite-title" className="pt-heading pt-admin-title">
-              Inviter un client
-            </h2>
+          {/* Repliée dès qu'il existe des clients : la file « À traiter » et la liste passent avant. */}
+          <details className="pt-card pt-invite" open={rows.length === 0 && page === 1}>
+            <summary className="pt-invite-summary">
+              <h2 id="invite-title" className="pt-heading">
+                Inviter un client
+              </h2>
+              <span className="pt-invite-hint">Code de connexion par e-mail, sans mot de passe</span>
+            </summary>
             <p className="pt-intro">Le client reçoit un code par e-mail, sans mot de passe.</p>
             <InviteForm />
-          </section>
+          </details>
           <section className="pt-card" aria-labelledby="clients-title">
             <h2 id="clients-title" className="pt-heading pt-admin-title">
               Clients invités
             </h2>
             {pastEnd ? (
-              <div className="pt-admin-state">
-                <p className="pt-heading">Aucun résultat sur cette page</p>
-                <p className="pt-helper">Cette page est au-delà de la dernière page de la liste.</p>
-                <Link href="/admin" className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={3}
+                icon={<SearchX size={32} />}
+                title="Aucun résultat sur cette page"
+                description={<>Cette page est au-delà de la dernière page de la liste.</>}
+                action={<Link href="/admin" className="pt-btn-ghost">
                   Revenir à la première page
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : loadFailed ? (
-              <div className="pt-admin-state">
-                <p className="pt-heading">Clients indisponibles</p>
-                <p className="pt-helper">
-                  La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
-                  connexion à la base.
-                </p>
-                <Link href="/admin" className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={3}
+                icon={<TriangleAlert size={32} />}
+                title="Clients indisponibles"
+                description={<>La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                action={<Link href="/admin" className="pt-btn-ghost">
                   Recharger
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : (
               <>
                 <ClientsTable rows={rows} />

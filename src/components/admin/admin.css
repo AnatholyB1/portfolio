@@ -1,3 +1,10 @@
+@import "./motion.css";
+@import "./tables.css";
+@import "./controls.css";
+@import "./kpi.css";
+@import "./queue.css";
+@import "./sheets.css";
+
 /* Styles propres à l'administration, scopés sous .pt-admin (jetons existants). */
 
 /* ---------- Coque : lien d'évitement, colonne de page, navigation ---------- */
