@@ -1,0 +1,186 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { PROJECT_COPY } from '@/lib/projects/copy';
+import { runTool } from '../registry';
+
+const access = vi.hoisted(() => ({ getAccessibleProject: vi.fn() }));
+const content = vi.hoisted(() => ({ addProjectLink: vi.fn() }));
+const facts = vi.hoisted(() => ({ postProjectFact: vi.fn(), revokeProjectFact: vi.fn() }));
+const files = vi.hoisted(() => ({ requestUpload: vi.fn(), confirmUpload: vi.fn(), createDownloadUrl: vi.fn() }));
+const rpc = vi.hoisted(() => ({ callRpc: vi.fn() }));
+const read = vi.hoisted(() => ({ loadProjectBundle: vi.fn() }));
+vi.mock('@/lib/server/projects/access', () => access);
+vi.mock('@/lib/server/projects/content', () => content);
+vi.mock('@/lib/server/projects/facts', () => facts);
+vi.mock('@/lib/server/projects/files', () => files);
+vi.mock('@/lib/server/rpc', () => rpc);
+vi.mock('@/lib/server/projects/read', () => read);
+
+import { projectTools } from './projects';
+
+const ID = '11111111-1111-4111-8111-111111111111';
+const FID = '22222222-2222-4222-8222-222222222222';
+const principal = { tokenId: 't1', userId: 'admin-1' };
+const audit = vi.fn();
+const supabase = { tag: 'rls' };
+const ctx = { supabase: supabase as never, user: { id: 'admin-1' } as never };
+const tool = (name: string) => {
+  const t = projectTools.find((x) => x.name === name);
+  if (!t) throw new Error(`missing tool ${name}`);
+  return t;
+};
+const okFact = (over: Record<string, unknown> = {}) => ({
+  ok: true,
+  changed: true,
+  factId: 5,
+  stepBefore: 2,
+  stepAfter: 3,
+  done: false,
+  mail: 'sent',
+  ...over,
+});
+const bundle = {
+  project: { id: ID, clientId: 'c1', title: 'Refonte', offer: 'site-vitrine', startedAt: '2026-01-01' },
+  facts: [{ id: 5, type: 'deposit_received', targetFactId: null, actorKind: 'admin', createdAt: '2026-02-01' }],
+  notes: { 5: 'acompte reçu' },
+  state: { currentStep: 3, done: false, waitingOn: 'client', expectedAction: 'Signer', steps: [], sinceAt: 'x' },
+};
+
+beforeEach(() => {
+  audit.mockReset();
+  for (const f of [
+    ...Object.values(access),
+    ...Object.values(content),
+    ...Object.values(facts),
+    ...Object.values(files),
+    ...Object.values(rpc),
+    ...Object.values(read),
+  ]) f.mockReset();
+  access.getAccessibleProject.mockResolvedValue({ id: ID, clientId: 'c1' });
+  read.loadProjectBundle.mockResolvedValue(bundle);
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+describe('projectTools metadata', () => {
+  it('declares exact names, covers and destructive flags', () => {
+    const map = Object.fromEntries(projectTools.map((t) => [t.name, t.covers]));
+    expect(map).toMatchObject({
+      post_project_fact: ['postFactAction'],
+      revoke_project_fact: ['revokeFactAction'],
+      add_project_link: ['addLinkAction'],
+      request_project_upload: ['adminRequestUploadAction'],
+      confirm_project_upload: ['adminConfirmUploadAction'],
+      get_project_file_url: ['adminDownloadAction'],
+      set_reminder_hold: ['setReminderHoldAction'],
+    });
+    expect(projectTools.filter((t) => t.destructive).map((t) => t.name).sort()).toEqual(['post_project_fact', 'revoke_project_fact']);
+  });
+});
+
+describe('post_project_fact', () => {
+  const args = { projectId: ID, type: 'deposit_received', note: 'acompte' };
+  it('without confirm never posts and previews project, fact and the client e-mail effect', async () => {
+    const r = await runTool(tool('post_project_fact'), args, ctx, principal, audit);
+    expect(facts.postProjectFact).not.toHaveBeenCalled();
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    const json = JSON.stringify(r);
+    expect(json).toContain('Refonte');
+    expect(json).toContain('deposit_received');
+    expect(json).toMatch(/e-mail/);
+  });
+  it('previews minimally when the project cannot be read', async () => {
+    read.loadProjectBundle.mockResolvedValue(null);
+    const r = await runTool(tool('post_project_fact'), args, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+  });
+  it('with confirm posts as admin and reports the mail line', async () => {
+    facts.postProjectFact.mockResolvedValue(okFact());
+    const r = await runTool(tool('post_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    expect(facts.postProjectFact).toHaveBeenCalledWith(expect.objectContaining({ actorKind: 'admin', actorId: 'admin-1', reason: 'acompte' }));
+    expect(r).toMatchObject({ ok: true, data: { ok: true, data: { mailLine: PROJECT_COPY.facts.mailSent } } });
+  });
+  it('rejects an unknown fact type as invalid_input; already recorded is an audited error', async () => {
+    expect(await runTool(tool('post_project_fact'), { ...args, type: 'nope', confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    facts.postProjectFact.mockResolvedValue(okFact({ changed: false }));
+    const r = await runTool(tool('post_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    expect(r).toEqual({ ok: false, error: PROJECT_COPY.facts.alreadyRecorded });
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ outcome: 'error' }));
+  });
+});
+
+describe('revoke_project_fact', () => {
+  const args = { projectId: ID, factId: 5, reason: 'Erreur de saisie du fait' };
+  it('without confirm never revokes and previews the targeted fact', async () => {
+    const r = await runTool(tool('revoke_project_fact'), args, ctx, principal, audit);
+    expect(facts.revokeProjectFact).not.toHaveBeenCalled();
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    const json = JSON.stringify(r);
+    expect(json).toContain('deposit_received');
+    expect(json).toContain('Refonte');
+  });
+  it('with confirm revokes with the actor', async () => {
+    facts.revokeProjectFact.mockResolvedValue(okFact({ mail: 'none' }));
+    const r = await runTool(tool('revoke_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    expect(facts.revokeProjectFact).toHaveBeenCalledWith({ projectId: ID, factId: 5, actorId: 'admin-1', reason: args.reason });
+    expect(r).toMatchObject({ ok: true, data: { ok: true } });
+  });
+  it('rejects a short reason as invalid_input', async () => {
+    expect(await runTool(tool('revoke_project_fact'), { ...args, reason: 'court', confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});
+
+describe('add_project_link', () => {
+  it('adds the link', async () => {
+    content.addProjectLink.mockResolvedValue({ ok: true });
+    const r = await runTool(tool('add_project_link'), { projectId: ID, title: 'Maquette', url: 'https://example.com/x' }, ctx, principal, audit);
+    expect(content.addProjectLink).toHaveBeenCalledWith(supabase, { projectId: ID, title: 'Maquette', url: 'https://example.com/x', actorId: 'admin-1' });
+    expect(r).toMatchObject({ ok: true, data: { ok: true, message: PROJECT_COPY.links.add } });
+  });
+  it('a non-https url is an audited error with the url message', async () => {
+    const r = await runTool(tool('add_project_link'), { projectId: ID, title: 'M', url: 'http://example.com' }, ctx, principal, audit);
+    expect(r).toEqual({ ok: false, error: PROJECT_COPY.errors.url });
+  });
+});
+
+describe('upload flow', () => {
+  it('request_project_upload returns the signed url and file id, and the description explains the PUT', async () => {
+    files.requestUpload.mockResolvedValue({ ok: true, fileId: FID, signedUrl: 'https://s/u', token: 'secret-token', path: 'secret/path' });
+    const args = { projectId: ID, filename: 'a.pdf', size: 100, mime: 'application/pdf' };
+    const r = await runTool(tool('request_project_upload'), args, ctx, principal, audit);
+    expect(files.requestUpload).toHaveBeenCalledWith(supabase, { ...args, uploaderKind: 'admin', uploaderId: 'admin-1' });
+    expect(r).toMatchObject({ ok: true, data: { ok: true, data: { fileId: FID, signedUrl: 'https://s/u' } } });
+    expect(JSON.stringify(r)).not.toContain('secret');
+    const d = tool('request_project_upload').description;
+    expect(d).toContain('PUT');
+    expect(d).toContain('multipart');
+    expect(d).toContain('confirm_project_upload');
+  });
+  it('request_project_upload caps the size at the schema limit', async () => {
+    const r = await runTool(tool('request_project_upload'), { projectId: ID, filename: 'a.pdf', size: 26214401, mime: 'application/pdf' }, ctx, principal, audit);
+    expect(r).toEqual({ ok: false, error: 'invalid_input' });
+  });
+  it('confirm_project_upload confirms; a missing file is an audited error', async () => {
+    files.confirmUpload.mockResolvedValue({ ok: true });
+    expect(await runTool(tool('confirm_project_upload'), { fileId: FID }, ctx, principal, audit)).toMatchObject({ ok: true });
+    expect(files.confirmUpload).toHaveBeenCalledWith(supabase, FID);
+    files.confirmUpload.mockResolvedValue({ ok: false, code: 'missing' });
+    expect(await runTool(tool('confirm_project_upload'), { fileId: FID }, ctx, principal, audit)).toEqual({ ok: false, error: PROJECT_COPY.errors.generic });
+  });
+  it('get_project_file_url returns the signed url only', async () => {
+    files.createDownloadUrl.mockResolvedValue({ ok: true, url: 'https://s/d' });
+    const r = await runTool(tool('get_project_file_url'), { fileId: FID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { ok: true, data: { url: 'https://s/d' } } });
+    expect(tool('get_project_file_url').description).toMatch(/URL/);
+  });
+});
+
+describe('set_reminder_hold', () => {
+  it('suspends reminders with the actor', async () => {
+    rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'suspended' } });
+    const r = await runTool(tool('set_reminder_hold'), { projectId: ID, action: 'suspend' }, ctx, principal, audit);
+    expect(rpc.callRpc).toHaveBeenCalledWith('admin/projets', 'sv_set_reminder_hold', { p_project_id: ID, p_action: 'suspend', p_actor_id: 'admin-1' });
+    expect(r).toMatchObject({ ok: true, data: { ok: true, message: 'Relances suspendues.' } });
+  });
+  it('rejects an unknown action as invalid_input', async () => {
+    expect(await runTool(tool('set_reminder_hold'), { projectId: ID, action: 'pause' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});

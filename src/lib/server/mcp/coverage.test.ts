@@ -40,12 +40,8 @@ export function exportedValueNames(src: string): string[] {
 // Exclusions MOTIVÉES uniquement. Ajouter une action admin sans outil MCP casse ce test.
 // Phase B vide cette liste domaine par domaine.
 const EXCLUDED: Record<string, string> = {
-  addLinkAction: 'phase B : à migrer',
-  adminConfirmUploadAction: 'phase B : à migrer',
   adminDocumentDownloadAction: 'phase B : à migrer',
-  adminDownloadAction: 'phase B : à migrer',
   adminInvoiceDownloadAction: 'phase B : à migrer',
-  adminRequestUploadAction: 'phase B : à migrer',
   adminResumeFinalizationAction: 'phase B : à migrer',
   adminSealedDownloadAction: 'phase B : à migrer',
   exportSignatureTrailAction: 'phase B : à migrer',
@@ -54,12 +50,9 @@ const EXCLUDED: Record<string, string> = {
   issuePeriodInvoiceAction: 'phase B : à migrer',
   loadInvoiceDataAction: 'phase B : à migrer',
   loadSnapshotAction: 'phase B : à migrer',
-  postFactAction: 'phase B : à migrer',
   previewCreditNoteAction: 'phase B : à migrer',
   previewDocumentAction: 'phase B : à migrer',
   previewPeriodInvoiceAction: 'phase B : à migrer',
-  revokeFactAction: 'phase B : à migrer',
-  setReminderHoldAction: 'phase B : à migrer',
   verifyDocumentHashAction: 'phase B : à migrer',
   verifyInvoiceHashAction: 'phase B : à migrer',
   verifySignatureChainAction: 'phase B : à migrer',

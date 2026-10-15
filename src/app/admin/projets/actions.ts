@@ -9,13 +9,19 @@ import { requestIp } from '@/lib/server/signature/clientIp';
 import { createSealedDownloadUrl } from '@/lib/server/signature/links';
 import { finalizeSignature } from '@/lib/server/signature/seal';
 import { requireAdmin } from '@/lib/server/auth/dal';
+import {
+  addProjectLinkCore,
+  confirmProjectUploadCore,
+  downloadProjectFileCore,
+  postProjectFactCore,
+  requestProjectUploadCore,
+  revokeProjectFactCore,
+} from '@/lib/server/admin/core/projects';
 import { creditNoteMax, parseDaysToMilli } from '@/lib/documents/invoiceMath';
 import { formatEuros, toCents } from '@/lib/documents/money';
 import { documentInputSchema, specInputSchema, stripControlChars, type DocumentInput } from '@/lib/documents/schemas';
 import type { InvoiceSnapshotV2, LedgerSnapshot } from '@/lib/documents/types';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { linkSchema, postFactSchema, revokeFactSchema, uploadRequestSchema } from '@/lib/projects/schemas';
-import { DONE_COPY, STEPS } from '@/lib/projects/steps';
 import { createDocumentDownloadUrl, verifyDocumentHash } from '@/lib/server/documents/download';
 import { issueDocument } from '@/lib/server/documents/issue';
 import { prepareDocument } from '@/lib/server/documents/prepare';
@@ -27,13 +33,6 @@ import { createInvoiceDownloadUrl, verifyInvoiceHash } from '@/lib/server/invoic
 import { issueCreditNote, issueInvoice } from '@/lib/server/invoices/issue';
 import { renderLedgerPdf } from '@/lib/server/invoices/render';
 import { getAccessibleProject } from '@/lib/server/projects/access';
-import { addProjectLink } from '@/lib/server/projects/content';
-import {
-  postProjectFact,
-  revokeProjectFact,
-  type FactPostResult,
-} from '@/lib/server/projects/facts';
-import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
 import { expireOpenPayments, requestRefundForCreditNote } from '@/lib/server/stripe/refund';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import type {
@@ -79,30 +78,10 @@ function refresh(projectId: string) {
   revalidatePath('/espace-client/paiements');
 }
 
-function mailLine(mail: 'sent' | 'pending' | 'failed' | 'none'): string | undefined {
-  switch (mail) {
-    case 'sent':
-      return PROJECT_COPY.facts.mailSent;
-    case 'pending':
-      return PROJECT_COPY.facts.mailPending;
-    case 'failed':
-      return PROJECT_COPY.facts.mailFailed;
-    default:
-      return undefined;
-  }
-}
-
-function factOutcome(res: FactPostResult, projectId: string): ProjectActionState {
-  if (!res.ok) return err(PROJECT_COPY.errors.generic);
-  if (!res.changed) return err(PROJECT_COPY.facts.alreadyRecorded);
+function factState(res: Awaited<ReturnType<typeof postProjectFactCore>>, projectId: string): ProjectActionState {
+  if (!res.ok) return err(res.message);
   refresh(projectId);
-  const stepName =
-    res.done || res.stepAfter === null ? DONE_COPY.name : (STEPS[res.stepAfter - 1]?.name ?? DONE_COPY.name);
-  return {
-    status: 'success',
-    message: PROJECT_COPY.facts.recorded(stepName),
-    mailLine: mailLine(res.mail),
-  };
+  return { status: 'success', message: res.message, mailLine: res.data?.mailLine };
 }
 
 // Chaque action revérifie l'admin AVANT toute validation ou appel service_role (D-22).
@@ -110,68 +89,44 @@ export async function postFactAction(
   _prev: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
-  const { user, supabase } = await requireAdmin();
-  const note = str(formData, 'note').trim();
-  const parsed = postFactSchema.safeParse({
-    projectId: str(formData, 'projectId'),
+  const ctx = await requireAdmin();
+  const projectId = str(formData, 'projectId');
+  const res = await postProjectFactCore(ctx, {
+    projectId,
     type: str(formData, 'type'),
-    note: note || undefined,
+    note: str(formData, 'note'),
   });
-  if (!parsed.success) return err(PROJECT_COPY.errors.generic);
-  if (!(await getAccessibleProject(supabase, parsed.data.projectId))) {
-    return err(PROJECT_COPY.errors.generic);
-  }
-  const res = await postProjectFact({
-    projectId: parsed.data.projectId,
-    type: parsed.data.type,
-    actorKind: 'admin',
-    actorId: user.id,
-    reason: parsed.data.note ?? null,
-  });
-  return factOutcome(res, parsed.data.projectId);
+  return factState(res, projectId);
 }
 
 export async function revokeFactAction(
   _prev: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
-  const { user, supabase } = await requireAdmin();
-  const parsed = revokeFactSchema.safeParse({
-    projectId: str(formData, 'projectId'),
+  const ctx = await requireAdmin();
+  const projectId = str(formData, 'projectId');
+  const res = await revokeProjectFactCore(ctx, {
+    projectId,
     factId: str(formData, 'factId'),
     reason: str(formData, 'reason'),
   });
-  if (!parsed.success) return err(PROJECT_COPY.errors.generic);
-  if (!(await getAccessibleProject(supabase, parsed.data.projectId))) {
-    return err(PROJECT_COPY.errors.generic);
-  }
-  const res = await revokeProjectFact({
-    projectId: parsed.data.projectId,
-    factId: parsed.data.factId,
-    actorId: user.id,
-    reason: parsed.data.reason,
-  });
-  return factOutcome(res, parsed.data.projectId);
+  return factState(res, projectId);
 }
 
 export async function addLinkAction(
   _prev: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
-  const { user, supabase } = await requireAdmin();
-  const parsed = linkSchema.safeParse({
-    projectId: str(formData, 'projectId'),
+  const ctx = await requireAdmin();
+  const projectId = str(formData, 'projectId');
+  const res = await addProjectLinkCore(ctx, {
+    projectId,
     title: str(formData, 'title'),
-    url: str(formData, 'url').trim(),
+    url: str(formData, 'url'),
   });
-  if (!parsed.success) {
-    const urlBad = parsed.error.issues.some((i) => i.path[0] === 'url');
-    return err(urlBad ? PROJECT_COPY.errors.url : PROJECT_COPY.errors.generic);
-  }
-  const res = await addProjectLink(supabase, { ...parsed.data, actorId: user.id });
-  if (!res.ok) return err(PROJECT_COPY.errors.generic);
-  refresh(parsed.data.projectId);
-  return { status: 'success', message: PROJECT_COPY.links.add };
+  if (!res.ok) return err(res.message);
+  refresh(projectId);
+  return { status: 'success', message: res.message };
 }
 
 export async function adminRequestUploadAction(input: {
@@ -180,40 +135,26 @@ export async function adminRequestUploadAction(input: {
   size: number;
   mime: string;
 }): Promise<UploadRequestResult> {
-  const { user, supabase } = await requireAdmin();
-  const parsed = uploadRequestSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, message: PROJECT_COPY.errors.generic };
-  const res = await requestUpload(supabase, {
-    ...parsed.data,
-    uploaderKind: 'admin',
-    uploaderId: user.id,
-  });
-  if (res.ok) return { ok: true, fileId: res.fileId, signedUrl: res.signedUrl };
-  if (res.code === 'too_large') return { ok: false, message: PROJECT_COPY.errors.fileTooLarge };
-  if (res.code === 'bad_type') return { ok: false, message: PROJECT_COPY.errors.fileType };
-  return { ok: false, message: PROJECT_COPY.errors.generic };
+  const ctx = await requireAdmin();
+  const res = await requestProjectUploadCore(ctx, input);
+  if (res.ok && res.data) return { ok: true, fileId: res.data.fileId, signedUrl: res.data.signedUrl };
+  return { ok: false, message: res.message };
 }
 
 export async function adminConfirmUploadAction(fileId: string): Promise<SimpleResult> {
-  const { supabase } = await requireAdmin();
-  if (typeof fileId !== 'string' || fileId.length === 0) {
-    return { ok: false, message: PROJECT_COPY.errors.generic };
-  }
-  const res = await confirmUpload(supabase, fileId);
-  if (!res.ok) return { ok: false, message: PROJECT_COPY.errors.generic };
+  const ctx = await requireAdmin();
+  const res = await confirmProjectUploadCore(ctx, { fileId });
+  if (!res.ok) return { ok: false, message: res.message };
   revalidatePath('/admin/projets');
   revalidatePath('/espace-client');
   return { ok: true };
 }
 
 export async function adminDownloadAction(fileId: string): Promise<DownloadResult> {
-  const { supabase } = await requireAdmin();
-  if (typeof fileId !== 'string' || fileId.length === 0) {
-    return { ok: false, message: PROJECT_COPY.errors.downloadFailed };
-  }
-  const res = await createDownloadUrl(supabase, fileId);
-  if (!res.ok) return { ok: false, message: PROJECT_COPY.errors.downloadFailed };
-  return { ok: true, url: res.url };
+  const ctx = await requireAdmin();
+  const res = await downloadProjectFileCore(ctx, { fileId });
+  if (!res.ok || !res.data) return { ok: false, message: res.message };
+  return { ok: true, url: res.data.url };
 }
 
 // ---- Phase 13 : documents (D-17). Ordre : requireAdmin, zod, getAccessibleProject, module serveur. ----
