@@ -30,17 +30,17 @@ export interface EmptyStateProps {
 
 export default function EmptyState({ title, description, icon, action, headingLevel = 3, compact = false, className }: EmptyStateProps) {
   const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
-  const cls = ['pt-empty', compact ? 'pt-empty-compact' : '', className ?? ''].filter(Boolean).join(' ');
+  const cls = ['pt-emptystate',compact ? 'pt-emptystate-compact' : '', className ?? ''].filter(Boolean).join(' ');
   return (
     <div className={cls}>
       {icon ? (
-        <span className="pt-empty-icon" aria-hidden="true">
+        <span className="pt-emptystate-icon" aria-hidden="true">
           {icon}
         </span>
       ) : null}
-      <Heading className="pt-empty-title">{title}</Heading>
-      {description ? <p className="pt-empty-desc">{description}</p> : null}
-      {action ? <div className="pt-empty-action">{action}</div> : null}
+      <Heading className="pt-emptystate-title">{title}</Heading>
+      {description ? <p className="pt-emptystate-desc">{description}</p> : null}
+      {action ? <div className="pt-emptystate-action">{action}</div> : null}
     </div>
   );
 }

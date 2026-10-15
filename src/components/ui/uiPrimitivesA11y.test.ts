@@ -89,13 +89,13 @@ describe('ToastProvider / StatusNote ARIA', () => {
 describe('EmptyState', () => {
   it('renders a heading, hides the icon from AT and omits empty parts', () => {
     const html = renderToStaticMarkup(createElement(EmptyState, { title: 'Aucun document', description: 'Bientôt.', icon: createElement('svg'), headingLevel: 2 }));
-    expect(html).toContain('<h2 class="pt-empty-title">Aucun document</h2>');
+    expect(html).toContain('<h2 class="pt-emptystate-title">Aucun document</h2>');
     expect(html).toContain('aria-hidden="true"');
-    expect(html).not.toContain('pt-empty-action');
+    expect(html).not.toContain('pt-emptystate-action');
     const min = renderToStaticMarkup(createElement(EmptyState, { title: 'Vide', compact: true }));
     expect(min).toContain('<h3');
-    expect(min).toContain('pt-empty-compact');
-    expect(min).not.toContain('pt-empty-icon');
+    expect(min).toContain('pt-emptystate-compact');
+    expect(min).not.toContain('pt-emptystate-icon');
   });
 });
 

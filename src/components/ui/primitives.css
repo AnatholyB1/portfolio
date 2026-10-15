@@ -15,7 +15,7 @@
 }
 
 /* ── EmptyState ── */
-.pt-empty {
+.pt-emptystate {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,26 +24,26 @@
   padding: 40px 24px;
   color: var(--ink-dim);
 }
-.pt-empty-compact {
+.pt-emptystate-compact {
   padding: 20px 16px;
 }
-.pt-empty-icon {
+.pt-emptystate-icon {
   display: inline-flex;
   color: var(--ink-faint);
 }
-.pt-empty-title {
+.pt-emptystate-title {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--ink);
 }
-.pt-empty-desc {
+.pt-emptystate-desc {
   margin: 0;
   max-width: 44ch;
   font-size: 14px;
   line-height: 1.5;
 }
-.pt-empty-action {
+.pt-emptystate-action {
   margin-top: 8px;
 }
 
