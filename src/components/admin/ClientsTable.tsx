@@ -2,6 +2,7 @@ import { NOT_SET, formatDateFr, formatSiret } from '@/lib/admin/format';
 import { UsersRound } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import ResendButton from './ResendButton';
+import NewProjectButton from './NewProjectButton';
 import './admin.css';
 import TableScroll from '@/components/admin/shared/TableScroll';
 
@@ -66,7 +67,10 @@ export default function ClientsTable({ rows }: { rows: ClientRow[] }) {
             <td role="cell" data-label="Invité le">{formatDateFr(r.invitedAt)}</td>
             <td role="cell" data-label="Statut">{orDash(r.status)}</td>
             <td role="cell" data-label="Action">
-              {r.email ? <ResendButton clientId={r.id} clientName={r.client} /> : 'Aucune action'}
+              <div className="pt-row-actions">
+                <NewProjectButton clientId={r.id} clientName={r.client} />
+                {r.email ? <ResendButton clientId={r.id} clientName={r.client} /> : null}
+              </div>
             </td>
           </tr>
         ))}

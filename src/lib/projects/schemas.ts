@@ -13,6 +13,14 @@ export const convertSchema = inviteSchema.extend({
 });
 export type ConvertInput = z.infer<typeof convertSchema>;
 
+// Nouveau projet pour un client existant (hors conversion de lead). Titre et offre sont saisis, sans valeur par défaut.
+export const createProjectSchema = z.object({
+  clientId: uuid,
+  offer: z.enum(OFFER_SLUGS),
+  projectTitle: z.string().trim().min(1).max(80),
+});
+export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+
 export const postFactSchema = z.object({
   projectId: uuid,
   type: z.enum([

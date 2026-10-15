@@ -29,6 +29,11 @@ vi.mock('@/lib/server/projects/files', () => ({
   createDownloadUrl: (...a: unknown[]) => createDownloadUrl(...a),
 }));
 
+const createProject = vi.fn();
+vi.mock('@/lib/server/projects/create', () => ({
+  createProject: (...a: unknown[]) => createProject(...a),
+}));
+
 const revalidatePath = vi.fn();
 vi.mock('next/cache', () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
 
@@ -39,6 +44,7 @@ const {
   adminRequestUploadAction,
   adminConfirmUploadAction,
   adminDownloadAction,
+  createProjectAction,
 } = await import('./actions');
 
 const ID = '11111111-1111-4111-8111-111111111111';
@@ -72,6 +78,7 @@ beforeEach(() => {
   requestUpload.mockResolvedValue({ ok: true, fileId: 'f1', signedUrl: 'https://s/u', token: 't', path: 'p' });
   confirmUpload.mockResolvedValue({ ok: true });
   createDownloadUrl.mockResolvedValue({ ok: true, url: 'https://s/d' });
+  createProject.mockResolvedValue({ ok: true, projectId: 'p9', title: 'Site Acme' });
 });
 
 const guarded: [string, () => Promise<unknown>, ReturnType<typeof vi.fn>][] = [
@@ -93,6 +100,12 @@ const guarded: [string, () => Promise<unknown>, ReturnType<typeof vi.fn>][] = [
   ],
   ['adminConfirmUploadAction', () => adminConfirmUploadAction('f1'), confirmUpload],
   ['adminDownloadAction', () => adminDownloadAction('f1'), createDownloadUrl],
+  [
+    'createProjectAction',
+    () =>
+      createProjectAction({ status: 'idle' }, form({ clientId: ID, offer: 'site-vitrine', projectTitle: 'Site Acme' })),
+    createProject,
+  ],
 ];
 
 describe.each(guarded)('%s guard', (_n, run, service) => {
@@ -206,5 +219,38 @@ describe('file actions', () => {
     expect(confirmUpload).toHaveBeenCalledWith(supabase, 'f1');
     expect(await adminDownloadAction('f1')).toEqual({ ok: true, url: 'https://s/d' });
     expect(createDownloadUrl).toHaveBeenCalledWith(supabase, 'f1');
+  });
+});
+
+describe('createProjectAction', () => {
+  const fd = () => form({ clientId: ID, offer: 'site-vitrine', projectTitle: 'Site Acme' });
+  it("verifie l'admin avant tout et transmet les champs avec son id", async () => {
+    const order: string[] = [];
+    requireAdmin.mockImplementation(async () => {
+      order.push('admin');
+      return { user: { id: 'admin-1' }, supabase };
+    });
+    createProject.mockImplementation(async () => {
+      order.push('create');
+      return { ok: true, projectId: 'p9', title: 'Site Acme' };
+    });
+    await createProjectAction({ status: 'idle' }, fd());
+    expect(order).toEqual(['admin', 'create']);
+    expect(createProject).toHaveBeenCalledWith(
+      { clientId: ID, offer: 'site-vitrine', projectTitle: 'Site Acme' },
+      { userId: 'admin-1' },
+    );
+  });
+  it('revalide les pages et renvoie le projet cree en cas de succes', async () => {
+    const r = await createProjectAction({ status: 'idle' }, fd());
+    expect(r).toMatchObject({ status: 'success', projectId: 'p9' });
+    expect(r.message).toContain('Site Acme');
+    expect(revalidatePath.mock.calls.map((c) => c[0])).toEqual(['/admin', '/admin/projets', '/espace-client']);
+  });
+  it("renvoie l'erreur telle quelle sans revalider", async () => {
+    createProject.mockResolvedValue({ ok: false, code: 'client_not_found' });
+    const r = await createProjectAction({ status: 'idle' }, fd());
+    expect(r).toEqual({ status: 'error', message: 'Client introuvable.' });
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 });

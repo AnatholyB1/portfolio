@@ -6,6 +6,7 @@ import { DONE_COPY, STEPS } from '@/lib/projects/steps';
 import { getAccessibleProject } from '@/lib/server/projects/access';
 import { addProjectLink } from '@/lib/server/projects/content';
 import { postProjectFact, revokeProjectFact, type FactPostResult } from '@/lib/server/projects/facts';
+import { createProject } from '@/lib/server/projects/create';
 import { confirmUpload, createDownloadUrl, requestUpload } from '@/lib/server/projects/files';
 import { callRpc } from '@/lib/server/rpc';
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
@@ -158,4 +159,30 @@ export async function setReminderHoldCore(ctx: AdminCtx, input: unknown): Promis
   if (outcome === 'resumed') return { ok: true, message: 'Relances reprises.' };
   if (outcome === 'unchanged') return { ok: true, message: 'Aucun changement.' };
   return fail(HOLD_GENERIC);
+}
+
+export async function createProjectCore(
+  ctx: AdminCtx,
+  input: unknown,
+): Promise<CoreResult<{ projectId: string; title: string }>> {
+  const i = rec(input);
+  const res = await createProject(
+    { clientId: str(i.clientId), offer: str(i.offer), projectTitle: str(i.projectTitle) },
+    { userId: ctx.user.id },
+  );
+  if (res.ok) {
+    return {
+      ok: true,
+      message: PROJECT_COPY.creation.success(res.title),
+      data: { projectId: res.projectId, title: res.title },
+    };
+  }
+  switch (res.code) {
+    case 'invalid':
+      return fail(PROJECT_COPY.creation.invalid);
+    case 'client_not_found':
+      return fail(PROJECT_COPY.creation.clientNotFound);
+    default:
+      return fail(GENERIC);
+  }
 }

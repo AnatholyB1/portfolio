@@ -18,6 +18,11 @@ vi.mock('@/lib/server/projects/files', () => files);
 vi.mock('@/lib/server/rpc', () => rpc);
 vi.mock('@/lib/server/projects/read', () => read);
 vi.mock('@/lib/server/reminders/holds', () => holds);
+const projectsCore = vi.hoisted(() => ({ createProjectCore: vi.fn() }));
+vi.mock('@/lib/server/admin/core/projects', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  ...projectsCore,
+}));
 
 import { projectTools } from './projects';
 
@@ -59,6 +64,7 @@ const bundle = {
 beforeEach(() => {
   audit.mockReset();
   for (const f of [
+    ...Object.values(projectsCore),
     ...Object.values(access),
     ...Object.values(content),
     ...Object.values(facts),
@@ -78,6 +84,7 @@ describe('projectTools metadata', () => {
   it('declares exact names, covers and destructive flags', () => {
     const map = Object.fromEntries(projectTools.map((t) => [t.name, t.covers]));
     expect(map).toMatchObject({
+      create_project: ['createProjectAction'],
       post_project_fact: ['postFactAction'],
       revoke_project_fact: ['revokeFactAction'],
       add_project_link: ['addLinkAction'],
@@ -90,10 +97,56 @@ describe('projectTools metadata', () => {
     expect(projectTools.filter((t) => t.destructive).map((t) => t.name).sort()).toEqual([
       'add_project_link',
       'confirm_project_upload',
+      'create_project',
       'post_project_fact',
       'revoke_project_fact',
       'suspend_reminders',
     ]);
+  });
+});
+
+describe('create_project (destructive: irreversible creation, no client e-mail)', () => {
+  const CID = '33333333-3333-4333-8333-333333333333';
+  const args = { clientId: CID, offer: 'site-vitrine', projectTitle: 'Refonte du site' };
+  function clientCtx(row: unknown, error: unknown = null) {
+    const b: Record<string, ReturnType<typeof vi.fn>> = {};
+    b.select = vi.fn(() => b);
+    b.eq = vi.fn(() => b);
+    b.maybeSingle = vi.fn(() => Promise.resolve({ data: row, error }));
+    return { supabase: { from: vi.fn(() => b) } as never, user: { id: 'admin-1' } as never };
+  }
+  it('without confirm creates nothing and previews client, title, offer and the absence of e-mail', async () => {
+    const c = clientCtx({ id: CID, name: 'ACME SAS' });
+    const r = await runTool(tool('create_project'), args, c, principal, audit);
+    expect(projectsCore.createProjectCore).not.toHaveBeenCalled();
+    expect(r).toMatchObject({
+      ok: true,
+      needsConfirmation: true,
+      preview: { clientId: CID, clientName: 'ACME SAS', offer: 'site-vitrine', projectTitle: 'Refonte du site', mail: 'Aucun e-mail envoyé au client' },
+    });
+  });
+  it('creates through the core with the exact input after the two-step flow', async () => {
+    projectsCore.createProjectCore.mockResolvedValue({ ok: true, data: { projectId: ID, title: 'Refonte du site' } });
+    const c = clientCtx({ id: CID, name: 'ACME SAS' });
+    const r = await confirmTwoStep(tool('create_project'), { ...args }, c, principal, audit);
+    expect(projectsCore.createProjectCore).toHaveBeenCalledTimes(1);
+    expect(projectsCore.createProjectCore).toHaveBeenCalledWith(expect.anything(), args);
+    expect(r).toMatchObject({ ok: true });
+  });
+  it('an unknown or unreadable client gives an error, never a token nor a creation', async () => {
+    const r1 = await runTool(tool('create_project'), args, clientCtx(null), principal, audit);
+    const r2 = await runTool(tool('create_project'), args, clientCtx(null, { message: 'x' }), principal, audit);
+    expect(r1).toEqual({ ok: false, error: 'tool_failed' });
+    expect(r2).toEqual({ ok: false, error: 'tool_failed' });
+    expect(JSON.stringify([r1, r2])).not.toContain('previewToken');
+    expect(projectsCore.createProjectCore).not.toHaveBeenCalled();
+  });
+  it('rejects an unknown offer, an empty title and a non-uuid client as invalid_input', async () => {
+    const c = clientCtx({ id: CID, name: 'ACME SAS' });
+    for (const bad of [{ ...args, offer: 'inconnue' }, { ...args, projectTitle: '' }, { ...args, clientId: 'x' }]) {
+      expect(await runTool(tool('create_project'), bad, c, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    }
+    expect(projectsCore.createProjectCore).not.toHaveBeenCalled();
   });
 });
 

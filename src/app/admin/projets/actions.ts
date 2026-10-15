@@ -27,6 +27,7 @@ import {
 import {
   addProjectLinkCore,
   confirmProjectUploadCore,
+  createProjectCore,
   downloadProjectFileCore,
   postProjectFactCore,
   requestProjectUploadCore,
@@ -56,6 +57,12 @@ export type ProjectActionState = {
   status: 'idle' | 'success' | 'error';
   message?: string;
   mailLine?: string;
+};
+
+export type CreateProjectState = {
+  status: 'idle' | 'success' | 'error';
+  message?: string;
+  projectId?: string;
 };
 
 function str(fd: FormData, key: string): string {
@@ -124,6 +131,24 @@ export async function addLinkAction(
   if (!res.ok) return err(res.message);
   refresh(projectId);
   return { status: 'success', message: res.message };
+}
+
+// Creation d'un projet pour un client existant. requireAdmin AVANT toute lecture du formulaire.
+export async function createProjectAction(
+  _prev: CreateProjectState,
+  formData: FormData,
+): Promise<CreateProjectState> {
+  const ctx = await requireAdmin();
+  const res = await createProjectCore(ctx, {
+    clientId: str(formData, 'clientId'),
+    offer: str(formData, 'offer'),
+    projectTitle: str(formData, 'projectTitle'),
+  });
+  if (!res.ok) return { status: 'error', message: res.message };
+  revalidatePath('/admin');
+  revalidatePath('/admin/projets');
+  revalidatePath('/espace-client');
+  return { status: 'success', message: res.message, projectId: res.data?.projectId };
 }
 
 export async function adminRequestUploadAction(input: {

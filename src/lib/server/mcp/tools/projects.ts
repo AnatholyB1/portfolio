@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   addProjectLinkCore,
   confirmProjectUploadCore,
+  createProjectCore,
   downloadProjectFileCore,
   postProjectFactCore,
   requestProjectUploadCore,
@@ -11,7 +12,7 @@ import {
 } from '@/lib/server/admin/core/projects';
 import { MAX_FILE_BYTES } from '@/lib/projects/fileRules';
 import { PROJECT_COPY } from '@/lib/projects/copy';
-import { postFactSchema } from '@/lib/projects/schemas';
+import { createProjectSchema, postFactSchema } from '@/lib/projects/schemas';
 import { BLOCAGE_FILTERS, ETAPE_FILTERS, classifyProject, filterProjects, sortProjects } from '@/lib/projects/blocking';
 import { blockCompletion } from '@/lib/projects/onboardingSchema';
 import { STEPS, resolveWaiting, type ProjectState } from '@/lib/projects/steps';
@@ -31,6 +32,36 @@ async function bundleOf(ctx: AdminCtx, id: string) {
   if (!bundle) throw new Error('project_unreadable');
   return bundle;
 }
+
+// Destructif : la création est irréversible (aucune suppression de projet, FK on delete restrict). Aucun e-mail
+// n'est envoyé au client. L'aperçu lit le client via le client RLS ; client illisible ou introuvable = erreur,
+// donc jamais de previewToken pour un aperçu aveugle.
+const createProject = defineTool({
+  name: 'create_project',
+  description:
+    "Ajoute un projet à un client existant (offre et titre obligatoires, sans valeur par défaut). Aucune invitation et aucun e-mail n'est envoyé au client. L'identifiant du client vient de list_projects, get_project ou de la fiche client. Création irréversible : un projet ne se supprime pas.",
+  covers: ['createProjectAction'],
+  destructive: true,
+  input: z.object({
+    clientId: z.string().uuid(),
+    offer: createProjectSchema.shape.offer,
+    projectTitle: t(80),
+  }),
+  preview: async (ctx, input) => {
+    const row = await ctx.supabase.from('sv_clients').select('id, name').eq('id', input.clientId).maybeSingle();
+    const d = row.data as { id?: string; name?: string } | null;
+    if (row.error || !d) throw new Error('client_unreadable');
+    return {
+      action: 'Création d’un projet pour un client existant',
+      clientId: input.clientId,
+      clientName: d.name ?? null,
+      offer: input.offer,
+      projectTitle: input.projectTitle,
+      mail: 'Aucun e-mail envoyé au client',
+    };
+  },
+  run: (ctx, input) => createProjectCore(ctx, input),
+});
 
 // Destructif : enregistrer un fait fait avancer l'étape du projet et envoie un e-mail de changement
 // d'étape aux membres du client (envoi non rappelable). Le fait lui-même se corrige par revoke_project_fact.
@@ -331,6 +362,7 @@ const getProject = defineTool({
 export const projectTools: ToolDef[] = [
   listProjects,
   getProject,
+  createProject,
   postProjectFact,
   revokeProjectFact,
   addProjectLink,

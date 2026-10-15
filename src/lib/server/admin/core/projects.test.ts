@@ -11,11 +11,14 @@ vi.mock('@/lib/server/projects/access', () => access);
 vi.mock('@/lib/server/projects/content', () => content);
 vi.mock('@/lib/server/projects/facts', () => facts);
 vi.mock('@/lib/server/projects/files', () => files);
+const create = vi.hoisted(() => ({ createProject: vi.fn() }));
+vi.mock('@/lib/server/projects/create', () => create);
 vi.mock('@/lib/server/rpc', () => rpc);
 
 import {
   addProjectLinkCore,
   confirmProjectUploadCore,
+  createProjectCore,
   downloadProjectFileCore,
   postProjectFactCore,
   requestProjectUploadCore,
@@ -46,6 +49,7 @@ beforeEach(() => {
     ...Object.values(facts),
     ...Object.values(files),
     ...Object.values(rpc),
+    ...Object.values(create),
   ]) f.mockReset();
   access.getAccessibleProject.mockResolvedValue({ id: ID, clientId: 'c1' });
 });
@@ -197,5 +201,35 @@ describe('setReminderHoldCore', () => {
     expect(await setReminderHoldCore(ctx, { projectId: ID, action: 'suspend' })).toEqual({ ok: false, message: GEN });
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'weird' } });
     expect(await setReminderHoldCore(ctx, { projectId: ID, action: 'suspend' })).toEqual({ ok: false, message: GEN });
+  });
+});
+
+describe('createProjectCore', () => {
+  const input = { clientId: ID, offer: 'site-vitrine', projectTitle: 'Site Acme' };
+  it("cree le projet avec l'admin de la session et renvoie le message de succes", async () => {
+    create.createProject.mockResolvedValue({ ok: true, projectId: 'p1', title: 'Site Acme' });
+    const r = await createProjectCore(ctx, input);
+    expect(create.createProject).toHaveBeenCalledWith(input, { userId: 'admin-1' });
+    expect(r).toEqual({
+      ok: true,
+      message: PROJECT_COPY.creation.success('Site Acme'),
+      data: { projectId: 'p1', title: 'Site Acme' },
+    });
+  });
+  it('tolere une entree non objet (champs vides transmis)', async () => {
+    create.createProject.mockResolvedValue({ ok: false, code: 'invalid' });
+    await createProjectCore(ctx, null);
+    expect(create.createProject).toHaveBeenCalledWith(
+      { clientId: '', offer: '', projectTitle: '' },
+      { userId: 'admin-1' },
+    );
+  });
+  it.each([
+    ['invalid', PROJECT_COPY.creation.invalid],
+    ['client_not_found', PROJECT_COPY.creation.clientNotFound],
+    ['error', GENERIC],
+  ])('mappe %s vers le message francais', async (code, message) => {
+    create.createProject.mockResolvedValue({ ok: false, code });
+    expect(await createProjectCore(ctx, input)).toEqual({ ok: false, message });
   });
 });

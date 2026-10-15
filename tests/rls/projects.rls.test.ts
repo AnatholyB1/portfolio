@@ -210,3 +210,38 @@ describe('client column and table restrictions', () => {
     expect(facts.data).toHaveLength(0);
   });
 });
+
+describe('plusieurs projets pour un même client', () => {
+  let second: string;
+
+  beforeAll(async () => {
+    second = await makeProject(clientA.id, { title: 'Projet A bis', offer: 'branding' });
+  });
+
+  it('deux créations sur le même client donnent deux identifiants distincts', () => {
+    expect(second).toBeTruthy();
+    expect(second).not.toBe(projectA);
+  });
+
+  it('un membre du client voit les deux projets', async () => {
+    const r = await userA.client.from('sv_projects').select('id').eq('client_id', clientA.id);
+    const ids = (r.data ?? []).map((row: any) => row.id);
+    expect(ids).toContain(projectA);
+    expect(ids).toContain(second);
+  });
+
+  it("un membre d'un autre client n'en voit aucun", async () => {
+    const r = await userB.client.from('sv_projects').select('id').in('id', [projectA, second]);
+    expect(r.data ?? []).toHaveLength(0);
+  });
+
+  it('un utilisateur authentifié ne peut pas appeler sv_create_project', async () => {
+    const args = { p_client_id: clientA.id, p_actor: null, p_title: 'forgé', p_offer: 'branding' };
+    for (const c of [userA.client, adminUser.client, anonClient()]) {
+      const r = await c.rpc('sv_create_project', args);
+      expect(r.error).not.toBeNull();
+    }
+    const n = await svc().from('sv_projects').select('id').eq('client_id', clientA.id).eq('title', 'forgé');
+    expect(n.data ?? []).toHaveLength(0);
+  });
+});

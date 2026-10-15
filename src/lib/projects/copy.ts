@@ -48,6 +48,21 @@ export const PROJECT_COPY = {
     mailFailed:
       "Client créé, mais l'invitation n'a pas pu partir. Elle sera retentée automatiquement ; vous pouvez aussi la renvoyer depuis la liste des clients.",
   },
+  creation: {
+    trigger: 'Nouveau projet',
+    title: 'Nouveau projet',
+    helper: "Ajoute un projet à ce client. Aucune invitation ni e-mail n'est envoyé : le client le retrouve dans son espace.",
+    offerLabel: 'Offre',
+    titleLabel: 'Titre du projet',
+    chooseOffer: 'Choisir une offre',
+    submit: 'Créer le projet',
+    submitting: 'Création en cours…',
+    cancel: 'Annuler',
+    viewProject: 'Voir le projet',
+    clientNotFound: 'Client introuvable.',
+    invalid: 'Choisissez une offre et saisissez un titre de projet (80 caractères maximum).',
+    success: (title: string) => `Projet « ${title} » créé.`,
+  },
   facts: {
     alreadyRecorded: 'Ce fait est déjà enregistré. Rien n\'a été modifié.',
     recorded: (stepName: string) => `Fait enregistré. L'étape est maintenant ${stepName}.`,
