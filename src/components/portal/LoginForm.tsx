@@ -71,7 +71,7 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
 
   if (!inCode) {
     return (
-      <>
+      <div className="pt-stepview" key="email">
         <h1 id="pt-auth-title" className="pt-heading">
           Connexion
         </h1>
@@ -113,7 +113,7 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
             {reqPending ? 'Envoi en cours…' : 'Recevoir mon code'}
           </button>
         </form>
-      </>
+      </div>
     );
   }
 
@@ -125,7 +125,7 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
   else if (resent) announcement = 'Un nouveau code a été envoyé.';
 
   return (
-    <>
+    <div className="pt-stepview" key="code">
       <h1 id="pt-auth-title" className="pt-heading">
         Saisissez votre code
       </h1>
@@ -179,6 +179,6 @@ export default function LoginForm({ next, initialEmail = '', notice }: LoginForm
           Changer d&apos;adresse e-mail
         </button>
       </form>
-    </>
+    </div>
   );
 }
