@@ -6,8 +6,19 @@ import { getSupabasePublicKey, getSupabaseUrl } from '@/lib/supabase/env';
 export type AdminCtx = { supabase: SupabaseClient; user: User };
 
 const CACHE_TTL_MS = 10 * 60_000;
+const EXPIRY_MARGIN_MS = 60_000;
 const cache = new Map<string, { ctx: AdminCtx; expires: number }>();
 const inflight = new Map<string, Promise<AdminCtx>>();
+
+// Durée de cache : 10 min au plus, et jamais au-delà de l'expiration du JWT moins 60 s.
+// Durée inconnue ou <= 0 : pas de cache (fail-safe).
+function cacheTtlMs(session: { expires_at?: number; expires_in?: number }): number {
+  let remaining: number | null = null;
+  if (typeof session.expires_at === 'number') remaining = session.expires_at * 1000 - Date.now();
+  else if (typeof session.expires_in === 'number') remaining = session.expires_in * 1000;
+  if (remaining === null) return 0;
+  return Math.min(CACHE_TTL_MS, remaining - EXPIRY_MARGIN_MS);
+}
 
 /** Tests uniquement. */
 export function __resetSessionCache(): void {
@@ -15,7 +26,7 @@ export function __resetSessionCache(): void {
   inflight.clear();
 }
 
-async function createAdminContext(userId: string): Promise<AdminCtx> {
+async function createAdminContext(userId: string): Promise<{ ctx: AdminCtx; ttlMs: number }> {
   const svc = createSupabaseAdminClient();
   // Le compte doit être admin au moment de l'appel (un token peut survivre à la révocation).
   const { data: admin } = await svc.from('sv_admins').select('user_id').eq('user_id', userId).maybeSingle();
@@ -40,19 +51,19 @@ async function createAdminContext(userId: string): Promise<AdminCtx> {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${accessToken}` } },
   });
-  return { supabase, user: u.user };
+  return { ctx: { supabase, user: u.user }, ttlMs: cacheTtlMs(sess.session ?? {}) };
 }
 
 // Une session auth par requête serait coûteuse : dédoublonnage des appels concurrents
-// et cache mémoire de 10 min par admin. Les échecs ne sont jamais mis en cache.
+// et cache mémoire (10 min max, borné par l'expiration de la session) par admin. Les échecs ne sont jamais mis en cache.
 export function buildAdminContext(userId: string): Promise<AdminCtx> {
   const hit = cache.get(userId);
   if (hit && hit.expires > Date.now()) return Promise.resolve(hit.ctx);
   const pending = inflight.get(userId);
   if (pending) return pending;
   const p = createAdminContext(userId)
-    .then((ctx) => {
-      cache.set(userId, { ctx, expires: Date.now() + CACHE_TTL_MS });
+    .then(({ ctx, ttlMs }) => {
+      if (ttlMs > 0) cache.set(userId, { ctx, expires: Date.now() + ttlMs });
       return ctx;
     })
     .finally(() => inflight.delete(userId));

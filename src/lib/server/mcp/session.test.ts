@@ -28,7 +28,7 @@ beforeEach(() => {
   maybeSingle.mockResolvedValue({ data: { user_id: 'uid' } });
   getUserById.mockResolvedValue({ data: { user }, error: null });
   generateLink.mockResolvedValue({ data: { properties: { hashed_token: 'h' } }, error: null });
-  verifyOtp.mockResolvedValue({ data: { session: { access_token: 'jwt', user: { id: 'uid' } } }, error: null });
+  verifyOtp.mockResolvedValue({ data: { session: { access_token: 'jwt', expires_in: 3600, user: { id: 'uid' } } }, error: null });
   createClient.mockImplementation((_u: string, _k: string, opts: { global?: unknown }) =>
     opts.global ? { marker: 'rls' } : { auth: { verifyOtp } },
   );
@@ -84,5 +84,53 @@ describe('buildAdminContext', () => {
     verifyOtp.mockResolvedValueOnce({ data: { session: null }, error: new Error('x') });
     await expect(buildAdminContext('uid')).rejects.toThrow('mcp_session_failed');
     await expect(buildAdminContext('uid')).resolves.toBeDefined();
+  });
+  describe('cache TTL follows the session lifetime', () => {
+    const withSession = (session: Record<string, unknown>) =>
+      verifyOtp.mockResolvedValue({ data: { session: { access_token: 'jwt', user: { id: 'uid' }, ...session } }, error: null });
+
+    it('caps at session expiry minus 60s when shorter than 10 minutes', async () => {
+      vi.useFakeTimers();
+      try {
+        withSession({ expires_in: 300 });
+        await buildAdminContext('uid');
+        vi.advanceTimersByTime(239_000);
+        await buildAdminContext('uid');
+        expect(generateLink).toHaveBeenCalledTimes(1);
+        vi.advanceTimersByTime(2_000);
+        await buildAdminContext('uid');
+        expect(generateLink).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+    it('uses expires_at (epoch seconds) when present', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-10-15T10:00:00Z'));
+      try {
+        withSession({ expires_at: Date.parse('2026-10-15T10:03:00Z') / 1000 });
+        await buildAdminContext('uid');
+        vi.advanceTimersByTime(119_000);
+        await buildAdminContext('uid');
+        expect(generateLink).toHaveBeenCalledTimes(1);
+        vi.advanceTimersByTime(2_000);
+        await buildAdminContext('uid');
+        expect(generateLink).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+    it('does not cache when the remaining lifetime is <= 60s or unknown', async () => {
+      withSession({ expires_in: 60 });
+      await buildAdminContext('uid');
+      await buildAdminContext('uid');
+      expect(generateLink).toHaveBeenCalledTimes(2);
+      __resetSessionCache();
+      generateLink.mockClear();
+      withSession({});
+      await buildAdminContext('uid');
+      await buildAdminContext('uid');
+      expect(generateLink).toHaveBeenCalledTimes(2);
+    });
   });
 });
