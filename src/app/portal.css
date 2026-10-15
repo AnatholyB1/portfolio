@@ -5,6 +5,7 @@
    couleur / bordure de 150-200ms, désactivées si prefers-reduced-motion. */
 
 @import "./tokens.css";
+@import "../components/ui/primitives.css";
 
 .pt-root {
   --pt-border-strong: #6f6b64;
