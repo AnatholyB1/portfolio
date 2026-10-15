@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useSuccessToast } from '@/components/admin/shared/useSuccessToast';
 import { revokeFactAction, type ProjectActionState } from '@/app/admin/projets/actions';
 import { ConfirmPanel } from '@/components/admin/shared/ConfirmAction';
 import { PROJECT_COPY } from '@/lib/projects/copy';
@@ -30,6 +31,7 @@ export default function RevokePanel({
   );
   const [reason, setReason] = useState('');
 
+  useSuccessToast(state);
   useEffect(() => {
     if (state.status === 'success') onClose(true);
   }, [state, onClose]);
