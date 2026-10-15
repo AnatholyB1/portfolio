@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { createToken, hashTokenValue, parseArgs, revokeToken } from '../../scripts/sv-mcp-token.mjs';
+import { createToken, formatStatus, hashTokenValue, listTokens, parseArgs, revokeToken, supabaseHost } from '../../scripts/sv-mcp-token.mjs';
 import { generateToken, hashToken } from '@/lib/server/mcp/token';
 
 type Opts = { admin?: { user_id: string } | null; insertError?: boolean; revokeRow?: { id: string } | null };
@@ -44,6 +44,8 @@ describe('parseArgs', () => {
   it('parses --days, --yes and --revoke', () => {
     expect(parseArgs(['--days', '30', '--yes'])).toMatchObject({ days: 30, yes: true });
     expect(parseArgs(['--revoke', 'abc', '--yes'])).toMatchObject({ revoke: 'abc', yes: true });
+    expect(parseArgs(['--list', '--email', 'a@b.fr'])).toMatchObject({ list: true, email: 'a@b.fr' });
+    expect(parseArgs([]).list).toBe(false);
   });
   it('flags invalid --days (non integer, <1, >365) as null', () => {
     for (const d of ['0', '366', 'x', '1.5', '-3']) expect(parseArgs(['--days', d]).days).toBeNull();
@@ -117,5 +119,42 @@ describe('revokeToken', () => {
   it('reports not_found for an unknown or already revoked id', async () => {
     const m = makeSvc({ revokeRow: null });
     expect(await revokeToken({ svc: m.svc, id: 'nope', write: true })).toMatchObject({ status: 'not_found' });
+  });
+});
+
+describe('supabaseHost and formatStatus', () => {
+  it('returns only the hostname, never credentials or path', () => {
+    expect(supabaseHost('https://abc.supabase.co/rest/v1?apikey=secret')).toBe('abc.supabase.co');
+    expect(supabaseHost('not a url')).toBe('(url invalide)');
+  });
+  it('uses conditional wording on a dry run and past tense after a write', () => {
+    expect(formatStatus('create', 'created', false)).toBe('would create');
+    expect(formatStatus('create', 'created', true)).toBe('created');
+    expect(formatStatus('revoke', 'revoked', false)).toBe('would revoke');
+    expect(formatStatus('revoke', 'revoked', true)).toBe('revoked');
+    expect(formatStatus('create', 'not_admin', false)).toBe('not_admin');
+  });
+});
+
+describe('listTokens', () => {
+  function listSvc(rows: unknown[], admin: { user_id: string } | null = { user_id: 'u1' }) {
+    const select = vi.fn<(cols: string) => unknown>(() => ({ eq: () => ({ order: async () => ({ data: rows, error: null }) }) }));
+    const from = vi.fn((table: string) =>
+      table === 'sv_admins'
+        ? { select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: admin, error: null }) }) }) }
+        : { select },
+    );
+    return { svc: { from } as unknown as SupabaseClient, select };
+  }
+  it('lists id, label, expiry and revocation, never hashes', async () => {
+    const m = listSvc([{ id: 't1', label: 'PC', expires_at: 'e', revoked_at: null }]);
+    const r = await listTokens({ svc: m.svc, email: 'a@b.fr' });
+    expect(r).toEqual({ status: 'listed', tokens: [{ id: 't1', label: 'PC', expires_at: 'e', revoked_at: null }] });
+    expect(m.select.mock.calls[0][0]).not.toContain('token_hash');
+    expect(m.select.mock.calls[0][0]).toBe('id, label, expires_at, revoked_at');
+  });
+  it('refuses a non admin email', async () => {
+    const m = listSvc([], null);
+    expect(await listTokens({ svc: m.svc, email: 'a@b.fr' })).toEqual({ status: 'not_admin', tokens: [] });
   });
 });

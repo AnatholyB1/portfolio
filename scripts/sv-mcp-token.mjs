@@ -9,6 +9,9 @@
 //   npm run sv:mcp-token -- --email x@y.fr --label "Claude Code PC" --days 90 --yes    (crée, affiche le jeton UNE fois)
 //   npm run sv:mcp-token -- --revoke <tokenId>                                         (simulation)
 //   npm run sv:mcp-token -- --revoke <tokenId> --yes                                   (révoque)
+//   npm run sv:mcp-token -- --list --email x@y.fr                                      (liste, jamais les hash)
+//
+// La base Supabase ciblée (hostname uniquement) est affichée avant toute action.
 //
 // Seul le hash sha256 est stocké : le jeton n'est jamais récupérable ensuite.
 // Refus : un e-mail qui n'est pas dans sv_admins. Durée : 1 à 365 jours (défaut 90).
@@ -37,6 +40,7 @@ export function parseArgs(argv) {
   let days = DEFAULT_DAYS;
   let revoke = null;
   let yes = false;
+  let list = false;
   const value = (i) => {
     const v = argv[i + 1];
     return v !== undefined && !v.startsWith('--') ? v : undefined;
@@ -68,8 +72,9 @@ export function parseArgs(argv) {
         i++;
       }
     } else if (a === '--yes') yes = true;
+    else if (a === '--list') list = true;
   }
-  return { email, label, days, revoke, yes, dryRun: !yes };
+  return { email, label, days, revoke, yes, list, dryRun: !yes };
 }
 
 export async function createToken({ svc, email, label, days, write, now = new Date() }) {
@@ -116,6 +121,38 @@ export async function revokeToken({ svc, id, write }) {
   return upd.data ? { status: 'revoked', wouldWrite: true } : { status: 'not_found', wouldWrite: false };
 }
 
+// Hostname seul : ni clé, ni chemin, ni paramètres.
+export function supabaseHost(url) {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '(url invalide)';
+  }
+}
+
+// « would create » en simulation, « created » après écriture ; les refus gardent leur code.
+export function formatStatus(action, status, write) {
+  const success = action === 'create' ? 'created' : 'revoked';
+  if (status !== success) return status;
+  return write ? success : `would ${action}`;
+}
+
+export async function listTokens({ svc, email }) {
+  const addr = String(email ?? '').trim().toLowerCase();
+  if (!addr || addr.length > 254 || !EMAIL_RE.test(addr)) return { status: 'invalid', tokens: [] };
+  const admin = await svc.from('sv_admins').select('user_id').eq('email', addr).maybeSingle();
+  if (admin.error) return { status: 'error', tokens: [] };
+  if (!admin.data) return { status: 'not_admin', tokens: [] };
+  // Colonnes explicites : token_hash n'est jamais lu.
+  const res = await svc
+    .from('sv_mcp_tokens')
+    .select('id, label, expires_at, revoked_at')
+    .eq('user_id', admin.data.user_id)
+    .order('created_at', { ascending: false });
+  if (res.error) return { status: 'error', tokens: [] };
+  return { status: 'listed', tokens: res.data ?? [] };
+}
+
 function loadDotEnvLocal() {
   let text;
   try {
@@ -134,12 +171,13 @@ function loadDotEnvLocal() {
 
 const USAGE =
   'Usage : npm run sv:mcp-token -- --email <adresse> --label <nom> [--days 1-365] [--yes]\n' +
+  '        npm run sv:mcp-token -- --list --email <adresse>\n' +
   '        npm run sv:mcp-token -- --revoke <tokenId> [--yes]\n' +
   '  sans --yes : simulation (aucune écriture).';
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (args.days === null || (!args.revoke && (!args.email || !args.label))) {
+  if (args.days === null || (args.list && !args.email) || (!args.list && !args.revoke && (!args.email || !args.label))) {
     console.error(USAGE);
     return 1;
   }
@@ -154,15 +192,25 @@ async function main() {
   }
   const svc = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const mode = args.yes ? 'écrit' : 'dry run';
+  console.log(`[sv-mcp-token] base : ${supabaseHost(url)}`);
+
+  if (args.list) {
+    const l = await listTokens({ svc, email: args.email });
+    console.log(`[sv-mcp-token] ${l.status}`);
+    for (const t of l.tokens) {
+      console.log(`${t.id}  ${t.label}  expire ${t.expires_at}  ${t.revoked_at ? `révoqué ${t.revoked_at}` : 'actif'}`);
+    }
+    return l.status === 'listed' ? 0 : 1;
+  }
 
   if (args.revoke) {
     const { status } = await revokeToken({ svc, id: args.revoke, write: args.yes });
-    console.log(`[sv-mcp-token] ${status} (${mode})`);
+    console.log(`[sv-mcp-token] ${formatStatus('revoke', status, args.yes)} (${mode})`);
     return status === 'revoked' ? 0 : 1;
   }
 
   const r = await createToken({ svc, email: args.email, label: args.label, days: args.days, write: args.yes });
-  console.log(`[sv-mcp-token] ${r.status} (${mode})`);
+  console.log(`[sv-mcp-token] ${formatStatus('create', r.status, args.yes)} (${mode})`);
   if (r.token) {
     console.log(`id         : ${r.id}`);
     console.log(`expire le  : ${r.expiresAt}`);
