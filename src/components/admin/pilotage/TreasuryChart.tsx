@@ -49,6 +49,9 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
           <title>Trésorerie projetée</title>
           <desc>{desc}</desc>
           {g.yTicks.map((t) => (
+            <line key={`grid-${t.cents}`} x1={M_LEFT} x2={VIEW_W - 16} y1={t.y} y2={t.y} stroke="var(--line-strong)" strokeWidth={1} />
+          ))}
+          {g.yTicks.map((t) => (
             <text
               key={t.cents}
               x={AXIS_LABEL_X}
@@ -98,7 +101,15 @@ export default function TreasuryChart({ cash, balanceLink }: Props) {
             <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} stroke="var(--warm)" strokeWidth={2} />
           ))}
           {g.points.map((p, i) => (
-            <circle key={months[i].month} cx={p.x} cy={p.y} r={3} fill="var(--acid)">
+            <circle
+              key={months[i].month}
+              cx={p.x}
+              cy={p.y}
+              r={4}
+              fill={months[i].closingCents < 0 ? 'var(--warm)' : 'var(--acid)'}
+              stroke="var(--bg)"
+              strokeWidth={2}
+            >
               <title>{`Solde de clôture ${monthLongFr(months[i].month)} : ${formatSignedEuros(months[i].closingCents)}`}</title>
             </circle>
           ))}
