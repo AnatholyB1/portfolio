@@ -11,6 +11,7 @@ import { costTools } from './tools/costs';
 import { reviewTools } from './tools/reviews';
 import { projectTools } from './tools/projects';
 import { documentTools } from './tools/documents';
+import { billingTools } from './tools/billing';
 import { leadTools } from './tools/leads';
 
 // SDK : @modelcontextprotocol/sdk 1.32.1. Transport Web Standard sans session
@@ -18,7 +19,7 @@ import { leadTools } from './tools/leads';
 // et un transport par requête, jamais réutilisés (voir src/app/api/mcp/route.ts).
 // registerTool(name, { description, inputSchema }, cb) accepte une forme brute zod.
 
-export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools, ...costTools, ...reviewTools, ...projectTools, ...documentTools];
+export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools, ...costTools, ...reviewTools, ...projectTools, ...documentTools, ...billingTools];
 
 // Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
 // `confirm` est un garde-fou côté modèle, pas une frontière de sécurité ; un échec d'audit ne bloque

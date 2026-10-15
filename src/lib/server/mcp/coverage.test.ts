@@ -40,13 +40,6 @@ export function exportedValueNames(src: string): string[] {
 // Exclusions MOTIVÉES uniquement. Ajouter une action admin sans outil MCP casse ce test.
 // Phase B vide cette liste domaine par domaine.
 const EXCLUDED: Record<string, string> = {
-  adminInvoiceDownloadAction: 'phase B : à migrer',
-  issueCreditNoteAction: 'phase B : à migrer',
-  issuePeriodInvoiceAction: 'phase B : à migrer',
-  loadInvoiceDataAction: 'phase B : à migrer',
-  previewCreditNoteAction: 'phase B : à migrer',
-  previewPeriodInvoiceAction: 'phase B : à migrer',
-  verifyInvoiceHashAction: 'phase B : à migrer',
 };
 
 describe('MCP tool registry', () => {
