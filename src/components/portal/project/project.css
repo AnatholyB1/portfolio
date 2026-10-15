@@ -722,34 +722,48 @@
   .pt-root .pt-pay-table,
   .pt-root .pt-pay-table tbody,
   .pt-root .pt-pay-table tr,
-  .pt-root .pt-pay-table td {
+  .pt-root .pt-pay-table td,
+  .pt-root .pt-docs-table,
+  .pt-root .pt-docs-table tbody,
+  .pt-root .pt-docs-table tr,
+  .pt-root .pt-docs-table td {
     display: block;
     width: 100%;
   }
-  .pt-root .pt-pay-table thead {
+  .pt-root .pt-pay-table thead,
+  .pt-root .pt-docs-table thead {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
     clip: rect(0 0 0 0);
   }
-  .pt-root .pt-pay-table tr {
+  .pt-root .pt-pay-table tr,
+  .pt-root .pt-docs-table tr {
     margin-bottom: 16px;
     padding: 8px 0;
     border: 1px solid var(--line);
     border-radius: 0.75rem;
   }
-  .pt-root .pt-pay-table tr.pt-doc-replaced {
+  .pt-root .pt-pay-table tr.pt-doc-replaced,
+  .pt-root .pt-docs-table tr.pt-doc-replaced {
     border-left: 2px solid var(--line-strong);
   }
   .pt-root .pt-pay-table tr.pt-pay-processing {
     border-left: 2px solid var(--pt-border-strong);
   }
-  .pt-root .pt-pay-table td {
+  .pt-root .pt-pay-table td,
+  .pt-root .pt-docs-table td {
     padding: 8px 16px;
     border-bottom: 0;
   }
-  .pt-root .pt-pay-table td[data-label]::before {
+  /* En carte, les libellés d'action (« Télécharger le document signé ») peuvent passer à la ligne. */
+  .pt-root .pt-docs-table .pt-file-action {
+    white-space: normal;
+    text-align: left;
+  }
+  .pt-root .pt-pay-table td[data-label]::before,
+  .pt-root .pt-docs-table td[data-label]::before {
     content: attr(data-label);
     display: block;
     font-family: var(--font-mono), monospace;
@@ -960,9 +974,13 @@
 .pt-root .pt-doc-badge[data-tone="wait"] {
   color: var(--ink-dim);
 }
-.pt-root .pt-docs-table .pt-file-action,
 .pt-root .pt-pay-table .pt-file-action {
   white-space: nowrap;
+}
+@media (min-width: 960px) {
+  .pt-root .pt-docs-table .pt-file-action {
+    white-space: nowrap;
+  }
 }
 .pt-root .pt-docs-actions {
   display: flex;
@@ -970,7 +988,7 @@
   align-items: center;
   gap: 4px 8px;
 }
-@media (min-width: 768px) {
+@media (min-width: 960px) {
   .pt-root .pt-docs-table td {
     padding-top: 16px;
     padding-bottom: 16px;
