@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useId, useRef } from 'react';
 import Link from 'next/link';
-import { AlertCircle, CheckCircle, FolderPlus } from 'lucide-react';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 import { createProjectAction, type CreateProjectState } from '@/app/admin/projets/actions';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { OFFER_LABELS, OFFER_SLUGS } from '@/lib/projects/offers';
@@ -60,7 +60,6 @@ export default function NewProjectButton({ clientId, clientName }: Props) {
         onClick={open}
         aria-label={`${COPY.trigger} pour ${clientName}`}
       >
-        <FolderPlus size={16} aria-hidden="true" />
         {COPY.trigger}
       </button>
 
