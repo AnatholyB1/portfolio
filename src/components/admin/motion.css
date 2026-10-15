@@ -25,7 +25,7 @@
 }
 
 /* ---------- Squelettes ----------
-   Mêmes hauteurs que les éléments réels (titre 29 px, en-tête de tableau 53 px, ligne 72 px)
+   Mêmes hauteurs que les éléments réels (titre 34 px, en-tête de tableau 53 px, ligne 72 px)
    pour que le contenu arrive sans décalage. */
 .pt-admin .pt-sk-wrap {
   display: flex;
@@ -37,11 +37,11 @@
 }
 .pt-admin .pt-sk-title {
   width: min(180px, 60%);
-  height: 29px;
+  height: 34px;
 }
 .pt-admin .pt-sk-subtitle {
   width: min(200px, 50%);
-  height: 29px;
+  height: 24px;
 }
 .pt-admin .pt-sk-controls {
   height: 104px;

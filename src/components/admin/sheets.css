@@ -1,0 +1,190 @@
+/* Admin : fiches lead et projet (hiérarchie, rythme vertical, sections repliables).
+   Échelle typographique : titre de page 28, titre de section 20, corps 16, secondaire 14. */
+
+/* ---------- Échelle et rythme ---------- */
+.pt-root .pt-admin h1.pt-heading {
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.pt-root .pt-admin .pt-card > h2.pt-heading,
+.pt-root .pt-admin .pt-card > .pt-queue-head > h2.pt-heading,
+.pt-root .pt-admin .pt-collapse-summary h2.pt-heading,
+.pt-root .pt-admin section > h2.pt-heading {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.pt-root .pt-admin .pt-lead-main,
+.pt-root .pt-admin .pt-lead-side {
+  gap: 24px;
+}
+.pt-root .pt-admin .pt-lead-grid {
+  gap: 24px;
+}
+@media (min-width: 1024px) {
+  .pt-root .pt-admin .pt-lead-grid {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 32px;
+  }
+}
+.pt-root .pt-admin > a.pt-btn-text,
+.pt-root .pt-admin > a.pt-back {
+  align-self: flex-start;
+}
+/* Colonne de droite : cartes secondaires plus denses que la colonne de travail. */
+.pt-root .pt-admin .pt-lead-side .pt-card {
+  padding: 20px;
+  gap: 12px;
+}
+
+/* ---------- En-tête de fiche : titre seul sur sa ligne, puis statut et actions ---------- */
+.pt-root .pt-admin .pt-lead-header {
+  gap: 12px 16px;
+}
+.pt-root .pt-admin .pt-lead-header > h1 {
+  flex: 1 1 100%;
+}
+.pt-root .pt-admin .pt-lead-header + .pt-helper,
+.pt-root .pt-admin .pt-proj-header + .pt-helper {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.pt-root .pt-admin .pt-proj-header {
+  align-items: flex-start;
+}
+.pt-root .pt-admin .pt-proj-header > .pt-proj-badges {
+  order: -1;
+  flex: 1 1 100%;
+}
+.pt-root .pt-admin .pt-proj-header > h1 {
+  flex: 1 1 100%;
+}
+
+/* Résumé « qui attend / depuis quand / quoi » : en tête de la carte d'étape, avant la frise. */
+.pt-root .pt-admin .pt-proj-brief {
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--acid);
+  border-radius: var(--pt-radius-sm);
+}
+.pt-root .pt-admin .pt-proj-brief dt {
+  font-size: 14px;
+}
+.pt-root .pt-admin .pt-proj-brief dd:last-of-type {
+  font-weight: 500;
+}
+
+/* ---------- Cartes repliables ---------- */
+.pt-root .pt-admin .pt-collapse {
+  gap: 0;
+  padding: 0 20px;
+}
+.pt-root .pt-admin .pt-collapse[open] {
+  padding-bottom: 20px;
+}
+.pt-root .pt-admin .pt-collapse-summary,
+.pt-root .pt-admin .pt-touch-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+  min-height: 56px;
+  padding: 8px 28px 8px 0;
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+}
+.pt-root .pt-admin .pt-collapse-summary::-webkit-details-marker,
+.pt-root .pt-admin .pt-touch-summary::-webkit-details-marker {
+  display: none;
+}
+.pt-root .pt-admin .pt-collapse-summary::after,
+.pt-root .pt-admin .pt-touch-summary::after {
+  content: "";
+  content: "" / "";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -6px;
+  border-right: 2px solid var(--ink-dim);
+  border-bottom: 2px solid var(--ink-dim);
+  transform: rotate(45deg);
+  transition: transform var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-collapse[open] > .pt-collapse-summary::after,
+.pt-root .pt-admin .pt-touch[open] > .pt-touch-summary::after {
+  transform: rotate(225deg);
+  margin-top: -2px;
+}
+.pt-root .pt-admin .pt-collapse-summary:hover::after,
+.pt-root .pt-admin .pt-touch-summary:hover::after {
+  border-color: var(--ink);
+}
+.pt-root .pt-admin .pt-collapse-preview {
+  font-size: 14px;
+  color: var(--ink-dim);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.pt-root .pt-admin .pt-collapse[open] > .pt-collapse-summary .pt-collapse-preview,
+.pt-root .pt-admin .pt-touch[open] > .pt-touch-summary .pt-collapse-preview {
+  display: none;
+}
+.pt-root .pt-admin .pt-collapse-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pt-root .pt-admin .pt-touch-summary h3 {
+  margin: 0;
+}
+.pt-root .pt-admin .pt-touch {
+  border-top: 1px solid var(--line);
+}
+.pt-root .pt-admin .pt-touch > .pt-summary {
+  padding-bottom: 8px;
+}
+
+/* ---------- Factures : actions compactes quand la carte est étroite ---------- */
+.pt-root .pt-admin .pt-table-scroll {
+  container-type: inline-size;
+}
+.pt-root .pt-admin .pt-bill-table {
+  font-size: 14px;
+}
+.pt-root .pt-admin .pt-bill-table td,
+.pt-root .pt-admin .pt-bill-table th {
+  padding: 12px 8px;
+  vertical-align: middle;
+}
+.pt-root .pt-admin .pt-bill-table .pt-btn-text,
+.pt-root .pt-admin .pt-bill-table .pt-btn-ghost {
+  padding: 8px;
+  font-size: 14px;
+}
+.pt-root .pt-admin .pt-bill-table .pt-doc-hash {
+  font-size: 13px;
+}
+.pt-root .pt-admin .pt-bill-table td:last-child {
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  @container (max-width: 860px) {
+    .pt-act-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+    .pt-bill-table td:last-child .pt-btn-text {
+      min-width: 44px;
+      padding-inline: 8px;
+    }
+  }
+}
