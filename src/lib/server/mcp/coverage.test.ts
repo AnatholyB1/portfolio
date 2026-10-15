@@ -31,7 +31,6 @@ const EXCLUDED: Record<string, string> = {
   issueCreditNoteAction: 'phase B : à migrer',
   issueDocumentAction: 'phase B : à migrer',
   issuePeriodInvoiceAction: 'phase B : à migrer',
-  liftSuppressionAction: 'phase B : à migrer',
   loadInvoiceDataAction: 'phase B : à migrer',
   loadSnapshotAction: 'phase B : à migrer',
   postFactAction: 'phase B : à migrer',
