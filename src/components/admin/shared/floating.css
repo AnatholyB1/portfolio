@@ -1,0 +1,11 @@
+/* Couche flottante admin (FloatingLayer) : position:fixed calée en JS sur le déclencheur.
+   Rendue dans .pt-admin (portail) pour garder les jetons et styles scopés. */
+.pt-admin .pt-float-layer {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
