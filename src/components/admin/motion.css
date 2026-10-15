@@ -11,7 +11,7 @@
     transform: translateY(6px);
   }
 }
-.pt-admin:not(.pt-admin-loading) > :not(.pt-admin-nav):not(.pt-admin-anchor) {
+.pt-admin:not(.pt-admin-loading) > :not(.pt-admin-nav):not(.pt-admin-anchor):not(.pt-float-layer) {
   animation: pt-admin-in var(--pt-dur-slow) var(--pt-ease-out) backwards;
 }
 .pt-admin:not(.pt-admin-loading) > :nth-child(3) {

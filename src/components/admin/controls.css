@@ -132,16 +132,16 @@
 }
 
 /* ---------- Champs ---------- */
-.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input) {
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="url"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input) {
   border-radius: var(--pt-radius-sm);
   transition:
     border-color var(--pt-dur-fast) var(--pt-ease-out),
     background-color var(--pt-dur-fast) var(--pt-ease-out);
 }
-.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):hover {
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="url"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):hover {
   border-color: var(--ink-dim);
 }
-.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):focus-visible {
+.pt-root .pt-admin :is(select, textarea, input[type="text"], input[type="url"], input[type="email"], input[type="month"], input[type="search"]):not(.pt-input):focus-visible {
   border-color: var(--acid);
 }
 .pt-root .pt-admin .pt-input {
@@ -158,6 +158,21 @@
 .pt-root .pt-admin :is(input[type="checkbox"], input[type="radio"]) {
   accent-color: var(--acid);
 }
+/* Case à cocher : case de 20 px et libellé en zone cliquable de 44 px de haut (le clic sur le
+   libellé coche la case). La logique du formulaire est inchangée. */
+.pt-root .pt-admin input[type="checkbox"] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+.pt-root .pt-admin label:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
 
 /* ---------- Pagination, résumés repliables ---------- */
 .pt-root .pt-admin .pt-pager .pt-btn-ghost[aria-disabled="true"] {
@@ -165,6 +180,14 @@
 }
 .pt-root .pt-admin summary {
   transition: color var(--pt-dur-fast) var(--pt-ease-out);
+}
+/* Résumés nus (Historique, Journal, Contenu brut) : zone cliquable de 44 px. Les résumés de
+   carte portent leur propre classe et leur propre hauteur. */
+.pt-root .pt-admin summary:not([class]) {
+  box-sizing: border-box;
+  min-height: 44px;
+  padding-block: 10px;
+  cursor: pointer;
 }
 .pt-root .pt-admin summary:hover {
   color: var(--ink);

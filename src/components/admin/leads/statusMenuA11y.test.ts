@@ -58,6 +58,15 @@ describe('F-D6 status menu markup', () => {
     expect(pill).toContain("if (state.status !== 'idle') pillRef.current?.focus()");
   });
 
+  it('renders the menu and the lost panel in a floating layer, out of the clipped table scroller', () => {
+    expect(pill).toContain("import FloatingLayer from '@/components/admin/shared/FloatingLayer'");
+    expect(pill.match(/<FloatingLayer/g)?.length).toBe(2);
+    // Le menu étant dans un portail, le clic dessus ne doit pas compter comme un clic extérieur.
+    expect(pill).toContain('isOutside(menuRef.current, e.target)');
+    expect(css).not.toMatch(/\.pt-lead-pill-menu \{[^}]*position: absolute/);
+    expect(css).not.toMatch(/\.pt-lead-pill-wrap > \.pt-lead-panel/);
+  });
+
   it('never disables the pill that holds the focus while sending', () => {
     expect(pill).not.toContain('disabled={pending}');
     expect(pill).toContain('aria-disabled={pending || undefined}');
