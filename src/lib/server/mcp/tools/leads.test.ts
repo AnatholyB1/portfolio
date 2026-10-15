@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ADMIN_COPY } from '@/lib/admin/leadLabels';
 import { runTool } from '../registry';
 
 const admin = vi.hoisted(() => ({
@@ -108,7 +109,8 @@ describe('erase_lead', () => {
     const { ctx } = makeCtx();
     const r = await runTool(tool('erase_lead'), { ...args, confirmEmail: 'x@y.fr', confirm: true }, ctx, principal, audit);
     expect(admin.eraseLead).not.toHaveBeenCalled();
-    expect(r).toMatchObject({ ok: true, data: { ok: false } });
+    expect(r).toEqual({ ok: false, error: ADMIN_COPY.eraseConfirmMismatch });
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'erase_lead', outcome: 'error' }));
   });
 });
 
@@ -195,7 +197,7 @@ describe('read tools', () => {
     expect(b.order).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(b.eq).toHaveBeenCalledWith('status', 'new');
     expect(b.limit).toHaveBeenCalledWith(20);
-    expect(r).toEqual({ ok: true, data: { leads: [{ id: ID }] } });
+    expect(r).toEqual({ ok: true, data: { leads: [{ id: ID, contact_nom: null, contact_email: null }] } });
     expect((await runTool(tool('list_leads'), { limit: 51 }, ctx, principal, audit)).ok).toBe(false);
   });
   it('list_leads masks contact PII and drops the phone', async () => {
