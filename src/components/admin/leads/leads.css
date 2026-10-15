@@ -248,6 +248,13 @@
 .pt-admin .pt-lead-item p {
   margin: 0 0 4px;
 }
+/* Lien d'une liste (liens du projet) : zone cliquable de 44 px de haut. */
+.pt-admin .pt-lead-item > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+}
 .pt-admin .pt-lead-answers {
   margin: 0 0 4px;
   padding-left: 20px;
@@ -289,6 +296,7 @@
   margin-top: 16px;
 }
 .pt-admin .pt-lead-form input[type="text"],
+.pt-admin .pt-lead-form input[type="url"],
 .pt-admin .pt-lead-form select,
 .pt-admin .pt-lead-form textarea {
   width: 100%;
