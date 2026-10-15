@@ -82,7 +82,7 @@ export default function NewProjectButton({ clientId, clientName }: Props) {
 
       <dialog
         ref={dialogRef}
-        className="pt-dialog"
+        className="pt-dialog pt-dialog-modal"
         aria-labelledby={titleId}
         aria-describedby={helpId}
         onCancel={(e) => {
