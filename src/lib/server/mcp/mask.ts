@@ -12,3 +12,10 @@ export function maskEmail(email: unknown): string {
   const suffix = dot === -1 ? '' : domain.slice(dot);
   return `${Array.from(local)[0]}***@${Array.from(name)[0]}***${suffix}`;
 }
+
+/** ***78 : seuls les deux derniers chiffres. Ne lève jamais, ne renvoie jamais l'entrée. */
+export function maskPhone(phone: unknown): string {
+  if (typeof phone !== 'string') return '***';
+  const digits = phone.replace(/\D/g, '');
+  return digits.length < 4 ? '***' : `***${digits.slice(-2)}`;
+}

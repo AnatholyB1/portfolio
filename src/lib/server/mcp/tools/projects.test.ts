@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PROJECT_COPY } from '@/lib/projects/copy';
+import { deriveProjectState } from '@/lib/projects/steps';
 import { runTool } from '../registry';
 
 const access = vi.hoisted(() => ({ getAccessibleProject: vi.fn() }));
@@ -7,13 +8,15 @@ const content = vi.hoisted(() => ({ addProjectLink: vi.fn() }));
 const facts = vi.hoisted(() => ({ postProjectFact: vi.fn(), revokeProjectFact: vi.fn() }));
 const files = vi.hoisted(() => ({ requestUpload: vi.fn(), confirmUpload: vi.fn(), createDownloadUrl: vi.fn() }));
 const rpc = vi.hoisted(() => ({ callRpc: vi.fn() }));
-const read = vi.hoisted(() => ({ loadProjectBundle: vi.fn() }));
+const read = vi.hoisted(() => ({ loadProjectBundle: vi.fn(), loadAdminProjects: vi.fn(), loadPendingClientWork: vi.fn() }));
+const holds = vi.hoisted(() => ({ loadReminderHold: vi.fn() }));
 vi.mock('@/lib/server/projects/access', () => access);
 vi.mock('@/lib/server/projects/content', () => content);
 vi.mock('@/lib/server/projects/facts', () => facts);
 vi.mock('@/lib/server/projects/files', () => files);
 vi.mock('@/lib/server/rpc', () => rpc);
 vi.mock('@/lib/server/projects/read', () => read);
+vi.mock('@/lib/server/reminders/holds', () => holds);
 
 import { projectTools } from './projects';
 
@@ -54,7 +57,10 @@ beforeEach(() => {
     ...Object.values(files),
     ...Object.values(rpc),
     ...Object.values(read),
+    ...Object.values(holds),
   ]) f.mockReset();
+  read.loadPendingClientWork.mockResolvedValue(null);
+  holds.loadReminderHold.mockResolvedValue({ suspended: false, since: null });
   access.getAccessibleProject.mockResolvedValue({ id: ID, clientId: 'c1' });
   read.loadProjectBundle.mockResolvedValue(bundle);
   vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -182,5 +188,102 @@ describe('set_reminder_hold', () => {
   });
   it('rejects an unknown action as invalid_input', async () => {
     expect(await runTool(tool('set_reminder_hold'), { projectId: ID, action: 'pause' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});
+
+const STATE = deriveProjectState([], '2026-01-01T00:00:00Z');
+const fullBundle = {
+  ...bundle,
+  state: STATE,
+  client: { id: 'c1', name: 'Jean Dupont', siret: '12345678901234', company: { nom: 'ACME SAS' } },
+  onboarding: {
+    companyConfirmedAt: '2026-01-02',
+    signatoryName: 'Jean Dupont',
+    signatoryRole: 'Gérant',
+    projectContactName: 'Alice',
+    projectContactEmail: 'alice@dupont.fr',
+    projectContactPhone: '06 12 34 56 78',
+    billingSameAsCompany: false,
+    billingAddress: { adresse: '1 rue Secrète', code_postal: '75001', commune: 'Paris' },
+    vatStatus: 'number',
+    vatNumber: 'FR123',
+    existingSiteUrl: null,
+    socialLinks: [],
+    projectGoal: 'Vendre',
+  },
+  files: [
+    { id: FID, projectId: ID, storagePath: 'secret/path/f.pdf', filename: 'f.pdf', mime: 'application/pdf', sizeBytes: 10, uploadedByKind: 'admin', status: 'ready', createdAt: 'c', readyAt: 'r' },
+  ],
+  links: [{ id: 'l1', projectId: ID, title: 'Maquette', url: 'https://example.com/m', createdAt: 'c' }],
+  consents: [{ id: 1, projectId: ID, granted: true, textVersion: 'v1', textSnapshot: 'texte long', createdAt: 'c' }],
+  lastActivityAt: '2026-02-01T00:00:00Z',
+};
+
+describe('get_project', () => {
+  it('has no covers and is not destructive', () => {
+    expect(tool('get_project').covers).toEqual([]);
+    expect(tool('get_project').destructive).toBeFalsy();
+  });
+  it('returns what the admin sheet shows, masking contact data and hiding storage paths', async () => {
+    read.loadProjectBundle.mockResolvedValue(fullBundle);
+    const r = await runTool(tool('get_project'), { projectId: ID }, ctx, principal, audit);
+    expect(read.loadProjectBundle).toHaveBeenCalledWith(supabase, ID, expect.any(Date));
+    expect(holds.loadReminderHold).toHaveBeenCalledWith(supabase, ID);
+    expect(r).toMatchObject({
+      ok: true,
+      data: {
+        project: { id: ID, title: 'Refonte' },
+        client: { name: 'ACME SAS', siret: '12345678901234' },
+        facts: [{ id: 5, type: 'deposit_received', note: 'acompte reçu' }],
+        files: [{ id: FID, filename: 'f.pdf', status: 'ready' }],
+        links: [{ title: 'Maquette', url: 'https://example.com/m' }],
+        consent: { granted: true, version: 'v1' },
+        reminderHold: { suspended: false },
+      },
+    });
+    const json = JSON.stringify(r);
+    expect(json).toContain('a***@d***.fr');
+    expect(json).toContain('***78');
+    for (const secret of ['alice@dupont.fr', '06 12 34 56 78', 'secret/path', '1 rue Secrète', 'texte long']) {
+      expect(json).not.toContain(secret);
+    }
+  });
+  it('resolves who is waiting with the pending client work and tolerates an unreadable hold', async () => {
+    read.loadProjectBundle.mockResolvedValue(fullBundle);
+    read.loadPendingClientWork.mockResolvedValue(new Map([[ID, { toSign: 0, toPay: 0 }]]));
+    holds.loadReminderHold.mockRejectedValue(new Error('x'));
+    const r = await runTool(tool('get_project'), { projectId: ID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { reminderHold: null } });
+    expect(read.loadPendingClientWork).toHaveBeenCalledWith(supabase, [ID], expect.any(Map));
+  });
+  it('fails when the project does not exist', async () => {
+    read.loadProjectBundle.mockResolvedValue(null);
+    const r = await runTool(tool('get_project'), { projectId: ID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false });
+  });
+});
+
+describe('list_projects', () => {
+  const row = (id: string, over: Record<string, unknown> = {}) => ({
+    projectId: id,
+    clientName: 'ACME SAS',
+    title: 'Refonte ' + id,
+    offer: 'site-vitrine',
+    state: { ...STATE, waitingOn: 'client' },
+    lastActivityAt: '2026-02-01',
+    daysWaiting: 3,
+    isDormant: false,
+    blockers: ['client'],
+    ...over,
+  });
+  it('reads through loadAdminProjects with the RLS client, filters and paginates', async () => {
+    read.loadAdminProjects.mockResolvedValue([row('a'), row('b', { blockers: ['admin'], state: { ...STATE, waitingOn: 'admin' } }), row('c')]);
+    const r = await runTool(tool('list_projects'), { blocage: 'client', limit: 1 }, ctx, principal, audit);
+    expect(read.loadAdminProjects).toHaveBeenCalledWith(supabase, expect.any(Date));
+    expect(r).toMatchObject({ ok: true, data: { total: 2, page: 1, hasNext: true, projects: [{ projectId: expect.any(String), clientName: 'ACME SAS' }] } });
+    expect((r as { data: { projects: unknown[] } }).data.projects).toHaveLength(1);
+  });
+  it('rejects an unknown filter as invalid_input', async () => {
+    expect(await runTool(tool('list_projects'), { etape: '9' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
 });

@@ -11,7 +11,12 @@ import {
 } from '@/lib/server/admin/core/projects';
 import { MAX_FILE_BYTES } from '@/lib/projects/fileRules';
 import { postFactSchema } from '@/lib/projects/schemas';
-import { loadProjectBundle } from '@/lib/server/projects/read';
+import { BLOCAGE_FILTERS, ETAPE_FILTERS, classifyProject, filterProjects, sortProjects } from '@/lib/projects/blocking';
+import { blockCompletion } from '@/lib/projects/onboardingSchema';
+import { STEPS, resolveWaiting, type ProjectState } from '@/lib/projects/steps';
+import { loadAdminProjects, loadPendingClientWork, loadProjectBundle } from '@/lib/server/projects/read';
+import { loadReminderHold } from '@/lib/server/reminders/holds';
+import { maskEmail, maskPhone } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
 import type { AdminCtx } from '../session';
 
@@ -137,7 +142,125 @@ const setReminderHold = defineTool({
   run: (ctx, input) => setReminderHoldCore(ctx, input),
 });
 
+function stateView(state: ProjectState) {
+  const step = state.currentStep ? STEPS.find((x) => x.index === state.currentStep) : undefined;
+  return {
+    done: state.done,
+    currentStep: state.currentStep,
+    stepName: step?.name ?? null,
+    waitingOn: state.waitingOn,
+    expectedAction: state.expectedAction,
+  };
+}
+
+function companyName(c: { name: string; company: unknown }): string {
+  const nom = (c.company as { nom?: unknown } | null)?.nom;
+  return typeof nom === 'string' && nom.trim() ? nom : c.name;
+}
+
+const listProjects = defineTool({
+  name: 'list_projects',
+  description:
+    "Liste les projets (ceux qui attendent Sèvalys d'abord), avec étape, qui attend, jours d'attente et blocages. Filtres : etape (1 à 6 ou done) et blocage (client, admin, dormant).",
+  covers: [],
+  input: z.object({
+    etape: z.enum(ETAPE_FILTERS).optional(),
+    blocage: z.enum(BLOCAGE_FILTERS).optional(),
+    page: z.number().int().min(1).default(1),
+    limit: z.number().int().min(1).max(50).default(25),
+  }),
+  run: async (ctx, input) => {
+    const all = await loadAdminProjects(ctx.supabase, new Date());
+    const sorted = sortProjects(filterProjects(all, { etape: input.etape, blocage: input.blocage }), undefined, 'desc');
+    const from = (input.page - 1) * input.limit;
+    return {
+      total: sorted.length,
+      page: input.page,
+      hasNext: from + input.limit < sorted.length,
+      projects: sorted.slice(from, from + input.limit).map((p) => ({
+        projectId: p.projectId,
+        clientName: p.clientName,
+        title: p.title,
+        offer: p.offer,
+        ...stateView(p.state),
+        daysWaiting: p.daysWaiting,
+        isDormant: p.isDormant,
+        blockers: p.blockers,
+        lastActivityAt: p.lastActivityAt,
+      })),
+    };
+  },
+});
+
+// Reprend la fiche admin hors documents et facturation : étape et faits, fichiers (sans chemin de stockage),
+// liens, accord de présentation, onboarding (contact masqué, sans adresse de facturation), relances.
+const getProject = defineTool({
+  name: 'get_project',
+  description:
+    "Lit la fiche d'un projet : étape et qui attend, journal des faits (avec leurs notes et identifiants pour revoke_project_fact), fichiers (identifiants pour get_project_file_url), liens, accord de présentation, onboarding et relances. E-mails et téléphones sont masqués.",
+  covers: [],
+  input: z.object({ projectId }),
+  run: async (ctx, input) => {
+    const now = new Date();
+    const bundle = await loadProjectBundle(ctx.supabase, input.projectId, now);
+    if (!bundle) return { ok: false, message: 'Projet introuvable.' };
+
+    // Qui attend vraiment (documents à signer, factures à payer) ; valeur statique si illisible.
+    const pending = await loadPendingClientWork(ctx.supabase, [bundle.project.id], new Map([[bundle.project.id, bundle.facts]]));
+    const pendingWork = pending?.get(bundle.project.id);
+    const state = pendingWork ? resolveWaiting(bundle.state, pendingWork) : bundle.state;
+    const { isDormant, daysWaiting } = classifyProject(state, bundle.lastActivityAt, now);
+
+    let reminderHold = null;
+    try {
+      reminderHold = await loadReminderHold(ctx.supabase, bundle.project.id);
+    } catch {
+      reminderHold = null;
+    }
+
+    const o = bundle.onboarding;
+    const latestConsent = bundle.consents[0];
+    return {
+      project: { id: bundle.project.id, title: bundle.project.title, offer: bundle.project.offer, startedAt: bundle.project.startedAt },
+      client: { name: companyName(bundle.client), siret: bundle.client.siret },
+      state: { ...stateView(state), daysWaiting, isDormant, lastActivityAt: bundle.lastActivityAt },
+      facts: bundle.facts.map((f) => ({ ...f, note: bundle.notes[f.id] ?? null })),
+      files: bundle.files.map((f) => ({
+        id: f.id,
+        filename: f.filename,
+        mime: f.mime,
+        sizeBytes: f.sizeBytes,
+        uploadedByKind: f.uploadedByKind,
+        status: f.status,
+        createdAt: f.createdAt,
+      })),
+      links: bundle.links.map((l) => ({ id: l.id, title: l.title, url: l.url, createdAt: l.createdAt })),
+      consent: latestConsent
+        ? { granted: latestConsent.granted, version: latestConsent.textVersion, at: latestConsent.createdAt }
+        : null,
+      onboarding: o
+        ? {
+            completion: blockCompletion(o),
+            companyConfirmedAt: o.companyConfirmedAt,
+            signatory: { name: o.signatoryName, role: o.signatoryRole },
+            contact: {
+              name: o.projectContactName,
+              email: o.projectContactEmail ? maskEmail(o.projectContactEmail) : null,
+              phone: o.projectContactPhone ? maskPhone(o.projectContactPhone) : null,
+            },
+            vatStatus: o.vatStatus,
+            billingSameAsCompany: o.billingSameAsCompany,
+            projectGoal: o.projectGoal,
+          }
+        : null,
+      reminderHold,
+    };
+  },
+});
+
 export const projectTools: ToolDef[] = [
+  listProjects,
+  getProject,
   postProjectFact,
   revokeProjectFact,
   addProjectLink,
