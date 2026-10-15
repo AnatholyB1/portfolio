@@ -12,8 +12,10 @@ import {
 } from 'lucide-react';
 import { setStatusAction, type LeadActionState } from '@/app/admin/leads/actions';
 import { STATUS_LABELS, STATUS_ORDER, type LeadStatus } from '@/lib/admin/leadLabels';
+import FloatingLayer from '@/components/admin/shared/FloatingLayer';
 import LostPanel from './LostPanel';
 import { isOutside, menuNavTarget } from './menuNav';
+import { useSuccessToast } from '@/components/admin/shared/useSuccessToast';
 import './leads.css';
 
 const ICONS: Record<LeadStatus, LucideIcon> = {
@@ -47,6 +49,8 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
   const menuId = `${useId()}-menu`;
 
   const Icon = ICONS[current];
+  // Le menu (et sa région) se referme avec l'action : le succès est annoncé par le toast global.
+  useSuccessToast(state);
 
   useEffect(() => {
     if (open) menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
@@ -56,7 +60,10 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (e: PointerEvent) => {
-      if (isOutside(wrapRef.current, e.target)) setOpenedAt(null);
+      // Le menu est rendu dans un portail (hors de wrapRef) : il compte comme « dedans ».
+      if (isOutside(wrapRef.current, e.target) && isOutside(menuRef.current, e.target)) {
+        setOpenedAt(null);
+      }
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
@@ -109,7 +116,8 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
         )}
       </button>
       {open ? (
-        <div
+        <FloatingLayer anchorRef={pillRef} width={240}>
+          <div
           ref={menuRef}
           id={menuId}
           className="pt-lead-pill-menu"
@@ -142,21 +150,24 @@ export default function StatusPill({ leadId, status }: { leadId: string; status:
               </form>
             ),
           )}
-        </div>
+          </div>
+        </FloatingLayer>
       ) : null}
       <div className="pt-sr-only" aria-live="polite">
-        {state.status !== 'idle' ? state.message : ''}
+        {state.status === 'error' ? state.message : ''}
       </div>
       {/* Texte visible de l'erreur ; l'annonce vocale passe par la région sr-only ci-dessus. */}
       <p className="pt-error">{state.status === 'error' ? state.message : ''}</p>
       {lostOpen ? (
-        <LostPanel
-          leadId={leadId}
-          onClose={() => {
-            setLostOpen(false);
-            pillRef.current?.focus();
-          }}
-        />
+        <FloatingLayer anchorRef={pillRef} width={360}>
+          <LostPanel
+            leadId={leadId}
+            onClose={() => {
+              setLostOpen(false);
+              pillRef.current?.focus();
+            }}
+          />
+        </FloatingLayer>
       ) : null}
     </div>
   );

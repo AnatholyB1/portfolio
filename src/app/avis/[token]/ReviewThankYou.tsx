@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { CircleCheck } from 'lucide-react';
 
 // Vue de remerciement (D-10, REV-02). Volontairement SANS prop de note : le bouton Google
 // est identique pour toutes les notes.
@@ -16,6 +17,7 @@ export default function ReviewThankYou({ googleUrl }: { googleUrl: string | null
 
   return (
     <div className="rv-thanks">
+      <CircleCheck size={40} aria-hidden="true" className="rv-thanks-icon" />
       <h1 id="rv-heading" className="pt-display" tabIndex={-1} ref={headingRef}>
         Merci pour votre avis
       </h1>

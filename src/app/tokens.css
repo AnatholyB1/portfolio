@@ -1,0 +1,32 @@
+/* Jetons de mouvement / rayon / élévation — back-office uniquement (portail, admin, auth, avis/[token]).
+   Importé depuis portal.css, JAMAIS depuis globals.css : le site public ne les charge pas.
+   Tous les jetons sont préfixés `--pt-` : aucune collision avec l'existant, aucune règle ne les
+   consomme tant qu'un composant ne les référence pas (déclarations inertes).
+   Valeurs : VISUAL-CRITIQUE.md (V2, V13). Aucune animation > 400ms hors reveals publics. */
+
+:root {
+  /* Mouvement */
+  --pt-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --pt-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --pt-dur-fast: 120ms;
+  --pt-dur-base: 200ms;
+  --pt-dur-slow: 400ms;
+
+  /* Rayons : cartes 12, contrôles 8, pilules 100 */
+  --pt-radius-sm: 8px;
+  --pt-radius-md: 12px;
+  --pt-radius-pill: 100px;
+
+  /* Élévation (fond sombre : ombres profondes et discrètes) */
+  --pt-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --pt-shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --pt-shadow-lg: 0 24px 60px -30px rgba(196, 245, 66, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --pt-dur-fast: 0.01ms;
+    --pt-dur-base: 0.01ms;
+    --pt-dur-slow: 0.01ms;
+  }
+}

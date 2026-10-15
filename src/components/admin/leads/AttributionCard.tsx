@@ -16,45 +16,59 @@ function rawLine(v: unknown) {
   return typeof v === 'string' && v.trim() ? <span className="pt-lead-raw">Reçu : {v}</span> : null;
 }
 
-function Touch({ title, touch }: { title: string; touch: unknown }) {
+function Touch({ title, touch, collapsed = false }: { title: string; touch: unknown; collapsed?: boolean }) {
   const t = rec(touch);
   const params = rec(t?.params) ?? {};
   const raw = rec(t?.raw) ?? {};
+  const preview = t ? [text(params.utm_source), text(params.utm_medium)].join(' / ') : 'Arrivée directe';
+  const body = !t ? (
+    <p className="pt-helper">Aucune donnée (arrivée directe)</p>
+  ) : (
+    <dl className="pt-summary">
+      <dt>Source</dt>
+      <dd>
+        {text(params.utm_source)}
+        {rawLine(raw.utm_source)}
+      </dd>
+      <dt>Support</dt>
+      <dd>
+        {text(params.utm_medium)}
+        {rawLine(raw.utm_medium)}
+      </dd>
+      <dt>Campagne</dt>
+      <dd>{text(params.utm_campaign)}</dd>
+      <dt>Contenu</dt>
+      <dd>{text(params.utm_content)}</dd>
+      <dt>Terme</dt>
+      <dd>{text(params.utm_term)}</dd>
+      <dt>Page d&apos;atterrissage</dt>
+      <dd className="pt-lead-trunc" title={text(t.landing)}>{text(t.landing)}</dd>
+      <dt>Référent</dt>
+      <dd className="pt-lead-trunc" title={text(t.referrer)}>{text(t.referrer)}</dd>
+      {CLICK_IDS.filter((k) => typeof params[k] === 'string' && params[k] !== '').map((k) => (
+        <div key={k} className="pt-admin-contents">
+          <dt>{k}</dt>
+          <dd className="pt-lead-trunc" title={String(params[k])}>{String(params[k])}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+  // Dernier contact : repliable, l'aperçu (source / support) se lit sans ouvrir.
+  if (collapsed) {
+    return (
+      <details className="pt-touch">
+        <summary className="pt-touch-summary">
+          <h3 className="pt-lead-subhead">{title}</h3>
+          <span className="pt-collapse-preview">{preview}</span>
+        </summary>
+        {body}
+      </details>
+    );
+  }
   return (
     <div>
       <h3 className="pt-lead-subhead">{title}</h3>
-      {!t ? (
-        <p className="pt-helper">Aucune donnée (arrivée directe)</p>
-      ) : (
-        <dl className="pt-summary">
-          <dt>Source</dt>
-          <dd>
-            {text(params.utm_source)}
-            {rawLine(raw.utm_source)}
-          </dd>
-          <dt>Support</dt>
-          <dd>
-            {text(params.utm_medium)}
-            {rawLine(raw.utm_medium)}
-          </dd>
-          <dt>Campagne</dt>
-          <dd>{text(params.utm_campaign)}</dd>
-          <dt>Contenu</dt>
-          <dd>{text(params.utm_content)}</dd>
-          <dt>Terme</dt>
-          <dd>{text(params.utm_term)}</dd>
-          <dt>Page d&apos;atterrissage</dt>
-          <dd className="pt-lead-trunc" title={text(t.landing)}>{text(t.landing)}</dd>
-          <dt>Référent</dt>
-          <dd className="pt-lead-trunc" title={text(t.referrer)}>{text(t.referrer)}</dd>
-          {CLICK_IDS.filter((k) => typeof params[k] === 'string' && params[k] !== '').map((k) => (
-            <div key={k} className="pt-admin-contents">
-              <dt>{k}</dt>
-              <dd className="pt-lead-trunc" title={String(params[k])}>{String(params[k])}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
+      {body}
     </div>
   );
 }
@@ -94,7 +108,7 @@ export default function AttributionCard({
         </div>
       ) : null}
       <Touch title="Premier contact" touch={firstTouch} />
-      <Touch title="Dernier contact" touch={lastTouch} />
+      <Touch title="Dernier contact" touch={lastTouch} collapsed />
     </section>
   );
 }

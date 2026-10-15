@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react';
 import { markLostAction, type LeadActionState } from '@/app/admin/leads/actions';
+import { useSuccessToast } from '@/components/admin/shared/useSuccessToast';
 import { ConfirmPanel } from '@/components/admin/shared/ConfirmAction';
 import { LOST_REASONS } from '@/lib/admin/leadLabels';
 import './leads.css';
@@ -24,6 +25,7 @@ export default function LostPanel({ leadId, onClose }: { leadId: string; onClose
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
 
+  useSuccessToast(state);
   useEffect(() => {
     if (state.status === 'success') onClose();
   }, [state, onClose]);

@@ -1,0 +1,133 @@
+/* Admin : tableaux (V5, V14). Survol de ligne, ligne cliquable, en-têtes collants, chiffres alignés,
+   pastilles de statut cohérentes. Jetons --pt-* ; transitions explicites (jamais `all`). */
+
+/* ---------- Densité et alignement ---------- */
+@media (min-width: 768px) {
+  .pt-root .pt-admin .pt-admin-table th {
+    padding: 12px 16px;
+    background: var(--bg-2);
+  }
+  .pt-root .pt-admin .pt-admin-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+  }
+  .pt-admin .pt-table tbody tr:last-child td,
+  .pt-admin .pt-table tbody tr:last-child th {
+    border-bottom: 0;
+  }
+  /* Colonne de nombres ou de durée : alignée à droite, en-tête compris. */
+  .pt-admin th.pt-col-end,
+  .pt-admin td.pt-col-end {
+    text-align: right;
+  }
+  .pt-admin th.pt-col-end .pt-proj-sort {
+    justify-content: flex-end;
+  }
+}
+.pt-admin .pt-table td,
+.pt-admin .pt-table th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Survol et ligne cliquable ---------- */
+.pt-admin .pt-table tbody tr {
+  position: relative;
+  transition: background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-admin .pt-table tbody tr:hover,
+.pt-admin .pt-table tbody tr:focus-within {
+  background: rgba(236, 234, 227, 0.04);
+}
+/* Le lien principal de la ligne couvre toute la ligne (une seule cible, pas de lien dupliqué). Les
+   autres contrôles de la ligne (pastille, e-mail, boutons) restent au-dessus et cliquables. */
+.pt-admin .pt-table tbody tr:has(a.pt-row-link) {
+  cursor: pointer;
+}
+.pt-admin .pt-table a.pt-row-link {
+  text-decoration-color: var(--pt-border-strong, #6f6b64);
+  transition: text-decoration-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-admin .pt-table a.pt-row-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.pt-admin .pt-table tbody tr:hover a.pt-row-link {
+  text-decoration-color: var(--ink);
+}
+.pt-admin .pt-table a.pt-row-link:focus-visible {
+  outline: none;
+}
+.pt-admin .pt-table a.pt-row-link:focus-visible::after {
+  outline: 2px solid var(--acid);
+  outline-offset: -2px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-admin .pt-table td :is(button, form, .pt-lead-pill-wrap, a:not(.pt-row-link)) {
+  position: relative;
+  z-index: 1;
+}
+.pt-admin .pt-table .pt-lead-pill-wrap:has([role="menu"]) {
+  z-index: 20;
+}
+@media (max-width: 767px) {
+  .pt-admin .pt-table tbody tr:has(a.pt-row-link) {
+    transition: background-color var(--pt-dur-fast) var(--pt-ease-out);
+  }
+  .pt-admin .pt-table tbody tr:has(a.pt-row-link):active {
+    background: rgba(236, 234, 227, 0.07);
+  }
+}
+
+/* ---------- En-têtes collants ----------
+   Les longues listes (.pt-table-sticky) défilent dans leur conteneur et gardent l'en-tête
+   visible. Sous 768 px les tableaux sont des cartes : aucun défilement interne. */
+@media (min-width: 768px) and (min-height: 640px) {
+  .pt-admin .pt-table-scroll.pt-table-sticky {
+    max-height: min(72vh, 760px);
+    overflow-y: auto;
+  }
+  .pt-admin .pt-table-sticky thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-bottom: 0;
+    box-shadow: inset 0 -1px 0 var(--line);
+  }
+}
+
+/* ---------- Pastilles de statut ----------
+   Une seule forme pour tous les statuts : icône ou point + libellé texte, jamais la couleur seule. */
+.pt-root .pt-admin :is(.pt-lead-badge, .pt-doc-badge) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--bg-3);
+  border: 1px solid var(--pt-border-strong, #6f6b64);
+  border-radius: var(--pt-radius-pill);
+}
+/* « Attend Sèvalys » (point acide) : c'est ce qui demande une action de l'admin. */
+.pt-root .pt-admin :is(.pt-lead-badge, .pt-doc-badge):has(> .pt-lead-dot) {
+  background: var(--acid-soft);
+  border-color: color-mix(in srgb, var(--acid) 55%, var(--bg));
+}
+.pt-admin a.pt-lead-badge {
+  text-decoration: none;
+  transition: border-color var(--pt-dur-fast) var(--pt-ease-out), background-color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-admin a.pt-lead-badge:hover {
+  border-color: var(--ink-dim);
+}
+
+/* ---------- Valeurs sous une valeur principale ---------- */
+.pt-admin .pt-lead-sub {
+  margin-top: 2px;
+  line-height: 1.4;
+}

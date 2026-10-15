@@ -32,7 +32,7 @@ describe('client portal documents tab', () => {
     expect(page).toContain('withStatuses');
     expect(page).toContain('current="documents"');
     expect(page).toContain('documentDownloadAction');
-    expect(page).toContain('PROJECT_COPY.documents.portal.emptyHeading');
+    expect(page).toContain('copy.emptyHeading');
   });
 
   it('never defaults to a signing status when the bundle fails to load (WR-05)', () => {

@@ -63,7 +63,7 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
   };
 
   return (
-    <TableScroll label="Projets">
+    <TableScroll label="Projets" className="pt-table-sticky">
 <table className="pt-table pt-admin-table" role="table">
       <caption className="pt-sr-only">Projets</caption>
       <thead role="rowgroup">
@@ -75,6 +75,7 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
                 key={c.key}
                 scope="col"
                 role="columnheader"
+                className={c.key === 'depuis' ? 'pt-col-end' : undefined}
                 aria-sort={active ? (ordre === 'asc' ? 'ascending' : 'descending') : 'none'}
               >
                 <Link href={sortHref(c.key)} className="pt-proj-sort">
@@ -96,7 +97,7 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
         {rows.map((r) => (
           <tr key={r.projectId} role="row">
             <td role="cell" data-label="Client">
-              <Link href={`/admin/projets/${r.projectId}`} className="pt-link-target">
+              <Link href={`/admin/projets/${r.projectId}`} className="pt-link-target pt-row-link">
                 {r.clientName}
               </Link>
               <span className="pt-lead-sub">{r.title}</span>
@@ -118,7 +119,7 @@ export default function ProjectsTable({ rows, tri, ordre, etape, blocage }: Proj
                 ) : null}
               </span>
             </td>
-            <td role="cell" data-label="Depuis" className="pt-proj-days">
+            <td role="cell" data-label="Depuis" className="pt-proj-days pt-col-end">
               {r.daysWaiting} j
             </td>
           </tr>

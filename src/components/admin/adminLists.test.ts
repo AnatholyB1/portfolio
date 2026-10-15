@@ -104,9 +104,10 @@ describe('emails, avis and liens pages', () => {
 });
 
 describe('shared styles', () => {
-  it('lead panel is static by default and floats only from the status pill', () => {
+  it('lead panel is static by default and only fills the floating layer from the status pill', () => {
     expect(leadsCss).toMatch(/\.pt-admin \.pt-lead-panel \{\s*position: static/);
-    expect(leadsCss).toMatch(/\.pt-lead-pill-wrap > \.pt-lead-panel \{\s*position: absolute/);
+    expect(leadsCss).toMatch(/\.pt-float-layer > \.pt-lead-panel \{\s*width: 100%/);
+    expect(leadsCss).not.toMatch(/\.pt-lead-pill-wrap > \.pt-lead-panel/);
   });
 
   it('dialog uses defined tokens, not undefined --pt-surface / --pt-border', () => {

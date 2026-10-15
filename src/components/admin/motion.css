@@ -1,0 +1,156 @@
+/* Admin : squelettes de chargement fidèles à la mise en page + entrée douce du contenu.
+   Jetons --pt-* uniquement (tokens.css). Aucune animation sous prefers-reduced-motion. */
+
+/* ---------- Entrée de contenu ----------
+   Le contenu (tout sauf la navigation) monte de 6 px en fondu à l'arrivée de la page.
+   fill-mode `backwards` : aucun style résiduel après l'animation (pas de contexte
+   d'empilement qui gênerait les menus ou les en-têtes collants). Trois enfants décalés au plus. */
+@keyframes pt-admin-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.pt-admin:not(.pt-admin-loading) > :not(.pt-admin-nav):not(.pt-admin-anchor):not(.pt-float-layer) {
+  animation: pt-admin-in var(--pt-dur-slow) var(--pt-ease-out) backwards;
+}
+.pt-admin:not(.pt-admin-loading) > :nth-child(3) {
+  animation-delay: 40ms;
+}
+.pt-admin:not(.pt-admin-loading) > :nth-child(4) {
+  animation-delay: 80ms;
+}
+.pt-admin:not(.pt-admin-loading) > :nth-child(n + 5) {
+  animation-delay: 120ms;
+}
+
+/* ---------- Squelettes ----------
+   Mêmes hauteurs que les éléments réels (titre 34 px, en-tête de tableau 53 px, ligne 72 px)
+   pour que le contenu arrive sans décalage. */
+.pt-admin .pt-sk-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.pt-admin .pt-sk-wrap .pt-card {
+  gap: 16px;
+}
+.pt-admin .pt-sk-title {
+  width: min(180px, 60%);
+  height: 34px;
+}
+.pt-admin .pt-sk-subtitle {
+  width: min(200px, 50%);
+  height: 24px;
+}
+.pt-admin .pt-sk-controls {
+  height: 104px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-admin .pt-sk-field {
+  height: 44px;
+}
+.pt-admin .pt-sk-back {
+  width: 120px;
+  height: 44px;
+}
+.pt-admin .pt-sk-pill {
+  width: 140px;
+  height: 32px;
+  border-radius: var(--pt-radius-pill);
+}
+.pt-admin .pt-sk-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.pt-admin .pt-sk-queue {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.pt-admin .pt-sk-tile {
+  height: 56px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-admin .pt-sk-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.pt-admin .pt-sk-kpi {
+  height: 116px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-admin .pt-sk-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+.pt-admin .pt-sk-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.pt-admin .pt-sk-card-lg {
+  height: 420px;
+  border-radius: var(--pt-radius-md);
+}
+.pt-admin .pt-sk-card-md {
+  height: 220px;
+  border-radius: var(--pt-radius-md);
+}
+.pt-admin .pt-sk-table {
+  display: flex;
+  flex-direction: column;
+}
+.pt-admin .pt-sk-table .pt-sk-row {
+  align-items: center;
+  height: 72px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.pt-admin .pt-sk-table .pt-sk-row-head {
+  height: 53px;
+}
+.pt-admin .pt-sk-table .pt-sk-row .pt-sk {
+  height: 14px;
+}
+.pt-admin .pt-sk-table .pt-sk-row-head .pt-sk {
+  height: 10px;
+  width: 60%;
+}
+@media (min-width: 768px) {
+  .pt-admin .pt-sk-queue {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .pt-admin .pt-sk-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .pt-admin .pt-sk-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+/* Mobile : les tableaux deviennent des cartes, le squelette se réduit à deux colonnes. */
+@media (max-width: 767px) {
+  .pt-admin .pt-sk-table .pt-sk-row {
+    grid-template-columns: 1fr 1fr !important;
+    height: 88px;
+  }
+  .pt-admin .pt-sk-table .pt-sk-row .pt-sk:nth-child(n + 3) {
+    display: none;
+  }
+  .pt-admin .pt-sk-table .pt-sk-row-head {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-admin:not(.pt-admin-loading) > * {
+    animation: none;
+  }
+}

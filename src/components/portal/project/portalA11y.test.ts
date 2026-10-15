@@ -58,9 +58,10 @@ describe('F-C4 onboarding errors are announced', () => {
 });
 
 describe('F-C5 legal form', () => {
-  it('does not show the raw INSEE code (no label table in the repository)', () => {
-    expect(onboarding).not.toContain('forme_juridique_code');
-    expect(onboarding).not.toContain('<dt>Forme juridique</dt>');
+  it('shows the legal form as a label, never the raw INSEE code', () => {
+    expect(onboarding).toContain('<dt>Forme juridique</dt>');
+    expect(onboarding).toContain('legalFormLabel(company.forme_juridique_code)');
+    expect(onboarding).not.toContain('{company.forme_juridique_code}');
   });
 });
 
@@ -108,5 +109,38 @@ describe('a single skip link in the private areas', () => {
     ]) {
       expect(read(layout)).not.toContain('data-own-skip-link');
     }
+  });
+});
+
+describe('root skip link is not rendered where a layout owns one', () => {
+  it('is skipped on every private area and kept on public pages', async () => {
+    const { hasOwnSkipLink } = await import('@/components/ui/skipLinkScope');
+    for (const p of ['/admin', '/admin/leads/1', '/espace-client', '/espace-client/documents', '/connexion', '/auth/confirm']) {
+      expect(hasOwnSkipLink(p), p).toBe(true);
+    }
+    for (const p of ['/', '/services', '/simulateur', '/avis', '/avis/abc', '/desinscription', '/administration', '/connexions', null]) {
+      expect(hasOwnSkipLink(p), String(p)).toBe(false);
+    }
+  });
+
+  it('the root SkipLink returns null from that scope', () => {
+    const src = read('../../ui/SkipLink.tsx');
+    expect(src).toMatch(/if \(hasOwnSkipLink\(pathname\)\) return null;/);
+  });
+});
+
+describe('documents table stacks into cards up to 959px, like payments', () => {
+  it('shares the card rules and lets action labels wrap in card mode', () => {
+    expect(projectCss).toMatch(/@media \(max-width: 959px\) \{[\s\S]*\.pt-root \.pt-docs-table td \{/);
+    expect(projectCss).toMatch(/\.pt-root \.pt-docs-table \.pt-file-action \{\s*white-space: normal;/);
+    expect(projectCss).toMatch(/@media \(min-width: 960px\) \{\s*\.pt-root \.pt-docs-table \.pt-file-action \{\s*white-space: nowrap;/);
+  });
+});
+
+describe('onboarding thank-you message follows the project state', () => {
+  it('drops "Nous préparons votre devis" once the quote step is past', () => {
+    expect(onboarding).toContain('quotePending ? COPY.done : COPY.doneAfterQuote');
+    expect(clientPage).toContain('quotePending=');
+    expect(read('../../../lib/projects/copy.ts')).toContain("doneAfterQuote: 'Merci, votre onboarding est complet.'");
   });
 });

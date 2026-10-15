@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, Inbox } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import DetailPanel from '@/components/admin/pilotage/DetailPanel';
 import PilotageKpis from '@/components/admin/pilotage/PilotageKpis';
@@ -79,16 +81,15 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
               </div>
 
               {view === null ? (
-                <div className="pt-empty">
-                  <h2 className="pt-heading">Chiffres indisponibles</h2>
-                  <p className="pt-helper">
-                    Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux. Rechargez la page ;
-                    si l&apos;erreur persiste, vérifiez la connexion à la base.
-                  </p>
-                  <Link className="pt-btn-ghost" href={pilotageHref(params, {})}>
+                <EmptyState
+                  headingLevel={2}
+                  icon={<TriangleAlert size={32} />}
+                  title="Chiffres indisponibles"
+                  description={<>Une lecture a échoué, aucun total n&apos;est affiché pour éviter un chiffre faux. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                  action={<Link className="pt-btn-ghost" href={pilotageHref(params, {})}>
                     Recharger
-                  </Link>
-                </div>
+                  </Link>}
+                />
               ) : (
                 <>
                   <form method="get" className="pt-funnel-controls">
@@ -149,13 +150,12 @@ export default async function AdminPilotagePage({ searchParams }: { searchParams
                   ) : null}
 
                   {view.isEmpty ? (
-                    <div className="pt-empty">
-                      <h2 className="pt-heading">Rien à piloter pour l&apos;instant</h2>
-                      <p className="pt-helper">
-                        Les chiffres apparaissent dès le premier devis émis ou la première facture. Les données de test
-                        sont masquées : cochez « Inclure les données de test » pour les voir.
-                      </p>
-                    </div>
+                    <EmptyState
+                      headingLevel={2}
+                      icon={<Inbox size={32} />}
+                      title="Rien à piloter pour l'instant"
+                      description={<>Les chiffres apparaissent dès le premier devis émis ou la première facture. Les données de test sont masquées : cochez « Inclure les données de test » pour les voir.</>}
+                    />
                   ) : (
                     <>
                       <PilotageKpis tiles={view.tiles} params={params} />

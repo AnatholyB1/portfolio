@@ -367,7 +367,25 @@
 /* ---------- Transitions ---------- */
 .pt-root .pt-file-pick,
 .pt-root .pt-step-badge {
-  transition: color 150ms ease, border-color 150ms ease;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-file-pick:hover {
+  border-color: var(--ink-dim);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.pt-root .pt-file-pick:active {
+  transform: scale(0.98);
+}
+/* Cases de consentement et de signature : retour au survol et à l'appui. */
+.pt-root .pt-sign-consent,
+.pt-root .pt-sign-radio {
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-sign-consent:hover {
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-sign-consent:active {
+  background: var(--bg-2);
 }
 @media (prefers-reduced-motion: reduce) {
   .pt-root .pt-file-pick,
@@ -393,6 +411,14 @@
   color: var(--ink-dim);
   text-decoration: none;
   border-bottom: 2px solid transparent;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-client-nav a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--pt-border-strong);
+}
+.pt-root .pt-client-nav a:active {
+  color: var(--ink);
 }
 .pt-root .pt-client-nav a.pt-client-nav-active {
   color: var(--ink);
@@ -696,34 +722,48 @@
   .pt-root .pt-pay-table,
   .pt-root .pt-pay-table tbody,
   .pt-root .pt-pay-table tr,
-  .pt-root .pt-pay-table td {
+  .pt-root .pt-pay-table td,
+  .pt-root .pt-docs-table,
+  .pt-root .pt-docs-table tbody,
+  .pt-root .pt-docs-table tr,
+  .pt-root .pt-docs-table td {
     display: block;
     width: 100%;
   }
-  .pt-root .pt-pay-table thead {
+  .pt-root .pt-pay-table thead,
+  .pt-root .pt-docs-table thead {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
     clip: rect(0 0 0 0);
   }
-  .pt-root .pt-pay-table tr {
+  .pt-root .pt-pay-table tr,
+  .pt-root .pt-docs-table tr {
     margin-bottom: 16px;
     padding: 8px 0;
     border: 1px solid var(--line);
     border-radius: 0.75rem;
   }
-  .pt-root .pt-pay-table tr.pt-doc-replaced {
+  .pt-root .pt-pay-table tr.pt-doc-replaced,
+  .pt-root .pt-docs-table tr.pt-doc-replaced {
     border-left: 2px solid var(--line-strong);
   }
   .pt-root .pt-pay-table tr.pt-pay-processing {
     border-left: 2px solid var(--pt-border-strong);
   }
-  .pt-root .pt-pay-table td {
+  .pt-root .pt-pay-table td,
+  .pt-root .pt-docs-table td {
     padding: 8px 16px;
     border-bottom: 0;
   }
-  .pt-root .pt-pay-table td[data-label]::before {
+  /* En carte, les libellés d'action (« Télécharger le document signé ») peuvent passer à la ligne. */
+  .pt-root .pt-docs-table .pt-file-action {
+    white-space: normal;
+    text-align: left;
+  }
+  .pt-root .pt-pay-table td[data-label]::before,
+  .pt-root .pt-docs-table td[data-label]::before {
     content: attr(data-label);
     display: block;
     font-family: var(--font-mono), monospace;
@@ -803,4 +843,159 @@
 .pt-root .pt-onb summary:focus-visible {
   outline: 2px solid var(--acid);
   outline-offset: 2px;
+}
+
+/* ---------- Hiérarchie de la page Projet (V8) ---------- */
+/* N1 : « En attente de vous » devient la carte héros (filet d'accent, titre 32, action principale large).
+   N2 : frise et informations en carte standard. N3 : fichiers, liens, accord en carte discrète. */
+.pt-root .pt-who {
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-who[data-waiting="client"] {
+  padding: 24px;
+  background: var(--acid-soft);
+  border: 1px solid color-mix(in srgb, var(--acid) 45%, var(--bg));
+  border-left: 3px solid var(--acid);
+  border-radius: var(--pt-radius-md);
+}
+.pt-root .pt-who[data-waiting="client"] .pt-who-icon {
+  color: var(--acid);
+}
+.pt-root .pt-who[data-waiting="client"] .pt-who-name {
+  font-size: 32px;
+}
+.pt-root .pt-who[data-waiting="client"] .pt-who-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pt-root .pt-who[data-waiting="client"] .pt-who-since {
+  color: var(--ink);
+}
+.pt-root .pt-who[data-actionable] .pt-who-actions {
+  margin-top: 8px;
+}
+.pt-root .pt-who[data-actionable] .pt-who-actions .pt-btn-primary {
+  min-height: 48px;
+  padding: 8px 32px;
+}
+.pt-root .pt-who[data-waiting="done"] {
+  border-color: color-mix(in srgb, var(--acid) 45%, var(--bg));
+}
+.pt-root .pt-who[data-waiting="done"] .pt-who-icon {
+  color: var(--acid);
+}
+@media (max-width: 639px) {
+  .pt-root .pt-who[data-waiting="client"] {
+    padding: 16px;
+  }
+  .pt-root .pt-who[data-waiting="client"] .pt-who-name {
+    font-size: 28px;
+  }
+  .pt-root .pt-who[data-actionable] .pt-who-actions,
+  .pt-root .pt-who[data-actionable] .pt-who-actions > a {
+    width: 100%;
+  }
+}
+.pt-root .pt-card-quiet {
+  background: var(--bg);
+  border-color: var(--line);
+}
+
+/* Frise : le trait relie les étapes terminées en encre, le reste reste en retrait. */
+.pt-root .pt-step-list[data-variant="client"] .pt-step-done::before {
+  background: var(--ink-dim);
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-done .pt-step-marker {
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-upcoming .pt-step-marker {
+  border-style: dashed;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-current {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border: 1px solid color-mix(in srgb, var(--acid) 30%, transparent);
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-current .pt-step-name {
+  font-size: 18px;
+}
+
+/* ---------- Résumé collant (mobile) : séparé du contenu par une ombre, zone sûre respectée ---------- */
+@media (max-width: 639px) {
+  .pt-root .pt-sign-bar,
+  .pt-root .pt-sign-summary {
+    box-shadow: 0 -8px 24px -16px var(--bg);
+  }
+  .pt-root .pt-sign-summary {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--pt-border-strong);
+  }
+}
+
+/* ---------- Documents et paiements (V10) ---------- */
+/* Hauteur de ligne constante, version et numéro insécables, montants tabulaires, en-têtes lisibles.
+   Limité aux tableaux du portail : le tableau partagé .pt-table de l'admin n'est pas modifié. */
+.pt-root .pt-docs-table th,
+.pt-root .pt-pay-table th {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.pt-root .pt-docs-table td,
+.pt-root .pt-pay-table td {
+  vertical-align: middle;
+}
+.pt-root .pt-docs-table tbody tr,
+.pt-root .pt-pay-table tbody tr {
+  min-height: 56px;
+}
+.pt-root .pt-nowrap,
+.pt-root .pt-pay-number {
+  white-space: nowrap;
+}
+.pt-root .pt-pay-amount-cell {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pt-root .pt-doc-badge {
+  white-space: nowrap;
+}
+.pt-root .pt-doc-badge[data-tone="success"] {
+  color: var(--acid);
+  border-color: color-mix(in srgb, var(--acid) 40%, var(--bg));
+  background: var(--acid-soft);
+}
+.pt-root .pt-doc-badge[data-tone="action"] {
+  color: var(--ink);
+  border-color: var(--acid);
+}
+.pt-root .pt-doc-badge[data-tone="wait"] {
+  color: var(--ink-dim);
+}
+.pt-root .pt-pay-table .pt-file-action {
+  white-space: nowrap;
+}
+@media (min-width: 960px) {
+  .pt-root .pt-docs-table .pt-file-action {
+    white-space: nowrap;
+  }
+}
+.pt-root .pt-docs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+@media (min-width: 960px) {
+  .pt-root .pt-docs-table td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+.pt-root .pt-doc-meta svg {
+  display: inline-block;
+  vertical-align: -3px;
+  margin-right: 4px;
 }

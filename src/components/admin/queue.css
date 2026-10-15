@@ -1,0 +1,145 @@
+/* Admin : accueil (file « À traiter », invitation repliable) et états vides. */
+
+/* ---------- File « À traiter » ---------- */
+.pt-root .pt-admin .pt-queue-card {
+  gap: 16px;
+}
+.pt-root .pt-admin .pt-queue-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+.pt-root .pt-admin .pt-queue-total {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-queue-link {
+  gap: 16px;
+  min-height: 56px;
+  padding: 8px 16px 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--acid);
+  border-radius: var(--pt-radius-sm);
+  transition:
+    background-color var(--pt-dur-fast) var(--pt-ease-out),
+    border-color var(--pt-dur-fast) var(--pt-ease-out),
+    transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-queue-link:hover {
+  background: var(--bg-3);
+  border-color: var(--ink-dim);
+  border-left-color: var(--acid);
+}
+.pt-root .pt-admin .pt-queue-link:active {
+  transform: scale(0.985);
+}
+.pt-root .pt-admin .pt-queue-link::after {
+  content: "→";
+  content: "→" / "";
+  margin-left: auto;
+  color: var(--ink-dim);
+  transition:
+    transform var(--pt-dur-fast) var(--pt-ease-out),
+    color var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-queue-link:hover::after {
+  color: var(--ink);
+  transform: translateX(3px);
+}
+.pt-root .pt-admin .pt-queue-count {
+  min-width: 3ch;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.pt-root .pt-admin .pt-queue-unavailable {
+  border-left-color: var(--warm);
+}
+@media (max-width: 767px) {
+  .pt-root .pt-admin .pt-queue-link {
+    min-height: 64px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-root .pt-admin .pt-queue-link:hover::after {
+    transform: none;
+  }
+}
+
+/* ---------- Invitation repliable ---------- */
+.pt-root .pt-admin .pt-invite {
+  gap: 0;
+  padding: 0 24px;
+}
+.pt-root .pt-admin .pt-invite[open] {
+  padding-bottom: 24px;
+}
+.pt-root .pt-admin .pt-invite-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  min-height: 64px;
+  padding: 8px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.pt-root .pt-admin .pt-invite-summary::-webkit-details-marker {
+  display: none;
+}
+.pt-root .pt-admin .pt-invite-summary::after {
+  content: "+";
+  content: "+" / "";
+  order: 3;
+  margin-left: auto;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink-dim);
+  transition: transform var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-admin .pt-invite[open] .pt-invite-summary::after {
+  transform: rotate(45deg);
+}
+.pt-root .pt-admin .pt-invite-summary:hover::after {
+  color: var(--ink);
+}
+.pt-root .pt-admin .pt-invite-hint {
+  order: 2;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+.pt-root .pt-admin .pt-invite[open] .pt-invite-hint {
+  display: none;
+}
+@media (max-width: 767px) {
+  .pt-root .pt-admin .pt-invite-hint {
+    display: none;
+  }
+}
+.pt-root .pt-admin .pt-invite > .pt-intro {
+  margin: 8px 0 24px;
+}
+
+/* ---------- États vides ---------- */
+.pt-root .pt-admin .pt-emptystate:not(.pt-emptystate-compact) {
+  padding: 48px 24px;
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--pt-radius-md);
+}
+.pt-root .pt-admin .pt-emptystate-compact {
+  padding: 24px 16px;
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--pt-radius-md);
+}
+.pt-root .pt-admin .pt-emptystate-icon {
+  margin-bottom: 4px;
+}
+.pt-root .pt-admin .pt-emptystate-action a {
+  text-decoration: none;
+}

@@ -49,6 +49,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 import { ALLOWED_FILE_TYPES, type FileKind } from '@/lib/projects/fileRules';
 import { OFFER_LABELS, type OfferSlug } from '@/lib/projects/offers';
 import { STEPS, resolveWaiting } from '@/lib/projects/steps';
+import { toAdminVoice } from '@/lib/projects/adminCopy';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
 import { loadAdminBillingView } from '@/lib/server/invoices/adminView';
@@ -130,6 +131,8 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
   const pending = await loadPendingClientWork(supabase, [project.id], new Map([[project.id, facts]]));
   const pendingWork = pending?.get(project.id);
   const state = pendingWork ? resolveWaiting(bundle.state, pendingWork) : bundle.state;
+  // Frise et action attendue à la voix de l'admin (le portail garde le texte à la voix du client).
+  const adminState = toAdminVoice(state);
   const { isDormant, daysWaiting } = classifyProject(state, lastActivityAt, now);
   const nom = (client.company as { nom?: unknown } | null)?.nom;
   const name = typeof nom === 'string' && nom.trim() ? nom : client.name || 'Client';
@@ -177,8 +180,7 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                 <h2 id="proj-steps-title" className="pt-heading">
                   Étape et faits
                 </h2>
-                <Timeline state={state} variant="admin" />
-                <dl className="pt-summary">
+                <dl className="pt-summary pt-proj-brief">
                   <dt>Étape en cours</dt>
                   <dd>{state.done || !step ? PROJECT_COPY.blocage.done : `${step.index}/6 ${step.name}`}</dd>
                   <dt>{PROJECT_COPY.whoWaits.label}</dt>
@@ -186,8 +188,9 @@ export default async function AdminProjectSheetPage({ params }: { params: Promis
                   <dt>Depuis</dt>
                   <dd>{countFr(daysWaiting, 'jour')}</dd>
                   <dt>Action attendue</dt>
-                  <dd>{state.expectedAction}</dd>
+                  <dd>{adminState.expectedAction}</dd>
                 </dl>
+                <Timeline state={adminState} variant="admin" />
                 <PostFactForm projectId={project.id} facts={facts} signedFacts={signedFacts} />
                 <FactJournal projectId={project.id} facts={facts} notes={notes} />
               </section>

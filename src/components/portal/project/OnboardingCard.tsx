@@ -9,6 +9,7 @@ import {
 } from '@/app/espace-client/actions';
 import type { CompanySnapshot } from '@/lib/admin/inviteSchema';
 import { NOT_SET, formatDateFr } from '@/lib/admin/format';
+import { legalFormLabel } from '@/lib/company/legalForm';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import {
   blockCompletion,
@@ -23,7 +24,13 @@ const COPY = PROJECT_COPY.onboarding;
 const MAX_SOCIAL = 4;
 const MAX_GOAL = 1000;
 
-type Props = { company: CompanySnapshot | null; siret: string; onboarding: OnboardingRow | null };
+type Props = {
+  company: CompanySnapshot | null;
+  siret: string;
+  onboarding: OnboardingRow | null;
+  /** false une fois le devis établi ou le projet livré : le message ne promet plus « votre devis ». */
+  quotePending?: boolean;
+};
 
 function Badge({ done }: { done: boolean }) {
   return (
@@ -176,8 +183,8 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
             <dd>{company?.nom || NOT_SET}</dd>
             <dt>Adresse</dt>
             <dd>{address || NOT_SET}</dd>
-            {/* Le snapshot ne contient que le code INSEE (nature_juridique), sans table de libellés dans le dépôt :
-                on ne l'affiche pas tel quel (« 1000 » ne dit rien au client). */}
+            <dt>Forme juridique</dt>
+            <dd>{company?.forme_juridique_code ? legalFormLabel(company.forme_juridique_code) : NOT_SET}</dd>
           </dl>
         </div>
         {confirmedAt ? (
@@ -204,7 +211,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
   );
 }
 
-export default function OnboardingCard({ company, siret, onboarding }: Props) {
+export default function OnboardingCard({ company, siret, onboarding, quotePending = true }: Props) {
   const row = onboarding;
   const empty: OnboardingRow = {
     companyConfirmedAt: null,
@@ -577,7 +584,7 @@ export default function OnboardingCard({ company, siret, onboarding }: Props) {
         <>
           <p className="pt-success">
             <Check size={16} aria-hidden="true" className="pt-msg-icon" />
-            <span>{COPY.done}</span>
+            <span>{quotePending ? COPY.done : COPY.doneAfterQuote}</span>
           </p>
           <details>
             <summary className="pt-btn-text">{COPY.edit}</summary>

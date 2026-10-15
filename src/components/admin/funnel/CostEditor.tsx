@@ -1,6 +1,8 @@
 'use client';
 
 import { useActionState, useRef, useState } from 'react';
+import { useSuccessToast } from '@/components/admin/shared/useSuccessToast';
+import { StatusNote } from '@/components/ui/Toast';
 import { saveCostAction, type CostActionState } from '@/app/admin/entonnoir/actions';
 import './funnel.css';
 
@@ -20,6 +22,8 @@ export default function CostEditor({ source, campaign, month, currentCents }: Pr
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [lastSeen, setLastSeen] = useState(state);
+  // L'éditeur se ferme au succès : le résultat est annoncé par le toast global.
+  useSuccessToast(state);
 
   // Ferme l'éditeur quand une action réussit (dérivé du changement d'état, sans effet).
   if (state !== lastSeen) {
@@ -73,9 +77,9 @@ export default function CostEditor({ source, campaign, month, currentCents }: Pr
           </div>
         </form>
       ) : null}
-      <p aria-live="polite" className={state.status === 'error' ? 'pt-error' : 'pt-success'}>
-        {state.message ?? ''}
-      </p>
+      <StatusNote tone="error" live="assertive">
+        {state.status === 'error' ? state.message : null}
+      </StatusNote>
     </div>
   );
 }

@@ -40,7 +40,8 @@ describe('SourceTable', () => {
       'Part',
       'DIRECT_NO_LEAD',
       'Total',
-      'Aucun CA signé sur cette période. Changez de période ou consultez le pipeline.',
+      'Aucun CA signé sur cette période',
+      'Changez de période ou consultez le pipeline.',
     ]) {
       expect(src).toContain(s);
     }

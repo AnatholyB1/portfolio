@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, useEffect, useState, useTransition } from 'react';
-import { AlertTriangle, Check, Clock, Download, Lock, Receipt, Undo2 } from 'lucide-react';
+import { AlertTriangle, Check, Clock, Download, FileSearch, Lock, Receipt, Undo2 } from 'lucide-react';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { formatDateFr } from '@/lib/admin/format';
 import { formatSignedEuros } from '@/lib/documents/money';
@@ -300,7 +300,7 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
                     {inv.sha256 ? (
                       <>
                         <span className="pt-doc-hash" title={inv.sha256}>
-                          {fullHashId === inv.id ? inv.sha256 : inv.sha256.slice(0, 12)}
+                          {fullHashId === inv.id ? inv.sha256 : inv.sha256.slice(0, 8)}
                         </span>{' '}
                         <button
                           type="button"
@@ -323,7 +323,9 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
                       disabled={downloadingId === inv.id}
                     >
                       <Download size={16} aria-hidden="true" />
-                      {downloadingId === inv.id ? PROJECT_COPY.payments.portal.preparing : LIST.download}
+                      <span className="pt-act-label">
+                        {downloadingId === inv.id ? PROJECT_COPY.payments.portal.preparing : LIST.download}
+                      </span>
                     </button>{' '}
                     <button
                       type="button"
@@ -332,7 +334,8 @@ export default function InvoiceList({ invoices, download, verifyHash, loadData, 
                       aria-controls={detailId}
                       onClick={() => setOpenId(open ? null : inv.id)}
                     >
-                      {LIST.viewData}
+                      <FileSearch size={16} aria-hidden="true" />
+                      <span className="pt-act-label">{LIST.viewData}</span>
                     </button>
                     {canCredit ? (
                       <>

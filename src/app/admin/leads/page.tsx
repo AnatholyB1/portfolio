@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, SearchX, Inbox } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import LeadFilters from '@/components/admin/leads/LeadFilters';
 import LeadsTable, { type LeadRow } from '@/components/admin/leads/LeadsTable';
@@ -124,48 +126,46 @@ export default async function AdminLeadsPage({
               ) : null}
               <LeadFilters statut={statut} source={source} retours={retours} sources={sources} notice={statutNotice} />
               {pastEnd ? (
-                <div className="pt-empty">
-                  <h2 className="pt-heading">Aucun résultat sur cette page</h2>
-                  <p className="pt-helper">
-                    Cette page est au-delà de la dernière page de la liste.
-                  </p>
-                  <Link href={hrefFor(statut, source, retours, 1)} className="pt-btn-ghost">
+                <EmptyState
+                  headingLevel={2}
+                  icon={<SearchX size={32} />}
+                  title="Aucun résultat sur cette page"
+                  description={<>Cette page est au-delà de la dernière page de la liste.</>}
+                  action={<Link href={hrefFor(statut, source, retours, 1)} className="pt-btn-ghost">
                     Revenir à la première page
-                  </Link>
-                </div>
+                  </Link>}
+                />
               ) : error ? (
-                <div className="pt-empty">
-                  <h2 className="pt-heading">Leads indisponibles</h2>
-                  <p className="pt-helper">
-                    La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
-                    connexion à la base.
-                  </p>
-                  <Link href={hrefFor(statut, source, retours, page)} className="pt-btn-ghost">
+                <EmptyState
+                  headingLevel={2}
+                  icon={<TriangleAlert size={32} />}
+                  title="Leads indisponibles"
+                  description={<>La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                  action={<Link href={hrefFor(statut, source, retours, page)} className="pt-btn-ghost">
                     Recharger
-                  </Link>
-                </div>
+                  </Link>}
+                />
               ) : rows.length === 0 ? (
                 hasFilters ? (
-                  <div className="pt-empty">
-                    <h2 className="pt-heading">Aucun lead ne correspond</h2>
-                    <p className="pt-helper">
-                      Modifiez ou réinitialisez les filtres pour voir plus de résultats.
-                    </p>
-                    <Link href="/admin/leads" className="pt-btn-ghost">
+                  <EmptyState
+                    headingLevel={2}
+                    icon={<SearchX size={32} />}
+                    title="Aucun lead ne correspond"
+                    description={<>Modifiez ou réinitialisez les filtres pour voir plus de résultats.</>}
+                    action={<Link href="/admin/leads" className="pt-btn-ghost">
                       Réinitialiser les filtres
-                    </Link>
-                  </div>
+                    </Link>}
+                  />
                 ) : (
-                  <div className="pt-empty">
-                    <h2 className="pt-heading">Aucun lead pour le moment</h2>
-                    <p className="pt-helper">
-                      Les demandes du simulateur et du formulaire de contact apparaîtront ici avec
-                      leur source.
-                    </p>
-                    <Link href="/admin/liens" className="pt-btn-ghost">
+                  <EmptyState
+                    headingLevel={2}
+                    icon={<Inbox size={32} />}
+                    title="Aucun lead pour le moment"
+                    description={<>Les demandes du simulateur et du formulaire de contact apparaîtront ici avec leur source.</>}
+                    action={<Link href="/admin/liens" className="pt-btn-ghost">
                       Préparer un lien de campagne
-                    </Link>
-                  </div>
+                    </Link>}
+                  />
                 )
               ) : (
                 <>

@@ -26,7 +26,7 @@ export default async function DesinscriptionPage({ searchParams }: Desinscriptio
           activité continuent : factures, codes de connexion et e-mails de signature.
         </p>
         <p className="pt-helper">
-          Pour vous réinscrire, écrivez à <a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.
+          Pour vous réinscrire, écrivez à <span className="whitespace-nowrap"><a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.</span>
         </p>
       </AuthCard>
     );
@@ -41,7 +41,7 @@ export default async function DesinscriptionPage({ searchParams }: Desinscriptio
       <AuthCard title="Désinscription">
         <p className="pt-helper">Ce lien de désinscription est invalide ou incomplet.</p>
         <p className="pt-helper">
-          Pour vous désinscrire, écrivez à <a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.
+          Pour vous désinscrire, écrivez à <span className="whitespace-nowrap"><a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.</span>
         </p>
       </AuthCard>
     );
@@ -62,7 +62,7 @@ export default async function DesinscriptionPage({ searchParams }: Desinscriptio
         </button>
       </form>
       <p className="pt-helper">
-        Pour vous réinscrire ensuite, écrivez à <a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.
+        Pour vous réinscrire ensuite, écrivez à <span className="whitespace-nowrap"><a href={`mailto:${CONTACT}`} className="inline-flex min-h-[44px] items-center underline">{CONTACT}</a>.</span>
       </p>
     </AuthCard>
   );

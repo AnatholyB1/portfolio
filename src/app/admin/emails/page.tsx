@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { TriangleAlert, SearchX } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import AdminNav from '@/components/admin/AdminNav';
 import LiftSuppressionForm from '@/components/admin/mail/LiftSuppressionForm';
 import Pager, { ADMIN_PAGE_SIZE, parsePage } from '@/components/admin/Pager';
@@ -48,28 +50,27 @@ export default async function AdminEmailsPage({
               vers cette adresse. Une réactivation exige un motif et reste tracée.
             </p>
             {rows === null ? (
-              <div className="pt-empty">
-                <h2 className="pt-heading">Liste indisponible</h2>
-                <p className="pt-helper">
-                  La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la
-                  connexion à la base.
-                </p>
-                <Link href={hrefFor(page)} className="pt-btn-ghost">
+              <EmptyState
+                headingLevel={2}
+                icon={<TriangleAlert size={32} />}
+                title="Liste indisponible"
+                description={<>La liste n&apos;a pas pu être lue. Rechargez la page ; si l&apos;erreur persiste, vérifiez la connexion à la base.</>}
+                action={<Link href={hrefFor(page)} className="pt-btn-ghost">
                   Recharger
-                </Link>
-              </div>
+                </Link>}
+              />
             ) : rows.length === 0 ? (
-              <div className="pt-empty">
-                <h2 className="pt-heading">{page > 1 ? "Aucun résultat sur cette page" : "Aucune adresse bloquée"}</h2>
-                <p className="pt-helper">
-                  Les plaintes, désinscriptions et rebonds définitifs apparaîtront ici avec leur cause.
-                </p>
-                {page > 1 ? (
+              <EmptyState
+                headingLevel={2}
+                icon={<SearchX size={32} />}
+                title={page > 1 ? "Aucun résultat sur cette page" : "Aucune adresse bloquée"}
+                description={<>Les plaintes, désinscriptions et rebonds définitifs apparaîtront ici avec leur cause.</>}
+                action={page > 1 ? (
                   <Link href="/admin/emails" className="pt-btn-ghost">
                     Revenir à la première page
                   </Link>
                 ) : null}
-              </div>
+              />
             ) : (
               <>
                 {/* Rôles explicites : sur mobile le CSS passe les éléments en display:block. */}
