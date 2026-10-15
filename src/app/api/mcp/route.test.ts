@@ -32,7 +32,7 @@ describe('/api/mcp auth', () => {
     resolveMock.mockReset();
     ctxMock.mockReset();
     insertMock.mockReset();
-    resolveMock.mockResolvedValue(null);
+    resolveMock.mockResolvedValue({ kind: 'invalid' });
   });
 
   it('401 without header, never builds a session', async () => {
@@ -42,17 +42,46 @@ describe('/api/mcp auth', () => {
     expect(ctxMock).not.toHaveBeenCalled();
   });
 
-  it('401 with a wrong token on every verb, never builds a session', async () => {
-    for (const handler of [POST, GET, DELETE]) {
-      const res = await handler(rpc(INIT));
-      expect(res.status).toBe(401);
-    }
+  it('401 with a wrong token on POST, never builds a session', async () => {
+    const res = await POST(rpc(INIT));
+    expect(res.status).toBe(401);
     expect(resolveMock).toHaveBeenCalledWith('Bearer svmcp_x');
     expect(ctxMock).not.toHaveBeenCalled();
   });
 
+  it('503 auth_unavailable when token resolution cannot reach the database', async () => {
+    resolveMock.mockResolvedValue({ kind: 'unavailable' });
+    const res = await POST(rpc(INIT));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: 'auth_unavailable' });
+    expect(ctxMock).not.toHaveBeenCalled();
+  });
+
+  it('405 Allow: POST on GET and DELETE, with and without a token, without resolving', async () => {
+    for (const handler of [GET, DELETE]) {
+      for (const headers of [HEADERS, { accept: 'text/event-stream' }]) {
+        const res = await handler(new Request('https://sevalys.com/api/mcp', { method: 'GET', headers }));
+        expect(res.status).toBe(405);
+        expect(res.headers.get('allow')).toBe('POST');
+      }
+    }
+    expect(resolveMock).not.toHaveBeenCalled();
+    expect(ctxMock).not.toHaveBeenCalled();
+  });
+
+  it('403 on any Origin header (browser), before token resolution, without CORS headers', async () => {
+    resolveMock.mockResolvedValue({ kind: 'ok', principal: { tokenId: 't', userId: 'u' } });
+    for (const handler of [POST, GET, DELETE]) {
+      const res = await handler(rpc(INIT, { ...HEADERS, origin: 'https://evil.example' }));
+      expect(res.status).toBe(403);
+      expect([...res.headers.keys()].some((k) => k.startsWith('access-control-'))).toBe(false);
+    }
+    expect(resolveMock).not.toHaveBeenCalled();
+    expect(ctxMock).not.toHaveBeenCalled();
+  });
+
   it('503 session_unavailable (no stack) when the admin context cannot be built', async () => {
-    resolveMock.mockResolvedValue({ tokenId: 't', userId: 'u' });
+    resolveMock.mockResolvedValue({ kind: 'ok', principal: { tokenId: 't', userId: 'u' } });
     ctxMock.mockRejectedValue(new Error('mcp_session_failed at secret/path.ts'));
     const res = await POST(rpc(INIT));
     expect(res.status).toBe(503);
@@ -73,7 +102,7 @@ describe('/api/mcp round trip', () => {
     ctxMock.mockReset();
     insertMock.mockReset();
     insertMock.mockResolvedValue({ error: null });
-    resolveMock.mockResolvedValue({ tokenId: 'tok', userId: 'usr' });
+    resolveMock.mockResolvedValue({ kind: 'ok', principal: { tokenId: 'tok', userId: 'usr' } });
     ctxMock.mockResolvedValue({ supabase, user: { id: 'usr' } });
   });
 
