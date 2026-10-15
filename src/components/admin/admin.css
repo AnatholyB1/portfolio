@@ -441,6 +441,13 @@
   white-space: normal;
 }
 
+/* Message de succès de « Nouveau projet » dans la cellule Action : il revient à la ligne au lieu
+   d'élargir la colonne (la cellule est en nowrap). */
+.pt-admin .pt-row-actions [aria-live] {
+  max-width: 220px;
+  white-space: normal;
+}
+
 /* Bureau : les colonnes courtes restent sur une ligne (sauf Statut, qui se coupe pour garder la colonne Action visible),
    l'e-mail ne se coupe qu'en dernier recours. */
 @media (min-width: 768px) {

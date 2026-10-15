@@ -40,7 +40,7 @@ describe('createProject', () => {
       p_title: 'Site Acme',
       p_offer: 'site-vitrine',
     });
-    expect(mocks.sync).toHaveBeenCalledWith(CLIENT);
+    expect(mocks.sync).toHaveBeenCalledWith(CLIENT, { silent: true });
   });
 
   it('mappe sv_client_not_found vers client_not_found sans sync', async () => {

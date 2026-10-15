@@ -152,6 +152,7 @@ async function post(a: {
   actorId: string | null;
   targetFactId: number | null;
   reason: string | null;
+  silent?: boolean;
 }): Promise<FactPostResult> {
   const res = await callRpc<{ fact_id: number | null; changed: boolean }>(
     'projects/facts',
@@ -172,6 +173,10 @@ async function post(a: {
   if (!changed || factId === null) {
     return { ok: true, changed: false, factId, stepBefore: null, stepAfter: null, done: false, mail: 'none' };
   }
+  // Rattachement silencieux (ex. onboarding deja complet a la creation d'un projet) : aucun e-mail de changement d'etape.
+  if (a.silent) {
+    return { ok: true, changed: true, factId, stepBefore: null, stepAfter: null, done: false, mail: 'none' };
+  }
 
   const after = await afterFactPosted(a.projectId, factId);
   return { ok: true, changed: true, factId, ...after };
@@ -183,6 +188,8 @@ export function postProjectFact(a: {
   actorKind: ActorKind;
   actorId: string | null;
   reason?: string | null;
+  /** true : n'envoie aucun e-mail de changement d'etape (le fait est quand meme ecrit). */
+  silent?: boolean;
 }): Promise<FactPostResult> {
   return post({
     projectId: a.projectId,
@@ -191,6 +198,7 @@ export function postProjectFact(a: {
     actorId: a.actorId,
     targetFactId: null,
     reason: a.reason ?? null,
+    silent: a.silent,
   });
 }
 

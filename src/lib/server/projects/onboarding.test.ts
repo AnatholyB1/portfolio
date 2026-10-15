@@ -143,4 +143,20 @@ describe('syncOnboardingFacts', () => {
     await syncOnboardingFacts('c1');
     expect(mocks.post).not.toHaveBeenCalled();
   });
+
+  it('notifie l admin quand le fait est poste (mode normal)', async () => {
+    state.row = { ...complete };
+    await syncOnboardingFacts('c1');
+    expect(mocks.post).toHaveBeenCalledTimes(1);
+    expect(mocks.post.mock.calls[0][0].silent).toBeFalsy();
+    expect(mocks.send).toHaveBeenCalledTimes(1);
+  });
+
+  it('silent : poste le fait en silence et n envoie aucun e-mail', async () => {
+    state.row = { ...complete };
+    await syncOnboardingFacts('c1', { silent: true });
+    expect(mocks.post).toHaveBeenCalledTimes(1);
+    expect(mocks.post.mock.calls[0][0]).toMatchObject({ projectId: 'p1', type: 'onboarding_completed', silent: true });
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
 });

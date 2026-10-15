@@ -46,7 +46,7 @@ export async function createProject(
   // L'onboarding est porte par le client : s'il est deja complet, le nouveau projet
   // doit recevoir le fait onboarding_completed. Un echec n'annule jamais la creation.
   try {
-    await syncOnboardingFacts(clientId);
+    await syncOnboardingFacts(clientId, { silent: true });
   } catch {
     console.error('[admin/create-project] onboarding sync failed');
   }

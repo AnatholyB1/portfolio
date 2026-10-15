@@ -145,8 +145,12 @@ export async function saveOnboardingBlock(
   }
 }
 
-/** Poste onboarding_completed (système) sur les projets du client qui ne l'ont pas encore (D-08, D-12). */
-export async function syncOnboardingFacts(clientId: string): Promise<void> {
+/**
+ * Poste onboarding_completed (système) sur les projets du client qui ne l'ont pas encore (D-08, D-12).
+ * `silent` : aucun e-mail (ni changement d'étape au client, ni notification admin), pour la création
+ * d'un projet par l'admin sur un client dont l'onboarding est déjà complet.
+ */
+export async function syncOnboardingFacts(clientId: string, opts: { silent?: boolean } = {}): Promise<void> {
   const row = await readRow(clientId);
   if (!row || !isOnboardingComplete(row)) return;
 
@@ -164,8 +168,10 @@ export async function syncOnboardingFacts(clientId: string): Promise<void> {
       type: 'onboarding_completed',
       actorKind: 'system',
       actorId: null,
+      silent: opts.silent,
     });
     if (!res.ok || !res.changed) continue;
+    if (opts.silent) continue;
     try {
       await enqueueAndSend({
         event: 'onboarding_completed',

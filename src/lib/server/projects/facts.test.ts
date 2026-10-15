@@ -65,6 +65,19 @@ describe('postProjectFact', () => {
     expect(call.payload.expectedAction).toContain('contrat');
   });
 
+  it('silent: ecrit le fait sans calculer l etape ni envoyer d e-mail', async () => {
+    state.facts = { data: [f(10, 'onboarding_completed')], error: null };
+    const r = await postProjectFact({
+      projectId: 'p',
+      type: 'onboarding_completed',
+      actorKind: 'system',
+      actorId: null,
+      silent: true,
+    });
+    expect(r).toMatchObject({ ok: true, changed: true, factId: 10, mail: 'none' });
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+
   it('fact ahead of the current step sends no mail', async () => {
     state.facts = { data: [f(1, 'onboarding_completed'), f(10, 'deposit_received')], error: null };
     const r = await postProjectFact({ projectId: 'p', type: 'deposit_received', actorKind: 'admin', actorId: 'u' });
