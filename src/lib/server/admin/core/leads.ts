@@ -13,15 +13,12 @@ import {
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
+import { rec } from './shared';
 
 export type { CoreResult } from './result';
 
 function fail(message: string): CoreResult {
   return { ok: false, message };
-}
-
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
 }
 
 export async function setLeadStatusCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {

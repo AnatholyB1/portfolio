@@ -4,9 +4,8 @@ import { INVITE_COPY, companySnapshotSchema } from '@/lib/admin/inviteSchema';
 import { inviteClientCore, lookupSiretCore, resendInvitationCore } from '@/lib/server/admin/core/clients';
 import { maskEmail } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
+import { t } from '../schema';
 import { cleanCompany } from './leads';
-
-const t = (max: number, min = 1) => z.string().trim().min(min).max(max);
 
 const lookupSiret = defineTool({
   name: 'lookup_siret',

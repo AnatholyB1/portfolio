@@ -7,14 +7,7 @@ import { lookupSiret, type SiretLookupResult } from '@/lib/server/clients/siret'
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
-
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
-}
-
-function text(v: unknown): string {
-  return typeof v === 'string' ? v : '';
-}
+import { rec, str } from './shared';
 
 // Recherche Sirene (API publique, aucune donnée de dirigeant). Le résultat est renvoyé tel quel :
 // c'est la forme que consomme le formulaire d'invitation.
@@ -65,7 +58,7 @@ export async function inviteClientCore(
     case 'invalid':
       return {
         ok: false,
-        message: inviteInvalidMessage({ name: text(i.name), email: text(i.email), siret: text(i.siret) }),
+        message: inviteInvalidMessage({ name: str(i.name), email: str(i.email), siret: str(i.siret) }),
       };
     default:
       console.error(`[admin/invite] ${result.code}`);

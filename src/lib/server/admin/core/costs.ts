@@ -20,6 +20,7 @@ import {
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
+import { rec } from './shared';
 
 const CODE_MESSAGES: Record<string, string> = {
   sv_project_not_found: COST_COPY.projectUnknown,
@@ -32,13 +33,9 @@ const CODE_MESSAGES: Record<string, string> = {
   sv_series_already_stopped: COST_COPY.alreadyStopped,
 };
 
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
-}
-
 // Champ obligatoire : une valeur absente ou non textuelle devient '' (comme FormData.get côté web).
 // Un nombre (entrée d'outil) est ramené à sa forme texte.
-function str(v: unknown): string {
+function textOrNumber(v: unknown): string {
   if (typeof v === 'number') return String(v);
   return typeof v === 'string' ? v : '';
 }
@@ -63,10 +60,10 @@ function invalid(issues: { message: string }[]): CoreResult {
 export async function saveAcquisitionCostCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {
   const i = rec(input);
   const parsed = costSchema.safeParse({
-    source: str(i.source),
-    campaign: str(i.campaign),
-    month: str(i.month),
-    amount: str(i.amount),
+    source: textOrNumber(i.source),
+    campaign: textOrNumber(i.campaign),
+    month: textOrNumber(i.month),
+    amount: textOrNumber(i.amount),
   });
   if (!parsed.success) return { ok: false, message: ADMIN_COPY.costInvalid };
 
@@ -81,11 +78,11 @@ export async function addRecurringCostCore(ctx: AdminCtx, input: unknown): Promi
   const i = rec(input);
   const parsed = recurringCostSchema.safeParse({
     seriesId: optional(i.seriesId),
-    label: str(i.label),
-    category: str(i.category),
-    amount: str(i.amount),
-    frequency: str(i.frequency),
-    startsOn: str(i.startsOn),
+    label: textOrNumber(i.label),
+    category: textOrNumber(i.category),
+    amount: textOrNumber(i.amount),
+    frequency: textOrNumber(i.frequency),
+    startsOn: textOrNumber(i.startsOn),
     endsOn: optional(i.endsOn),
   });
   if (!parsed.success) return invalid(parsed.error.issues);
@@ -96,8 +93,8 @@ export async function addRecurringCostCore(ctx: AdminCtx, input: unknown): Promi
 export async function stopRecurringCostCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {
   const i = rec(input);
   const parsed = stopRecurringSchema.safeParse({
-    seriesId: str(i.seriesId),
-    fromMonth: str(i.fromMonth),
+    seriesId: textOrNumber(i.seriesId),
+    fromMonth: textOrNumber(i.fromMonth),
   });
   if (!parsed.success) return invalid(parsed.error.issues);
   const res = await stopRecurringCost({ ...parsed.data, actor: ctx.user.id });
@@ -107,11 +104,11 @@ export async function stopRecurringCostCore(ctx: AdminCtx, input: unknown): Prom
 export async function addProjectCostCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {
   const i = rec(input);
   const parsed = projectCostSchema.safeParse({
-    projectId: str(i.projectId),
-    incurredOn: str(i.incurredOn),
-    category: str(i.category),
-    label: str(i.label),
-    amount: str(i.amount),
+    projectId: textOrNumber(i.projectId),
+    incurredOn: textOrNumber(i.incurredOn),
+    category: textOrNumber(i.category),
+    label: textOrNumber(i.label),
+    amount: textOrNumber(i.amount),
     vat: optional(i.vat),
   });
   if (!parsed.success) return invalid(parsed.error.issues);
@@ -120,7 +117,7 @@ export async function addProjectCostCore(ctx: AdminCtx, input: unknown): Promise
 }
 
 export async function voidProjectCostCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {
-  const parsed = voidCostSchema.safeParse({ costId: str(rec(input).costId) });
+  const parsed = voidCostSchema.safeParse({ costId: textOrNumber(rec(input).costId) });
   if (!parsed.success) return invalid(parsed.error.issues);
   const res = await voidProjectCost({ ...parsed.data, actor: ctx.user.id });
   return res.ok ? { ok: true, message: COST_COPY.successVoid } : failCode(res.code);
@@ -129,8 +126,8 @@ export async function voidProjectCostCore(ctx: AdminCtx, input: unknown): Promis
 export async function saveBalanceCore(ctx: AdminCtx, input: unknown): Promise<CoreResult> {
   const i = rec(input);
   const parsed = cashBalanceSchema.safeParse({
-    amount: str(i.amount),
-    asOf: str(i.asOf),
+    amount: textOrNumber(i.amount),
+    asOf: textOrNumber(i.asOf),
     note: optional(i.note),
   });
   if (!parsed.success) return invalid(parsed.error.issues);

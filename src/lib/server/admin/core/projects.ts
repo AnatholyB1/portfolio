@@ -11,17 +11,10 @@ import { callRpc } from '@/lib/server/rpc';
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
+import { rec, str } from './shared';
 
 const GENERIC = PROJECT_COPY.errors.generic;
 const HOLD_GENERIC = 'Le changement a échoué. Réessayez dans un instant.';
-
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
-}
-
-function str(v: unknown): string {
-  return typeof v === 'string' ? v : '';
-}
 
 function fail(message: string): CoreResult<never> {
   return { ok: false, message };

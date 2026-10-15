@@ -8,6 +8,7 @@ import { callRpc } from '@/lib/server/rpc';
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
+import { rec, str } from './shared';
 
 const ERROR_MSG = 'Action impossible. Vérifiez le motif et le détail puis réessayez.';
 const UNCHANGED_MSG = "Aucun changement : l'avis est déjà dans cet état.";
@@ -36,14 +37,6 @@ const reissueSchema = z.object({
 });
 
 type ModerateResult = { outcome?: string; outbox_ids?: unknown };
-
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
-}
-
-function str(v: unknown): string {
-  return typeof v === 'string' ? v : '';
-}
 
 function fail(message: string): CoreResult {
   return { ok: false, message };

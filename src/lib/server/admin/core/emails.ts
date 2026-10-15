@@ -4,6 +4,7 @@ import { callRpc } from '@/lib/server/rpc';
 // Type seul (effacé à la compilation) : aucun import runtime de mcp/session.
 import type { AdminCtx } from '@/lib/server/mcp/session';
 import type { CoreResult } from './result';
+import { rec } from './shared';
 
 const REASON_MSG = 'Indiquez un motif (3 à 300 caractères).';
 const GENERIC_MSG = 'La réactivation a échoué. Réessayez dans un instant.';
@@ -12,10 +13,6 @@ const schema = z.object({
   id: z.coerce.number().int().positive(),
   reason: z.string().trim().min(3).max(300),
 });
-
-function rec(input: unknown): Record<string, unknown> {
-  return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
-}
 
 function fail(message: string): CoreResult {
   return { ok: false, message };

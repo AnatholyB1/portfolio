@@ -16,3 +16,8 @@ export function fieldErrorsOf(error: { issues: { path: PropertyKey[]; message: s
 export function rec(input: unknown): Record<string, unknown> {
   return input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
 }
+
+/** Texte ou chaîne vide : une valeur absente ou non textuelle devient '' (comme FormData.get côté web). */
+export function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}

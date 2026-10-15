@@ -14,6 +14,7 @@ import {
 } from '@/lib/server/admin/core/leads';
 import { maskEmail } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
+import { t } from '../schema';
 
 // Réexporté : les tests et appelants historiques importent maskEmail depuis ce module.
 export { maskEmail };
@@ -80,8 +81,6 @@ export function cleanCompany(v: unknown): unknown {
   }
   return Object.keys(out).length ? out : null;
 }
-
-const t = (max: number, min = 1) => z.string().trim().min(min).max(max);
 
 const listLeads = defineTool({
   name: 'list_leads',

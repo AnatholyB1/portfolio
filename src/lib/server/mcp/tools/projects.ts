@@ -19,12 +19,11 @@ import { loadAdminProjects, loadPendingClientWork, loadProjectBundle } from '@/l
 import { loadReminderHold } from '@/lib/server/reminders/holds';
 import { maskEmail, maskName, maskPhone } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
+import { t } from '../schema';
 import type { AdminCtx } from '../session';
 
 const projectId = z.string().uuid();
 const fileId = z.string().uuid();
-const t = (max: number, min = 1) => z.string().trim().min(min).max(max);
-
 // Lecture du projet pour les aperçus (client RLS) ; null si illisible : l'aperçu reste affiché, sans détail.
 async function bundleOf(ctx: AdminCtx, id: string) {
   try {
