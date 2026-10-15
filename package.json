@@ -13,7 +13,8 @@
     "test:rls": "vitest run -c vitest.rls.config.ts",
     "rls:canary": "node scripts/rls-canary.mjs",
     "verify:email-dns": "node scripts/verify-email-dns.mjs",
-    "sv:add-admin": "node scripts/sv-add-admin.mjs"
+    "sv:add-admin": "node scripts/sv-add-admin.mjs",
+    "sv:mcp-token": "node scripts/sv-mcp-token.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
