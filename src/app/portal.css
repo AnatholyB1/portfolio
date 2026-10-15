@@ -77,6 +77,26 @@
   align-items: center;
   justify-content: center;
   padding: 32px 16px;
+  /* Halo d'accent discret derrière le logo (V7) ; fond uni en dessous. */
+  background: radial-gradient(600px circle at 50% 0, color-mix(in srgb, var(--acid) 8%, transparent), transparent 60%) no-repeat;
+}
+.pt-auth .pt-card {
+  gap: 20px;
+  border-color: var(--line-strong);
+  border-radius: var(--pt-radius-md);
+  box-shadow: var(--pt-shadow-lg);
+}
+@media (min-width: 480px) {
+  .pt-auth .pt-card {
+    padding: 32px;
+  }
+}
+.pt-auth .pt-heading {
+  font-size: 28px;
+}
+.pt-auth .pt-helper {
+  font-size: 15px;
+  line-height: 1.55;
 }
 .pt-auth-notes {
   width: 100%;
@@ -164,6 +184,9 @@
   color: var(--ink);
   font-weight: 500;
   overflow-wrap: anywhere;
+  padding: 1px 8px;
+  background: var(--bg-3);
+  border-radius: var(--pt-radius-sm);
 }
 .pt-input {
   width: 100%;
@@ -202,7 +225,7 @@
 .pt-otp-cell {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 44px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -221,7 +244,24 @@
   margin-right: 12px;
 }
 .pt-otp-cell[data-active] {
-  border-color: var(--ink);
+  border-color: var(--acid);
+  background: color-mix(in srgb, var(--acid) 6%, var(--bg-3));
+}
+/* Curseur clignotant dans la cellule en cours de saisie : indique où va le prochain chiffre. */
+.pt-otp-cell[data-active]:empty::after {
+  content: "";
+  width: 2px;
+  height: 1.1em;
+  background: var(--acid);
+  animation: pt-caret 1s steps(1) infinite;
+}
+@keyframes pt-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.pt-otp-cell:not(:empty) {
+  border-color: var(--ink-dim);
 }
 .pt-otp[data-pending] {
   opacity: 0.6;
@@ -615,4 +655,99 @@ body:has([data-own-skip-link]) .skip-link {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ---------- Entrée de contenu (V4) : fondu + glissement de 8 px, 400 ms, ease-out ---------- */
+/* Portail client et cartes d'authentification uniquement : l'admin garde son rendu. Les squelettes
+   (.pt-load) n'entrent pas : seul le contenu réel s'anime, sans double fondu. La règle
+   prefers-reduced-motion en fin de fichier supprime l'animation. */
+@keyframes pt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes pt-fade {
+  from {
+    opacity: 0;
+  }
+}
+.pt-main[data-width="client"] > :not(.pt-load),
+.pt-auth > :not(.pt-load) {
+  animation: pt-enter var(--pt-dur-slow) var(--pt-ease-out) both;
+}
+.pt-main[data-width="client"] > :nth-child(2),
+.pt-auth > :nth-child(2) {
+  animation-delay: 60ms;
+}
+.pt-main[data-width="client"] > :nth-child(3),
+.pt-auth > :nth-child(3) {
+  animation-delay: 120ms;
+}
+.pt-main[data-width="client"] > :nth-child(n + 4) {
+  animation-delay: 160ms;
+}
+/* Changement d'étape dans une carte (e-mail -> code) : fondu court. */
+.pt-stepview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: pt-fade var(--pt-dur-base) var(--pt-ease-out) both;
+}
+.pt-stepview > form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- Squelettes de chargement : mêmes dimensions que le rendu final (CLS nul) ---------- */
+.pt-load-title .pt-sk {
+  height: 36px;
+  width: 55%;
+}
+.pt-load-title-auth .pt-sk {
+  height: 29px;
+  width: 45%;
+}
+.pt-load-sub .pt-sk {
+  width: 45%;
+}
+.pt-load-nav {
+  width: 240px;
+  max-width: 100%;
+}
+.pt-load-nav .pt-sk {
+  height: 44px;
+}
+.pt-load-who .pt-sk-block {
+  height: 148px;
+}
+.pt-load-steps .pt-sk-shapes {
+  gap: 36px;
+}
+.pt-load-steps .pt-sk {
+  height: 24px;
+}
+.pt-load-steps .pt-sk-short {
+  width: 100%;
+}
+.pt-load-steps .pt-sk:nth-child(3n) {
+  width: 70%;
+}
+.pt-load-label .pt-sk {
+  height: 21px;
+  width: 40%;
+}
+.pt-load-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-load-input .pt-sk-block,
+.pt-load-button .pt-sk-block {
+  height: 44px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-load-button .pt-sk-block {
+  border-radius: var(--pt-radius-pill);
 }
