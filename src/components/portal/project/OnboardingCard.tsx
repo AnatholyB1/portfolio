@@ -9,6 +9,7 @@ import {
 } from '@/app/espace-client/actions';
 import type { CompanySnapshot } from '@/lib/admin/inviteSchema';
 import { formatDateFr } from '@/lib/admin/format';
+import { legalFormLabel } from '@/lib/company/legalForm';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import {
   blockCompletion,
@@ -163,7 +164,7 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
             <dt>Adresse</dt>
             <dd>{address || '—'}</dd>
             <dt>Forme juridique</dt>
-            <dd>{company?.forme_juridique_code || '—'}</dd>
+            <dd>{company?.forme_juridique_code ? legalFormLabel(company.forme_juridique_code) : '—'}</dd>
           </dl>
         </div>
         {confirmedAt ? (
