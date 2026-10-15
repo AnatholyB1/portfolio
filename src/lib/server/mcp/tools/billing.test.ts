@@ -597,3 +597,23 @@ describe('pdf cap, seller stripping and field errors', () => {
     expect(r).toMatchObject({ ok: false, error: COPY.period.validationSummary, fieldErrors: { periodEnd: expect.any(String) } });
   });
 });
+
+describe('deductions ordering never makes a confirmation stale (review)', () => {
+  it('a shuffled deductions array between preview, recompute and run still confirms and previews in a stable order', async () => {
+    const A = { label: 'Acompte', invoiceId: 'i1', invoiceNumber: 'FA-1', invoiceDate: '2026-09-01', amountCents: 1000 };
+    const B = { label: 'Période', invoiceId: 'i2', invoiceNumber: 'FA-2', invoiceDate: '2026-09-15', amountCents: 2000 };
+    let n = 0;
+    build.buildPeriodInput.mockImplementation(() => {
+      n += 1;
+      const deductions = n % 2 === 0 ? [B, A] : [A, B];
+      return { id: INV, header: { snapshot: { ...periodSnapshot, deductions } } };
+    });
+    const first = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    const second = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    const order = (r: unknown) => (r as { preview: { summary: { deductions: { invoiceNumber: string }[] } } }).preview.summary.deductions.map((d) => d.invoiceNumber);
+    expect(order(first)).toEqual(['FA-1', 'FA-2']);
+    expect(order(second)).toEqual(['FA-1', 'FA-2']);
+    const r = await confirmTwoStep(tool('issue_period_invoice'), period, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { issued: true } });
+  });
+});

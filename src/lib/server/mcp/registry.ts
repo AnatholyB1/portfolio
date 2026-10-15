@@ -50,7 +50,8 @@ export function defineTool<S extends z.ZodObject>(def: ToolDef<S>): ToolDef<S> {
   return def;
 }
 
-const CONFIRM_FIELDS = { confirm: z.literal(true).optional(), previewToken: z.string().max(4096).optional() };
+// confirm:false équivaut à l'absence de confirm (aperçu) ; seul `true` accompagné d'un previewToken exécute.
+const CONFIRM_FIELDS = { confirm: z.boolean().optional(), previewToken: z.string().max(4096).optional() };
 
 /** Schéma d'entrée exposé au client : les outils destructifs reçoivent confirm et previewToken. */
 export function inputSchemaFor<S extends z.ZodObject>(tool: ToolDef<S>): z.ZodObject {
@@ -65,12 +66,26 @@ export function describeTool(tool: ToolDef): string {
   return tool.destructive ? tool.description + CONFIRM_HELP : tool.description;
 }
 
-// JSON canonique (clés triées) pour un digest stable.
+// JSON canonique (clés triées) pour un digest stable. Strict : un digest ne doit jamais masquer une différence.
+// Refuse les objets non simples (Date, Map, Set, instances de classe : JSON.stringify les aplatit ou les vide),
+// les éléments undefined d'un tableau ([undefined] ne vaut pas [null]), les fonctions, symboles et nombres non finis.
 function canonical(v: unknown): string {
-  if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`;
+  if (Array.isArray(v)) {
+    return `[${v
+      .map((item) => {
+        if (item === undefined) throw new Error('canonical_undefined_item');
+        return canonical(item);
+      })
+      .join(',')}]`;
+  }
   if (v && typeof v === 'object') {
+    const proto = Object.getPrototypeOf(v);
+    if (proto !== Object.prototype && proto !== null) throw new Error('canonical_non_plain_object');
     const o = v as Record<string, unknown>;
     return `{${Object.keys(o).sort().filter((k) => o[k] !== undefined).map((k) => `${JSON.stringify(k)}:${canonical(o[k])}`).join(',')}}`;
+  }
+  if (typeof v === 'function' || typeof v === 'symbol' || (typeof v === 'number' && !Number.isFinite(v))) {
+    throw new Error('canonical_unsupported_value');
   }
   return JSON.stringify(v) ?? 'null';
 }
@@ -131,6 +146,14 @@ function isCoreRefusal(v: unknown): v is { ok: false; message: string } {
   return o.ok === false && typeof o.message === 'string';
 }
 
+// Journal : jamais le message d'une erreur (les détails Postgres peuvent contenir des données personnelles, p. ex.
+// « Key (email)=(…) »). Nom de l'erreur, plus un code court sans donnée (ex. 23505) quand il y en a un.
+function errorTag(err: unknown): string {
+  const name = err instanceof Error ? err.name : 'unknown';
+  const code = typeof err === 'object' && err !== null ? (err as { code?: unknown }).code : undefined;
+  return typeof code === 'string' && /^[A-Za-z0-9_]{1,40}$/.test(code) ? `${name} ${code}` : name;
+}
+
 export type ToolResult =
   | { ok: true; data: unknown }
   | { ok: true; needsConfirmation: true; preview: unknown; previewToken: string }
@@ -173,7 +196,7 @@ export async function runTool<S extends z.ZodObject>(
       return { ok: false, error: 'invalid_input' };
     }
     const { confirm, previewToken, ...input } = parsed.data as Record<string, unknown> & {
-      confirm?: true;
+      confirm?: boolean;
       previewToken?: string;
     };
     argsDigest = digest(input);
@@ -229,7 +252,7 @@ export async function runTool<S extends z.ZodObject>(
     await safeAudit({ ...base, argsDigest, outcome: 'ok' });
     return { ok: true, data };
   } catch (err) {
-    console.error(`[mcp] ${tool.name} failed`, err instanceof Error ? err.message : 'unknown');
+    console.error(`[mcp] ${tool.name} failed`, errorTag(err));
     await safeAudit({ ...base, argsDigest, outcome: 'error' });
     return { ok: false, error: 'tool_failed' };
   }

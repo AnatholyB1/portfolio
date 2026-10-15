@@ -158,23 +158,19 @@ const voidProjectCost = defineTool({
   input: z.object({ costId: z.number().int().positive() }),
   preview: async (ctx, input) => {
     const base = { action: 'Annulation du coût de projet (il sort des totaux)', costId: input.costId };
-    try {
-      const data = await loadCostsRegister(ctx.supabase);
-      const cost = data.projectCosts.find((c) => c.id === input.costId && c.voidsCostId === null);
-      if (!cost) return { ...base, found: false };
-      const project = data.projects.find((p) => p.id === cost.projectId);
-      return {
-        ...base,
-        found: true,
-        label: cost.label,
-        category: cost.category,
-        amountCents: cost.amountCents,
-        incurredOn: cost.incurredOn,
-        projectTitle: project?.title ?? null,
-      };
-    } catch {
-      return base;
-    }
+    const data = await loadCostsRegister(ctx.supabase);
+    const cost = data.projectCosts.find((c) => c.id === input.costId && c.voidsCostId === null);
+    if (!cost) return { ...base, found: false };
+    const project = data.projects.find((p) => p.id === cost.projectId);
+    return {
+      ...base,
+      found: true,
+      label: cost.label,
+      category: cost.category,
+      amountCents: cost.amountCents,
+      incurredOn: cost.incurredOn,
+      projectTitle: project?.title ?? null,
+    };
   },
   run: (ctx, input) => voidProjectCostCore(ctx, input),
 });

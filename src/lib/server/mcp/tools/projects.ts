@@ -24,13 +24,12 @@ import type { AdminCtx } from '../session';
 
 const projectId = z.string().uuid();
 const fileId = z.string().uuid();
-// Lecture du projet pour les aperçus (client RLS) ; null si illisible : l'aperçu reste affiché, sans détail.
+// Lecture du projet pour les aperçus (client RLS). Un projet illisible ou introuvable fait échouer l'aperçu : on ne
+// délivre jamais de previewToken pour un aperçu aveugle.
 async function bundleOf(ctx: AdminCtx, id: string) {
-  try {
-    return await loadProjectBundle(ctx.supabase, id, new Date());
-  } catch {
-    return null;
-  }
+  const bundle = await loadProjectBundle(ctx.supabase, id, new Date());
+  if (!bundle) throw new Error('project_unreadable');
+  return bundle;
 }
 
 // Destructif : enregistrer un fait fait avancer l'étape du projet et envoie un e-mail de changement
@@ -189,12 +188,9 @@ const suspendReminders = defineTool({
   input: z.object({ projectId }),
   preview: async (ctx, input) => {
     const b = await bundleOf(ctx, input.projectId);
-    let currentHold: unknown = null;
-    try {
-      currentHold = await loadReminderHold(ctx.supabase, input.projectId);
-    } catch {
-      currentHold = null;
-    }
+    // loadReminderHold renvoie null quand la lecture échoue : aperçu aveugle, donc erreur.
+    const currentHold = await loadReminderHold(ctx.supabase, input.projectId);
+    if (currentHold === null) throw new Error('reminder_hold_unreadable');
     return {
       action: "Suspension des relances automatiques ; les e-mails de relance et de demande d'avis en file sont ignorés définitivement",
       projectId: input.projectId,

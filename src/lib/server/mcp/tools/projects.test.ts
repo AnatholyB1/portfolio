@@ -108,10 +108,15 @@ describe('post_project_fact', () => {
     expect(json).toContain('deposit_received');
     expect(json).toMatch(/e-mail/);
   });
-  it('previews minimally when the project cannot be read', async () => {
+  it('a project that cannot be read gives an error, never a blind preview or a token', async () => {
     read.loadProjectBundle.mockResolvedValue(null);
     const r = await runTool(tool('post_project_fact'), args, ctx, principal, audit);
-    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    expect(r).toEqual({ ok: false, error: 'tool_failed' });
+    expect(JSON.stringify(r)).not.toContain('previewToken');
+    read.loadProjectBundle.mockRejectedValue(new Error('x'));
+    expect(await runTool(tool('revoke_project_fact'), { projectId: ID, factId: 5, reason: 'Erreur de saisie du fait' }, ctx, principal, audit)).toEqual({ ok: false, error: 'tool_failed' });
+    expect(await runTool(tool('add_project_link'), { projectId: ID, title: 'M', url: 'https://example.com' }, ctx, principal, audit)).toEqual({ ok: false, error: 'tool_failed' });
+    expect(facts.postProjectFact).not.toHaveBeenCalled();
   });
   it('with confirm posts as admin and reports the mail line', async () => {
     facts.postProjectFact.mockResolvedValue(okFact());
@@ -356,5 +361,18 @@ describe('review fixes: masking and bounds', () => {
   });
   it('list_projects caps page at 100', async () => {
     expect(await runTool(tool('list_projects'), { page: 101 }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});
+
+describe('suspend_reminders previews are never blind', () => {
+  it('an unreadable hold (null) or a failing read gives an error and no token', async () => {
+    holds.loadReminderHold.mockResolvedValue(null);
+    const r1 = await runTool(tool('suspend_reminders'), { projectId: ID }, ctx, principal, audit);
+    expect(r1).toEqual({ ok: false, error: 'tool_failed' });
+    holds.loadReminderHold.mockRejectedValue(new Error('x'));
+    const r2 = await runTool(tool('suspend_reminders'), { projectId: ID }, ctx, principal, audit);
+    expect(r2).toEqual({ ok: false, error: 'tool_failed' });
+    expect(JSON.stringify([r1, r2])).not.toContain('previewToken');
+    expect(rpc.callRpc).not.toHaveBeenCalled();
   });
 });

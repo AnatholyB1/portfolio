@@ -69,7 +69,15 @@ function ledgerSummary(snapshot: LedgerSnapshot) {
       servicePeriod: snapshot.servicePeriod,
       dueDate: snapshot.dueDate,
       orderNumber: snapshot.orderNumber,
-      deductions: snapshot.deductions,
+      // Tri explicite : l'ordre des déductions ne doit jamais rendre une confirmation obsolète.
+      deductions: [...snapshot.deductions].sort(
+        (a, b) =>
+          a.invoiceDate.localeCompare(b.invoiceDate) ||
+          a.invoiceNumber.localeCompare(b.invoiceNumber) ||
+          a.label.localeCompare(b.label) ||
+          a.amountCents - b.amountCents ||
+          a.invoiceId.localeCompare(b.invoiceId),
+      ),
       prepaidCents: snapshot.prepaidCents,
     };
   }

@@ -100,12 +100,8 @@ const reissueReviewLink = defineTool({
   destructive: true,
   input: z.object({ projectId: z.string().uuid(), detail }),
   preview: async (ctx, input) => {
-    let current: unknown = null;
-    try {
-      current = await loadReviewLinkStatus(ctx.supabase, input.projectId);
-    } catch {
-      current = null;
-    }
+    // Une lecture en échec fait échouer l'aperçu (jamais de previewToken pour un aperçu aveugle).
+    const current = await loadReviewLinkStatus(ctx.supabase, input.projectId);
     return {
       action: "Invalidation du lien d'avis en cours et des demandes d'avis en attente, puis création d'un nouveau lien (60 jours)",
       projectId: input.projectId,

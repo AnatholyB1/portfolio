@@ -178,10 +178,11 @@ describe('void_project_cost', () => {
     expect(json).toContain('Refonte');
     expect(json).not.toContain('Dupont SARL');
   });
-  it('falls back to a minimal preview when the register cannot be read', async () => {
+  it('a register that cannot be read gives an error, never a blind preview or a token', async () => {
     load.loadCostsRegister.mockRejectedValue(new load.PilotageLoadError('x'));
     const r = await runTool(tool('void_project_cost'), { costId: 4 }, ctx, principal, audit);
-    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    expect(r).toEqual({ ok: false, error: 'tool_failed' });
+    expect(JSON.stringify(r)).not.toContain('previewToken');
     expect(w.voidProjectCost).not.toHaveBeenCalled();
   });
   it('with confirm voids with the actor', async () => {

@@ -96,7 +96,7 @@ describe('runTool hardening', () => {
     const boom = defineTool({ name: 'b', description: 'd', covers: [], input: z.object({}), run: async () => { throw new Error('secret'); } });
     const r = await runTool(boom, {}, ctx, principal, audit);
     expect(JSON.stringify(r)).not.toContain('secret');
-    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('b'), expect.stringContaining('secret'));
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('b'), expect.not.stringContaining('secret'));
   });
   it('rejects a destructive tool whose schema already has confirm', () => {
     expect(() =>

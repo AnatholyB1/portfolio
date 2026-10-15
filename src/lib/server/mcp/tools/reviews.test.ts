@@ -106,10 +106,12 @@ describe('reissue_review_link', () => {
     expect(json).toContain('active');
     expect(json).toMatch(/invalid/i);
   });
-  it('previews without status when the read fails', async () => {
+  it('a link status that cannot be read gives an error, never a blind preview or a token', async () => {
     links.loadReviewLinkStatus.mockRejectedValue(new Error('x'));
     const r = await runTool(tool('reissue_review_link'), args, ctx, principal, audit);
-    expect(r).toMatchObject({ ok: true, needsConfirmation: true });
+    expect(r).toEqual({ ok: false, error: 'tool_failed' });
+    expect(JSON.stringify(r)).not.toContain('previewToken');
+    expect(rpc.callRpc).not.toHaveBeenCalled();
   });
   it('with confirm reissues and returns the url once', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'reissued' } });
