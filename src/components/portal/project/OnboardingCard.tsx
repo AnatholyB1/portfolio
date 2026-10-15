@@ -9,6 +9,7 @@ import {
 } from '@/app/espace-client/actions';
 import type { CompanySnapshot } from '@/lib/admin/inviteSchema';
 import { NOT_SET, formatDateFr } from '@/lib/admin/format';
+import { legalFormLabel } from '@/lib/company/legalForm';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import {
   blockCompletion,
@@ -176,8 +177,8 @@ function CompanyBlock({ company, siret, row, done }: { company: CompanySnapshot 
             <dd>{company?.nom || NOT_SET}</dd>
             <dt>Adresse</dt>
             <dd>{address || NOT_SET}</dd>
-            {/* Le snapshot ne contient que le code INSEE (nature_juridique), sans table de libellés dans le dépôt :
-                on ne l'affiche pas tel quel (« 1000 » ne dit rien au client). */}
+            <dt>Forme juridique</dt>
+            <dd>{company?.forme_juridique_code ? legalFormLabel(company.forme_juridique_code) : NOT_SET}</dd>
           </dl>
         </div>
         {confirmedAt ? (
