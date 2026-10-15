@@ -12,10 +12,14 @@ const leadsCss = read('../../components/admin/leads/leads.css');
 
 describe('admin route boundaries and shell', () => {
   it('loading keeps the shell, announces the wait with a status role and a real ellipsis', () => {
-    expect(loading).toContain('<AdminNav');
-    expect(loading).toContain('role="status"');
-    expect(loading).toContain('Chargement…');
-    expect(loading).not.toContain('...');
+    // Le squelette vit dans AdminLoadingShell, partagé par les loading.tsx de chaque route.
+    const shell = read('../../components/admin/AdminLoadingShell.tsx');
+    expect(loading).toContain('AdminLoadingShell');
+    expect(shell).toContain('<AdminNav');
+    expect(shell).toContain('role="status"');
+    expect(shell).toContain('Chargement…');
+    expect(shell).not.toContain('...');
+    expect(shell).toContain('aria-hidden="true"');
   });
 
   it('error is a client boundary in French with retry and a way back, nav preserved', () => {
