@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { FileText } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import NoAccess from '@/components/portal/NoAccess';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -77,9 +79,8 @@ export default async function EspaceClientDocumentsPage() {
         <ClientNav current="documents" />
         <h1 className="pt-heading">{copy.title}</h1>
         {groups.length === 0 ? (
-          <section className="pt-card" aria-labelledby="documents-empty-title">
-            <h2 id="documents-empty-title" className="pt-heading">{PROJECT_COPY.documents.portal.emptyHeading}</h2>
-            <p className="pt-helper">{copy.emptyBody}</p>
+          <section className="pt-card" aria-label={copy.emptyHeading}>
+            <EmptyState icon={<FileText size={32} />} title={copy.emptyHeading} description={copy.emptyBody} headingLevel={2} />
           </section>
         ) : (
           groups.map((g) => (

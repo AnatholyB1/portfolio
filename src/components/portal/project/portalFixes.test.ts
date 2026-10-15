@@ -101,9 +101,9 @@ describe('copy and live regions', () => {
     expect(page).not.toContain('Votre interlocuteur<');
   });
 
-  it('mounts error live regions empty and keeps them out of the flow', () => {
+  it('mounts error live regions empty (StatusNote) and keeps them out of the flow', () => {
     for (const f of ['./PayButton.tsx', './PaymentsList.tsx', './DocumentsList.tsx']) {
-      expect(read(f)).toContain('className="pt-error pt-live" aria-live="polite"');
+      expect(read(f)).toContain('<StatusNote tone="error" live="assertive">');
     }
     expect(portalCss).toContain('.pt-live:empty');
   });

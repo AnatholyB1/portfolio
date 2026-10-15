@@ -8,6 +8,7 @@ import { documentSubject, nameWithSubject } from '@/lib/projects/accessibleNames
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { DOC_LABELS, STATUS_LABELS, type DocType, type DocumentStatus } from '@/lib/documents/types';
 import type { DownloadResult } from './types';
+import { StatusNote } from '@/components/ui/Toast';
 import './project.css';
 
 export type DocumentListItem = {
@@ -139,9 +140,9 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
           ))}
         </tbody>
       </table>
-      <p className="pt-error pt-live" aria-live="polite">
+      <StatusNote tone="error" live="assertive">
         {error}
-      </p>
+      </StatusNote>
     </div>
   );
 }

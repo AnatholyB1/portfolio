@@ -6,6 +6,7 @@ import { setConsentAction, type PortalActionState } from '@/app/espace-client/ac
 import { formatDateFr } from '@/lib/admin/format';
 import { PRESENTATION_CONSENT } from '@/lib/projects/consent';
 import { PROJECT_COPY } from '@/lib/projects/copy';
+import { StatusNote } from '@/components/ui/Toast';
 import './project.css';
 
 const INITIAL: PortalActionState = { status: 'idle' };
@@ -57,7 +58,7 @@ export default function ConsentCard({ projectId, current }: Props) {
         )}
       </form>
 
-      <div aria-live="polite">
+      <StatusNote tone="info" live="polite">
         {state.status === 'success' && state.message && !granted ? (
           <p className="pt-success">
             <Check size={16} aria-hidden="true" className="pt-msg-icon" />
@@ -70,7 +71,7 @@ export default function ConsentCard({ projectId, current }: Props) {
             <span>{state.message}</span>
           </p>
         ) : null}
-      </div>
+      </StatusNote>
       {stale ? (
         <button type="button" className="pt-btn-ghost" onClick={() => window.location.reload()}>
           {COPY.reload}

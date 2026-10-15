@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Receipt } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 import NoAccess from '@/components/portal/NoAccess';
 import ShellFooter from '@/components/portal/ShellFooter';
 import ShellHeader from '@/components/portal/ShellHeader';
@@ -79,9 +81,8 @@ export default async function EspaceClientPaymentsPage({ searchParams }: { searc
         ) : null}
         {!loadFailed && retour && !bannerInvoice ? <ReturnNotice retour={retour} /> : null}
         {!loadFailed && groups.length === 0 ? (
-          <section className="pt-card" aria-labelledby="payments-empty-title">
-            <h2 id="payments-empty-title" className="pt-heading">{copy.emptyHeading}</h2>
-            <p className="pt-helper">{copy.emptyBody}</p>
+          <section className="pt-card" aria-label={copy.emptyHeading}>
+            <EmptyState icon={<Receipt size={32} />} title={copy.emptyHeading} description={copy.emptyBody} headingLevel={2} />
           </section>
         ) : null}
         {!loadFailed

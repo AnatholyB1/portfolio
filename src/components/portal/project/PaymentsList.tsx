@@ -9,6 +9,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 
 import PayButton, { type PayResult } from './PayButton';
 import type { DownloadResult, PortalInvoiceView } from './types';
+import { StatusNote } from '@/components/ui/Toast';
 import './project.css';
 
 type Props = {
@@ -173,9 +174,9 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
           ))}
         </tbody>
       </table>
-      <p className="pt-error pt-live" aria-live="polite">
+      <StatusNote tone="error" live="assertive">
         {error}
-      </p>
+      </StatusNote>
       <p className="pt-doc-meta">{copy.vatNote}</p>
     </div>
   );
