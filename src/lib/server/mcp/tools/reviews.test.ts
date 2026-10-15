@@ -125,6 +125,29 @@ describe('reissue_review_link', () => {
   });
 });
 
+describe('review fixes', () => {
+  const longBody = 'x'.repeat(300);
+  const rv = (status: string) => ({
+    id: 'r', publishedAt: 'd', projectId: PID, projectTitle: 'Refonte', companyName: 'Dupont', rating: 1, title: null,
+    body: longBody, displayName: 'Jean D.', status, history: [],
+  });
+  it('list_reviews truncates the body of hidden reviews to 80 characters and keeps published ones whole', async () => {
+    admin.loadAdminReviews.mockResolvedValue([rv('hidden'), rv('published')]);
+    const r = await runTool(tool('list_reviews'), {}, ctx, principal, audit);
+    const reviews = (r as { data: { reviews: { status: string; body: string }[] } }).data.reviews;
+    expect(reviews[0].body.length).toBeLessThanOrEqual(80);
+    expect(reviews[0].body.endsWith('…')).toBe(true);
+    expect(reviews[1].body).toBe(longBody);
+  });
+  it('list_reviews caps page at 100', async () => {
+    expect(await runTool(tool('list_reviews'), { page: 101 }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+  it('reissue_review_link warns that the one-time url persists in the transcript', () => {
+    expect(tool('reissue_review_link').description).toMatch(/transcription|historique de la conversation/);
+    expect(tool('reissue_review_link').description).toMatch(/URL/);
+  });
+});
+
 describe('list_reviews', () => {
   const review = (id: string) => ({
     id,

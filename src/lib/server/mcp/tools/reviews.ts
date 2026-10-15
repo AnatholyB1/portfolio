@@ -12,13 +12,18 @@ const reviewId = z.string().uuid();
 const detail = z.string().trim().min(3).max(500);
 const hideReasons = REVIEW_HIDE_REASONS.map((r) => r.value) as [string, ...string[]];
 
+function truncate(text: string, max: number): string {
+  const chars = Array.from(text);
+  return chars.length <= max ? text : chars.slice(0, max - 1).join('') + '…';
+}
+
 const listReviews = defineTool({
   name: 'list_reviews',
   description:
     "Liste les avis clients (plus récents d'abord) avec leur statut (published/hidden) et l'historique de modération. Les e-mails des administrateurs sont masqués.",
   covers: [],
   input: z.object({
-    page: z.number().int().min(1).default(1),
+    page: z.number().int().min(1).max(100).default(1),
     limit: z.number().int().min(1).max(50).default(20),
   }),
   run: async (ctx, input) => {
@@ -30,6 +35,8 @@ const listReviews = defineTool({
       hasNext: fetched.length > input.limit,
       reviews: fetched.slice(0, input.limit).map((r) => ({
         ...r,
+        // Un avis masqué l'a été pour illégalité (injure, données de tiers) : le corps est tronqué dans la liste.
+        body: r.status === 'hidden' ? truncate(r.body, 80) : r.body,
         history: r.history.map(({ actorEmail, ...h }) => ({
           ...h,
           actorEmail: actorEmail === null ? null : maskEmail(actorEmail),
@@ -88,7 +95,7 @@ const unhideReview = defineTool({
 const reissueReviewLink = defineTool({
   name: 'reissue_review_link',
   description:
-    "Réémet le lien d'avis d'un projet : invalide le lien précédent et les demandes d'avis en attente, puis renvoie le nouveau lien (affiché une seule fois, non envoyé par e-mail).",
+    "Réémet le lien d'avis d'un projet : invalide le lien précédent et les demandes d'avis en attente, puis renvoie le nouveau lien (affiché une seule fois, non envoyé par e-mail). Attention : la réponse contient une URL à usage unique qui restera dans la transcription de la conversation du client MCP ; ne pas la partager ailleurs.",
   covers: ['reissueReviewLinkAction'],
   destructive: true,
   input: z.object({ projectId: z.string().uuid(), detail }),

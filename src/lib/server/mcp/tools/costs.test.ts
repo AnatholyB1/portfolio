@@ -24,6 +24,14 @@ import { costTools } from './costs';
 const UUID = '11111111-1111-4111-8111-111111111111';
 const principal = { tokenId: 't1', userId: 'admin-1' };
 const audit = vi.fn();
+function makeCtx(existing: unknown = null) {
+  const b: Record<string, ReturnType<typeof vi.fn>> = {};
+  b.select = vi.fn(() => b);
+  b.eq = vi.fn(() => b);
+  b.maybeSingle = vi.fn(() => Promise.resolve({ data: existing, error: null }));
+  const from = vi.fn(() => b);
+  return { supabase: { from } as never, user: { id: 'admin-1' } as never, from, b };
+}
 const ctx = { supabase: {} as never, user: { id: 'admin-1' } as never };
 const tool = (name: string) => {
   const t = costTools.find((x) => x.name === name);
@@ -71,17 +79,52 @@ describe('costTools metadata', () => {
       save_cash_balance: ['saveBalanceAction'],
     });
   });
-  it('is destructive only for the deletion (void)', () => {
-    expect(costTools.filter((t) => t.destructive).map((t) => t.name)).toEqual(['void_project_cost']);
+  it('is destructive only for the deletion (void) and the overwrite of an acquisition cost', () => {
+    expect(costTools.filter((t) => t.destructive).map((t) => t.name).sort()).toEqual(['save_acquisition_cost', 'void_project_cost']);
+  });
+});
+
+describe('save_acquisition_cost overwrites: preview shows the existing and the new amount', () => {
+  const args = { source: 'Google', month: '2026-10', amount: '12,5' };
+  it('without confirm writes nothing and shows the new amount next to the existing one (normalised key)', async () => {
+    const c = makeCtx({ cost_per_rdv_cents: 900 });
+    const r = await runTool(tool('save_acquisition_cost'), args, c, principal, audit);
+    expect(leads.upsertAcquisitionCost).not.toHaveBeenCalled();
+    expect(c.from).toHaveBeenCalledWith('sv_acquisition_costs');
+    expect(c.b.eq).toHaveBeenCalledWith('source', 'google');
+    expect(c.b.eq).toHaveBeenCalledWith('campaign', '');
+    expect(c.b.eq).toHaveBeenCalledWith('month', '2026-10-01');
+    expect(r).toMatchObject({
+      ok: true,
+      needsConfirmation: true,
+      preview: { wouldSave: true, source: 'google', month: '2026-10-01', newAmountCents: 1250, existingAmountCents: 900, replacesExisting: true },
+    });
+  });
+  it('previews a first entry (no existing amount)', async () => {
+    const r = await runTool(tool('save_acquisition_cost'), args, makeCtx(null), principal, audit);
+    expect(r).toMatchObject({ preview: { wouldSave: true, existingAmountCents: null, replacesExisting: false } });
+  });
+  it('previews an invalid amount as not savable', async () => {
+    const r = await runTool(tool('save_acquisition_cost'), { ...args, amount: '0' }, makeCtx(null), principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldSave: false } });
+  });
+  it('saves after the two-step confirmation, and the existing amount changing makes the token stale', async () => {
+    const c = makeCtx({ cost_per_rdv_cents: 900 });
+    const first = await runTool(tool('save_acquisition_cost'), args, c, principal, audit);
+    const changed = makeCtx({ cost_per_rdv_cents: 1000 });
+    const stale = await runTool(tool('save_acquisition_cost'), { ...args, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, changed, principal, audit);
+    expect(stale).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(leads.upsertAcquisitionCost).not.toHaveBeenCalled();
+    const r = await confirmTwoStep(tool('save_acquisition_cost'), args, c, principal, audit);
+    expect(leads.upsertAcquisitionCost).toHaveBeenCalledWith('google', '', '2026-10-01', 1250, 'admin-1');
+    expect(r).toMatchObject({ ok: true, data: { ok: true } });
+  });
+  it('the description says the amount is a cost per appointment', () => {
+    expect(tool('save_acquisition_cost').description).toMatch(/rendez-vous/);
   });
 });
 
 describe('append-only cost writes run without confirmation and delegate to the cores', () => {
-  it('save_acquisition_cost', async () => {
-    const r = await runTool(tool('save_acquisition_cost'), { source: 'Google', month: '2026-10', amount: '12,5' }, ctx, principal, audit);
-    expect(leads.upsertAcquisitionCost).toHaveBeenCalledWith('google', '', '2026-10-01', 1250, 'admin-1');
-    expect(r).toMatchObject({ ok: true, data: { ok: true } });
-  });
   it('add_recurring_cost', async () => {
     const r = await runTool(
       tool('add_recurring_cost'),

@@ -62,6 +62,17 @@ describe('lookup_siret', () => {
     siret.lookupSiret.mockResolvedValue(result);
     expect(await runTool(tool('lookup_siret'), { siret: '12345678901234' }, ctx, principal, audit)).toEqual({ ok: true, data: result });
   });
+  it.each([
+    ['invalid', INVITE_COPY.siretInvalid],
+    ['not_found', INVITE_COPY.siretNotFound],
+    ['rate_limited', INVITE_COPY.siretNotFound],
+    ['unavailable', INVITE_COPY.siretNotFound],
+  ])('a %s lookup carries a message so it is audited as an error', async (reason, message) => {
+    siret.lookupSiret.mockResolvedValue({ ok: false, reason });
+    const r = await runTool(tool('lookup_siret'), { siret: '12345678901234' }, ctx, principal, audit);
+    expect(r).toEqual({ ok: false, error: message });
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'lookup_siret', outcome: 'error' }));
+  });
 });
 
 describe('invite_client', () => {
@@ -78,11 +89,37 @@ describe('invite_client', () => {
     expect(json).toContain('12345678901234');
   });
 
+  it('the preview says "nouveau client" when no client has this SIRET (read through RLS by siret)', async () => {
+    ctx = makeCtx({});
+    const r = await runTool(tool('invite_client'), args, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { clientStatus: 'nouveau client' } });
+    expect((ctx.supabase as unknown as { from: ReturnType<typeof vi.fn> }).from).toHaveBeenCalledWith('sv_clients');
+  });
+  it('the preview names the existing client and the masked address that will get a new access', async () => {
+    ctx = makeCtx({ sv_clients: { id: 'c9', name: 'ACME SAS' } });
+    const r = await runTool(tool('invite_client'), args, ctx, principal, audit);
+    expect(r).toMatchObject({
+      ok: true,
+      needsConfirmation: true,
+      preview: { clientStatus: 'client existant ACME SAS: un nouvel accès sera ajouté pour c***@a***.fr' },
+    });
+    expect(JSON.stringify(r)).not.toContain('client@acme.fr');
+  });
+  it('the preview flags a malformed siret without querying', async () => {
+    ctx = makeCtx({});
+    const r = await runTool(tool('invite_client'), { ...args, siret: '123' }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { clientStatus: INVITE_COPY.siretInvalid } });
+  });
+  it('companySource defaults to manual for tool-supplied company objects', async () => {
+    invite.inviteClient.mockResolvedValue({ ok: false, code: 'error' });
+    await confirmTwoStep(tool('invite_client'), { ...args }, ctx, principal, audit);
+    expect(invite.inviteClient.mock.calls[0][0]).toMatchObject({ companySource: 'manual' });
+  });
   it('with confirm invites with the actor and never returns the clear e-mail', async () => {
     invite.inviteClient.mockResolvedValue({ ok: true, clientId: 'c1', email: 'client@acme.fr', mailSent: true });
     const r = await confirmTwoStep(tool('invite_client'), { ...args }, ctx, principal, audit);
     expect(invite.inviteClient).toHaveBeenCalledWith(
-      { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234', company: { nom: 'ACME SAS' }, companySource: 'api' },
+      { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234', company: { nom: 'ACME SAS' }, companySource: 'manual' },
       { userId: 'admin-1' },
     );
     expect(r).toMatchObject({ ok: true, data: { invited: true } });

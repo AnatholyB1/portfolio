@@ -18,7 +18,7 @@ const listEmailSuppressions = defineTool({
     "Liste la liste de suppression d'e-mails (plus récentes d'abord), adresses masquées. L'identifiant sert à lift_email_suppression.",
   covers: [],
   input: z.object({
-    page: z.number().int().min(1).default(1),
+    page: z.number().int().min(1).max(100).default(1),
     limit: z.number().int().min(1).max(50).default(20),
   }),
   run: async (ctx, input) => {

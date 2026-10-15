@@ -1,6 +1,6 @@
 import 'server-only';
 import { z } from 'zod';
-import { companySnapshotSchema } from '@/lib/admin/inviteSchema';
+import { INVITE_COPY, companySnapshotSchema } from '@/lib/admin/inviteSchema';
 import { inviteClientCore, lookupSiretCore, resendInvitationCore } from '@/lib/server/admin/core/clients';
 import { maskEmail } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
@@ -13,7 +13,12 @@ const lookupSiret = defineTool({
   description: 'Recherche une entreprise par SIRET (14 chiffres) dans l\'annuaire public des entreprises.',
   covers: ['lookupSiretAction'],
   input: z.object({ siret: z.string().max(40) }),
-  run: (ctx, input) => lookupSiretCore(ctx, input),
+  run: async (ctx, input) => {
+    const res = await lookupSiretCore(ctx, input);
+    if (res.ok) return res;
+    // Sans `message`, un refus de l'annuaire serait audité comme un succès : même libellés que le formulaire web.
+    return { ok: false, message: res.reason === 'invalid' ? INVITE_COPY.siretInvalid : INVITE_COPY.siretNotFound, reason: res.reason };
+  },
 });
 
 const inviteClient = defineTool({
@@ -27,18 +32,32 @@ const inviteClient = defineTool({
     email: t(254),
     siret: t(40),
     company: z.preprocess(cleanCompany, companySnapshotSchema.nullable().optional()),
-    companySource: z.enum(['api', 'manual']).default('api'),
+    // 'manual' : l'objet company est fourni par l'appelant, pas issu de l'annuaire (lookup_siret).
+    companySource: z.enum(['api', 'manual']).default('manual'),
   }),
-  preview: async (_ctx, input) => ({
-    action: 'Création du compte client et envoi de l\'invitation par e-mail',
-    client: {
-      name: input.name,
-      email: maskEmail(input.email),
-      siret: input.siret,
-      company: input.company?.nom ?? null,
-    },
-    mail: `Invitation envoyée à ${maskEmail(input.email)}`,
-  }),
+  preview: async (ctx, input) => {
+    // Client déjà connu pour ce SIRET (lecture RLS) : un nouvel accès s'ajoute, rien n'est créé de neuf.
+    const digits = input.siret.replace(/\s/g, '');
+    let clientStatus: string;
+    if (!/^\d{14}$/.test(digits)) {
+      clientStatus = INVITE_COPY.siretInvalid;
+    } else {
+      const { data } = await ctx.supabase.from('sv_clients').select('id, name').eq('siret', digits).maybeSingle();
+      const name = (data as { name?: string } | null)?.name ?? '';
+      clientStatus = data ? `client existant ${name}: un nouvel accès sera ajouté pour ${maskEmail(input.email)}` : 'nouveau client';
+    }
+    return {
+      action: "Création du compte client (ou ajout d'un accès) et envoi de l'invitation par e-mail",
+      clientStatus,
+      client: {
+        name: input.name,
+        email: maskEmail(input.email),
+        siret: input.siret,
+        company: input.company?.nom ?? null,
+      },
+      mail: `Invitation envoyée à ${maskEmail(input.email)}`,
+    };
+  },
   run: async (ctx, input) => {
     const res = await inviteClientCore(ctx, {
       name: input.name,

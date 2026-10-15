@@ -8,6 +8,8 @@ import {
   stopRecurringCostCore,
   voidProjectCostCore,
 } from '@/lib/server/admin/core/costs';
+import { ADMIN_COPY } from '@/lib/admin/leadLabels';
+import { costSchema } from '@/lib/admin/leadSchemas';
 import { currentBalance, projectCostRegister, recurringRegister } from '@/lib/server/pilotage/costs';
 import { COST_CATEGORY_KEYS } from '@/lib/server/pilotage/costSchemas';
 import { loadCostsRegister } from '@/lib/server/pilotage/load';
@@ -45,19 +47,45 @@ const getCostRegister = defineTool({
   },
 });
 
-// Non destructif : l'écriture remplace le montant d'un mois pour une source/campagne, mais l'action est tracée
-// avec l'acteur et se corrige en la rejouant ; aucune donnée n'est supprimée.
+// Destructif : l'écriture REMPLACE le coût par rendez-vous déjà enregistré pour (source, campagne, mois) ; l'ancien
+// montant n'est pas conservé (seul l'acteur est tracé). L'aperçu montre le montant existant et le nouveau.
 const saveAcquisitionCost = defineTool({
   name: 'save_acquisition_cost',
   description:
-    "Enregistre (ou remplace) le coût d'acquisition d'un mois pour une source et une campagne (entonnoir).",
+    "Enregistre ou REMPLACE le coût par rendez-vous (en euros) d'un mois pour une source et une campagne (entonnoir). Le montant précédent n'est pas conservé : sans confirm, l'aperçu montre le montant existant et le nouveau.",
   covers: ['saveCostAction'],
+  destructive: true,
   input: z.object({
     source: text(200),
     campaign: text(200).default(''),
     month: z.string().max(7).describe('Mois AAAA-MM'),
-    amount: euros('Coût du mois'),
+    amount: euros('Coût par rendez-vous'),
   }),
+  preview: async (ctx, input) => {
+    // Même normalisation que l'écriture (minuscules, 1er du mois, centimes).
+    const parsed = costSchema.safeParse({ source: input.source, campaign: input.campaign, month: input.month, amount: input.amount });
+    if (!parsed.success) return { wouldSave: false, message: ADMIN_COPY.costInvalid };
+    const { source, campaign, month, cents } = parsed.data;
+    // Lecture RLS d'une ligne : aucun lecteur existant n'expose ce montant (la page entonnoir lit la vue agrégée).
+    const row = await ctx.supabase
+      .from('sv_acquisition_costs')
+      .select('cost_per_rdv_cents')
+      .eq('source', source)
+      .eq('campaign', campaign)
+      .eq('month', month)
+      .maybeSingle();
+    const existing = (row.data as { cost_per_rdv_cents?: number } | null)?.cost_per_rdv_cents;
+    return {
+      action: 'Enregistrement du coût par rendez-vous (remplace le montant existant)',
+      wouldSave: true,
+      source,
+      campaign,
+      month,
+      newAmountCents: cents,
+      existingAmountCents: existing === undefined ? null : Number(existing),
+      replacesExisting: existing !== undefined,
+    };
+  },
   run: (ctx, input) => saveAcquisitionCostCore(ctx, input),
 });
 

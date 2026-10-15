@@ -10,13 +10,14 @@ import {
   setReminderHoldCore,
 } from '@/lib/server/admin/core/projects';
 import { MAX_FILE_BYTES } from '@/lib/projects/fileRules';
+import { PROJECT_COPY } from '@/lib/projects/copy';
 import { postFactSchema } from '@/lib/projects/schemas';
 import { BLOCAGE_FILTERS, ETAPE_FILTERS, classifyProject, filterProjects, sortProjects } from '@/lib/projects/blocking';
 import { blockCompletion } from '@/lib/projects/onboardingSchema';
 import { STEPS, resolveWaiting, type ProjectState } from '@/lib/projects/steps';
 import { loadAdminProjects, loadPendingClientWork, loadProjectBundle } from '@/lib/server/projects/read';
 import { loadReminderHold } from '@/lib/server/reminders/holds';
-import { maskEmail, maskPhone } from '../mask';
+import { maskEmail, maskName, maskPhone } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
 import type { AdminCtx } from '../session';
 
@@ -89,12 +90,39 @@ const revokeProjectFact = defineTool({
   run: (ctx, input) => revokeProjectFactCore(ctx, input),
 });
 
-// Non destructif : ajout d'un lien utile affiché sur la fiche, sans effet de bord (pas d'e-mail).
+// Destructif : le lien apparaît sur la fiche projet visible du client (publication), sans e-mail mais sans
+// retrait possible depuis les outils. L'aperçu montre le projet, le titre et l'hôte de l'URL ; https obligatoire.
 const addProjectLink = defineTool({
   name: 'add_project_link',
-  description: "Ajoute un lien utile (https uniquement) à la fiche d'un projet.",
+  description:
+    "Publie un lien utile (https uniquement) sur la fiche d'un projet, visible du client. Sans confirm, l'aperçu montre le projet, le titre, l'URL et son hôte.",
   covers: ['addLinkAction'],
+  destructive: true,
   input: z.object({ projectId, title: t(80), url: t(2000) }),
+  preview: async (ctx, input) => {
+    const b = await bundleOf(ctx, input.projectId);
+    const url = input.url.trim();
+    let host: string | null = null;
+    let https = false;
+    try {
+      const u = new URL(url);
+      host = u.host;
+      https = u.protocol === 'https:';
+    } catch {
+      host = null;
+    }
+    return {
+      action: "Publication d'un lien sur la fiche projet, visible du client",
+      wouldAdd: https,
+      projectId: input.projectId,
+      projectTitle: b?.project.title ?? null,
+      title: input.title,
+      url,
+      host,
+      https,
+      ...(https ? {} : { message: PROJECT_COPY.errors.url }),
+    };
+  },
   run: (ctx, input) => addProjectLinkCore(ctx, input),
 });
 
@@ -113,13 +141,31 @@ const requestProjectUpload = defineTool({
   run: (ctx, input) => requestProjectUploadCore(ctx, input),
 });
 
-// Non destructif : vérifie la présence du fichier dans le stockage puis le publie sur la fiche.
+// Destructif : la confirmation rend le fichier disponible pour le client sur la fiche projet (publication).
 const confirmProjectUpload = defineTool({
   name: 'confirm_project_upload',
   description:
-    "Étape 2 du dépôt : confirme qu'un fichier a bien été envoyé sur signedUrl (voir request_project_upload) et le rend disponible. Échoue si le fichier n'est pas dans le stockage.",
+    "Étape 2 du dépôt : confirme qu'un fichier a bien été envoyé sur signedUrl (voir request_project_upload) et le publie sur la fiche, visible du client. Sans confirm, l'aperçu montre le nom et la taille du fichier. Échoue si le fichier n'est pas dans le stockage.",
   covers: ['adminConfirmUploadAction'],
+  destructive: true,
   input: z.object({ fileId }),
+  preview: async (ctx, input) => {
+    const row = await ctx.supabase
+      .from('sv_project_files')
+      .select('id, filename, size_bytes, status, project_id')
+      .eq('id', input.fileId)
+      .maybeSingle();
+    const d = row.data as { filename?: string; size_bytes?: number; status?: string } | null;
+    if (row.error || !d) return { found: false, fileId: input.fileId, message: 'Fichier introuvable.' };
+    return {
+      action: 'Publication du fichier sur la fiche projet, visible du client',
+      found: true,
+      fileId: input.fileId,
+      filename: d.filename ?? null,
+      sizeBytes: d.size_bytes === undefined ? null : Number(d.size_bytes),
+      status: d.status ?? null,
+    };
+  },
   run: (ctx, input) => confirmProjectUploadCore(ctx, input),
 });
 
@@ -133,13 +179,42 @@ const getProjectFileUrl = defineTool({
   run: (ctx, input) => downloadProjectFileCore(ctx, input),
 });
 
-// Non destructif : suspendre ou reprendre les relances est réversible et n'envoie rien immédiatement.
-const setReminderHold = defineTool({
-  name: 'set_reminder_hold',
-  description: "Suspend (suspend) ou reprend (resume) les relances automatiques d'un projet.",
+// Destructif : suspendre fait ignorer définitivement les e-mails de relance et de demande d'avis mis en file ;
+// la reprise ne les remet jamais en file (voir resume_reminders).
+const suspendReminders = defineTool({
+  name: 'suspend_reminders',
+  description:
+    "Suspend les relances automatiques d'un projet. Les relances et demandes d'avis qui devaient partir pendant la suspension sont ignorées définitivement : reprendre les relances ne les renvoie pas.",
   covers: ['setReminderHoldAction'],
-  input: z.object({ projectId, action: z.enum(['suspend', 'resume']) }),
-  run: (ctx, input) => setReminderHoldCore(ctx, input),
+  destructive: true,
+  input: z.object({ projectId }),
+  preview: async (ctx, input) => {
+    const b = await bundleOf(ctx, input.projectId);
+    let currentHold: unknown = null;
+    try {
+      currentHold = await loadReminderHold(ctx.supabase, input.projectId);
+    } catch {
+      currentHold = null;
+    }
+    return {
+      action: "Suspension des relances automatiques ; les e-mails de relance et de demande d'avis en file sont ignorés définitivement",
+      projectId: input.projectId,
+      projectTitle: b?.project.title ?? null,
+      currentHold,
+      effect: "Les relances ignorées pendant la suspension ne seront jamais renvoyées, même après resume_reminders.",
+    };
+  },
+  run: (ctx, input) => setReminderHoldCore(ctx, { projectId: input.projectId, action: 'suspend' }),
+});
+
+// Non destructif : la reprise ne fait rien partir immédiatement (et ne rattrape pas les envois ignorés).
+const resumeReminders = defineTool({
+  name: 'resume_reminders',
+  description:
+    "Reprend les relances automatiques d'un projet. Cela ne remet pas en file les relances ignorées pendant la suspension : seules les prochaines échéances partiront.",
+  covers: ['setReminderHoldAction'],
+  input: z.object({ projectId }),
+  run: (ctx, input) => setReminderHoldCore(ctx, { projectId: input.projectId, action: 'resume' }),
 });
 
 function stateView(state: ProjectState) {
@@ -166,7 +241,7 @@ const listProjects = defineTool({
   input: z.object({
     etape: z.enum(ETAPE_FILTERS).optional(),
     blocage: z.enum(BLOCAGE_FILTERS).optional(),
-    page: z.number().int().min(1).default(1),
+    page: z.number().int().min(1).max(100).default(1),
     limit: z.number().int().min(1).max(50).default(25),
   }),
   run: async (ctx, input) => {
@@ -242,9 +317,9 @@ const getProject = defineTool({
         ? {
             completion: blockCompletion(o),
             companyConfirmedAt: o.companyConfirmedAt,
-            signatory: { name: o.signatoryName, role: o.signatoryRole },
+            signatory: { name: maskName(o.signatoryName), role: o.signatoryRole },
             contact: {
-              name: o.projectContactName,
+              name: maskName(o.projectContactName),
               email: o.projectContactEmail ? maskEmail(o.projectContactEmail) : null,
               phone: o.projectContactPhone ? maskPhone(o.projectContactPhone) : null,
             },
@@ -267,5 +342,6 @@ export const projectTools: ToolDef[] = [
   requestProjectUpload,
   confirmProjectUpload,
   getProjectFileUrl,
-  setReminderHold,
+  suspendReminders,
+  resumeReminders,
 ];

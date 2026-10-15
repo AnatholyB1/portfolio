@@ -32,6 +32,13 @@ const tool = (name: string) => {
   if (!t) throw new Error(`missing tool ${name}`);
   return t;
 };
+function fileCtx(row: unknown) {
+  const b: Record<string, ReturnType<typeof vi.fn>> = {};
+  b.select = vi.fn(() => b);
+  b.eq = vi.fn(() => b);
+  b.maybeSingle = vi.fn(() => Promise.resolve({ data: row, error: null }));
+  return { supabase: { from: vi.fn(() => b) } as never, user: { id: 'admin-1' } as never };
+}
 const okFact = (over: Record<string, unknown> = {}) => ({
   ok: true,
   changed: true,
@@ -77,9 +84,16 @@ describe('projectTools metadata', () => {
       request_project_upload: ['adminRequestUploadAction'],
       confirm_project_upload: ['adminConfirmUploadAction'],
       get_project_file_url: ['adminDownloadAction'],
-      set_reminder_hold: ['setReminderHoldAction'],
+      suspend_reminders: ['setReminderHoldAction'],
+      resume_reminders: ['setReminderHoldAction'],
     });
-    expect(projectTools.filter((t) => t.destructive).map((t) => t.name).sort()).toEqual(['post_project_fact', 'revoke_project_fact']);
+    expect(projectTools.filter((t) => t.destructive).map((t) => t.name).sort()).toEqual([
+      'add_project_link',
+      'confirm_project_upload',
+      'post_project_fact',
+      'revoke_project_fact',
+      'suspend_reminders',
+    ]);
   });
 });
 
@@ -135,16 +149,31 @@ describe('revoke_project_fact', () => {
   });
 });
 
-describe('add_project_link', () => {
-  it('adds the link', async () => {
+describe('add_project_link (destructive: publishes to the client sheet)', () => {
+  const args = { projectId: ID, title: 'Maquette', url: 'https://example.com/x' };
+  it('without confirm adds nothing and previews the project, the title, the url and its host', async () => {
+    const r = await runTool(tool('add_project_link'), args, ctx, principal, audit);
+    expect(content.addProjectLink).not.toHaveBeenCalled();
+    expect(r).toMatchObject({
+      ok: true,
+      needsConfirmation: true,
+      preview: { wouldAdd: true, projectTitle: 'Refonte', title: 'Maquette', url: 'https://example.com/x', host: 'example.com', https: true },
+    });
+  });
+  it('the preview flags a non-https url as not addable and shows its host', async () => {
+    const r = await runTool(tool('add_project_link'), { ...args, url: 'http://example.com/x' }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldAdd: false, https: false, host: 'example.com' } });
+  });
+  it('adds the link after the two-step confirmation', async () => {
     content.addProjectLink.mockResolvedValue({ ok: true });
-    const r = await runTool(tool('add_project_link'), { projectId: ID, title: 'Maquette', url: 'https://example.com/x' }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('add_project_link'), args, ctx, principal, audit);
     expect(content.addProjectLink).toHaveBeenCalledWith(supabase, { projectId: ID, title: 'Maquette', url: 'https://example.com/x', actorId: 'admin-1' });
     expect(r).toMatchObject({ ok: true, data: { ok: true, message: PROJECT_COPY.links.add } });
   });
-  it('a non-https url is an audited error with the url message', async () => {
-    const r = await runTool(tool('add_project_link'), { projectId: ID, title: 'M', url: 'http://example.com' }, ctx, principal, audit);
+  it('a non-https url is an audited error with the url message even when confirmed', async () => {
+    const r = await confirmTwoStep(tool('add_project_link'), { ...args, url: 'http://example.com' }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: PROJECT_COPY.errors.url });
+    expect(content.addProjectLink).not.toHaveBeenCalled();
   });
 });
 
@@ -165,12 +194,24 @@ describe('upload flow', () => {
     const r = await runTool(tool('request_project_upload'), { projectId: ID, filename: 'a.pdf', size: 26214401, mime: 'application/pdf' }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: 'invalid_input' });
   });
-  it('confirm_project_upload confirms; a missing file is an audited error', async () => {
+  it('confirm_project_upload without confirm publishes nothing and previews the file name and size', async () => {
+    const c = fileCtx({ id: FID, filename: 'devis.pdf', size_bytes: 123456, status: 'pending', project_id: ID });
+    const r = await runTool(tool('confirm_project_upload'), { fileId: FID }, c, principal, audit);
+    expect(files.confirmUpload).not.toHaveBeenCalled();
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { found: true, filename: 'devis.pdf', sizeBytes: 123456, status: 'pending' } });
+    expect(JSON.stringify(r)).toMatch(/client/);
+  });
+  it('the preview says when the file is unknown', async () => {
+    const r = await runTool(tool('confirm_project_upload'), { fileId: FID }, fileCtx(null), principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { found: false } });
+  });
+  it('confirm_project_upload confirms after the two-step flow; a missing file is an audited error', async () => {
+    const c = fileCtx({ id: FID, filename: 'devis.pdf', size_bytes: 1, status: 'pending', project_id: ID });
     files.confirmUpload.mockResolvedValue({ ok: true });
-    expect(await runTool(tool('confirm_project_upload'), { fileId: FID }, ctx, principal, audit)).toMatchObject({ ok: true });
-    expect(files.confirmUpload).toHaveBeenCalledWith(supabase, FID);
+    expect(await confirmTwoStep(tool('confirm_project_upload'), { fileId: FID }, c, principal, audit)).toMatchObject({ ok: true });
+    expect(files.confirmUpload).toHaveBeenCalledWith(c.supabase, FID);
     files.confirmUpload.mockResolvedValue({ ok: false, code: 'missing' });
-    expect(await runTool(tool('confirm_project_upload'), { fileId: FID }, ctx, principal, audit)).toEqual({ ok: false, error: PROJECT_COPY.errors.generic });
+    expect(await confirmTwoStep(tool('confirm_project_upload'), { fileId: FID }, c, principal, audit)).toEqual({ ok: false, error: PROJECT_COPY.errors.generic });
   });
   it('get_project_file_url returns the signed url only', async () => {
     files.createDownloadUrl.mockResolvedValue({ ok: true, url: 'https://s/d' });
@@ -180,15 +221,30 @@ describe('upload flow', () => {
   });
 });
 
-describe('set_reminder_hold', () => {
-  it('suspends reminders with the actor', async () => {
+describe('reminder hold', () => {
+  it('suspend_reminders without confirm suspends nothing and previews the project, the hold and the permanent effect', async () => {
+    const r = await runTool(tool('suspend_reminders'), { projectId: ID }, ctx, principal, audit);
+    expect(rpc.callRpc).not.toHaveBeenCalled();
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { projectTitle: 'Refonte', currentHold: { suspended: false } } });
+    expect(JSON.stringify(r)).toMatch(/jamais/);
+  });
+  it('suspend_reminders suspends with the actor after the two-step flow', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'suspended' } });
-    const r = await runTool(tool('set_reminder_hold'), { projectId: ID, action: 'suspend' }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('suspend_reminders'), { projectId: ID }, ctx, principal, audit);
     expect(rpc.callRpc).toHaveBeenCalledWith('admin/projets', 'sv_set_reminder_hold', { p_project_id: ID, p_action: 'suspend', p_actor_id: 'admin-1' });
     expect(r).toMatchObject({ ok: true, data: { ok: true, message: 'Relances suspendues.' } });
   });
-  it('rejects an unknown action as invalid_input', async () => {
-    expect(await runTool(tool('set_reminder_hold'), { projectId: ID, action: 'pause' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  it('resume_reminders resumes without confirmation but warns in its description that skipped e-mails are not requeued', async () => {
+    rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'resumed' } });
+    const r = await runTool(tool('resume_reminders'), { projectId: ID }, ctx, principal, audit);
+    expect(rpc.callRpc).toHaveBeenCalledWith('admin/projets', 'sv_set_reminder_hold', { p_project_id: ID, p_action: 'resume', p_actor_id: 'admin-1' });
+    expect(r).toMatchObject({ ok: true, data: { ok: true, message: 'Relances reprises.' } });
+    expect(tool('resume_reminders').destructive).toBeFalsy();
+    expect(tool('resume_reminders').description).toMatch(/ne remet pas|ne rétablit pas|pas remis/);
+    expect(tool('suspend_reminders').description).toMatch(/définitiv/);
+  });
+  it('rejects a bad project id as invalid_input', async () => {
+    expect(await runTool(tool('resume_reminders'), { projectId: 'x' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
 });
 
@@ -286,5 +342,19 @@ describe('list_projects', () => {
   });
   it('rejects an unknown filter as invalid_input', async () => {
     expect(await runTool(tool('list_projects'), { etape: '9' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});
+
+describe('review fixes: masking and bounds', () => {
+  it('get_project reduces signatory and contact names to initials', async () => {
+    read.loadProjectBundle.mockResolvedValue(fullBundle);
+    const r = await runTool(tool('get_project'), { projectId: ID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { onboarding: { signatory: { name: 'J. D.' }, contact: { name: 'A.' } } } });
+    const json = JSON.stringify(r);
+    expect(json).not.toContain('Jean Dupont');
+    expect(json).not.toContain('"Alice"');
+  });
+  it('list_projects caps page at 100', async () => {
+    expect(await runTool(tool('list_projects'), { page: 101 }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
 });

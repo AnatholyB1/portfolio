@@ -81,6 +81,13 @@ describe('lift_email_suppression', () => {
   });
 });
 
+describe('list_email_suppressions bounds', () => {
+  it('caps page at 100', async () => {
+    const { ctx } = makeCtx();
+    expect(await runTool(tool('list_email_suppressions'), { page: 101 }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+});
+
 describe('list_email_suppressions', () => {
   const row = (id: number, email = 'a@b.fr') => ({
     id,
