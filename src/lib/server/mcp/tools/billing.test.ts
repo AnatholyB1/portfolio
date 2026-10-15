@@ -12,6 +12,7 @@ const download = vi.hoisted(() => ({ createInvoiceDownloadUrl: vi.fn(), verifyIn
 const refund = vi.hoisted(() => ({ requestRefundForCreditNote: vi.fn(), expireOpenPayments: vi.fn() }));
 const projects = vi.hoisted(() => ({ loadProjectBundle: vi.fn() }));
 const billView = vi.hoisted(() => ({ loadAdminBillingView: vi.fn() }));
+const invRead = vi.hoisted(() => ({ loadInvoicesForProjects: vi.fn() }));
 const state = vi.hoisted(() => ({ adminQueues: {} as Record<string, { data?: unknown; error?: unknown }[]> }));
 vi.mock('@/lib/server/projects/access', () => access);
 vi.mock('@/lib/server/invoices/context', () => ictx);
@@ -22,20 +23,27 @@ vi.mock('@/lib/server/invoices/download', () => download);
 vi.mock('@/lib/server/stripe/refund', () => refund);
 vi.mock('@/lib/server/projects/read', () => projects);
 vi.mock('@/lib/server/invoices/adminView', () => billView);
+vi.mock('@/lib/server/invoices/read', () => invRead);
 
 type Res = { data?: unknown; error?: unknown };
 function fakeDb(queues: Record<string, Res[]>) {
   return {
     from: vi.fn((table: string) => {
-      const next = (queues[table] ?? []).shift() ?? { data: [] };
       const chain: Record<string, unknown> = {};
       for (const m of ['select', 'eq', 'in', 'order', 'limit']) chain[m] = () => chain;
-      chain.maybeSingle = () =>
-        Promise.resolve({
+      // Files séparées « :single » (maybeSingle) et « :list » (await direct) quand elles existent.
+      const pull = (kind: 'single' | 'list'): Res => (queues[table + ':' + kind] ?? queues[table] ?? []).shift() ?? { data: [] };
+      chain.maybeSingle = () => {
+        const next = pull('single');
+        return Promise.resolve({
           data: Array.isArray(next.data) ? (next.data[0] ?? null) : (next.data ?? null),
           error: next.error ?? null,
         });
-      chain.then = (resolve: (v: unknown) => void) => resolve({ data: next.data ?? [], error: next.error ?? null });
+      };
+      chain.then = (resolve: (v: unknown) => void) => {
+        const next = pull('list');
+        return resolve({ data: next.data ?? [], error: next.error ?? null });
+      };
       return chain;
     }),
   };
@@ -129,7 +137,9 @@ beforeEach(() => {
     ...Object.values(refund),
     ...Object.values(projects),
     ...Object.values(billView),
+    ...Object.values(invRead),
   ]) f.mockReset();
+  invRead.loadInvoicesForProjects.mockResolvedValue([]);
   rlsQueues = {};
   state.adminQueues = {};
   ctx = mkCtx();
@@ -459,5 +469,131 @@ describe('preview token binds the confirmation (review scenarios)', () => {
     const r = await runTool(tool('issue_period_invoice'), { ...other, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
     expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
     expect(issue.issueInvoice).not.toHaveBeenCalled();
+  });
+});
+
+describe('replays, used ids and duplicate guards (review I-1, I-3)', () => {
+  const OTHER = '55555555-5555-4555-8555-555555555555';
+  const ago = (min: number) => new Date(Date.now() - min * 60_000).toISOString();
+  const cnRow = { data: [{ id: CN, number: 'AV-2026-0001', kind: 'credit_note', credits_invoice_id: ORIGIN, project_id: PID }] };
+  const originNumberRow = { data: [{ number: 'FA-2026-0001' }] };
+  const alternate = (a: Res, b: Res) => Array.from({ length: 8 }, (_, i) => (i % 2 === 0 ? a : b));
+
+  it('a credit note replay reports alreadyIssued with the existing number and applies no Stripe effect', async () => {
+    originQueues({ paid: true });
+    issue.issueCreditNote.mockResolvedValue({ ok: true, outcome: 'already_issued', creditNoteId: CN, number: 'AV-2026-0001', fullyCredited: true, mail: 'none', pdf: 'attached' });
+    const r = await confirmTwoStep(tool('issue_credit_note'), credit, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { issued: false, alreadyIssued: true, number: 'AV-2026-0001', creditNoteId: CN } });
+    expect(refund.requestRefundForCreditNote).not.toHaveBeenCalled();
+    expect(refund.expireOpenPayments).not.toHaveBeenCalled();
+  });
+  it('a replay of a fully credited invoice returns the existing credit note number, not over-credit', async () => {
+    originQueues({ paid: true });
+    rlsQueues.sv_invoices.splice(0, 8, ...alternate(cnRow, originNumberRow));
+    ictx.loadInvoiceContext.mockResolvedValue({ ...invoiceCtx, invoices: [{ ...invoiceCtx.invoices[0], creditedCents: 30000 }] });
+    ctx = mkCtx();
+    const r = await confirmTwoStep(tool('issue_credit_note'), { ...credit, scope: 'total', amount: undefined }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { issued: false, alreadyIssued: true, number: 'AV-2026-0001', creditNoteId: CN } });
+    expect(issue.issueCreditNote).not.toHaveBeenCalled();
+  });
+  it('the credit note preview says alreadyIssued:true, wouldIssue:false for an id already used', async () => {
+    rlsQueues = { sv_invoices: alternate(cnRow, originNumberRow) };
+    ctx = mkCtx();
+    const r = await runTool(tool('issue_credit_note'), credit, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, alreadyIssued: true, number: 'AV-2026-0001', creditNoteId: CN } });
+  });
+  it('the period invoice preview says alreadyIssued:true, wouldIssue:false for an id already used', async () => {
+    rlsQueues = { sv_invoices: times({ data: [{ id: INV, number: 'FA-2026-0002', kind: 'period', project_id: PID }] }) };
+    ctx = mkCtx();
+    const r = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, alreadyIssued: true, number: 'FA-2026-0002', invoiceId: INV } });
+    expect(issue.issueInvoice).not.toHaveBeenCalled();
+  });
+
+  const otherPeriod = { id: OTHER, kind: 'period', number: 'FA-2026-0009', periodStart: '2026-10-01', periodEnd: '2026-10-31' };
+  it('refuses a period invoice for the same project and period issued minutes ago under a different id, citing the existing number', async () => {
+    invRead.loadInvoicesForProjects.mockResolvedValue([otherPeriod]);
+    rlsQueues = { 'sv_invoices:single': times({ data: [] }), 'sv_invoices:list': times({ data: [{ id: OTHER, issued_at: ago(5) }] }) };
+    ctx = mkCtx();
+    const first = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    expect(first).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, duplicateOf: { number: 'FA-2026-0009' } } });
+    const r = await confirmTwoStep(tool('issue_period_invoice'), period, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false });
+    expect((r as { error: string }).error).toContain('FA-2026-0009');
+    expect((r as { error: string }).error).toContain('list_project_invoices');
+    expect(issue.issueInvoice).not.toHaveBeenCalled();
+  });
+  it('does not flag an older invoice (15 minutes window), another period, or the same id', async () => {
+    invRead.loadInvoicesForProjects.mockResolvedValue([otherPeriod, { ...otherPeriod, id: 'x2', periodEnd: '2026-09-30' }, { ...otherPeriod, id: INV }]);
+    rlsQueues = { 'sv_invoices:single': times({ data: [] }), 'sv_invoices:list': times({ data: [{ id: OTHER, issued_at: ago(20) }] }) };
+    ctx = mkCtx();
+    const r = await confirmTwoStep(tool('issue_period_invoice'), period, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { issued: true } });
+  });
+  it('refuses a partial credit note with the same amount on the same invoice issued minutes ago under another id', async () => {
+    originQueues({ paid: true });
+    invRead.loadInvoicesForProjects.mockResolvedValue([{ id: ORIGIN, creditNotes: [{ id: OTHER, number: 'AV-2026-0009', totalInclTaxCents: 10000 }] }]);
+    rlsQueues['sv_invoices:list'] = times({ data: [{ id: OTHER, issued_at: ago(3) }] });
+    ctx = mkCtx();
+    const first = await runTool(tool('issue_credit_note'), credit, ctx, principal, audit);
+    expect(first).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, duplicateOf: { number: 'AV-2026-0009' } } });
+    const r = await confirmTwoStep(tool('issue_credit_note'), credit, ctx, principal, audit);
+    expect((r as { error: string }).error).toContain('AV-2026-0009');
+    expect(issue.issueCreditNote).not.toHaveBeenCalled();
+    expect(refund.requestRefundForCreditNote).not.toHaveBeenCalled();
+  });
+  it('does not flag a different amount, an older credit note or a total credit note', async () => {
+    originQueues({ paid: true });
+    invRead.loadInvoicesForProjects.mockResolvedValue([{ id: ORIGIN, creditNotes: [{ id: OTHER, number: 'AV-2026-0009', totalInclTaxCents: 5000 }] }]);
+    rlsQueues['sv_invoices:list'] = times({ data: [{ id: OTHER, issued_at: ago(3) }] });
+    ctx = mkCtx();
+    expect(await confirmTwoStep(tool('issue_credit_note'), credit, ctx, principal, audit)).toMatchObject({ ok: true, data: { issued: true } });
+    originQueues({ paid: true });
+    invRead.loadInvoicesForProjects.mockResolvedValue([{ id: ORIGIN, creditNotes: [{ id: OTHER, number: 'AV-2026-0009', totalInclTaxCents: 10000 }] }]);
+    rlsQueues['sv_invoices:list'] = times({ data: [{ id: OTHER, issued_at: ago(30) }] });
+    ctx = mkCtx();
+    expect(await confirmTwoStep(tool('issue_credit_note'), credit, ctx, principal, audit)).toMatchObject({ ok: true, data: { issued: true } });
+  });
+  it('the descriptions tell the model to check list_project_invoices before retrying with a new id', () => {
+    expect(tool('issue_period_invoice').description).toContain('list_project_invoices');
+    expect(tool('issue_credit_note').description).toContain('list_project_invoices');
+  });
+});
+
+describe('pdf cap, seller stripping and field errors', () => {
+  it('refuses includePdf above 2 MB of base64 and points to the signed url tools', async () => {
+    render.renderLedgerPdf.mockResolvedValue({ buffer: Buffer.alloc(1_600_000) });
+    const r = await runTool(tool('preview_period_invoice'), { ...period, includePdf: true }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false });
+    expect((r as { error: string }).error).toMatch(/2 Mo/);
+    expect((r as { error: string }).error).toMatch(/get_invoice_url/);
+    render.renderLedgerPdf.mockResolvedValue({ buffer: Buffer.alloc(1_400_000) });
+    expect(await runTool(tool('preview_period_invoice'), { ...period, includePdf: true }, ctx, principal, audit)).toMatchObject({ ok: true });
+  });
+  it('the credit note preview applies the same cap', async () => {
+    originQueues({ paid: true });
+    render.renderLedgerPdf.mockResolvedValue({ buffer: Buffer.alloc(1_600_000) });
+    const r = await runTool(tool('preview_credit_note'), { ...credit, includePdf: true }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false });
+  });
+  it('the descriptions say the pdf contains the seller details', () => {
+    expect(tool('preview_period_invoice').description).toMatch(/vendeur/);
+    expect(tool('preview_credit_note').description).toMatch(/vendeur/);
+  });
+  it('get_invoice_data strips seller at any depth in a credit note snapshot', async () => {
+    rlsQueues = { sv_invoices: [{ data: [{ id: ORIGIN, project_id: PID }] }] };
+    ctx = mkCtx();
+    state.adminQueues = {
+      sv_invoices: [{ data: [{ snapshot: { docType: 'credit_note', seller: { iban: 'FR76TOP' }, origin: { number: 'FA-1', seller: { iban: 'FR76NESTED' } }, lines: [{ seller: { iban: 'FR76DEEP' }, totalCents: 1 }] } }] }],
+      sv_invoice_lines: [{ data: [] }],
+    };
+    const r = await runTool(tool('get_invoice_data'), { invoiceId: ORIGIN }, ctx, principal, audit);
+    const json = JSON.stringify(r);
+    for (const secret of ['FR76TOP', 'FR76NESTED', 'FR76DEEP', 'seller']) expect(json).not.toContain(secret);
+    expect(json).toContain('FA-1');
+  });
+  it('validation refusals carry fieldErrors in the tool result', async () => {
+    const r = await runTool(tool('preview_period_invoice'), { ...period, periodEnd: '2026-09-01' }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: COPY.period.validationSummary, fieldErrors: { periodEnd: expect.any(String) } });
   });
 });

@@ -366,6 +366,8 @@ export async function previewCreditNoteCore(ctx: AdminCtx, raw: unknown): Promis
 
 export type CreditIssued = {
   ok: true;
+  /** 'already_issued' : rejeu d'un creditNoteId déjà émis ; aucun effet Stripe n'est rejoué. */
+  outcome: 'issued' | 'already_issued';
   tone: 'success' | 'warning';
   message: string;
   number: string;
@@ -373,12 +375,67 @@ export type CreditIssued = {
   projectId: string;
   originNumber: string;
   refundRequested: boolean;
-  totals: LedgerTotals;
+  totals: LedgerTotals | null;
 };
+
+export type ExistingCreditNote = { number: string; creditNoteId: string; originNumber: string; projectId: string };
+
+/**
+ * Avoir déjà émis sous ce creditNoteId pour cette facture d'origine (rejeu). Lecture RLS ; null si l'identifiant
+ * est absent ou inconnu, ou s'il désigne autre chose qu'un avoir de cette facture.
+ */
+export async function findIssuedCreditNoteCore(ctx: AdminCtx, raw: unknown): Promise<ExistingCreditNote | null> {
+  const parsed = creditNoteSchema.safeParse(raw);
+  if (!parsed.success || !parsed.data.creditNoteId) return null;
+  const row = await ctx.supabase
+    .from('sv_invoices')
+    .select('id, number, kind, credits_invoice_id, project_id')
+    .eq('id', parsed.data.creditNoteId)
+    .maybeSingle();
+  const d = row.data as { id?: string; number?: string; kind?: string; credits_invoice_id?: string; project_id?: string } | null;
+  if (row.error || !d || d.kind !== 'credit_note' || String(d.credits_invoice_id) !== parsed.data.originInvoiceId) return null;
+  const origin = await ctx.supabase.from('sv_invoices').select('number').eq('id', parsed.data.originInvoiceId).maybeSingle();
+  return {
+    number: String(d.number),
+    creditNoteId: String(d.id),
+    originNumber: String((origin.data as { number?: string } | null)?.number ?? ''),
+    projectId: String(d.project_id),
+  };
+}
+
+export type ExistingInvoice = { number: string; invoiceId: string; projectId: string };
+
+/** Facture (hors avoir) déjà émise sous cet identifiant. Lecture RLS. */
+export async function findIssuedInvoiceCore(ctx: AdminCtx, raw: unknown): Promise<ExistingInvoice | null> {
+  const id = rec(raw).invoiceId;
+  if (typeof id !== 'string' || !uuidRe.test(id)) return null;
+  const row = await ctx.supabase.from('sv_invoices').select('id, number, kind, project_id').eq('id', id).maybeSingle();
+  const d = row.data as { id?: string; number?: string; kind?: string; project_id?: string } | null;
+  if (row.error || !d || d.kind === 'credit_note') return null;
+  return { number: String(d.number), invoiceId: String(d.id), projectId: String(d.project_id) };
+}
 
 export async function issueCreditNoteCore(ctx: AdminCtx, raw: unknown): Promise<CreditIssued | BillFail> {
   const prep = await prepareCreditNoteCore(ctx, raw);
-  if (!prep.ok) return prep;
+  if (!prep.ok) {
+    // Rejeu d'un avoir déjà émis : après un avoir total réussi le plafond répondrait « déjà crédité ». Le même
+    // creditNoteId désigne la même émission : on renvoie le numéro existant, sans rien rejouer (ni remboursement
+    // ni expiration de paiements). Lecture seulement sur le chemin d'échec : le chemin nominal est inchangé.
+    const existing = await findIssuedCreditNoteCore(ctx, raw);
+    if (!existing) return prep;
+    return {
+      ok: true,
+      outcome: 'already_issued',
+      tone: 'success',
+      message: PAY.credit.success(existing.number, existing.originNumber),
+      number: existing.number,
+      creditNoteId: existing.creditNoteId,
+      projectId: existing.projectId,
+      originNumber: existing.originNumber,
+      refundRequested: false,
+      totals: null,
+    };
+  }
 
   const res = await issueCreditNote({ ...prep.args, id: prep.id, issueKey: 'credit:' + prep.id });
   if (!res.ok) {
@@ -386,6 +443,21 @@ export async function issueCreditNoteCore(ctx: AdminCtx, raw: unknown): Promise<
     return { ok: false, message: PAY.credit.error };
   }
   const base = PAY.credit.success(res.number, prep.load.origin.number);
+  if (res.outcome === 'already_issued') {
+    // Course : l'avoir existait déjà côté base. Les effets Stripe ont été appliqués à la première émission.
+    return {
+      ok: true,
+      outcome: 'already_issued',
+      tone: 'success',
+      message: base,
+      number: res.number,
+      creditNoteId: res.creditNoteId,
+      projectId: prep.load.projectId,
+      originNumber: prep.load.origin.number,
+      refundRequested: prep.refund,
+      totals: totalsOf(prep.args.snapshot),
+    };
+  }
   let tone: 'success' | 'warning' = 'success';
   let message = base;
 
@@ -402,6 +474,7 @@ export async function issueCreditNoteCore(ctx: AdminCtx, raw: unknown): Promise<
   if (!prep.load.paid) await expireOpenPayments(prep.load.origin.id);
   return {
     ok: true,
+    outcome: 'issued',
     tone,
     message,
     number: res.number,

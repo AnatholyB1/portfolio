@@ -236,3 +236,20 @@ describe('preview token contract', () => {
     expect(describeTool(safe)).toBe('d');
   });
 });
+
+describe('runTool refusals carry field errors', () => {
+  it('keeps fieldErrors from a core refusal in the error result', async () => {
+    const t = defineTool({
+      name: 'fe', description: 'd', covers: [], input: z.object({}),
+      run: async () => ({ ok: false, message: 'Validation.', fieldErrors: { lines: 'Ajoutez une ligne.' } }),
+    });
+    expect(await runTool(t, {}, ctx, principal, audit)).toEqual({ ok: false, error: 'Validation.', fieldErrors: { lines: 'Ajoutez une ligne.' } });
+  });
+  it('ignores malformed fieldErrors', async () => {
+    const t = defineTool({
+      name: 'fe2', description: 'd', covers: [], input: z.object({}),
+      run: async () => ({ ok: false, message: 'Validation.', fieldErrors: 'nope' }),
+    });
+    expect(await runTool(t, {}, ctx, principal, audit)).toEqual({ ok: false, error: 'Validation.' });
+  });
+});

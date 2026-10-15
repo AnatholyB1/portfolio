@@ -217,12 +217,31 @@ export async function sealedDownloadCore(ctx: AdminCtx, input: unknown): Promise
   return res.ok ? { ok: true, message: '', data: { url: res.url } } : failed;
 }
 
-export async function resumeFinalizationCore(ctx: AdminCtx, input: unknown): Promise<CoreResult<{ projectId: string }>> {
+export async function resumeFinalizationCore(
+  ctx: AdminCtx,
+  input: unknown,
+): Promise<CoreResult<{ projectId: string; outcome: 'sealed' | 'already_sealed' }>> {
   const id = docIdOf(input);
   if (!id) return { ok: false, message: GENERIC };
   const doc = await ctx.supabase.from('sv_project_documents').select('project_id').eq('id', id).maybeSingle();
   if (doc.error || !doc.data) return { ok: false, message: GENERIC };
   const res = await finalizeSignature(id);
   if (!res.ok) return { ok: false, message: GENERIC };
-  return { ok: true, message: '', data: { projectId: String((doc.data as { project_id: unknown }).project_id) } };
+  return {
+    ok: true,
+    message: '',
+    data: { projectId: String((doc.data as { project_id: unknown }).project_id), outcome: res.outcome },
+  };
+}
+
+export type ExistingDocument = { documentId: string; reference: string; revision: number };
+
+/** Document déjà émis sous cet identifiant (rejeu). Lecture RLS ; null si inconnu ou identifiant mal formé. */
+export async function findIssuedDocumentCore(ctx: AdminCtx, input: unknown): Promise<ExistingDocument | null> {
+  const id = docIdOf(input);
+  if (!id) return null;
+  const row = await ctx.supabase.from('sv_project_documents').select('id, reference, revision').eq('id', id).maybeSingle();
+  const d = row.data as { id?: string; reference?: string; revision?: number } | null;
+  if (row.error || !d) return null;
+  return { documentId: String(d.id ?? id), reference: String(d.reference), revision: Number(d.revision) };
 }

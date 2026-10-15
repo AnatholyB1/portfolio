@@ -19,3 +19,32 @@ export function maskPhone(phone: unknown): string {
   const digits = phone.replace(/\D/g, '');
   return digits.length < 4 ? '***' : `***${digits.slice(-2)}`;
 }
+
+const IPV4 = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/;
+
+/** 203.0.x.x (IPv4) ou 2001:db8:abcd::/48 (IPv6). null si ce n'est pas une adresse ; ne renvoie jamais l'entrée. */
+export function maskIp(ip: unknown): string | null {
+  if (typeof ip !== 'string') return null;
+  const value = ip.trim();
+  const v4 = IPV4.exec(value) ?? IPV4.exec(value.replace(/^::ffff:/i, ''));
+  if (v4) return `${v4[1]}.${v4[2]}.x.x`;
+  if (!/^[0-9a-f:]+$/i.test(value) || !value.includes(':')) return null;
+  const groups = value.split(':');
+  const lead: string[] = [];
+  for (const g of groups) {
+    if (g === '') break;
+    lead.push(g);
+    if (lead.length === 3) break;
+  }
+  return lead.length === 0 ? null : `${lead.join(':')}::/48`;
+}
+
+/** « Jean Dupont » devient « J. D. » ; « Marie » devient « M. ». null si vide. */
+export function maskName(name: unknown): string | null {
+  if (typeof name !== 'string') return null;
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return null;
+  const initial = (w: string) => `${Array.from(w.replace(/^[^\p{L}\p{N}]+/u, ''))[0] ?? ''}.`;
+  const first = initial(words[0]);
+  return words.length === 1 ? first : `${first} ${initial(words[words.length - 1])}`;
+}

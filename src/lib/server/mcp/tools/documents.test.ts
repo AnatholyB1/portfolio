@@ -15,6 +15,7 @@ const seal = vi.hoisted(() => ({ finalizeSignature: vi.fn() }));
 const projects = vi.hoisted(() => ({ loadProjectBundle: vi.fn() }));
 const docView = vi.hoisted(() => ({ loadAdminDocumentsView: vi.fn() }));
 const sigView = vi.hoisted(() => ({ loadSignatureViews: vi.fn() }));
+const invRead = vi.hoisted(() => ({ loadInvoicesForProjects: vi.fn() }));
 vi.mock('@/lib/server/projects/access', () => access);
 vi.mock('@/lib/server/documents/prepare', () => prepare);
 vi.mock('@/lib/server/documents/render', () => render);
@@ -27,6 +28,7 @@ vi.mock('@/lib/server/signature/seal', () => seal);
 vi.mock('@/lib/server/projects/read', () => projects);
 vi.mock('@/lib/server/documents/adminView', () => docView);
 vi.mock('@/lib/server/signature/adminView', () => sigView);
+vi.mock('@/lib/server/invoices/read', () => invRead);
 
 import { documentTools } from './documents';
 
@@ -96,7 +98,9 @@ beforeEach(() => {
     ...Object.values(projects),
     ...Object.values(docView),
     ...Object.values(sigView),
+    ...Object.values(invRead),
   ]) f.mockReset();
+  invRead.loadInvoicesForProjects.mockResolvedValue([]);
   ctx = makeCtx();
   sigView.loadSignatureViews.mockResolvedValue(new Map());
   access.getAccessibleProject.mockResolvedValue({ id: PID, clientId: 'c1' });
@@ -151,6 +155,9 @@ describe('preview_document', () => {
 });
 
 describe('issue_document', () => {
+  beforeEach(() => {
+    ctx = makeCtx(null);
+  });
   it('without confirm never issues; the preview runs the issue-mode checks and shows what would be issued', async () => {
     const r = await runTool(tool('issue_document'), quoteArgs, ctx, principal, audit);
     expect(issue.issueDocument).not.toHaveBeenCalled();
@@ -317,6 +324,9 @@ describe('list_project_documents', () => {
 });
 
 describe('preview token binds the confirmation', () => {
+  beforeEach(() => {
+    ctx = makeCtx(null);
+  });
   it('confirm without a token is invalid_input and issues nothing', async () => {
     expect(await runTool(tool('issue_document'), { ...quoteArgs, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
     expect(await runTool(tool('resume_signature_finalization'), { documentId: DID, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
@@ -329,5 +339,111 @@ describe('preview token binds the confirmation', () => {
     const r = await runTool(tool('issue_document'), { ...quoteArgs, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
     expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
     expect(issue.issueDocument).not.toHaveBeenCalled();
+  });
+});
+
+describe('document replays, caps and masking (review)', () => {
+  it('the issue preview says alreadyIssued:true, wouldIssue:false for a documentId already used', async () => {
+    ctx = makeCtx({ id: DID, reference: 'DEV-2026-1', revision: 2 });
+    const r = await runTool(tool('issue_document'), quoteArgs, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, alreadyIssued: true, documentId: DID, reference: 'DEV-2026-1', revision: 2 } });
+    expect(issue.issueDocument).not.toHaveBeenCalled();
+  });
+  it('an already_issued outcome from the issuer is reported as issued:false', async () => {
+    ctx = makeCtx(null);
+    issue.issueDocument.mockResolvedValue({ ok: true, outcome: 'already_issued', documentId: DID, mail: 'none' });
+    const r = await confirmTwoStep(tool('issue_document'), quoteArgs, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { issued: false, outcome: 'already_issued', documentId: DID } });
+  });
+  it('the description states the upload_failed exception to reusing documentId', () => {
+    const d = tool('issue_document').description;
+    expect(d).toContain('upload_failed');
+    expect(d).toMatch(/nouveau documentId/);
+  });
+  it('preview_document refuses includePdf above 2 MB and says the pdf contains seller details', async () => {
+    render.renderDocument.mockResolvedValue({ buffer: Buffer.alloc(1_600_000) });
+    const r = await runTool(tool('preview_document'), { ...quoteArgs, includePdf: true }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false });
+    expect((r as { error: string }).error).toMatch(/get_document_url/);
+    expect(tool('preview_document').description).toMatch(/vendeur/);
+  });
+  it('preview validation refusals carry fieldErrors', async () => {
+    const r = await runTool(tool('preview_document'), { ...quoteArgs, lines: [] }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: DOC.validationSummary, fieldErrors: { lines: expect.any(String) } });
+  });
+  it('get_document_snapshot strips seller at any depth', async () => {
+    read.loadDocumentSnapshot.mockResolvedValue({ ...quoteSnapshot, quote: { reference: 'D', seller: { iban: 'FR76NESTED' } }, lines: [{ seller: { iban: 'FR76DEEP' }, totalCents: 1 }] });
+    const r = await runTool(tool('get_document_snapshot'), { documentId: DID }, ctx, principal, audit);
+    const json = JSON.stringify(r);
+    for (const secret of ['FR76SECRET', 'FR76NESTED', 'FR76DEEP', 'seller']) expect(json).not.toContain(secret);
+  });
+  it('list_project_documents masks the signer ip and the trail ips', async () => {
+    projects.loadProjectBundle.mockResolvedValue({ project: { id: PID } });
+    docView.loadAdminDocumentsView.mockResolvedValue({
+      expected: [],
+      issued: [{ id: DID, docType: 'contract', revision: 1, issuedAt: 'x', status: 'signed', templateVersion: 'v2', sha256: 'abc', sizeBytes: 10, replacedBy: null }],
+      activeQuote: null,
+      activeSpec: null,
+      parties: { clientName: 'ACME SAS', signatory: 'Jean, Gérant', offerLabel: 'Site' },
+    });
+    sigView.loadSignatureViews.mockResolvedValue(
+      new Map([
+        [
+          DID,
+          {
+            eventCount: 1,
+            events: [{ seq: 1, label: 'Document ouvert', actorKind: 'client', ip: '203.0.113.77', occurredAtUtc: 'u', extra: 'raw' }],
+            signature: { signerName: 'Jean', signerRole: 'Gérant', signerEmail: 'jean@acme.fr', signedAt: 'a', signedAtUtc: 'u', ip: '2001:db8:abcd:1::7', consentVersion: 'v1', signedLinkHash: 'LINK' },
+            seal: null,
+            pendingFinalization: true,
+            reserves: [],
+            refusal: null,
+          },
+        ],
+      ]),
+    );
+    const r = await runTool(tool('list_project_documents'), { projectId: PID }, ctx, principal, audit);
+    const json = JSON.stringify(r);
+    expect(json).toContain('203.0.x.x');
+    expect(json).toContain('2001:db8:abcd::/48');
+    expect(json).not.toContain('203.0.113.77');
+    expect(json).not.toContain('2001:db8:abcd:1::7');
+    expect(json).not.toContain('raw');
+  });
+});
+
+describe('resume_signature_finalization real outcome', () => {
+  const docRow = { project_id: PID, doc_type: 'contract', reference: 'CTR-1', revision: 1 };
+  it('reports sealed and the automatically issued deposit invoice with its number', async () => {
+    ctx = makeCtx(docRow);
+    seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
+    invRead.loadInvoicesForProjects
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ id: 'inv-1', kind: 'deposit', number: 'FA-2026-0007' }]);
+    const r = await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit);
+    expect(r).toMatchObject({
+      ok: true,
+      data: { resumed: true, outcome: 'sealed', expectedAutoInvoice: 'deposit', autoIssuedInvoices: [{ number: 'FA-2026-0007', kind: 'deposit' }] },
+    });
+  });
+  it('reports already_sealed with no new invoice', async () => {
+    ctx = makeCtx(docRow);
+    seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'already_sealed' });
+    const r = await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { resumed: true, outcome: 'already_sealed', autoIssuedInvoices: [] } });
+  });
+  it('says unknown when the invoice list cannot be read', async () => {
+    ctx = makeCtx(docRow);
+    seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
+    invRead.loadInvoicesForProjects.mockRejectedValue(new Error('x'));
+    const r = await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: true, data: { resumed: true, outcome: 'sealed', autoIssuedInvoices: null } });
+  });
+  it('an acceptance document expects the final invoice, other types none', async () => {
+    ctx = makeCtx({ ...docRow, doc_type: 'acceptance' });
+    seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
+    expect(await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit)).toMatchObject({ data: { expectedAutoInvoice: 'final' } });
+    ctx = makeCtx({ ...docRow, doc_type: 'quote' });
+    expect(await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit)).toMatchObject({ data: { expectedAutoInvoice: null } });
   });
 });

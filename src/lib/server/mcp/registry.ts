@@ -117,7 +117,7 @@ function isCoreRefusal(v: unknown): v is { ok: false; message: string } {
 export type ToolResult =
   | { ok: true; data: unknown }
   | { ok: true; needsConfirmation: true; preview: unknown; previewToken: string }
-  | { ok: false; error: string; message?: string };
+  | { ok: false; error: string; message?: string; fieldErrors?: Record<string, string> };
 
 // Garde-fous (à lire avant de modifier) :
 // - Confirmation liée à un aperçu : un outil destructif appelé sans confirm renvoie { preview, previewToken } ;
@@ -194,7 +194,9 @@ export async function runTool<S extends z.ZodObject>(
     // Refus métier d'un core ({ ok:false, message }) : ce n'est pas un succès, même sans exception.
     if (isCoreRefusal(data)) {
       await safeAudit({ ...base, argsDigest, outcome: 'error' });
-      return { ok: false, error: data.message };
+      const fieldErrors = (data as { fieldErrors?: unknown }).fieldErrors;
+      const valid = fieldErrors && typeof fieldErrors === 'object' && !Array.isArray(fieldErrors) && Object.values(fieldErrors).every((x) => typeof x === 'string');
+      return { ok: false, error: data.message, ...(valid ? { fieldErrors: fieldErrors as Record<string, string> } : {}) };
     }
     await safeAudit({ ...base, argsDigest, outcome: 'ok' });
     return { ok: true, data };

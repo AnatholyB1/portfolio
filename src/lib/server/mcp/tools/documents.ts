@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   downloadDocumentCore,
   exportSignatureTrailCore,
+  findIssuedDocumentCore,
   issueDocumentCore,
   loadSnapshotCore,
   prepareDocumentCore,
@@ -15,9 +16,12 @@ import {
 import type { SignatureView } from '@/components/admin/projects/documents/types';
 import type { DocumentSnapshot } from '@/lib/documents/types';
 import { loadAdminDocumentsView } from '@/lib/server/documents/adminView';
+import { loadInvoicesForProjects } from '@/lib/server/invoices/read';
 import { loadProjectBundle } from '@/lib/server/projects/read';
 import { loadSignatureViews } from '@/lib/server/signature/adminView';
-import { maskEmail } from '../mask';
+import { maskEmail, maskIp } from '../mask';
+import { pdfTooLarge, pdfTooLargeMessage } from '../pdf';
+import { stripSeller } from '../redact';
 import { defineTool, type ToolDef } from '../registry';
 
 const documentId = z.string().uuid();
@@ -116,21 +120,18 @@ function summarize(snapshot: DocumentSnapshot) {
   }
 }
 
-function withoutSeller<T extends object>(snapshot: T): Omit<T, 'seller'> {
-  const { seller: _seller, ...rest } = snapshot as T & { seller?: unknown };
-  void _seller;
-  return rest;
-}
-
 const previewDocument = defineTool({
   name: 'preview_document',
   description:
-    "Aperçu d'un document (devis, cahier des charges, contrat, PV de recette, facture proforma) sans rien émettre : applique les mêmes contrôles que l'aperçu web et renvoie un résumé (montants, référence, révision). includePdf: true ajoute le PDF en base64.",
+    "Aperçu d'un document (devis, cahier des charges, contrat, PV de recette, facture proforma) sans rien émettre : applique les mêmes contrôles que l'aperçu web et renvoie un résumé (montants, référence, révision). includePdf: true ajoute le PDF en base64 (2 Mo maximum ; il contient l'identité et les coordonnées bancaires du vendeur).",
   covers: ['previewDocumentAction'],
   input: z.object({ ...documentFields, includePdf: z.boolean().default(false) }),
   run: async (ctx, input) => {
     const res = await previewDocumentCore(ctx, coreInput(input as Record<string, unknown>));
     if (!res.ok) return res;
+    if ((input as DocInput).includePdf && pdfTooLarge(res.pdfBase64)) {
+      return { ok: false, message: pdfTooLargeMessage('get_document_url') };
+    }
     return {
       summary: summarize(res.snapshot),
       replacesPreviousRevision: res.replaces !== null,
@@ -144,11 +145,22 @@ const previewDocument = defineTool({
 const issueDocument = defineTool({
   name: 'issue_document',
   description:
-    "Émet un document (devis, cahier des charges, contrat ou PV de recette ; pas les factures) : fige le PDF, remplace la révision précédente le cas échéant et peut prévenir le client par e-mail. Mêmes champs que preview_document. Sans confirm, renvoie ce qui serait émis ; avec confirm: true, refait tous les contrôles puis émet et renvoie documentId et référence. documentId sert de clé d'idempotence : le réutiliser pour un nouvel essai.",
+    "Émet un document (devis, cahier des charges, contrat ou PV de recette ; pas les factures) : fige le PDF, remplace la révision précédente le cas échéant et peut prévenir le client par e-mail. Mêmes champs que preview_document. Sans confirm, renvoie ce qui serait émis ; avec confirm: true, refait tous les contrôles puis émet et renvoie documentId et référence. documentId sert de clé d'idempotence : le réutiliser pour tout nouvel essai du même envoi, SAUF après un échec upload_failed (le fichier peut subsister dans le stockage sans ligne de document : générer alors un nouveau documentId).",
   covers: ['issueDocumentAction'],
   destructive: true,
   input: z.object(documentFields),
   preview: async (ctx, input) => {
+    const used = await findIssuedDocumentCore(ctx, input);
+    if (used) {
+      return {
+        wouldIssue: false,
+        alreadyIssued: true,
+        documentId: used.documentId,
+        reference: used.reference,
+        revision: used.revision,
+        message: 'Ce documentId a déjà servi : le document existe déjà, rien ne sera émis.',
+      };
+    }
     // Mêmes contrôles que l'émission confirmée (mode 'issue').
     const prep = await prepareDocumentCore(ctx, coreInput(input as Record<string, unknown>), 'issue');
     if (!prep.ok) {
@@ -252,21 +264,40 @@ const resumeSignatureFinalization = defineTool({
     };
   },
   run: async (ctx, input) => {
+    const doc = await ctx.supabase.from('sv_project_documents').select('project_id, doc_type').eq('id', input.documentId).maybeSingle();
+    const row = doc.data as { project_id?: string; doc_type?: string } | null;
+    const invoiceIds = async (): Promise<Map<string, { number: string; kind: string }> | null> => {
+      if (!row?.project_id) return null;
+      try {
+        return new Map((await loadInvoicesForProjects(ctx.supabase, [row.project_id])).map((v) => [v.id, { number: v.number, kind: v.kind }]));
+      } catch {
+        return null;
+      }
+    };
+    const before = await invoiceIds();
     const res = await resumeFinalizationCore(ctx, input);
     if (!res.ok) return res;
-    return { resumed: true };
+    const after = await invoiceIds();
+    return {
+      resumed: true,
+      outcome: res.data!.outcome,
+      // Contrat signé -> facture d'acompte ; PV de recette signé -> facture finale (au mieux, le cron reprend sinon).
+      expectedAutoInvoice: row?.doc_type === 'contract' ? 'deposit' : row?.doc_type === 'acceptance' ? 'final' : null,
+      autoIssuedInvoices:
+        before && after ? [...after].filter(([id]) => !before.has(id)).map(([id, v]) => ({ id, number: v.number, kind: v.kind })) : null,
+    };
   },
 });
 
 const getDocumentSnapshot = defineTool({
   name: 'get_document_snapshot',
-  description: "Lit l'instantané figé d'un document émis (lignes, montants, parties) ; l'identité du vendeur est retirée.",
+  description: "Lit l'instantané figé d'un document émis (lignes, montants, parties) ; l'identité du vendeur est retirée à toute profondeur.",
   covers: ['loadSnapshotAction'],
   input: z.object({ documentId }),
   run: async (ctx, input) => {
     const res = await loadSnapshotCore(ctx, input);
     if (!res.ok) return res;
-    return { snapshot: withoutSeller(res.data!.snapshot) };
+    return { snapshot: stripSeller(res.data!.snapshot) };
   },
 });
 
@@ -301,14 +332,21 @@ const listProjectDocuments = defineTool({
                 signerRole: s.signature.signerRole,
                 signerEmail: maskEmail(s.signature.signerEmail),
                 signedAtUtc: s.signature.signedAtUtc,
-                ip: s.signature.ip,
+                ip: maskIp(s.signature.ip),
                 consentVersion: s.signature.consentVersion,
               }
             : null,
           seal: s?.seal ?? null,
           pendingFinalization: s?.pendingFinalization ?? false,
           eventCount: s?.eventCount ?? 0,
-          events: s?.events ?? [],
+          // Colonnes du tableau d'historique de la page (adresse IP masquée), rien de plus.
+          events: (s?.events ?? []).map((e) => ({
+            seq: e.seq,
+            label: e.label,
+            actorKind: e.actorKind,
+            ip: maskIp(e.ip),
+            occurredAtUtc: e.occurredAtUtc,
+          })),
           reserves: s?.reserves ?? [],
           refusal: s?.refusal ?? null,
         };

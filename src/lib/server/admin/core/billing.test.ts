@@ -38,6 +38,8 @@ vi.mock('@/lib/supabase/admin', () => ({ createSupabaseAdminClient: () => fakeDb
 
 import {
   downloadInvoiceCore,
+  findIssuedCreditNoteCore,
+  findIssuedInvoiceCore,
   issueCreditNoteCore,
   issuePeriodInvoiceCore,
   loadInvoiceDataCore,
@@ -321,5 +323,66 @@ describe('invoice download, hash and frozen data', () => {
     state.adminQueues = { sv_invoices: [{ data: [{ snapshot: {} }] }] };
     expect(await loadInvoiceDataCore(ctx, { invoiceId: ORIGIN })).toEqual({ ok: false, message: GENERIC });
     expect(state.adminQueues.sv_invoices).toHaveLength(1);
+  });
+});
+
+describe('credit note replays (review I-1)', () => {
+  const existing = { id: CN, number: 'AV-2026-0001', kind: 'credit_note', credits_invoice_id: ORIGIN, project_id: PID };
+  it('findIssuedCreditNoteCore recognises a credit note already issued under the same id for the same origin', async () => {
+    rlsQueues = { sv_invoices: [{ data: [existing] }, { data: [{ number: 'FA-2026-0001' }] }] };
+    ctx = mkCtx();
+    expect(await findIssuedCreditNoteCore(ctx, credit)).toEqual({ number: 'AV-2026-0001', creditNoteId: CN, originNumber: 'FA-2026-0001', projectId: PID });
+  });
+  it('ignores an unknown id, a non credit-note row, another origin and a missing creditNoteId', async () => {
+    rlsQueues = { sv_invoices: [{ data: [] }] };
+    ctx = mkCtx();
+    expect(await findIssuedCreditNoteCore(ctx, credit)).toBeNull();
+    rlsQueues = { sv_invoices: [{ data: [{ ...existing, kind: 'deposit' }] }] };
+    ctx = mkCtx();
+    expect(await findIssuedCreditNoteCore(ctx, credit)).toBeNull();
+    rlsQueues = { sv_invoices: [{ data: [{ ...existing, credits_invoice_id: INV }] }] };
+    ctx = mkCtx();
+    expect(await findIssuedCreditNoteCore(ctx, credit)).toBeNull();
+    const { creditNoteId: _c, ...noId } = credit;
+    void _c;
+    expect(await findIssuedCreditNoteCore(ctx, noId)).toBeNull();
+  });
+  it('a replay of a successful total credit returns the existing number instead of over-credit, with no Stripe effect and no new issuance', async () => {
+    originQueues({ paid: true });
+    rlsQueues.sv_invoices.push({ data: [existing] }, { data: [{ number: 'FA-2026-0001' }] });
+    ctx = mkCtx();
+    ictx.loadInvoiceContext.mockResolvedValue({ ...invoiceCtx, invoices: [{ ...invoiceCtx.invoices[0], creditedCents: 30000 }] });
+    const r = await issueCreditNoteCore(ctx, credit);
+    expect(r).toMatchObject({ ok: true, outcome: 'already_issued', number: 'AV-2026-0001', creditNoteId: CN, originNumber: 'FA-2026-0001', projectId: PID });
+    expect(r.ok && r.message).toBe(COPY.credit.success('AV-2026-0001', 'FA-2026-0001'));
+    expect(issue.issueCreditNote).not.toHaveBeenCalled();
+    expect(refund.requestRefundForCreditNote).not.toHaveBeenCalled();
+    expect(refund.expireOpenPayments).not.toHaveBeenCalled();
+  });
+  it('an over-credit with an unknown creditNoteId is still the over-credit refusal', async () => {
+    originQueues({ paid: true });
+    ictx.loadInvoiceContext.mockResolvedValue({ ...invoiceCtx, invoices: [{ ...invoiceCtx.invoices[0], creditedCents: 30000 }] });
+    expect(await issueCreditNoteCore(ctx, credit)).toEqual({ ok: false, message: COPY.credit.overCredit });
+  });
+  it('a race where the rpc reports already_issued skips the Stripe effects too', async () => {
+    originQueues({ paid: true });
+    issue.issueCreditNote.mockResolvedValue({ ok: true, outcome: 'already_issued', creditNoteId: CN, number: 'AV-2026-0001', fullyCredited: true, mail: 'none', pdf: 'attached' });
+    const r = await issueCreditNoteCore(ctx, credit);
+    expect(r).toMatchObject({ ok: true, outcome: 'already_issued', number: 'AV-2026-0001' });
+    expect(refund.requestRefundForCreditNote).not.toHaveBeenCalled();
+    expect(refund.expireOpenPayments).not.toHaveBeenCalled();
+  });
+  it('a fresh issuance reports outcome issued', async () => {
+    originQueues({ paid: true });
+    expect(await issueCreditNoteCore(ctx, credit)).toMatchObject({ ok: true, outcome: 'issued' });
+  });
+  it('findIssuedInvoiceCore recognises an invoice already issued under the id', async () => {
+    rlsQueues = { sv_invoices: [{ data: [{ id: INV, number: 'FA-2026-0002', kind: 'period', project_id: PID }] }] };
+    ctx = mkCtx();
+    expect(await findIssuedInvoiceCore(ctx, { invoiceId: INV })).toEqual({ number: 'FA-2026-0002', invoiceId: INV, projectId: PID });
+    rlsQueues = { sv_invoices: [{ data: [] }] };
+    ctx = mkCtx();
+    expect(await findIssuedInvoiceCore(ctx, { invoiceId: INV })).toBeNull();
+    expect(await findIssuedInvoiceCore(ctx, { invoiceId: 'nope' })).toBeNull();
   });
 });

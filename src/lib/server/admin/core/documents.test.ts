@@ -22,6 +22,7 @@ vi.mock('@/lib/server/signature/seal', () => seal);
 
 import {
   exportSignatureTrailCore,
+  findIssuedDocumentCore,
   issueDocumentCore,
   loadSnapshotCore,
   prepareDocumentCore,
@@ -235,8 +236,16 @@ describe('signature trail', () => {
 describe('resumeFinalizationCore', () => {
   it('finalizes and returns the project id for revalidation', async () => {
     seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
-    expect(await resumeFinalizationCore(rowCtx({ project_id: PID }), { documentId: DID })).toEqual({ ok: true, message: '', data: { projectId: PID } });
+    expect(await resumeFinalizationCore(rowCtx({ project_id: PID }), { documentId: DID })).toEqual({
+      ok: true,
+      message: '',
+      data: { projectId: PID, outcome: 'sealed' },
+    });
     expect(seal.finalizeSignature).toHaveBeenCalledWith(DID);
+  });
+  it('reports already_sealed when the seal existed', async () => {
+    seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'already_sealed' });
+    expect(await resumeFinalizationCore(rowCtx({ project_id: PID }), { documentId: DID })).toMatchObject({ ok: true, data: { outcome: 'already_sealed' } });
   });
   it('never finalizes an unreadable document or with a bad id; maps failure to generic', async () => {
     expect(await resumeFinalizationCore(rowCtx(null), { documentId: DID })).toEqual({ ok: false, message: GENERIC });
@@ -244,5 +253,17 @@ describe('resumeFinalizationCore', () => {
     expect(seal.finalizeSignature).not.toHaveBeenCalled();
     seal.finalizeSignature.mockResolvedValue({ ok: false, code: 'not_signed' });
     expect(await resumeFinalizationCore(rowCtx({ project_id: PID }), { documentId: DID })).toEqual({ ok: false, message: GENERIC });
+  });
+});
+
+describe('findIssuedDocumentCore', () => {
+  it('recognises a document already issued under the id (read through RLS)', async () => {
+    const c = rowCtx({ id: DID, reference: 'DEV-1', revision: 2, doc_type: 'quote' });
+    expect(await findIssuedDocumentCore(c, { documentId: DID })).toEqual({ documentId: DID, reference: 'DEV-1', revision: 2 });
+    expect(c.from).toHaveBeenCalledWith('sv_project_documents');
+  });
+  it('returns null for an unknown or malformed id', async () => {
+    expect(await findIssuedDocumentCore(rowCtx(null), { documentId: DID })).toBeNull();
+    expect(await findIssuedDocumentCore(rowCtx({ id: DID }), { documentId: 'x' })).toBeNull();
   });
 });
