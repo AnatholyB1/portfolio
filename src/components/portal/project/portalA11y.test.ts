@@ -58,9 +58,10 @@ describe('F-C4 onboarding errors are announced', () => {
 });
 
 describe('F-C5 legal form', () => {
-  it('does not show the raw INSEE code (no label table in the repository)', () => {
-    expect(onboarding).not.toContain('forme_juridique_code');
-    expect(onboarding).not.toContain('<dt>Forme juridique</dt>');
+  it('shows the legal form as a label, never the raw INSEE code', () => {
+    expect(onboarding).toContain('<dt>Forme juridique</dt>');
+    expect(onboarding).toContain('legalFormLabel(company.forme_juridique_code)');
+    expect(onboarding).not.toContain('{company.forme_juridique_code}');
   });
 });
 
