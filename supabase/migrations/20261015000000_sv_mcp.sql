@@ -38,3 +38,8 @@ create unique index if not exists sv_mcp_audit_preview_jti_uq on public.sv_mcp_a
 -- service_role : ne pas dépendre des default privileges. Audit en ajout seul.
 grant select, insert, update on public.sv_mcp_tokens to service_role;
 grant select, insert on public.sv_mcp_audit to service_role;
+-- Les default privileges de Supabase donnent ALL à service_role sur toute nouvelle table :
+-- le grant ci-dessus s'y ajoute sans rien retirer. On retire donc explicitement le reste
+-- pour que l'audit soit réellement en ajout seul et que les jetons ne soient jamais supprimés.
+revoke update, delete, truncate, references, trigger on public.sv_mcp_audit from service_role;
+revoke delete, truncate, references, trigger on public.sv_mcp_tokens from service_role;
