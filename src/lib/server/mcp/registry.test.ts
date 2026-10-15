@@ -253,3 +253,94 @@ describe('runTool refusals carry field errors', () => {
     expect(await runTool(t, {}, ctx, principal, audit)).toEqual({ ok: false, error: 'Validation.' });
   });
 });
+
+describe('single-use preview tokens', () => {
+  const run = vi.fn(async (_c: unknown, i: { id: string }) => ({ erased: i.id }));
+  const t1 = defineTool({
+    name: 'once', description: 'd', covers: [], destructive: true,
+    input: z.object({ id: z.string() }),
+    preview: async (_c, i) => ({ willErase: i.id }),
+    run,
+  });
+  // Journal d'audit simulé avec l'index unique partiel (preview_jti) sur les lignes « attempt ».
+  const claimed = new Set<string>();
+  const dbAudit = vi.fn(async (e: { outcome: string; previewJti?: string }) => {
+    if (e.outcome === 'attempt' && e.previewJti) {
+      if (claimed.has(e.previewJti)) return { conflict: true as const };
+      claimed.add(e.previewJti);
+    }
+  });
+  const other = { tokenId: 't2', userId: 'u1' };
+  const tokenOf = async (tool: typeof t1 = t1, p = principal, input: object = { id: 'a' }) =>
+    ((await runTool(tool, input, ctx, p, dbAudit)) as { previewToken: string }).previewToken;
+  beforeEach(() => {
+    claimed.clear();
+    dbAudit.mockClear();
+    run.mockClear();
+  });
+
+  it('signs a jti and the principal token id into the token', async () => {
+    const payload = JSON.parse(Buffer.from((await tokenOf()).split('.')[0], 'base64url').toString());
+    expect(payload).toMatchObject({ tool: 'once', sub: 't1' });
+    expect(payload.jti).toMatch(/^[0-9a-f-]{36}$/);
+  });
+  it('writes the jti and preview digest on the blocking attempt row only', async () => {
+    const tk = await tokenOf();
+    await runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit);
+    const rows = dbAudit.mock.calls.map((c) => c[0] as { outcome: string; previewJti?: string; previewDigest?: string });
+    const attempts = rows.filter((e) => e.outcome === 'attempt');
+    expect(attempts).toHaveLength(1);
+    expect(attempts[0].previewJti).toMatch(/^[0-9a-f-]{36}$/);
+    expect(attempts[0].previewDigest).toMatch(/^[0-9a-f]{64}$/);
+    for (const e of rows.filter((x) => x.outcome !== 'attempt')) expect(e.previewJti).toBeUndefined();
+  });
+  it('two concurrent confirms with one token run exactly once', async () => {
+    const tk = await tokenOf();
+    const [a, b] = await Promise.all([
+      runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit),
+      runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit),
+    ]);
+    expect(run).toHaveBeenCalledTimes(1);
+    const results = [a, b];
+    expect(results.filter((r) => r.ok)).toHaveLength(1);
+    expect(results.find((r) => !r.ok)).toMatchObject({ ok: false, error: 'preview_already_used' });
+  });
+  it('a sequential replay of a used token returns preview_already_used without running', async () => {
+    const tk = await tokenOf();
+    expect((await runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit)).ok).toBe(true);
+    const r = await runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit);
+    expect(r).toMatchObject({ ok: false, error: 'preview_already_used', message: expect.stringMatching(/aperçu/i) });
+    expect(run).toHaveBeenCalledTimes(1);
+  });
+  it('a token issued to another principal is rejected as preview_stale', async () => {
+    const tk = await tokenOf(t1, principal);
+    expect(await runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, other, dbAudit)).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(run).not.toHaveBeenCalled();
+    expect(claimed.size).toBe(0);
+  });
+  it('a failure after the claim consumes the token: a fresh preview is needed', async () => {
+    const failing = defineTool({
+      name: 'fails', description: 'd', covers: [], destructive: true,
+      input: z.object({ id: z.string() }),
+      preview: async () => ({}),
+      run: async () => ({ ok: false, message: 'Refusé.' }),
+    });
+    const tk = await tokenOf(failing as never);
+    expect(await runTool(failing, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit)).toEqual({ ok: false, error: 'Refusé.' });
+    expect(await runTool(failing, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit)).toMatchObject({ ok: false, error: 'preview_already_used' });
+    const fresh = await tokenOf(failing as never);
+    expect(await runTool(failing, { id: 'a', confirm: true, previewToken: fresh }, ctx, principal, dbAudit)).toEqual({ ok: false, error: 'Refusé.' });
+  });
+  it('any other audit failure on the claim stays audit_unavailable', async () => {
+    const tk = await tokenOf();
+    dbAudit.mockRejectedValueOnce(new Error('db down'));
+    expect(await runTool(t1, { id: 'a', confirm: true, previewToken: tk }, ctx, principal, dbAudit)).toEqual({ ok: false, error: 'audit_unavailable' });
+    expect(run).not.toHaveBeenCalled();
+  });
+  it('the description says the token is single-use and a failure after the claim needs a fresh preview', () => {
+    const d = describeTool(t1);
+    expect(d).toMatch(/usage unique/);
+    expect(d).toMatch(/échoue|échec/);
+    expect(d).toMatch(/nouvel aperçu/);
+  });
+});

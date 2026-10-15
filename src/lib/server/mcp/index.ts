@@ -1,7 +1,7 @@
 import 'server-only';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { describeTool, inputSchemaFor, runTool, type AuditEntry, type ToolDef } from './registry';
+import { describeTool, inputSchemaFor, runTool, type AuditEntry, type AuditResult, type ToolDef } from './registry';
 import type { AdminCtx } from './session';
 import type { McpPrincipal } from './token';
 import { clientTools } from './tools/clients';
@@ -23,7 +23,9 @@ export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools
 // Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
 // La confirmation est liée à un aperçu (previewToken) mais n'authentifie pas un humain ; un échec d'audit
 // ne bloque pas les outils non destructifs (voir registry.ts).
-async function audit(e: AuditEntry): Promise<void> {
+// Une violation d'unicité (23505) sur une ligne qui porte un jti est un jeton d'aperçu déjà consommé : résultat typé,
+// pas une erreur d'audit.
+export async function auditToDb(e: AuditEntry): Promise<AuditResult> {
   const { error } = await createSupabaseAdminClient().from('sv_mcp_audit').insert({
     token_id: e.tokenId,
     user_id: e.userId,
@@ -31,15 +33,20 @@ async function audit(e: AuditEntry): Promise<void> {
     destructive: e.destructive,
     args_digest: e.argsDigest,
     outcome: e.outcome,
+    preview_jti: e.previewJti ?? null,
+    preview_digest: e.previewDigest ?? null,
   });
-  if (error) throw new Error('mcp_audit_insert_failed');
+  if (error) {
+    if (e.previewJti && (error as { code?: string }).code === '23505') return { conflict: true };
+    throw new Error('mcp_audit_insert_failed');
+  }
 }
 
 export function buildServer(ctx: AdminCtx, principal: McpPrincipal): McpServer {
   const server = new McpServer({ name: 'sevalys-admin', version: '1.0.0' });
   for (const tool of ALL_TOOLS) {
     server.registerTool(tool.name, { description: describeTool(tool), inputSchema: inputSchemaFor(tool).shape }, async (args: unknown) => {
-      const result = await runTool(tool, args, ctx, principal, audit);
+      const result = await runTool(tool, args, ctx, principal, auditToDb);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result) }], isError: !result.ok };
     });
   }

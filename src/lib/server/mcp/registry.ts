@@ -1,11 +1,24 @@
 import 'server-only';
-import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { getSupabaseSecretKey } from '@/lib/supabase/env';
 import type { AdminCtx } from './session';
 import type { McpPrincipal } from './token';
 
-export type AuditEntry = { tokenId: string; userId: string; tool: string; destructive: boolean; argsDigest: string | null; outcome: 'attempt' | 'ok' | 'error' | 'needs_confirmation' };
+export type AuditEntry = {
+  tokenId: string;
+  userId: string;
+  tool: string;
+  destructive: boolean;
+  argsDigest: string | null;
+  outcome: 'attempt' | 'ok' | 'error' | 'needs_confirmation';
+  /** Ligne « attempt » seulement : jti du previewToken consommé (index unique partiel côté base) et digest de l'aperçu. */
+  previewJti?: string;
+  previewDigest?: string;
+};
+
+/** Résultat typé d'une écriture d'audit : `conflict` = le jti a déjà été consommé (violation d'unicité). */
+export type AuditResult = void | { conflict: true };
 
 export type ToolDef<S extends z.ZodObject = z.ZodObject> = {
   name: string;
@@ -45,7 +58,7 @@ export function inputSchemaFor<S extends z.ZodObject>(tool: ToolDef<S>): z.ZodOb
 }
 
 const CONFIRM_HELP =
-  " [Outil destructif en deux temps : l'appel sans confirm ne fait rien et renvoie preview et previewToken ; pour exécuter, rappeler avec exactement les mêmes arguments, confirm: true et previewToken inchangé (valable 10 minutes). Si l'état a changé entre-temps, la confirmation est refusée (preview_stale) : relancer l'aperçu.]";
+  " [Outil destructif en deux temps : l'appel sans confirm ne fait rien et renvoie preview et previewToken ; pour exécuter, rappeler avec exactement les mêmes arguments, confirm: true et previewToken inchangé (valable 10 minutes, à usage unique). Si l'état a changé entre-temps, la confirmation est refusée (preview_stale) : relancer l'aperçu. Le jeton est consommé dès que l'exécution démarre : si l'appel échoue ensuite, ou en cas de rejeu (preview_already_used), il faut un nouvel aperçu et un nouveau previewToken.]";
 
 /** Description exposée au client : celle de l'outil, plus le mode d'emploi de la confirmation pour les destructifs. */
 export function describeTool(tool: ToolDef): string {
@@ -86,12 +99,15 @@ function signToken(payload: string): string {
   return createHmac('sha256', auditKey()).update('preview-token:' + payload).digest('hex');
 }
 
-function issuePreviewToken(tool: string, inputDigest: string, previewDigest: string, now: number): string {
-  const payload = b64url(JSON.stringify({ tool, inputDigest, previewDigest, exp: now + PREVIEW_TTL_MS }));
+function issuePreviewToken(tool: string, sub: string, inputDigest: string, previewDigest: string, now: number): string {
+  // jti : identifiant à usage unique (consommé via la ligne d'audit « attempt ») ; sub : jeton MCP émetteur.
+  const payload = b64url(JSON.stringify({ tool, sub, jti: randomUUID(), inputDigest, previewDigest, exp: now + PREVIEW_TTL_MS }));
   return payload + '.' + signToken(payload);
 }
 
-function verifyPreviewToken(token: string, tool: string, inputDigest: string, now: number): string | null {
+type PreviewClaims = { digest: string; jti: string };
+
+function verifyPreviewToken(token: string, tool: string, sub: string, inputDigest: string, now: number): PreviewClaims | null {
   const dot = token.indexOf('.');
   if (dot < 1 || dot === token.length - 1) return null;
   const payload = token.slice(0, dot);
@@ -100,9 +116,10 @@ function verifyPreviewToken(token: string, tool: string, inputDigest: string, no
   if (mac.length !== expected.length || !timingSafeEqual(mac, expected)) return null;
   try {
     const c = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as Record<string, unknown>;
-    if (c.tool !== tool || c.inputDigest !== inputDigest) return null;
+    if (c.tool !== tool || c.sub !== sub || c.inputDigest !== inputDigest) return null;
     if (typeof c.exp !== 'number' || c.exp < now) return null;
-    return typeof c.previewDigest === 'string' ? c.previewDigest : null;
+    if (typeof c.previewDigest !== 'string' || typeof c.jti !== 'string') return null;
+    return { digest: c.previewDigest, jti: c.jti };
   } catch {
     return null;
   }
@@ -119,6 +136,8 @@ export type ToolResult =
   | { ok: true; needsConfirmation: true; preview: unknown; previewToken: string }
   | { ok: false; error: string; message?: string; fieldErrors?: Record<string, string> };
 
+const PREVIEW_AGAIN = "Relancez l'appel sans confirm pour obtenir un nouvel aperçu et un nouveau previewToken.";
+
 // Garde-fous (à lire avant de modifier) :
 // - Confirmation liée à un aperçu : un outil destructif appelé sans confirm renvoie { preview, previewToken } ;
 //   l'exécution exige confirm: true ET ce previewToken (10 min, HMAC, lié à l'outil, aux arguments et au
@@ -133,7 +152,7 @@ export async function runTool<S extends z.ZodObject>(
   raw: unknown,
   ctx: AdminCtx,
   principal: McpPrincipal,
-  audit: (e: AuditEntry) => Promise<void> | void,
+  audit: (e: AuditEntry) => Promise<AuditResult> | AuditResult,
 ): Promise<ToolResult> {
   const base = { tokenId: principal.tokenId, userId: principal.userId, tool: tool.name, destructive: Boolean(tool.destructive) };
   // L'audit ne doit jamais changer le résultat renvoyé (sauf l'« attempt » destructif, bloquant).
@@ -162,7 +181,7 @@ export async function runTool<S extends z.ZodObject>(
     if (tool.destructive && confirm !== true) {
       const preview = await tool.preview!(ctx, input as z.infer<S>);
       await safeAudit({ ...base, argsDigest, outcome: 'needs_confirmation' });
-      const token = issuePreviewToken(tool.name, argsDigest, pinned(preview), Date.now());
+      const token = issuePreviewToken(tool.name, principal.tokenId, argsDigest, pinned(preview), Date.now());
       return { ok: true, needsConfirmation: true, preview, previewToken: token };
     }
     if (tool.destructive) {
@@ -171,20 +190,29 @@ export async function runTool<S extends z.ZodObject>(
         await safeAudit({ ...base, argsDigest, outcome: 'error' });
         return { ok: false, error: 'invalid_input' };
       }
-      const expectedDigest = verifyPreviewToken(previewToken, tool.name, argsDigest, Date.now());
+      const claims = verifyPreviewToken(previewToken, tool.name, principal.tokenId, argsDigest, Date.now());
       // L'aperçu est recalculé : l'état a pu changer depuis l'aperçu confirmé par le modèle.
-      const fresh = expectedDigest === null ? null : pinned(await tool.preview!(ctx, input as z.infer<S>));
-      if (expectedDigest === null || fresh !== expectedDigest) {
+      const fresh = claims === null ? null : pinned(await tool.preview!(ctx, input as z.infer<S>));
+      if (claims === null || fresh !== claims.digest) {
         await safeAudit({ ...base, argsDigest, outcome: 'error' });
         return {
           ok: false,
           error: 'preview_stale',
-          message: "L'aperçu n'est plus valable (jeton invalide, expiré ou état modifié depuis). Relancez l'appel sans confirm pour obtenir un nouvel aperçu et un nouveau previewToken.",
+          message: `L'aperçu n'est plus valable (jeton invalide, expiré ou état modifié depuis). ${PREVIEW_AGAIN}`,
         };
       }
-      // Pas d'action irréversible sans trace : l'échec d'écriture bloque l'exécution.
+      // Consommation du jeton, de façon atomique : la ligne « attempt » porte le jti, que l'index unique partiel de
+      // sv_mcp_audit n'accepte qu'une fois. Deux confirmations concurrentes : une seule passe.
       try {
-        await audit({ ...base, argsDigest, outcome: 'attempt' });
+        const claimed = await audit({ ...base, argsDigest, outcome: 'attempt', previewJti: claims.jti, previewDigest: claims.digest });
+        if (claimed && claimed.conflict) {
+          await safeAudit({ ...base, argsDigest, outcome: 'error' });
+          return {
+            ok: false,
+            error: 'preview_already_used',
+            message: `Cet aperçu a déjà été utilisé (usage unique). ${PREVIEW_AGAIN}`,
+          };
+        }
       } catch {
         console.error(`[mcp] ${tool.name} audit failed`);
         return { ok: false, error: 'audit_unavailable' };

@@ -23,12 +23,17 @@ create table if not exists public.sv_mcp_audit (
   outcome text not null check (outcome in ('attempt', 'ok', 'error', 'needs_confirmation')),
   -- sha256 hex du JSON canonique de l'entrée validée, sans `confirm` ; jamais les arguments bruts.
   args_digest text null,
+  -- Ligne « attempt » d'un outil destructif : jti du previewToken consommé et digest de l'aperçu confirmé.
+  preview_jti text null,
+  preview_digest text null,
   at timestamptz not null default now()
 );
 alter table public.sv_mcp_audit enable row level security;
 revoke all on public.sv_mcp_audit from anon, authenticated;
 create index if not exists sv_mcp_audit_token_id_idx on public.sv_mcp_audit (token_id);
 create index if not exists sv_mcp_audit_tool_at_idx on public.sv_mcp_audit (tool, at);
+-- Usage unique d'un previewToken : un second « attempt » avec le même jti viole l'unicité (23505).
+create unique index if not exists sv_mcp_audit_preview_jti_uq on public.sv_mcp_audit (preview_jti) where outcome = 'attempt';
 
 -- service_role : ne pas dépendre des default privileges. Audit en ajout seul.
 grant select, insert, update on public.sv_mcp_tokens to service_role;
