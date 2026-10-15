@@ -9,6 +9,7 @@ import { PROJECT_COPY } from '@/lib/projects/copy';
 
 import PayButton, { type PayResult } from './PayButton';
 import type { DownloadResult, PortalInvoiceView } from './types';
+import { StatusNote } from '@/components/ui/Toast';
 import './project.css';
 
 type Props = {
@@ -25,9 +26,17 @@ function payLabel(kind: PortalInvoiceView['kind']): string {
   return copy.payInvoice;
 }
 
+const BADGE_TONE: Record<PortalInvoiceView['status'], 'success' | 'action' | 'wait' | undefined> = {
+  paid: 'success',
+  to_pay: 'action',
+  processing: 'wait',
+  credited: 'wait',
+  refunded: 'wait',
+};
+
 function StatusBadge({ status }: { status: PortalInvoiceView['status'] }) {
   return (
-    <span className="pt-doc-badge">
+    <span className="pt-doc-badge" data-tone={BADGE_TONE[status]}>
       {status === 'processing' ? <Clock size={14} aria-hidden="true" /> : null}
       {status === 'paid' ? <Check size={14} aria-hidden="true" /> : null}
       {status === 'credited' || status === 'refunded' ? <Undo2 size={14} aria-hidden="true" /> : null}
@@ -91,7 +100,7 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
           {isNote ? null : <span className="pt-doc-meta pt-pay-number">{inv.number}</span>}
           {isNote && origin ? <span className="pt-doc-meta">{copy.creditOf(origin.number)}</span> : null}
         </td>
-        <td data-label={copy.columns.issuedOn}>{formatDateFr(inv.issuedOn)}</td>
+        <td data-label={copy.columns.issuedOn} className="pt-nowrap">{formatDateFr(inv.issuedOn)}</td>
         <td data-label={copy.columns.period}>
           {inv.periodStart && inv.periodEnd ? copy.period(formatDateFr(inv.periodStart), formatDateFr(inv.periodEnd)) : NOT_SET}
         </td>
@@ -165,9 +174,9 @@ export default function PaymentsList({ projectTitle, invoices, pay, getDownloadU
           ))}
         </tbody>
       </table>
-      <p className="pt-error pt-live" aria-live="polite">
+      <StatusNote tone="error" live="assertive">
         {error}
-      </p>
+      </StatusNote>
       <p className="pt-doc-meta">{copy.vatNote}</p>
     </div>
   );

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CreditCard } from 'lucide-react';
 import { nameWithSubject } from '@/lib/projects/accessibleNames';
 import { PROJECT_COPY } from '@/lib/projects/copy';
+import { StatusNote } from '@/components/ui/Toast';
 import './project.css';
 
 export type PayResult = { ok: true; url: string } | { ok: false; message: string; settled?: boolean };
@@ -59,9 +60,9 @@ export default function PayButton({ invoiceId, label, subject, variant, pay }: P
         <CreditCard size={16} aria-hidden="true" />
         {busy ? copy.redirecting : label}
       </button>
-      <p className="pt-error pt-live" aria-live="polite">
+      <StatusNote tone="error" live="assertive">
         {error}
-      </p>
+      </StatusNote>
     </div>
   );
 }

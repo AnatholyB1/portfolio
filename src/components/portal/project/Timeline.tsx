@@ -25,7 +25,7 @@ export default function Timeline({
   variant: 'client' | 'admin';
 }) {
   return (
-    <ol aria-label="Avancement du projet" className="pt-step-list">
+    <ol aria-label="Avancement du projet" className="pt-step-list" data-variant={variant}>
       {state.steps.map((s) => (
         <li
           key={s.index}

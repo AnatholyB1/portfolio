@@ -16,8 +16,8 @@ const files = read('./FilesPanel.tsx');
 describe('home page cards and headings', () => {
   it('wraps onboarding, files and consent in pt-card', () => {
     expect(onboarding).toContain('className="pt-card pt-onb"');
-    expect(consent).toContain('className="pt-card pt-consent"');
-    expect(page).toMatch(/<section className="pt-card" aria-labelledby="files-title">\s*<FilesPanel/);
+    expect(consent).toContain('className="pt-card pt-card-quiet pt-consent"');
+    expect(page).toMatch(/<section className="pt-card pt-card-quiet" aria-labelledby="files-title">\s*<FilesPanel/);
     expect(files).toContain('id="files-title"');
   });
 
@@ -101,9 +101,9 @@ describe('copy and live regions', () => {
     expect(page).not.toContain('Votre interlocuteur<');
   });
 
-  it('mounts error live regions empty and keeps them out of the flow', () => {
+  it('mounts error live regions empty (StatusNote) and keeps them out of the flow', () => {
     for (const f of ['./PayButton.tsx', './PaymentsList.tsx', './DocumentsList.tsx']) {
-      expect(read(f)).toContain('className="pt-error pt-live" aria-live="polite"');
+      expect(read(f)).toContain('<StatusNote tone="error" live="assertive">');
     }
     expect(portalCss).toContain('.pt-live:empty');
   });

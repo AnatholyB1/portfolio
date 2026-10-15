@@ -138,3 +138,17 @@
   align-items: center;
   min-height: 44px;
 }
+
+/* ---------- Liens : survol et appui ---------- */
+.pt-client a,
+.pt-noaccess a {
+  transition: color var(--pt-dur-base) var(--pt-ease-out), text-underline-offset var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-client a:hover,
+.pt-noaccess a:hover {
+  text-underline-offset: 5px;
+}
+.pt-client a:active,
+.pt-noaccess a:active {
+  color: var(--ink-dim);
+}

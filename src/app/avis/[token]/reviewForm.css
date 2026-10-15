@@ -34,7 +34,13 @@
   border: 0;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.rv-star:hover {
+  background: var(--acid-soft);
+}
+.rv-star:active {
+  transform: scale(0.92);
 }
 .rv-star:focus-visible,
 .rv-link:focus-visible,
@@ -93,4 +99,83 @@
   .rv-star {
     transition: none;
   }
+}
+
+/* ---------- Engagement (étoiles, choix, remerciement) : transitions explicites, jetons --pt-* ---------- */
+.rv-star {
+  width: 48px;
+  height: 48px;
+}
+.rv-star-icon {
+  fill: none;
+  stroke: var(--pt-border-strong);
+  transition: fill var(--pt-dur-fast) var(--pt-ease-out), stroke var(--pt-dur-fast) var(--pt-ease-out), transform var(--pt-dur-base) var(--pt-ease-out);
+}
+.rv-star-icon[data-filled] {
+  fill: var(--acid);
+  stroke: var(--acid);
+}
+/* Aperçu au survol : les étoiles jusqu'à celle visée se remplissent, les suivantes se vident. */
+.rv-rating:hover .rv-star-icon {
+  fill: var(--acid);
+  stroke: var(--acid);
+}
+.rv-rating .rv-star:hover ~ .rv-star .rv-star-icon {
+  fill: none;
+  stroke: var(--pt-border-strong);
+}
+.rv-star:hover {
+  background: transparent;
+}
+.rv-star[aria-checked="true"] .rv-star-icon {
+  animation: rv-pop var(--pt-dur-slow) var(--pt-ease-out);
+}
+@keyframes rv-pop {
+  40% {
+    transform: scale(1.18);
+  }
+}
+.rv-choice {
+  padding: 8px 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--pt-radius-sm);
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.rv-choice:hover {
+  border-color: var(--ink-dim);
+}
+.rv-choice:active {
+  transform: scale(0.99);
+}
+.rv-choice:has(input:checked) {
+  border-color: var(--acid);
+  background: var(--acid-soft);
+}
+.rv-fieldset {
+  gap: 8px;
+}
+.rv-thanks {
+  align-items: flex-start;
+}
+.rv-thanks-icon {
+  color: var(--acid);
+}
+.rv-thanks-icon path {
+  stroke-dasharray: 24;
+  animation: rv-draw var(--pt-dur-slow) var(--pt-ease-out) 150ms both;
+}
+@keyframes rv-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+}
+.rv-thanks > * {
+  animation: pt-enter var(--pt-dur-slow) var(--pt-ease-out) both;
+}
+.rv-thanks > :nth-child(2) {
+  animation-delay: 80ms;
+}
+.rv-thanks > :nth-child(n + 3) {
+  animation-delay: 160ms;
 }

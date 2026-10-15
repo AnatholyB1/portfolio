@@ -18,7 +18,7 @@ export default function WhoWaits({ state, now, actions = [] }: Props) {
   const name = state.done ? DONE_COPY.waitingLine : state.waitingOn === 'client' ? COPY.client : COPY.admin;
   const shown = state.done ? [] : actions;
   return (
-    <div className="pt-who">
+    <div className="pt-who" data-waiting={state.done ? 'done' : state.waitingOn} data-actionable={shown.length > 0 ? '' : undefined}>
       <Icon size={20} aria-hidden="true" className="pt-who-icon" />
       <div className="pt-who-body">
         {state.done ? null : <p className="pt-who-label">{COPY.label}</p>}

@@ -74,12 +74,7 @@ export default function ReviewRatingInput({ value, onChange, invalid, describedB
               onClick={() => onChange(n)}
               onKeyDown={onKeyDown}
             >
-              <Star
-                size={24}
-                aria-hidden="true"
-                fill={filled ? 'var(--acid)' : 'none'}
-                stroke={filled ? 'var(--acid)' : 'var(--pt-border-strong)'}
-              />
+              <Star size={32} aria-hidden="true" className="rv-star-icon" data-filled={filled ? '' : undefined} />
             </button>
           );
         })}

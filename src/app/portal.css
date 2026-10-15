@@ -77,6 +77,26 @@
   align-items: center;
   justify-content: center;
   padding: 32px 16px;
+  /* Halo d'accent discret derrière le logo (V7) ; fond uni en dessous. */
+  background: radial-gradient(600px circle at 50% 0, color-mix(in srgb, var(--acid) 8%, transparent), transparent 60%) no-repeat;
+}
+.pt-auth .pt-card {
+  gap: 20px;
+  border-color: var(--line-strong);
+  border-radius: var(--pt-radius-md);
+  box-shadow: var(--pt-shadow-lg);
+}
+@media (min-width: 480px) {
+  .pt-auth .pt-card {
+    padding: 32px;
+  }
+}
+.pt-auth .pt-heading {
+  font-size: 28px;
+}
+.pt-auth .pt-helper {
+  font-size: 15px;
+  line-height: 1.55;
 }
 .pt-auth-notes {
   width: 100%;
@@ -96,7 +116,7 @@
 .pt-auth-notes a {
   color: var(--ink-dim);
   text-decoration: underline;
-  transition: color 0.2s;
+  transition: color var(--pt-dur-base) var(--pt-ease-out);
 }
 .pt-auth-notes a:hover {
   color: var(--ink);
@@ -145,7 +165,7 @@
   font-size: 14px;
   color: var(--ink-dim);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-base) var(--pt-ease-out);
 }
 .pt-back:hover {
   color: var(--ink);
@@ -164,6 +184,9 @@
   color: var(--ink);
   font-weight: 500;
   overflow-wrap: anywhere;
+  padding: 1px 8px;
+  background: var(--bg-3);
+  border-radius: var(--pt-radius-sm);
 }
 .pt-input {
   width: 100%;
@@ -177,7 +200,14 @@
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), box-shadow var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-input:hover:not(:disabled) {
+  border-color: var(--ink-dim);
+}
+.pt-input:focus-visible {
+  border-color: var(--acid);
+  box-shadow: 0 0 0 3px var(--acid-soft);
 }
 .pt-input::placeholder {
   color: var(--ink-dim);
@@ -195,7 +225,7 @@
 .pt-otp-cell {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 44px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,13 +238,30 @@
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
-  transition: border-color 0.2s;
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-base) var(--pt-ease-out);
 }
 .pt-otp-cell[data-group-end] {
   margin-right: 12px;
 }
 .pt-otp-cell[data-active] {
-  border-color: var(--ink);
+  border-color: var(--acid);
+  background: color-mix(in srgb, var(--acid) 6%, var(--bg-3));
+}
+/* Curseur clignotant dans la cellule en cours de saisie : indique où va le prochain chiffre. */
+.pt-otp-cell[data-active]:empty::after {
+  content: "";
+  width: 2px;
+  height: 1.1em;
+  background: var(--acid);
+  animation: pt-caret 1s steps(1) infinite;
+}
+@keyframes pt-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.pt-otp-cell:not(:empty) {
+  border-color: var(--ink-dim);
 }
 .pt-otp[data-pending] {
   opacity: 0.6;
@@ -255,7 +302,15 @@
   text-decoration: none;
   border-radius: 100px;
   border: 1px solid transparent;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out), box-shadow var(--pt-dur-base) var(--pt-ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+/* Appui : retour tactile immédiat (120 ms), jamais sur un bouton inactif. */
+.pt-btn-primary:active:not(:disabled),
+.pt-btn-ghost:active:not(:disabled),
+.pt-btn-text:active:not([aria-disabled="true"]):not(:disabled) {
+  transform: scale(0.98);
+  transition-duration: var(--pt-dur-fast);
 }
 .pt-btn-primary {
   background: var(--acid);
@@ -266,6 +321,11 @@
 }
 .pt-btn-primary:hover:not(:disabled) {
   background: var(--ink);
+  box-shadow: var(--pt-shadow-md);
+}
+.pt-btn-primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 88%, var(--bg));
+  box-shadow: none;
 }
 .pt-btn-text {
   background: transparent;
@@ -274,6 +334,7 @@
 }
 .pt-btn-text:hover:not(:disabled) {
   color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
 }
 .pt-btn-ghost {
   background: transparent;
@@ -284,6 +345,10 @@
 .pt-btn-ghost:hover:not(:disabled) {
   color: var(--ink);
   border-color: var(--ink-dim);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.pt-btn-ghost:active:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
 }
 .pt-btn-primary:disabled,
 .pt-btn-ghost:disabled {
@@ -300,6 +365,7 @@
 .pt-btn-text:disabled:hover,
 .pt-btn-text[aria-disabled="true"]:hover {
   color: var(--ink-dim);
+  background: transparent;
 }
 
 /* ---------- Messages ---------- */
@@ -527,7 +593,7 @@ body:has([data-own-skip-link]) .skip-link {
   color: var(--ink);
 }
 .pt-table tbody tr {
-  transition: background-color 0.2s;
+  transition: background-color var(--pt-dur-base) var(--pt-ease-out);
 }
 .pt-table tbody tr:hover {
   background: var(--bg-3);
@@ -589,4 +655,141 @@ body:has([data-own-skip-link]) .skip-link {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ---------- Entrée de contenu (V4) : fondu + glissement de 8 px, 400 ms, ease-out ---------- */
+/* Portail client et cartes d'authentification uniquement : l'admin garde son rendu. Les squelettes
+   (.pt-load) n'entrent pas : seul le contenu réel s'anime, sans double fondu. La règle
+   prefers-reduced-motion en fin de fichier supprime l'animation. */
+@keyframes pt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes pt-fade {
+  from {
+    opacity: 0;
+  }
+}
+.pt-main[data-width="client"] > :not(.pt-load),
+.pt-auth > :not(.pt-load) {
+  animation: pt-enter var(--pt-dur-slow) var(--pt-ease-out) both;
+}
+.pt-main[data-width="client"] > :nth-child(2),
+.pt-auth > :nth-child(2) {
+  animation-delay: 60ms;
+}
+.pt-main[data-width="client"] > :nth-child(3),
+.pt-auth > :nth-child(3) {
+  animation-delay: 120ms;
+}
+.pt-main[data-width="client"] > :nth-child(n + 4) {
+  animation-delay: 160ms;
+}
+/* Changement d'étape dans une carte (e-mail -> code) : fondu court. */
+.pt-stepview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: pt-fade var(--pt-dur-base) var(--pt-ease-out) both;
+}
+.pt-stepview > form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- Squelettes de chargement : mêmes dimensions que le rendu final (CLS nul) ---------- */
+.pt-load-title .pt-sk {
+  height: 36px;
+  width: 55%;
+}
+.pt-load-title-auth .pt-sk {
+  height: 29px;
+  width: 45%;
+}
+.pt-load-sub .pt-sk {
+  width: 45%;
+}
+.pt-load-nav {
+  width: 240px;
+  max-width: 100%;
+}
+.pt-load-nav .pt-sk {
+  height: 44px;
+}
+.pt-load-who .pt-sk-block {
+  height: 148px;
+}
+.pt-load-steps .pt-sk-shapes {
+  gap: 36px;
+}
+.pt-load-steps .pt-sk {
+  height: 24px;
+}
+.pt-load-steps .pt-sk-short {
+  width: 100%;
+}
+.pt-load-steps .pt-sk:nth-child(3n) {
+  width: 70%;
+}
+.pt-load-label .pt-sk {
+  height: 21px;
+  width: 40%;
+}
+.pt-load-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-load-input .pt-sk-block,
+.pt-load-button .pt-sk-block {
+  height: 44px;
+  border-radius: var(--pt-radius-sm);
+}
+.pt-load-button .pt-sk-block {
+  border-radius: var(--pt-radius-pill);
+}
+
+/* ---------- Mouvement de la page Projet (V9) : une seule fois à l'arrivée, sauf la pulsation douce ---------- */
+@keyframes pt-fill {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes pt-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--acid) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+@keyframes pt-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-done::before {
+  transform-origin: top;
+  animation: pt-fill 600ms var(--pt-ease-out) both;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(2)::before {
+  animation-delay: 120ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(3)::before {
+  animation-delay: 240ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(4)::before {
+  animation-delay: 360ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-current .pt-step-marker {
+  animation: pt-pulse 2s ease-in-out 600ms infinite;
+}
+/* Livré : la coche se dessine une fois (la boucle ne se rejoue pas tant que la page reste ouverte). */
+.pt-root .pt-who[data-waiting="done"] .pt-who-icon path {
+  stroke-dasharray: 24;
+  animation: pt-draw var(--pt-dur-slow) var(--pt-ease-out) 200ms both;
 }

@@ -17,7 +17,7 @@ function httpsHost(url: string): string | null {
 export default function PortalLinks({ links }: { links: LinkView[] }) {
   if (links.length === 0) return null;
   return (
-    <section className="pt-card" aria-labelledby="portal-links-title">
+    <section className="pt-card pt-card-quiet" aria-labelledby="portal-links-title">
       <h2 id="portal-links-title" className="pt-heading">
         {PROJECT_COPY.links.heading}
       </h2>
