@@ -69,7 +69,18 @@ describe('leadTools metadata', () => {
 describe('maskEmail', () => {
   it('masks local part and domain name', () => {
     expect(maskEmail('alice@dupont.fr')).toBe('a***@d***.fr');
+    expect(maskEmail('  alice@dupont.fr ')).toBe('a***@d***.fr');
     expect(maskEmail('bad')).toBe('***');
+  });
+  it.each(['a@.fr', 'a@b', '@x.fr', 'x@', 'a@@b.fr', '', '   ', 'é@ü.fr'])('is safe on %j', (input) => {
+    const out = maskEmail(input);
+    expect(out).not.toContain('undefined');
+    expect(out).not.toBe(input);
+    expect(out).toMatch(/\*\*\*/);
+  });
+  it('handles astral first characters and tolerates non-strings', () => {
+    expect(maskEmail('\u{1D4D0}x@d.fr')).toBe('\u{1D4D0}***@d***.fr');
+    expect(maskEmail(undefined as never)).toBe('***');
   });
 });
 
@@ -187,11 +198,59 @@ describe('read tools', () => {
     expect(r).toEqual({ ok: true, data: { leads: [{ id: ID }] } });
     expect((await runTool(tool('list_leads'), { limit: 51 }, ctx, principal, audit)).ok).toBe(false);
   });
+  it('list_leads masks contact PII and drops the phone', async () => {
+    const row = { id: ID, contact_nom: 'Alice Dupont', contact_email: 'alice@dupont.fr', contact_telephone: '0600000000', status: 'new' };
+    const { ctx } = makeCtx(null, [row]);
+    const r = await runTool(tool('list_leads'), {}, ctx, principal, audit);
+    expect(r).toEqual({
+      ok: true,
+      data: { leads: [{ id: ID, status: 'new', contact_nom: 'A.', contact_email: 'a***@d***.fr' }] },
+    });
+    expect(JSON.stringify(r)).not.toContain('0600000000');
+  });
+  it('list_leads tolerates leads without contact', async () => {
+    const { ctx } = makeCtx(null, [{ id: ID, contact_nom: null, contact_email: null, contact_telephone: null }]);
+    const r = await runTool(tool('list_leads'), {}, ctx, principal, audit);
+    expect(r).toEqual({ ok: true, data: { leads: [{ id: ID, contact_nom: null, contact_email: null }] } });
+  });
   it('get_lead reads one lead by id, null when absent', async () => {
     const { ctx, b } = makeCtx({ id: ID });
     expect(await runTool(tool('get_lead'), { leadId: ID }, ctx, principal, audit)).toEqual({ ok: true, data: { lead: { id: ID } } });
     expect(b.eq).toHaveBeenCalledWith('id', ID);
     const none = makeCtx(null);
     expect(await runTool(tool('get_lead'), { leadId: ID }, none.ctx, principal, audit)).toEqual({ ok: true, data: { lead: null } });
+  });
+});
+
+describe('input trimming and company cleanup', () => {
+  it('applies limits after trimming', async () => {
+    const { ctx } = makeCtx();
+    const base = { leadId: ID, name: 'Acme', email: 'a@acme.fr', siret: '12345678901234', offer: 'site-vitrine' };
+    expect(await runTool(tool('convert_lead_to_client'), { ...base, projectTitle: '   ' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await runTool(tool('correct_lead_source'), { leadId: ID, source: ' ', medium: 'm', reason: 'une raison valable' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await runTool(tool('correct_lead_source'), { leadId: ID, source: 's', medium: 'm', reason: '   court   ' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+  });
+  it('strips empty company fields and trims the others', async () => {
+    convert.convertLead.mockResolvedValue({ ok: true, clientId: 'c', projectId: 'p', clientReused: false, email: 'e', mailSent: true });
+    const { ctx } = makeCtx();
+    const r = await runTool(
+      tool('convert_lead_to_client'),
+      {
+        leadId: ID, name: ' Acme ', email: 'a@acme.fr', siret: '12345678901234', offer: 'site-vitrine', projectTitle: ' T ',
+        company: { nom: ' X ', code_postal: '', adresse: '  ', commune: ' Paris ' }, confirm: true,
+      },
+      ctx, principal, audit,
+    );
+    expect(r.ok).toBe(true);
+    expect(convert.convertLead).toHaveBeenCalledWith(
+      expect.objectContaining({ company: { nom: 'X', commune: 'Paris' }, name: 'Acme', projectTitle: 'T' }),
+      { userId: 'admin-1' },
+    );
+  });
+  it('lookup_siret_exists flags a malformed siret without querying', async () => {
+    const { ctx, from } = makeCtx({ id: 'c1' });
+    const r = await runTool(tool('lookup_siret_exists'), { siret: '123' }, ctx, principal, audit);
+    expect(r).toEqual({ ok: true, data: { exists: false, reason: 'invalid_siret' } });
+    expect(from).not.toHaveBeenCalled();
   });
 });

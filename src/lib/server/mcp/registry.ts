@@ -38,6 +38,12 @@ function digest(input: unknown): string {
   return createHash('sha256').update(canonical(input)).digest('hex');
 }
 
+function isCoreRefusal(v: unknown): v is { ok: false; message: string } {
+  if (!v || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  return o.ok === false && typeof o.message === 'string';
+}
+
 export type ToolResult =
   | { ok: true; data: unknown }
   | { ok: true; needsConfirmation: true; preview: unknown }
@@ -85,6 +91,11 @@ export async function runTool<S extends z.ZodObject>(
       }
     }
     const data = await tool.run(ctx, input as z.infer<S>);
+    // Refus métier d'un core ({ ok:false, message }) : ce n'est pas un succès, même sans exception.
+    if (isCoreRefusal(data)) {
+      await safeAudit({ ...base, argsDigest, outcome: 'error' });
+      return { ok: false, error: data.message };
+    }
     await safeAudit({ ...base, argsDigest, outcome: 'ok' });
     return { ok: true, data };
   } catch (err) {

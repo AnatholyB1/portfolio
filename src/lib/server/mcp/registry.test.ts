@@ -88,3 +88,22 @@ describe('runTool hardening', () => {
   });
 });
 
+
+describe('runTool core refusals', () => {
+  it('maps a run() result shaped {ok:false,message} to ok:false and audits error', async () => {
+    const t = defineTool({
+      name: 'refuse', description: 'd', covers: [], input: z.object({}),
+      run: async () => ({ ok: false, message: 'Refusé.' }),
+    });
+    expect(await runTool(t, {}, ctx, principal, audit)).toEqual({ ok: false, error: 'Refusé.' });
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'refuse', outcome: 'error' }));
+  });
+  it('keeps {ok:true,message} results as successes', async () => {
+    const t = defineTool({
+      name: 'fine', description: 'd', covers: [], input: z.object({}),
+      run: async () => ({ ok: true, message: 'Fait.' }),
+    });
+    expect(await runTool(t, {}, ctx, principal, audit)).toEqual({ ok: true, data: { ok: true, message: 'Fait.' } });
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ outcome: 'ok' }));
+  });
+});

@@ -84,13 +84,13 @@ describe('src/proxy.ts static contract', () => {
     ]);
   });
 
-  it('leaves /api/resend/webhook and /api/unsubscribe outside every matcher entry', () => {
+  it('leaves /api/resend/webhook, /api/unsubscribe and /api/mcp (bearer auth) outside every matcher entry', () => {
     const literal = privateEntries();
     const sourceMatch = readMatcherBlock().match(/source:\s*'([^']+)'/);
     expect(sourceMatch).not.toBeNull();
     // Le littéral du source utilise des antislashs doublés dans le fichier.
     const catchAll = new RegExp(`^${sourceMatch![1].replace(/\\\\/g, '\\')}$`);
-    for (const path of ['/api/resend/webhook', '/api/unsubscribe']) {
+    for (const path of ['/api/resend/webhook', '/api/unsubscribe', '/api/mcp']) {
       expect(catchAll.test(path)).toBe(false);
       for (const entry of literal) {
         const prefix = entry.replace('/:path*', '');

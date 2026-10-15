@@ -45,17 +45,54 @@ const LEAD_COLUMNS = [
   'contact_telephone',
 ].join(', ');
 
-/** a***@d***.fr : conserve la 1re lettre du local-part et du domaine, et le suffixe. */
-export function maskEmail(email: string): string {
-  const at = email.lastIndexOf('@');
-  if (at < 1 || at === email.length - 1) return '***';
-  const local = email.slice(0, at);
-  const domain = email.slice(at + 1);
+/** a***@d***.fr : 1re lettre du local-part et du domaine + suffixe. Ne lève jamais, ne renvoie jamais l'entrée. */
+export function maskEmail(email: unknown): string {
+  if (typeof email !== 'string') return '***';
+  const value = email.trim();
+  const at = value.indexOf('@');
+  if (at < 1 || at !== value.lastIndexOf('@')) return '***';
+  const local = value.slice(0, at);
+  const domain = value.slice(at + 1);
   const dot = domain.indexOf('.');
   const name = dot === -1 ? domain : domain.slice(0, dot);
+  if (!name) return '***';
   const suffix = dot === -1 ? '' : domain.slice(dot);
-  return `${local[0]}***@${name[0]}***${suffix}`;
+  return `${Array.from(local)[0]}***@${Array.from(name)[0]}***${suffix}`;
 }
+
+function initial(nom: unknown): string | null {
+  if (typeof nom !== 'string') return null;
+  const first = Array.from(nom.trim())[0];
+  return first ? `${first}.` : null;
+}
+
+// Liste : pas de PII en clair (e-mail masqué, pas de téléphone, nom réduit à l'initiale).
+function redactLead(row: Record<string, unknown>): Record<string, unknown> {
+  const { contact_telephone: _tel, ...rest } = row;
+  void _tel;
+  return {
+    ...rest,
+    contact_nom: initial(row.contact_nom),
+    contact_email: typeof row.contact_email === 'string' ? maskEmail(row.contact_email) : null,
+  };
+}
+
+// Retire les champs vides et trim les autres, comme buildCompany ; un objet vide devient null.
+function cleanCompany(v: unknown): unknown {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return v;
+  const out: Record<string, unknown> = {};
+  for (const [k, val] of Object.entries(v)) {
+    if (typeof val === 'string') {
+      const t = val.trim();
+      if (t) out[k] = t;
+    } else if (val !== undefined) {
+      out[k] = val;
+    }
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+const t = (max: number, min = 1) => z.string().trim().min(min).max(max);
 
 const listLeads = defineTool({
   name: 'list_leads',
@@ -73,13 +110,14 @@ const listLeads = defineTool({
     if (input.status) q = q.eq('status', input.status);
     const { data, error } = await q.limit(input.limit);
     if (error) throw new Error('list_leads_failed');
-    return { leads: data ?? [] };
+    return { leads: ((data ?? []) as unknown as Record<string, unknown>[]).map(redactLead) };
   },
 });
 
 const getLead = defineTool({
   name: 'get_lead',
-  description: 'Lit un lead par identifiant (uuid).',
+  // Contrairement à list_leads, les coordonnées complètes sont renvoyées : nécessaires pour agir sur ce lead.
+  description: 'Lit un lead par identifiant (uuid), coordonnées de contact complètes.',
   covers: [],
   input: z.object({ leadId }),
   run: async (ctx, input) => {
@@ -105,7 +143,7 @@ const markLeadLost = defineTool({
   name: 'mark_lead_lost',
   description: 'Marque un lead comme perdu, avec un motif obligatoire et une note facultative.',
   covers: ['markLostAction'],
-  input: z.object({ leadId, reason: z.enum(lostCodes), note: z.string().max(500).optional() }),
+  input: z.object({ leadId, reason: z.enum(lostCodes), note: t(500, 0).optional() }),
   run: (ctx, input) => markLeadLostCore(ctx, input),
 });
 
@@ -115,10 +153,10 @@ const correctLeadSource = defineTool({
   covers: ['correctSourceAction'],
   input: z.object({
     leadId,
-    source: z.string().min(1).max(200),
-    medium: z.string().min(1).max(200),
-    campaign: z.string().max(200).default(''),
-    reason: z.string().min(10).max(500),
+    source: t(200),
+    medium: t(200),
+    campaign: t(200, 0).default(''),
+    reason: t(500, 10),
   }),
   run: (ctx, input) => correctLeadSourceCore(ctx, input),
 });
@@ -137,6 +175,7 @@ const lookupSiretExists = defineTool({
   covers: ['siretExistsAction'],
   input: z.object({ siret: z.string().max(40) }),
   run: async (ctx, input) => {
+    if (!/^\d{14}$/.test(input.siret.replace(/\s/g, ''))) return { exists: false, reason: 'invalid_siret' };
     const res = await siretExistsCore(ctx, input);
     return { exists: res.ok ? Boolean(res.data?.exists) : false };
   },
@@ -148,7 +187,7 @@ const eraseLead = defineTool({
     'Efface définitivement les données personnelles d\'un lead (irréversible). confirmEmail doit être l\'e-mail exact du lead.',
   covers: ['eraseLeadAction'],
   destructive: true,
-  input: z.object({ leadId, reason: z.enum(eraseCodes), confirmEmail: z.string().min(1).max(254) }),
+  input: z.object({ leadId, reason: z.enum(eraseCodes), confirmEmail: t(254) }),
   preview: async (ctx, input) => {
     const { data } = await ctx.supabase
       .from('sv_leads_admin_v')
@@ -175,12 +214,12 @@ const convertLeadToClient = defineTool({
   destructive: true,
   input: z.object({
     leadId,
-    name: z.string().min(1).max(200),
-    email: z.string().max(254),
-    siret: z.string().max(40),
+    name: t(200),
+    email: t(254, 0),
+    siret: t(40, 0),
     offer: z.enum(OFFER_SLUGS),
-    projectTitle: z.string().min(1).max(80),
-    company: companySnapshotSchema.nullable().optional(),
+    projectTitle: t(80),
+    company: z.preprocess(cleanCompany, companySnapshotSchema.nullable().optional()),
     companySource: z.enum(['api', 'manual']).default('api'),
   }),
   preview: async (_ctx, input) => ({

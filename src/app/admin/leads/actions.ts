@@ -83,7 +83,6 @@ export async function markReturnSeenAction(
 // Le SIRET correspond-il déjà à un client ? Booléen seul (T-12-51).
 export async function siretExistsAction(siret: string): Promise<{ exists: boolean }> {
   const ctx = await requireAdmin();
-  // Lecture RLS admin .from('sv_clients') dans le core (le garde convertUi.test lit ce texte).
   const res = await siretExistsCore(ctx, { siret });
   return { exists: res.ok ? Boolean(res.data?.exists) : false };
 }

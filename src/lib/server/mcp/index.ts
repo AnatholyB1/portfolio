@@ -1,13 +1,40 @@
-// SDK MCP (@modelcontextprotocol/sdk 1.32.1), faits confirmes dans node_modules :
-// - Serveur : import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-// - Transport Web Standard (Request -> Response), sans session :
-//   import { WebStandardStreamableHTTPServerTransport }
-//     from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
-//   new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined })
-//   puis `await server.connect(transport); return transport.handleRequest(request)`.
-//   Option utile : enableJsonResponse (JSON au lieu de SSE). Un transport stateless
-//   ne se reutilise pas : un McpServer + un transport par requete.
-// - server.registerTool(name, { description, inputSchema }, cb) : inputSchema accepte une
-//   forme brute zod (Record<string, schema>) OU un schema objet ; zod ^3.25 || ^4 supporte
-//   (peer dep), donc zod 4 du repo OK sans import de compat. cb(args, extra).
-export {};
+import 'server-only';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
+import { runTool, type AuditEntry, type ToolDef } from './registry';
+import type { AdminCtx } from './session';
+import type { McpPrincipal } from './token';
+import { leadTools } from './tools/leads';
+
+// SDK : @modelcontextprotocol/sdk 1.32.1. Transport Web Standard sans session
+// (WebStandardStreamableHTTPServerTransport, sessionIdGenerator: undefined) : un McpServer
+// et un transport par requête, jamais réutilisés (voir src/app/api/mcp/route.ts).
+// registerTool(name, { description, inputSchema }, cb) accepte une forme brute zod.
+
+export const ALL_TOOLS: ToolDef[] = [...leadTools];
+
+// Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
+async function audit(e: AuditEntry): Promise<void> {
+  const { error } = await createSupabaseAdminClient().from('sv_mcp_audit').insert({
+    token_id: e.tokenId,
+    user_id: e.userId,
+    tool: e.tool,
+    destructive: e.destructive,
+    args_digest: e.argsDigest,
+    outcome: e.outcome,
+  });
+  if (error) throw new Error('mcp_audit_insert_failed');
+}
+
+export function buildServer(ctx: AdminCtx, principal: McpPrincipal): McpServer {
+  const server = new McpServer({ name: 'sevalys-admin', version: '1.0.0' });
+  for (const tool of ALL_TOOLS) {
+    const shape = (tool.destructive ? tool.input.extend({ confirm: z.literal(true).optional() }) : tool.input).shape;
+    server.registerTool(tool.name, { description: tool.description, inputSchema: shape }, async (args: unknown) => {
+      const result = await runTool(tool, args, ctx, principal, audit);
+      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }], isError: !result.ok };
+    });
+  }
+  return server;
+}

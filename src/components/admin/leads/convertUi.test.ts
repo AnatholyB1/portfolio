@@ -48,11 +48,18 @@ describe('conversion UI guards (D-01, D-04, D-22)', () => {
     expect(dialog).not.toMatch(/€|\beuros?\b|\bprix\b/i);
   });
 
-  it('siretExistsAction calls requireAdmin() before any read', () => {
+  it('siretExistsAction calls requireAdmin() before the core, which reads via the RLS client', () => {
     const start = actions.indexOf('export async function siretExistsAction');
     expect(start).toBeGreaterThan(-1);
     const body = actions.slice(start, actions.indexOf('export type ConvertState'));
     expect(body.indexOf('requireAdmin()')).toBeGreaterThan(-1);
-    expect(body.indexOf('requireAdmin()')).toBeLessThan(body.indexOf('.from('));
+    expect(body.indexOf('siretExistsCore(')).toBeGreaterThan(-1);
+    expect(body.indexOf('requireAdmin()')).toBeLessThan(body.indexOf('siretExistsCore('));
+    expect(body).not.toContain('.from(');
+
+    const coreSrc = read('../../../lib/server/admin/core/leads.ts');
+    const fn = coreSrc.slice(coreSrc.indexOf('export async function siretExistsCore'));
+    expect(fn).toContain("ctx.supabase.from('sv_clients')");
+    expect(coreSrc).not.toContain('createSupabaseAdminClient');
   });
 });
