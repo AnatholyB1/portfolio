@@ -34,7 +34,13 @@
   border: 0;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.rv-star:hover {
+  background: var(--acid-soft);
+}
+.rv-star:active {
+  transform: scale(0.92);
 }
 .rv-star:focus-visible,
 .rv-link:focus-visible,

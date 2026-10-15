@@ -367,7 +367,25 @@
 /* ---------- Transitions ---------- */
 .pt-root .pt-file-pick,
 .pt-root .pt-step-badge {
-  transition: color 150ms ease, border-color 150ms ease;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out), transform var(--pt-dur-fast) var(--pt-ease-out);
+}
+.pt-root .pt-file-pick:hover {
+  border-color: var(--ink-dim);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.pt-root .pt-file-pick:active {
+  transform: scale(0.98);
+}
+/* Cases de consentement et de signature : retour au survol et à l'appui. */
+.pt-root .pt-sign-consent,
+.pt-root .pt-sign-radio {
+  transition: border-color var(--pt-dur-base) var(--pt-ease-out), background-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-sign-consent:hover {
+  border-color: var(--ink-dim);
+}
+.pt-root .pt-sign-consent:active {
+  background: var(--bg-2);
 }
 @media (prefers-reduced-motion: reduce) {
   .pt-root .pt-file-pick,
@@ -393,6 +411,14 @@
   color: var(--ink-dim);
   text-decoration: none;
   border-bottom: 2px solid transparent;
+  transition: color var(--pt-dur-base) var(--pt-ease-out), border-color var(--pt-dur-base) var(--pt-ease-out);
+}
+.pt-root .pt-client-nav a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--pt-border-strong);
+}
+.pt-root .pt-client-nav a:active {
+  color: var(--ink);
 }
 .pt-root .pt-client-nav a.pt-client-nav-active {
   color: var(--ink);
