@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { INVITE_COPY } from '@/lib/admin/inviteSchema';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const siret = vi.hoisted(() => ({ lookupSiret: vi.fn() }));
 const invite = vi.hoisted(() => ({ inviteClient: vi.fn(), resendInvitation: vi.fn() }));
@@ -79,7 +80,7 @@ describe('invite_client', () => {
 
   it('with confirm invites with the actor and never returns the clear e-mail', async () => {
     invite.inviteClient.mockResolvedValue({ ok: true, clientId: 'c1', email: 'client@acme.fr', mailSent: true });
-    const r = await runTool(tool('invite_client'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('invite_client'), { ...args }, ctx, principal, audit);
     expect(invite.inviteClient).toHaveBeenCalledWith(
       { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234', company: { nom: 'ACME SAS' }, companySource: 'api' },
       { userId: 'admin-1' },
@@ -92,23 +93,23 @@ describe('invite_client', () => {
     invite.inviteClient.mockResolvedValue({ ok: false, code: 'error' });
     const { company: _c, ...noCompany } = args;
     void _c;
-    await runTool(tool('invite_client'), { ...noCompany, companySource: 'manual', confirm: true }, ctx, principal, audit);
+    await confirmTwoStep(tool('invite_client'), { ...noCompany, companySource: 'manual' }, ctx, principal, audit);
     expect(invite.inviteClient.mock.calls[0][0]).toMatchObject({ company: null, companySource: 'manual' });
   });
 
   it('turns a core refusal into an audited error', async () => {
     invite.inviteClient.mockResolvedValue({ ok: false, code: 'already_member' });
-    const r = await runTool(tool('invite_client'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('invite_client'), { ...args }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: INVITE_COPY.alreadyMember });
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'invite_client', outcome: 'error' }));
   });
 });
 
 describe('invite_client partial success', () => {
-  const args = { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234', confirm: true as const };
+  const args = { name: 'Acme', email: 'client@acme.fr', siret: '12345678901234' };
   it('tells the caller the client was created but the mail was not sent', async () => {
     invite.inviteClient.mockResolvedValue({ ok: true, clientId: 'c1', email: 'client@acme.fr', mailSent: false });
-    const r = await runTool(tool('invite_client'), args, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('invite_client'), args, ctx, principal, audit);
     expect(r).toMatchObject({ ok: true, data: { invited: false, partial: true, clientCreated: true, mailSent: false, clientId: 'c1' } });
     expect(JSON.stringify(r)).not.toContain('client@acme.fr');
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'invite_client', outcome: 'ok' }));
@@ -133,14 +134,14 @@ describe('resend_invitation', () => {
   });
   it('with confirm resends and never returns the clear e-mail', async () => {
     invite.resendInvitation.mockResolvedValue({ ok: true, email: 'client@acme.fr' });
-    const r = await runTool(tool('resend_invitation'), { clientId: CID, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('resend_invitation'), { clientId: CID }, ctx, principal, audit);
     expect(invite.resendInvitation).toHaveBeenCalledWith(CID);
     expect(r).toMatchObject({ ok: true, data: { resent: true, email: 'c***@a***.fr' } });
     expect(JSON.stringify(r)).not.toContain('client@acme.fr');
   });
   it('rate limiting is an audited error', async () => {
     throttle.hitThrottle.mockResolvedValue(false);
-    const r = await runTool(tool('resend_invitation'), { clientId: CID, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('resend_invitation'), { clientId: CID }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: INVITE_COPY.resendRateLimited });
     expect(invite.resendInvitation).not.toHaveBeenCalled();
   });

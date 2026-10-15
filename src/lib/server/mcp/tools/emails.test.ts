@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const rpc = vi.hoisted(() => ({ callRpc: vi.fn() }));
 const supp = vi.hoisted(() => ({ loadSuppressions: vi.fn() }));
@@ -63,7 +64,7 @@ describe('lift_email_suppression', () => {
   it('with confirm lifts with the actor', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'lifted' } });
     const { ctx } = makeCtx();
-    const r = await runTool(tool('lift_email_suppression'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('lift_email_suppression'), { ...args }, ctx, principal, audit);
     expect(rpc.callRpc).toHaveBeenCalledWith('admin/emails', 'sv_lift_suppression', {
       p_suppression_id: 12,
       p_reason: 'Adresse corrigée',
@@ -74,7 +75,7 @@ describe('lift_email_suppression', () => {
   it('a core refusal is an audited error', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'not_found' } });
     const { ctx } = makeCtx();
-    const r = await runTool(tool('lift_email_suppression'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('lift_email_suppression'), { ...args }, ctx, principal, audit);
     expect(r.ok).toBe(false);
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ outcome: 'error' }));
   });

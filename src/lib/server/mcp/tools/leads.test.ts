@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ADMIN_COPY } from '@/lib/admin/leadLabels';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const admin = vi.hoisted(() => ({
   setLeadStatus: vi.fn(),
@@ -101,13 +102,13 @@ describe('erase_lead', () => {
   it('with confirm erases', async () => {
     admin.eraseLead.mockResolvedValue({ ok: true });
     const { ctx } = makeCtx();
-    const r = await runTool(tool('erase_lead'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('erase_lead'), { ...args }, ctx, principal, audit);
     expect(admin.eraseLead).toHaveBeenCalledWith(ID, 'admin-1', 'doublon');
     expect(r).toMatchObject({ ok: true, data: { ok: true } });
   });
   it('with confirm but wrong email does not erase', async () => {
     const { ctx } = makeCtx();
-    const r = await runTool(tool('erase_lead'), { ...args, confirmEmail: 'x@y.fr', confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('erase_lead'), { ...args, confirmEmail: 'x@y.fr' }, ctx, principal, audit);
     expect(admin.eraseLead).not.toHaveBeenCalled();
     expect(r).toEqual({ ok: false, error: ADMIN_COPY.eraseConfirmMismatch });
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'erase_lead', outcome: 'error' }));
@@ -137,7 +138,7 @@ describe('convert_lead_to_client', () => {
   it('with confirm converts, mapping the structured company', async () => {
     convert.convertLead.mockResolvedValue({ ok: true, clientId: 'c', projectId: 'p', clientReused: false, email: 'contact@acme.fr', mailSent: true });
     const { ctx } = makeCtx();
-    const r = await runTool(tool('convert_lead_to_client'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('convert_lead_to_client'), { ...args }, ctx, principal, audit);
     expect(convert.convertLead).toHaveBeenCalledWith(
       expect.objectContaining({
         leadId: ID,
@@ -153,7 +154,7 @@ describe('convert_lead_to_client', () => {
   });
   it('rejects an unknown offer as invalid_input', async () => {
     const { ctx } = makeCtx();
-    const r = await runTool(tool('convert_lead_to_client'), { ...args, offer: 'nope', confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('convert_lead_to_client'), { ...args, offer: 'nope' }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: 'invalid_input' });
     expect(convert.convertLead).not.toHaveBeenCalled();
   });
@@ -235,11 +236,11 @@ describe('input trimming and company cleanup', () => {
   it('strips empty company fields and trims the others', async () => {
     convert.convertLead.mockResolvedValue({ ok: true, clientId: 'c', projectId: 'p', clientReused: false, email: 'e', mailSent: true });
     const { ctx } = makeCtx();
-    const r = await runTool(
+    const r = await confirmTwoStep(
       tool('convert_lead_to_client'),
       {
         leadId: ID, name: ' Acme ', email: 'a@acme.fr', siret: '12345678901234', offer: 'site-vitrine', projectTitle: ' T ',
-        company: { nom: ' X ', code_postal: '', adresse: '  ', commune: ' Paris ' }, confirm: true,
+        company: { nom: ' X ', code_postal: '', adresse: '  ', commune: ' Paris ' },
       },
       ctx, principal, audit,
     );

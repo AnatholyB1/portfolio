@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const access = vi.hoisted(() => ({ getAccessibleProject: vi.fn() }));
 const prepare = vi.hoisted(() => ({ prepareDocument: vi.fn() }));
@@ -97,6 +98,7 @@ beforeEach(() => {
     ...Object.values(sigView),
   ]) f.mockReset();
   ctx = makeCtx();
+  sigView.loadSignatureViews.mockResolvedValue(new Map());
   access.getAccessibleProject.mockResolvedValue({ id: PID, clientId: 'c1' });
   prepare.prepareDocument.mockResolvedValue({ ok: true, snapshot: quoteSnapshot, replaces: 'old-doc' });
   vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -174,22 +176,22 @@ describe('issue_document', () => {
   });
   it('with confirm re-runs the same checks, issues and returns the document id and reference', async () => {
     issue.issueDocument.mockResolvedValue({ ok: true, outcome: 'issued', documentId: DID, mail: 'sent' });
-    const r = await runTool(tool('issue_document'), { ...quoteArgs, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_document'), { ...quoteArgs }, ctx, principal, audit);
     expect(prepare.prepareDocument.mock.calls[0][2]).toBe('issue');
     expect(issue.issueDocument).toHaveBeenCalledWith({ documentId: DID, projectId: PID, snapshot: quoteSnapshot, replaces: 'old-doc', actorId: 'admin-1' });
     expect(r).toMatchObject({ ok: true, data: { issued: true, outcome: 'issued', documentId: DID, reference: 'DEV-2026-1', revision: 2, mail: 'sent' } });
   });
   it('confirm never skips a check: a failing check blocks the issuance as an audited error', async () => {
     prepare.prepareDocument.mockResolvedValue({ ok: false, code: 'signed_no_replace' });
-    const r = await runTool(tool('issue_document'), { ...quoteArgs, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_document'), { ...quoteArgs }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: DOC.signedNoReplace });
     expect(issue.issueDocument).not.toHaveBeenCalled();
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'issue_document', outcome: 'error' }));
   });
   it('an invoice docType is still refused when confirmed', async () => {
-    const r = await runTool(
+    const r = await confirmTwoStep(
       tool('issue_document'),
-      { projectId: PID, documentId: DID, docType: 'invoice', kind: 'deposit', serviceDate: '2026-10-01', confirm: true },
+      { projectId: PID, documentId: DID, docType: 'invoice', kind: 'deposit', serviceDate: '2026-10-01' },
       ctx,
       principal,
       audit,
@@ -199,7 +201,7 @@ describe('issue_document', () => {
   });
   it('an issuance failure code maps to the web message', async () => {
     issue.issueDocument.mockResolvedValue({ ok: false, code: 'seller_not_configured' });
-    expect(await runTool(tool('issue_document'), { ...quoteArgs, confirm: true }, ctx, principal, audit)).toEqual({
+    expect(await confirmTwoStep(tool('issue_document'), { ...quoteArgs }, ctx, principal, audit)).toEqual({
       ok: false,
       error: DOC.sellerNotConfigured,
     });
@@ -257,13 +259,13 @@ describe('resume_signature_finalization', () => {
   });
   it('with confirm finalizes', async () => {
     seal.finalizeSignature.mockResolvedValue({ ok: true, outcome: 'sealed', sealSha256: 'x' });
-    const r = await runTool(tool('resume_signature_finalization'), { documentId: DID, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit);
     expect(seal.finalizeSignature).toHaveBeenCalledWith(DID);
     expect(r).toMatchObject({ ok: true, data: { resumed: true } });
   });
   it('a failed finalization is an audited error', async () => {
     seal.finalizeSignature.mockResolvedValue({ ok: false, code: 'not_signed' });
-    const r = await runTool(tool('resume_signature_finalization'), { documentId: DID, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('resume_signature_finalization'), { documentId: DID }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: PROJECT_COPY.errors.generic });
   });
 });
@@ -311,5 +313,21 @@ describe('list_project_documents', () => {
   it('fails when the project does not exist', async () => {
     projects.loadProjectBundle.mockResolvedValue(null);
     expect(await runTool(tool('list_project_documents'), { projectId: PID }, ctx, principal, audit)).toMatchObject({ ok: false });
+  });
+});
+
+describe('preview token binds the confirmation', () => {
+  it('confirm without a token is invalid_input and issues nothing', async () => {
+    expect(await runTool(tool('issue_document'), { ...quoteArgs, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await runTool(tool('resume_signature_finalization'), { documentId: DID, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(issue.issueDocument).not.toHaveBeenCalled();
+    expect(seal.finalizeSignature).not.toHaveBeenCalled();
+  });
+  it('the check outcome changed between preview and confirm: preview_stale, nothing issued', async () => {
+    const first = await runTool(tool('issue_document'), quoteArgs, ctx, principal, audit);
+    prepare.prepareDocument.mockResolvedValue({ ok: false, code: 'wrong_step' });
+    const r = await runTool(tool('issue_document'), { ...quoteArgs, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(issue.issueDocument).not.toHaveBeenCalled();
   });
 });

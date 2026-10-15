@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const access = vi.hoisted(() => ({ getAccessibleProject: vi.fn() }));
 const ictx = vi.hoisted(() => ({ loadInvoiceContext: vi.fn() }));
@@ -105,11 +106,13 @@ const invoiceCtx = {
 };
 const credit = { originInvoiceId: ORIGIN, creditNoteId: CN, scope: 'partial', amount: '100', reason: 'Erreur de facturation', refundRequested: true };
 
+// Le parcours en deux temps charge l'origine plusieurs fois (aperçu, recalcul, exécution) : une file par appel.
+const times = <T,>(x: T, n = 8): T[] => Array.from({ length: n }, () => x);
 function originQueues(opts: { paid: boolean }) {
-  rlsQueues = { sv_invoices: [{ data: [{ id: ORIGIN, project_id: PID, kind: 'deposit' }] }] };
+  rlsQueues = { sv_invoices: times({ data: [{ id: ORIGIN, project_id: PID, kind: 'deposit' }] }) };
   state.adminQueues = {
-    sv_invoices: [{ data: [{ snapshot: { docType: 'invoice' } }] }],
-    sv_invoice_payment_events: [{ data: opts.paid ? [{ payment_intent_id: 'pi_1' }] : [] }],
+    sv_invoices: times({ data: [{ snapshot: { docType: 'invoice' } }] }),
+    sv_invoice_payment_events: times({ data: opts.paid ? [{ payment_intent_id: 'pi_1' }] : [] }),
   };
   ctx = mkCtx();
 }
@@ -194,7 +197,7 @@ describe('issue_period_invoice', () => {
   it('requires the invoiceId idempotency key at the schema level', async () => {
     const { invoiceId: _i, ...noId } = period;
     void _i;
-    expect(await runTool(tool('issue_period_invoice'), { ...noId, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...noId }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
     expect(issue.issueInvoice).not.toHaveBeenCalled();
   });
   it('without confirm never issues and previews exactly the amounts the issuance would use', async () => {
@@ -214,7 +217,7 @@ describe('issue_period_invoice', () => {
   });
   it('the preview and the confirmed call build the same input', async () => {
     await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
-    await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit);
+    await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit);
     expect(build.buildPeriodInput.mock.calls[0][1]).toEqual(build.buildPeriodInput.mock.calls[1][1]);
     expect(build.buildPeriodInput.mock.calls[0][2]).toBe(INV);
     expect(build.buildPeriodInput.mock.calls[1][2]).toBe(INV);
@@ -225,7 +228,7 @@ describe('issue_period_invoice', () => {
     expect(r).toMatchObject({ ok: true, needsConfirmation: true, preview: { wouldIssue: false, message: COPY.period.contractGuard } });
   });
   it('with confirm issues and returns the number, id, totals and delivery status', async () => {
-    const r = await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit);
     expect(issue.issueInvoice).toHaveBeenCalledWith({ id: INV, header: { snapshot: periodSnapshot } });
     expect(r).toMatchObject({
       ok: true,
@@ -242,33 +245,33 @@ describe('issue_period_invoice', () => {
   });
   it('confirm never skips a check: contract guard, validation and nothing-to-invoice still block', async () => {
     ictx.loadInvoiceContext.mockResolvedValue({ ...invoiceCtx, contractSigned: false });
-    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.contractGuard });
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.contractGuard });
     ictx.loadInvoiceContext.mockResolvedValue(invoiceCtx);
-    expect((await runTool(tool('issue_period_invoice'), { ...period, periodEnd: '2026-09-01', confirm: true }, ctx, principal, audit)).ok).toBe(false);
-    build.buildPeriodInput.mockImplementationOnce(() => {
+    expect((await confirmTwoStep(tool('issue_period_invoice'), { ...period, periodEnd: '2026-09-01' }, ctx, principal, audit)).ok).toBe(false);
+    build.buildPeriodInput.mockImplementation(() => {
       throw new Error('nothing_to_invoice');
     });
-    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.nothingToInvoice });
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.nothingToInvoice });
     expect(issue.issueInvoice).not.toHaveBeenCalled();
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'issue_period_invoice', outcome: 'error' }));
   });
   it('warns when the mail failed or the pdf is pending, with the number still returned', async () => {
     issue.issueInvoice.mockResolvedValueOnce({ ok: true, outcome: 'issued', invoiceId: INV, number: 'FA-2', mail: 'failed', pdf: 'attached' });
-    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toMatchObject({
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit)).toMatchObject({
       ok: true,
       data: { issued: true, number: 'FA-2', tone: 'warning', message: COPY.period.mailFailed },
     });
   });
   it('a replay of the same invoiceId reports the existing number instead of an opaque error', async () => {
     issue.issueInvoice.mockResolvedValue({ ok: true, outcome: 'already_issued', invoiceId: INV, number: 'FA-2', mail: 'none', pdf: 'attached' });
-    const r = await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit);
     expect(r).toMatchObject({ ok: true, data: { issued: false, alreadyIssued: true, number: 'FA-2', invoiceId: INV, message: COPY.period.alreadyIssued } });
   });
   it('maps rpc failures to web messages', async () => {
     issue.issueInvoice.mockResolvedValueOnce({ ok: false, code: 'sv_invoice_nothing_to_pay' });
-    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.nothingToInvoice });
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.nothingToInvoice });
     issue.issueInvoice.mockResolvedValueOnce({ ok: false, code: 'unknown' });
-    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.generic });
+    expect(await confirmTwoStep(tool('issue_period_invoice'), { ...period }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.period.generic });
   });
 });
 
@@ -293,7 +296,7 @@ describe('credit notes', () => {
   it('issue_credit_note requires the creditNoteId idempotency key', async () => {
     const { creditNoteId: _c, ...noId } = credit;
     void _c;
-    expect(await runTool(tool('issue_credit_note'), { ...noId, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('issue_credit_note'), { ...noId }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
   it('without confirm never issues and previews amounts, refund and the e-mail effect', async () => {
     originQueues({ paid: true });
@@ -320,7 +323,7 @@ describe('credit notes', () => {
   });
   it('with confirm issues, applies the Stripe effects and returns number, id and totals', async () => {
     originQueues({ paid: true });
-    const r = await runTool(tool('issue_credit_note'), { ...credit, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_credit_note'), { ...credit }, ctx, principal, audit);
     expect(issue.issueCreditNote.mock.calls[0][0]).toMatchObject({ id: CN, issueKey: 'credit:' + CN });
     expect(refund.requestRefundForCreditNote).toHaveBeenCalledWith(CN);
     expect(r).toMatchObject({
@@ -330,7 +333,7 @@ describe('credit notes', () => {
   });
   it('confirm never skips a check: over-credit and bad amount block without any effect', async () => {
     originQueues({ paid: true });
-    const r = await runTool(tool('issue_credit_note'), { ...credit, amount: '999', confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('issue_credit_note'), { ...credit, amount: '999' }, ctx, principal, audit);
     expect(r.ok).toBe(false);
     expect((r as { error: string }).error).toContain('Le montant doit être compris entre');
     expect(issue.issueCreditNote).not.toHaveBeenCalled();
@@ -341,7 +344,7 @@ describe('credit notes', () => {
   it('maps sv_credit_exceeds_invoice', async () => {
     originQueues({ paid: true });
     issue.issueCreditNote.mockResolvedValueOnce({ ok: false, code: 'sv_credit_exceeds_invoice' });
-    expect(await runTool(tool('issue_credit_note'), { ...credit, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.credit.overCredit });
+    expect(await confirmTwoStep(tool('issue_credit_note'), { ...credit }, ctx, principal, audit)).toEqual({ ok: false, error: COPY.credit.overCredit });
   });
 });
 
@@ -420,5 +423,41 @@ describe('list_project_invoices', () => {
   it('fails when the project does not exist', async () => {
     projects.loadProjectBundle.mockResolvedValue(null);
     expect(await runTool(tool('list_project_invoices'), { projectId: PID }, ctx, principal, audit)).toMatchObject({ ok: false });
+  });
+});
+
+describe('preview token binds the confirmation (review scenarios)', () => {
+  it('confirm:true without a previewToken is invalid_input and issues nothing', async () => {
+    originQueues({ paid: true });
+    expect(await runTool(tool('issue_credit_note'), { ...credit, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await runTool(tool('issue_period_invoice'), { ...period, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(issue.issueCreditNote).not.toHaveBeenCalled();
+    expect(issue.issueInvoice).not.toHaveBeenCalled();
+  });
+  it('the origin became paid between preview and confirm: preview_stale, nothing issued, no refund, no session expiry', async () => {
+    originQueues({ paid: false });
+    const first = await runTool(tool('issue_credit_note'), credit, ctx, principal, audit);
+    expect(first).toMatchObject({ ok: true, needsConfirmation: true, preview: { summary: { openPaymentsWillBeExpired: true, refundWillBeRequested: false } } });
+    originQueues({ paid: true });
+    const r = await runTool(tool('issue_credit_note'), { ...credit, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(issue.issueCreditNote).not.toHaveBeenCalled();
+    expect(refund.requestRefundForCreditNote).not.toHaveBeenCalled();
+    expect(refund.expireOpenPayments).not.toHaveBeenCalled();
+    expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ tool: 'issue_credit_note', outcome: 'error' }));
+  });
+  it('the contract became unsigned between preview and confirm: preview_stale for a period invoice', async () => {
+    const first = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    ictx.loadInvoiceContext.mockResolvedValue({ ...invoiceCtx, contractSigned: false });
+    const r = await runTool(tool('issue_period_invoice'), { ...period, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(issue.issueInvoice).not.toHaveBeenCalled();
+  });
+  it('a token from another invoice input cannot confirm this one', async () => {
+    const first = await runTool(tool('issue_period_invoice'), period, ctx, principal, audit);
+    const other = { ...period, periodEnd: '2026-10-30' };
+    const r = await runTool(tool('issue_period_invoice'), { ...other, confirm: true, previewToken: (first as { previewToken: string }).previewToken }, ctx, principal, audit);
+    expect(r).toMatchObject({ ok: false, error: 'preview_stale' });
+    expect(issue.issueInvoice).not.toHaveBeenCalled();
   });
 });

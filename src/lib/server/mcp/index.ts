@@ -1,8 +1,7 @@
 import 'server-only';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
-import { runTool, type AuditEntry, type ToolDef } from './registry';
+import { describeTool, inputSchemaFor, runTool, type AuditEntry, type ToolDef } from './registry';
 import type { AdminCtx } from './session';
 import type { McpPrincipal } from './token';
 import { clientTools } from './tools/clients';
@@ -22,8 +21,8 @@ import { leadTools } from './tools/leads';
 export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools, ...costTools, ...reviewTools, ...projectTools, ...documentTools, ...billingTools];
 
 // Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
-// `confirm` est un garde-fou côté modèle, pas une frontière de sécurité ; un échec d'audit ne bloque
-// pas les outils non destructifs (voir registry.ts).
+// La confirmation est liée à un aperçu (previewToken) mais n'authentifie pas un humain ; un échec d'audit
+// ne bloque pas les outils non destructifs (voir registry.ts).
 async function audit(e: AuditEntry): Promise<void> {
   const { error } = await createSupabaseAdminClient().from('sv_mcp_audit').insert({
     token_id: e.tokenId,
@@ -39,8 +38,7 @@ async function audit(e: AuditEntry): Promise<void> {
 export function buildServer(ctx: AdminCtx, principal: McpPrincipal): McpServer {
   const server = new McpServer({ name: 'sevalys-admin', version: '1.0.0' });
   for (const tool of ALL_TOOLS) {
-    const shape = (tool.destructive ? tool.input.extend({ confirm: z.literal(true).optional() }) : tool.input).shape;
-    server.registerTool(tool.name, { description: tool.description, inputSchema: shape }, async (args: unknown) => {
+    server.registerTool(tool.name, { description: describeTool(tool), inputSchema: inputSchemaFor(tool).shape }, async (args: unknown) => {
       const result = await runTool(tool, args, ctx, principal, audit);
       return { content: [{ type: 'text' as const, text: JSON.stringify(result) }], isError: !result.ok };
     });

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { COST_COPY } from '@/lib/server/pilotage/costSchemas';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const leads = vi.hoisted(() => ({ upsertAcquisitionCost: vi.fn() }));
 const w = vi.hoisted(() => ({
@@ -141,12 +142,12 @@ describe('void_project_cost', () => {
     expect(w.voidProjectCost).not.toHaveBeenCalled();
   });
   it('with confirm voids with the actor', async () => {
-    const r = await runTool(tool('void_project_cost'), { costId: 4, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('void_project_cost'), { costId: 4 }, ctx, principal, audit);
     expect(w.voidProjectCost).toHaveBeenCalledWith({ costId: 4, actor: 'admin-1' });
     expect(r).toMatchObject({ ok: true, data: { ok: true } });
   });
   it('rejects a non-positive id as invalid_input', async () => {
-    expect(await runTool(tool('void_project_cost'), { costId: 0, confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('void_project_cost'), { costId: 0 }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
 });
 

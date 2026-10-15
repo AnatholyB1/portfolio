@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const rpc = vi.hoisted(() => ({ callRpc: vi.fn() }));
 const outbox = vi.hoisted(() => ({ sendOutboxRow: vi.fn() }));
@@ -67,17 +68,17 @@ describe('hide_review', () => {
   });
   it('with confirm hides and notifies', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'hidden', outbox_ids: ['o1'] } });
-    const r = await runTool(tool('hide_review'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('hide_review'), { ...args }, ctx, principal, audit);
     expect(rpc.callRpc).toHaveBeenCalledWith('admin/avis', 'sv_moderate_review', expect.objectContaining({ p_action: 'hide', p_actor_id: 'admin-1' }));
     expect(outbox.sendOutboxRow).toHaveBeenCalledWith('o1');
     expect(r).toMatchObject({ ok: true, data: { ok: true } });
   });
   it('rejects a reason outside the closed list as invalid_input', async () => {
-    expect(await runTool(tool('hide_review'), { ...args, reason: 'low_rating', confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('hide_review'), { ...args, reason: 'low_rating' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
   it('unchanged is an audited error', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'unchanged' } });
-    const r = await runTool(tool('hide_review'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('hide_review'), { ...args }, ctx, principal, audit);
     expect(r.ok).toBe(false);
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ outcome: 'error' }));
   });
@@ -112,14 +113,14 @@ describe('reissue_review_link', () => {
   });
   it('with confirm reissues and returns the url once', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'reissued' } });
-    const r = await runTool(tool('reissue_review_link'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('reissue_review_link'), { ...args }, ctx, principal, audit);
     expect(r).toMatchObject({ ok: true, data: { ok: true, data: { url: expect.stringContaining('https://example.test/avis/') } } });
     // L'URL est un secret : jamais dans l'audit.
     expect(JSON.stringify(audit.mock.calls)).not.toContain('example.test');
   });
   it('reviewed is an audited error', async () => {
     rpc.callRpc.mockResolvedValue({ ok: true, data: { outcome: 'reviewed' } });
-    const r = await runTool(tool('reissue_review_link'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('reissue_review_link'), { ...args }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: 'Un avis a déjà été déposé pour ce projet.' });
   });
 });

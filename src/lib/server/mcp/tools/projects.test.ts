@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PROJECT_COPY } from '@/lib/projects/copy';
 import { deriveProjectState } from '@/lib/projects/steps';
 import { runTool } from '../registry';
+import { confirmTwoStep } from '../testing';
 
 const access = vi.hoisted(() => ({ getAccessibleProject: vi.fn() }));
 const content = vi.hoisted(() => ({ addProjectLink: vi.fn() }));
@@ -100,14 +101,14 @@ describe('post_project_fact', () => {
   });
   it('with confirm posts as admin and reports the mail line', async () => {
     facts.postProjectFact.mockResolvedValue(okFact());
-    const r = await runTool(tool('post_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('post_project_fact'), { ...args }, ctx, principal, audit);
     expect(facts.postProjectFact).toHaveBeenCalledWith(expect.objectContaining({ actorKind: 'admin', actorId: 'admin-1', reason: 'acompte' }));
     expect(r).toMatchObject({ ok: true, data: { ok: true, data: { mailLine: PROJECT_COPY.facts.mailSent } } });
   });
   it('rejects an unknown fact type as invalid_input; already recorded is an audited error', async () => {
-    expect(await runTool(tool('post_project_fact'), { ...args, type: 'nope', confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('post_project_fact'), { ...args, type: 'nope' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
     facts.postProjectFact.mockResolvedValue(okFact({ changed: false }));
-    const r = await runTool(tool('post_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('post_project_fact'), { ...args }, ctx, principal, audit);
     expect(r).toEqual({ ok: false, error: PROJECT_COPY.facts.alreadyRecorded });
     expect(audit).toHaveBeenLastCalledWith(expect.objectContaining({ outcome: 'error' }));
   });
@@ -125,12 +126,12 @@ describe('revoke_project_fact', () => {
   });
   it('with confirm revokes with the actor', async () => {
     facts.revokeProjectFact.mockResolvedValue(okFact({ mail: 'none' }));
-    const r = await runTool(tool('revoke_project_fact'), { ...args, confirm: true }, ctx, principal, audit);
+    const r = await confirmTwoStep(tool('revoke_project_fact'), { ...args }, ctx, principal, audit);
     expect(facts.revokeProjectFact).toHaveBeenCalledWith({ projectId: ID, factId: 5, actorId: 'admin-1', reason: args.reason });
     expect(r).toMatchObject({ ok: true, data: { ok: true } });
   });
   it('rejects a short reason as invalid_input', async () => {
-    expect(await runTool(tool('revoke_project_fact'), { ...args, reason: 'court', confirm: true }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
+    expect(await confirmTwoStep(tool('revoke_project_fact'), { ...args, reason: 'court' }, ctx, principal, audit)).toEqual({ ok: false, error: 'invalid_input' });
   });
 });
 
