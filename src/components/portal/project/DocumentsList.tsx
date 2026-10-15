@@ -31,6 +31,14 @@ type Props = {
 
 const SIGNABLE: readonly DocType[] = ['quote', 'contract', 'acceptance'];
 
+// Teinte du badge : fait (signé, payé) en accent, à faire en filet d'accent, le reste neutre.
+function toneOf(status: DocumentStatus | null): 'success' | 'action' | 'wait' | undefined {
+  if (status === 'signed' || status === 'paid') return 'success';
+  if (status === 'to_sign' || status === 'to_pay') return 'action';
+  if (status === 'replaced' || status === null) return 'wait';
+  return undefined;
+}
+
 // Tableau des documents émis. Le lien signé n'est jamais rendu dans le DOM (D-15).
 export default function DocumentsList({ projectTitle, documents, getDownloadUrl, getSealedDownloadUrl }: Props) {
   const copy = PROJECT_COPY.documents.portal;
@@ -60,7 +68,7 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
 
   return (
     <div className="pt-stack">
-      <table className="pt-table">
+      <table className="pt-table pt-docs-table">
         <caption className="pt-sr-only">{copy.caption(projectTitle)}</caption>
         <thead>
           <tr>
@@ -90,15 +98,16 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
                   </span>
                 ) : null}
               </td>
-              <td data-label={copy.columns.issuedOn}>{formatDateFr(d.issuedAt)}</td>
-              <td data-label={copy.columns.version}>{copy.version(d.revision)}</td>
+              <td data-label={copy.columns.issuedOn} className="pt-nowrap">{formatDateFr(d.issuedAt)}</td>
+              <td data-label={copy.columns.version} className="pt-nowrap">{copy.version(d.revision)}</td>
               <td data-label={copy.columns.status}>
-                <span className="pt-doc-badge">
+                <span className="pt-doc-badge" data-tone={toneOf(d.status)}>
                   {d.status === 'signed' || d.status === 'paid' ? <Check size={14} aria-hidden="true" /> : null}
                   {d.status ? STATUS_LABELS[d.status] : copy.statusUnavailable}
                 </span>
               </td>
               <td data-label={copy.columns.action}>
+                <div className="pt-docs-actions">
                 {d.status === 'to_sign' && SIGNABLE.includes(d.docType) ? (
                   <Link href={`/espace-client/documents/${d.id}/signer`} className="pt-btn-ghost pt-file-action">
                     <PenLine size={16} aria-hidden="true" />
@@ -124,6 +133,7 @@ export default function DocumentsList({ projectTitle, documents, getDownloadUrl,
                     </button>
                   );
                 })()}
+                </div>
               </td>
             </tr>
           ))}

@@ -23,7 +23,7 @@ export default function ConsentCard({ projectId, current }: Props) {
   const stale = state.status === 'error' && state.message === PROJECT_COPY.errors.consentStale;
 
   return (
-    <section className="pt-card pt-consent" aria-labelledby="consent-heading">
+    <section className="pt-card pt-card-quiet pt-consent" aria-labelledby="consent-heading">
       <h2 id="consent-heading" className="pt-heading">{COPY.heading}</h2>
       <p className="pt-status">{COPY.intro}</p>
       <blockquote className="pt-consent-quote pt-readback">{PRESENTATION_CONSENT.text}</blockquote>

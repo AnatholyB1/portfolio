@@ -751,3 +751,45 @@ body:has([data-own-skip-link]) .skip-link {
 .pt-load-button .pt-sk-block {
   border-radius: var(--pt-radius-pill);
 }
+
+/* ---------- Mouvement de la page Projet (V9) : une seule fois à l'arrivée, sauf la pulsation douce ---------- */
+@keyframes pt-fill {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes pt-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--acid) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+@keyframes pt-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-done::before {
+  transform-origin: top;
+  animation: pt-fill 600ms var(--pt-ease-out) both;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(2)::before {
+  animation-delay: 120ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(3)::before {
+  animation-delay: 240ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step:nth-child(4)::before {
+  animation-delay: 360ms;
+}
+.pt-root .pt-step-list[data-variant="client"] .pt-step-current .pt-step-marker {
+  animation: pt-pulse 2s ease-in-out 600ms infinite;
+}
+/* Livré : la coche se dessine une fois (la boucle ne se rejoue pas tant que la page reste ouverte). */
+.pt-root .pt-who[data-waiting="done"] .pt-who-icon path {
+  stroke-dasharray: 24;
+  animation: pt-draw var(--pt-dur-slow) var(--pt-ease-out) 200ms both;
+}

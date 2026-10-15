@@ -16,7 +16,7 @@ const files = read('./FilesPanel.tsx');
 describe('home page cards and headings', () => {
   it('wraps onboarding, files and consent in pt-card', () => {
     expect(onboarding).toContain('className="pt-card pt-onb"');
-    expect(consent).toContain('className="pt-card pt-consent"');
+    expect(consent).toContain('className="pt-card pt-card-quiet pt-consent"');
     expect(page).toMatch(/<section className="pt-card" aria-labelledby="files-title">\s*<FilesPanel/);
     expect(files).toContain('id="files-title"');
   });
