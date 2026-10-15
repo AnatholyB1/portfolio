@@ -6,6 +6,8 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
     passWithNoTests: true,
+    // Clé HMAC de l'audit MCP : tests sans variables Supabase réelles.
+    env: { MCP_AUDIT_SECRET: 'vitest-audit-secret' },
   },
   resolve: {
     alias: {

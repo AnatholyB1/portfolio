@@ -19,6 +19,8 @@ import { leadTools } from './tools/leads';
 export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools, ...costTools, ...reviewTools];
 
 // Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
+// `confirm` est un garde-fou côté modèle, pas une frontière de sécurité ; un échec d'audit ne bloque
+// pas les outils non destructifs (voir registry.ts).
 async function audit(e: AuditEntry): Promise<void> {
   const { error } = await createSupabaseAdminClient().from('sv_mcp_audit').insert({
     token_id: e.tokenId,

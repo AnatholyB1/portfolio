@@ -1,10 +1,11 @@
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { defineTool, runTool } from './registry';
 
 const audit = vi.fn();
 beforeEach(() => {
+  process.env.MCP_AUDIT_SECRET = 'test-audit-secret';
   audit.mockReset();
   vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -46,12 +47,25 @@ describe('runTool', () => {
 describe('runTool hardening', () => {
   it('records a digest of the validated input without confirm, never raw args', async () => {
     await runTool(danger, { id: 'a', confirm: true }, ctx, principal, audit);
-    const expected = createHash('sha256').update('{"id":"a"}').digest('hex');
+    const expected = createHmac('sha256', 'test-audit-secret').update('{"id":"a"}').digest('hex');
     const calls = audit.mock.calls.map((c) => c[0]);
     expect(calls.map((e) => e.outcome)).toEqual(['attempt', 'ok']);
     for (const e of calls) {
       expect(e.argsDigest).toBe(expected);
       expect(JSON.stringify(e)).not.toContain('"a"');
+    }
+  });
+  it('derives the HMAC key from the service key when MCP_AUDIT_SECRET is unset', async () => {
+    delete process.env.MCP_AUDIT_SECRET;
+    const prev = process.env.SUPABASE_SECRET_KEY;
+    process.env.SUPABASE_SECRET_KEY = 'service-key';
+    try {
+      await runTool(danger, { id: 'a', confirm: true }, ctx, principal, audit);
+      const key = createHash('sha256').update('mcp-audit:service-key').digest();
+      expect(audit.mock.calls[0][0].argsDigest).toBe(createHmac('sha256', key).update('{"id":"a"}').digest('hex'));
+    } finally {
+      if (prev === undefined) delete process.env.SUPABASE_SECRET_KEY;
+      else process.env.SUPABASE_SECRET_KEY = prev;
     }
   });
   it('digest is independent of key order', async () => {

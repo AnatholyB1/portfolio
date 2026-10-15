@@ -1,6 +1,7 @@
 import 'server-only';
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { z } from 'zod';
+import { getSupabaseSecretKey } from '@/lib/supabase/env';
 import type { AdminCtx } from './session';
 import type { McpPrincipal } from './token';
 
@@ -34,8 +35,16 @@ function canonical(v: unknown): string {
   return JSON.stringify(v) ?? 'null';
 }
 
+// HMAC-SHA256 : un digest nu d'arguments peu variés (ids, statuts) se retrouve par dictionnaire.
+// Clé : MCP_AUDIT_SECRET, sinon dérivée de la clé service (jamais journalisée).
+function auditKey(): string | Buffer {
+  const explicit = process.env.MCP_AUDIT_SECRET;
+  if (explicit) return explicit;
+  return createHash('sha256').update(`mcp-audit:${getSupabaseSecretKey()}`).digest();
+}
+
 function digest(input: unknown): string {
-  return createHash('sha256').update(canonical(input)).digest('hex');
+  return createHmac('sha256', auditKey()).update(canonical(input)).digest('hex');
 }
 
 function isCoreRefusal(v: unknown): v is { ok: false; message: string } {
@@ -49,6 +58,12 @@ export type ToolResult =
   | { ok: true; needsConfirmation: true; preview: unknown }
   | { ok: false; error: string };
 
+// Garde-fous (à lire avant de modifier) :
+// - `confirm: true` est un garde-fou côté modèle (empêche l'exécution par inadvertance), PAS une
+//   frontière de sécurité : un client qui détient un jeton valide peut toujours le fournir.
+//   La frontière est le jeton + la RLS de la session admin.
+// - Seul l'audit « attempt » d'un outil destructif est bloquant. Pour les outils non destructifs,
+//   un échec d'écriture d'audit n'empêche ni l'exécution ni le résultat.
 export async function runTool<S extends z.ZodObject>(
   tool: ToolDef<S>,
   raw: unknown,
