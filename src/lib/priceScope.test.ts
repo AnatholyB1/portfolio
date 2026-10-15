@@ -52,12 +52,13 @@ describe('price scope zones (D-17)', () => {
     }
   });
 
-  it('lists the fifteen documented zones with a rationale', () => {
+  it('lists the sixteen documented zones with a rationale', () => {
     expect(PRICE_ALLOWED_ZONES.map((z) => z.path).sort()).toEqual(
       [
         'src/app/admin',
         'src/app/api/avis',
         'src/app/api/cron',
+        'src/app/api/mcp',
         'src/app/api/resend',
         'src/app/api/stripe',
         'src/app/api/unsubscribe',
