@@ -7,6 +7,7 @@ import type { AdminCtx } from './session';
 import type { McpPrincipal } from './token';
 import { clientTools } from './tools/clients';
 import { emailTools } from './tools/emails';
+import { costTools } from './tools/costs';
 import { leadTools } from './tools/leads';
 
 // SDK : @modelcontextprotocol/sdk 1.32.1. Transport Web Standard sans session
@@ -14,7 +15,7 @@ import { leadTools } from './tools/leads';
 // et un transport par requête, jamais réutilisés (voir src/app/api/mcp/route.ts).
 // registerTool(name, { description, inputSchema }, cb) accepte une forme brute zod.
 
-export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools];
+export const ALL_TOOLS: ToolDef[] = [...leadTools, ...clientTools, ...emailTools, ...costTools];
 
 // Doit lever en cas d'échec : runTool bloque les outils destructifs si l'« attempt » n'est pas écrit.
 async function audit(e: AuditEntry): Promise<void> {

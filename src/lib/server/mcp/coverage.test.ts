@@ -17,8 +17,6 @@ function actionFiles(dir: string): string[] {
 // Phase B vide cette liste domaine par domaine.
 const EXCLUDED: Record<string, string> = {
   addLinkAction: 'phase B : à migrer',
-  addProjectCostAction: 'phase B : à migrer',
-  addRecurringCostAction: 'phase B : à migrer',
   adminConfirmUploadAction: 'phase B : à migrer',
   adminDocumentDownloadAction: 'phase B : à migrer',
   adminDownloadAction: 'phase B : à migrer',
@@ -40,15 +38,11 @@ const EXCLUDED: Record<string, string> = {
   reissueReviewLinkAction: 'phase B : à migrer',
   resendInvitationAction: 'phase B : à migrer',
   revokeFactAction: 'phase B : à migrer',
-  saveBalanceAction: 'phase B : à migrer',
-  saveCostAction: 'phase B : à migrer',
   setReminderHoldAction: 'phase B : à migrer',
-  stopRecurringAction: 'phase B : à migrer',
   unhideReviewAction: 'phase B : à migrer',
   verifyDocumentHashAction: 'phase B : à migrer',
   verifyInvoiceHashAction: 'phase B : à migrer',
   verifySignatureChainAction: 'phase B : à migrer',
-  voidProjectCostAction: 'phase B : à migrer',
 };
 
 describe('MCP tool registry', () => {
