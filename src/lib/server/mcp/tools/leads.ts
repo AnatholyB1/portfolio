@@ -12,7 +12,11 @@ import {
   setLeadStatusCore,
   siretExistsCore,
 } from '@/lib/server/admin/core/leads';
+import { maskEmail } from '../mask';
 import { defineTool, type ToolDef } from '../registry';
+
+// Réexporté : les tests et appelants historiques importent maskEmail depuis ce module.
+export { maskEmail };
 
 const leadId = z.string().uuid();
 const lostCodes = LOST_REASONS.map((r) => r.code) as [string, ...string[]];
@@ -45,21 +49,6 @@ const LEAD_COLUMNS = [
   'contact_telephone',
 ].join(', ');
 
-/** a***@d***.fr : 1re lettre du local-part et du domaine + suffixe. Ne lève jamais, ne renvoie jamais l'entrée. */
-export function maskEmail(email: unknown): string {
-  if (typeof email !== 'string') return '***';
-  const value = email.trim();
-  const at = value.indexOf('@');
-  if (at < 1 || at !== value.lastIndexOf('@')) return '***';
-  const local = value.slice(0, at);
-  const domain = value.slice(at + 1);
-  const dot = domain.indexOf('.');
-  const name = dot === -1 ? domain : domain.slice(0, dot);
-  if (!name) return '***';
-  const suffix = dot === -1 ? '' : domain.slice(dot);
-  return `${Array.from(local)[0]}***@${Array.from(name)[0]}***${suffix}`;
-}
-
 function initial(nom: unknown): string | null {
   if (typeof nom !== 'string') return null;
   const first = Array.from(nom.trim())[0];
@@ -78,7 +67,7 @@ function redactLead(row: Record<string, unknown>): Record<string, unknown> {
 }
 
 // Retire les champs vides et trim les autres, comme buildCompany ; un objet vide devient null.
-function cleanCompany(v: unknown): unknown {
+export function cleanCompany(v: unknown): unknown {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return v;
   const out: Record<string, unknown> = {};
   for (const [k, val] of Object.entries(v)) {

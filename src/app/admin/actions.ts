@@ -1,69 +1,40 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { INVITE_COPY, inviteInvalidMessage } from '@/lib/admin/inviteSchema';
+import { INVITE_COPY } from '@/lib/admin/inviteSchema';
 import { requireAdmin } from '@/lib/server/auth/dal';
 import { createHash } from 'node:crypto';
 import { hitThrottle } from '@/lib/server/auth/throttle';
-import { inviteClient, resendInvitation } from '@/lib/server/clients/invite';
+import { resendInvitation } from '@/lib/server/clients/invite';
 import { buildCompany, field } from '@/lib/admin/companyForm';
-import { lookupSiret, type SiretLookupResult } from '@/lib/server/clients/siret';
+import type { SiretLookupResult } from '@/lib/server/clients/siret';
+import { inviteClientCore, lookupSiretCore } from '@/lib/server/admin/core/clients';
 
 export type InviteState = { status: 'idle' | 'success' | 'error'; message?: string };
 
 // Chaque action revérifie l'admin AVANT toute logique service_role (T-10-46).
 export async function lookupSiretAction(siret: string): Promise<SiretLookupResult> {
-  await requireAdmin();
-  return lookupSiret(String(siret ?? ''));
+  const ctx = await requireAdmin();
+  return lookupSiretCore(ctx, { siret });
 }
 
 export async function inviteClientAction(
   _prev: InviteState,
   formData: FormData,
 ): Promise<InviteState> {
-  const { user } = await requireAdmin();
+  const ctx = await requireAdmin();
 
-  const siretRaw = field(formData, 'siret');
-  const result = await inviteClient(
-    {
-      name: field(formData, 'name'),
-      email: field(formData, 'email'),
-      siret: siretRaw,
-      company: buildCompany(formData),
-      companySource: field(formData, 'company_source') === 'manual' ? 'manual' : 'api',
-    },
-    { userId: user.id },
-  );
+  const result = await inviteClientCore(ctx, {
+    name: field(formData, 'name'),
+    email: field(formData, 'email'),
+    siret: field(formData, 'siret'),
+    company: buildCompany(formData),
+    companySource: field(formData, 'company_source') === 'manual' ? 'manual' : 'api',
+  });
 
-  if (result.ok) {
-    if (!result.mailSent) {
-      console.error('[admin/invite] mail_not_sent');
-      return { status: 'error', message: INVITE_COPY.generic };
-    }
-    revalidatePath('/admin');
-    return { status: 'success', message: INVITE_COPY.success(result.email) };
-  }
-
-  switch (result.code) {
-    case 'role_conflict':
-      return { status: 'error', message: INVITE_COPY.roleConflict };
-    case 'already_member':
-      return { status: 'error', message: INVITE_COPY.alreadyMember };
-    case 'existing_account':
-      return { status: 'error', message: INVITE_COPY.existingAccount };
-    case 'invalid':
-      return {
-        status: 'error',
-        message: inviteInvalidMessage({
-          name: field(formData, 'name'),
-          email: field(formData, 'email'),
-          siret: siretRaw,
-        }),
-      };
-    default:
-      console.error(`[admin/invite] ${result.code}`);
-      return { status: 'error', message: INVITE_COPY.generic };
-  }
+  if (!result.ok) return { status: 'error', message: result.message };
+  revalidatePath('/admin');
+  return { status: 'success', message: result.message };
 }
 
 const RESEND_WINDOW_SECONDS = 600;
