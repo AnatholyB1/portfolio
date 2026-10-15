@@ -6,7 +6,7 @@
  *     icon={<FileText size={32} />}          // optionnel, décoratif (aria-hidden)
  *     title="Aucun document pour l'instant"
  *     description="Vos documents apparaîtront ici dès qu'ils seront prêts."
- *     action={<Link className="pt-btn-ghost" href="...">Voir le projet</Link>}   // une action max
+ *     action={<button type="button" className="pt-btn-ghost">Actualiser</button>}   // une action max
  *     headingLevel={3}                        // 2 | 3 | 4, défaut 3 : à régler selon le plan de page
  *   />
  *
