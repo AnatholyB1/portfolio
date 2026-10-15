@@ -4,6 +4,9 @@
    Sobriété back-office (D-11) : pas d'animation, seulement des transitions
    couleur / bordure de 150-200ms, désactivées si prefers-reduced-motion. */
 
+@import "./tokens.css";
+@import "../components/ui/primitives.css";
+
 .pt-root {
   --pt-border-strong: #6f6b64;
   min-height: 100vh;

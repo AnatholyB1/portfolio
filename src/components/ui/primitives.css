@@ -1,0 +1,182 @@
+/* Primitives partagées back-office : EmptyState, Toast/StatusNote, Skeleton.
+   Classes préfixées `pt-` propres à ces composants ; chargé via portal.css (admin, portail, auth).
+   Aucune classe ci-dessous n'est utilisée par les pages publiques. Jetons : tokens.css (--pt-*). */
+
+.pt-ui-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── EmptyState ── */
+.pt-emptystate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 40px 24px;
+  color: var(--ink-dim);
+}
+.pt-emptystate-compact {
+  padding: 20px 16px;
+}
+.pt-emptystate-icon {
+  display: inline-flex;
+  color: var(--ink-faint);
+}
+.pt-emptystate-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.pt-emptystate-desc {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.pt-emptystate-action {
+  margin-top: 8px;
+}
+
+/* ── Toast / StatusNote ── */
+.pt-toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.pt-toast-region {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pt-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-3);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-left-width: 3px;
+  border-radius: var(--pt-radius-sm);
+  box-shadow: var(--pt-shadow-md);
+  font-size: 14px;
+  line-height: 1.4;
+  animation: pt-toast-in var(--pt-dur-base) var(--pt-ease-out) both;
+}
+.pt-toast-success {
+  border-left-color: var(--acid);
+}
+.pt-toast-error {
+  border-left-color: var(--warm);
+}
+.pt-toast-info {
+  border-left-color: var(--ink-dim);
+}
+.pt-toast-msg {
+  flex: 1;
+}
+.pt-toast-close {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -12px -14px -12px 0;
+  background: none;
+  border: 0;
+  color: var(--ink-dim);
+  font-size: 20px;
+  line-height: 1;
+}
+.pt-toast-close:hover {
+  color: var(--ink);
+}
+@keyframes pt-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.pt-status-note {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-dim);
+}
+.pt-status-note[data-empty="true"] {
+  min-height: 0;
+}
+.pt-status-success {
+  color: var(--acid);
+}
+.pt-status-error {
+  color: var(--warm);
+}
+
+/* ── Skeleton ── */
+.pt-skeleton {
+  position: relative;
+}
+.pt-sk-shapes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pt-sk {
+  display: block;
+  height: 16px;
+  border-radius: var(--pt-radius-sm);
+  background: linear-gradient(90deg, var(--bg-3) 0%, rgba(236, 234, 227, 0.07) 50%, var(--bg-3) 100%);
+  background-size: 200% 100%;
+  animation: pt-shimmer 1.4s linear infinite;
+}
+.pt-sk-line {
+  height: 20px;
+}
+.pt-sk-short {
+  width: 60%;
+}
+.pt-sk-block {
+  height: 160px;
+  border-radius: var(--pt-radius-md);
+}
+.pt-sk-row {
+  display: grid;
+  gap: 12px;
+}
+.pt-sk-row .pt-sk {
+  height: 20px;
+}
+@keyframes pt-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-toast {
+    animation: none;
+  }
+  .pt-sk {
+    animation: none;
+    background: var(--bg-3);
+  }
+}
