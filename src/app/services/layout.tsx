@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/pageSeo";
 
 export const metadata: Metadata = {
-  title: "Nos 9 services — sites, identité, publicité et agents IA | Sèvalys",
-  description: "Sèvalys propose 9 services pour PME à Tours : sites, identité de marque, agent vocal IA, maintenance, community management et publicité Meta & Google Ads.",
+  title: "Nos 10 services · sites, marque, SEO, pub et agents IA",
+  description: "10 services pour PME à Tours : sites, marque, agent vocal IA, maintenance, SEO, community management et publicité Meta et Google Ads.",
   keywords: [
     "agent vocal IA",
     "agent téléphonique IA",
@@ -49,16 +50,18 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Nos 9 services | Sèvalys",
+    title: "Nos 10 services · Sèvalys",
     description: "Sites, identité, publicité et agents IA pour PME à Tours.",
     type: "website",
     locale: "fr_FR",
     siteName: "Sèvalys",
     url: "/services",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nos 9 services | Sèvalys",
+    images: [OG_IMAGE.url],
+    title: "Nos 10 services · Sèvalys",
     description: "Sites, identité, publicité et agents IA pour PME à Tours.",
   },
   alternates: {

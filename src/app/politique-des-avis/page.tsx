@@ -1,14 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildPageSeo } from '@/lib/pageSeo';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'Politique des avis',
-  description:
-    'Comment les avis clients de Sèvalys sont collectés, vérifiés, publiés et modérés.',
+  ...buildPageSeo({
+    title: 'Politique des avis',
+    description:
+      'Comment les avis clients de Sèvalys sont collectés, vérifiés, publiés et modérés.',
+    path: '/politique-des-avis',
+  }),
   robots: { index: true, follow: true },
-  alternates: { canonical: '/politique-des-avis' },
 };
 
 // Same scale as /avis: medium-weight 24px section titles, 16px body.

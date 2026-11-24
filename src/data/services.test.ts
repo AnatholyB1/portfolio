@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getServiceBySlug, services } from './services';
-import { projects } from './projects';
+import { caseStudyProjects } from './projects';
 
 const servicesIndexPageSource = readFileSync(
   new URL('../app/services/page.tsx', import.meta.url),
@@ -18,11 +18,12 @@ const LOCKED_SLUGS = [
   'community-management',
   'meta-ads',
   'google-ads',
+  'seo-referencement',
 ];
 
 describe('services', () => {
-  it('has exactly 9 entries', () => {
-    expect(services).toHaveLength(9);
+  it('has exactly 10 entries', () => {
+    expect(services).toHaveLength(10);
   });
 
   it('every slug is unique', () => {
@@ -36,28 +37,28 @@ describe('services', () => {
     }
   });
 
-  it('the set of index values is exactly {0..8} (bijection, no duplicates, no holes)', () => {
+  it('the set of index values is exactly {0..9} (bijection, no duplicates, no holes)', () => {
     const indexes = services.map((s) => s.index).sort((a, b) => a - b);
-    expect(indexes).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(indexes).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
   });
 
   it('every non-null caseStudyProjectIndex is a valid projects index', () => {
     for (const s of services) {
       if (s.caseStudyProjectIndex !== null) {
-        expect(projects[s.caseStudyProjectIndex]).toBeDefined();
+        expect(caseStudyProjects[s.caseStudyProjectIndex]).toBeDefined();
       }
     }
   });
 
-  it('every non-null caseStudyProjectIndex is one of 0, 1, 2 only (D-05)', () => {
+  it('every non-null caseStudyProjectIndex is one of 2, 4, 5 only (D-05)', () => {
     for (const s of services) {
       if (s.caseStudyProjectIndex !== null) {
-        expect([0, 1, 2]).toContain(s.caseStudyProjectIndex);
+        expect([2, 4, 5]).toContain(s.caseStudyProjectIndex);
       }
     }
   });
 
-  it('the 9 slugs equal the exact locked list', () => {
+  it('the 10 slugs equal the exact locked list', () => {
     expect(services.map((s) => s.slug)).toEqual(LOCKED_SLUGS);
   });
 });
@@ -79,7 +80,7 @@ describe('/services index page', () => {
     expect(servicesIndexPageSource).toMatch(/import\s*\{\s*services\s*\}\s*from\s*['"]@\/data\/services['"]/);
   });
 
-  it('is data-driven via a services.map( call, not 9 hardcoded cards', () => {
+  it('is data-driven via a services.map( call, not 10 hardcoded cards', () => {
     expect(servicesIndexPageSource).toContain('services.map(');
   });
 
@@ -87,7 +88,7 @@ describe('/services index page', () => {
     expect(servicesIndexPageSource).toMatch(/`\/services\/\$\{s\.slug\}`/);
   });
 
-  it('contains no hardcoded /services/<literal-slug> string for any of the 9 slugs', () => {
+  it('contains no hardcoded /services/<literal-slug> string for any of the 10 slugs', () => {
     for (const s of services) {
       expect(servicesIndexPageSource).not.toContain(`"/services/${s.slug}"`);
       expect(servicesIndexPageSource).not.toContain(`'/services/${s.slug}'`);

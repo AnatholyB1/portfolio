@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { buildPageSeo } from '@/lib/pageSeo';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ReviewCard from '@/components/reviews/ReviewCard';
@@ -29,11 +30,13 @@ export async function generateMetadata({
   const published = await getPublishedReviews(1, (page - 1) * REVIEWS_PAGE_SIZE);
   const hasReviews = published.length > 0;
   return {
-    title: page > 1 ? `Avis clients, page ${page}` : 'Avis clients',
-    description:
-      'Les avis de clients dont le projet a été livré et la recette signée. Publiés tels qu’écrits, sans filtrage de la note ni du ton.',
+    ...buildPageSeo({
+      title: page > 1 ? `Avis clients, page ${page}` : 'Avis clients',
+      description:
+        'Les avis de clients dont le projet a été livré et la recette signée. Publiés tels qu’écrits, sans filtrage de la note ni du ton.',
+      path: page > 1 ? `/avis?page=${page}` : '/avis',
+    }),
     robots: hasReviews ? { index: true, follow: true } : { index: false, follow: true },
-    alternates: { canonical: page > 1 ? `/avis?page=${page}` : '/avis' },
   };
 }
 

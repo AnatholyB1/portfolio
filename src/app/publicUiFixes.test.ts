@@ -112,3 +112,21 @@ describe('global tokens and a11y base', () => {
     expect(home).toContain('id="main-content"');
   });
 });
+
+describe('SEO audit 24/11/2026: contact block', () => {
+  const contactSection = read('../components/sections/ContactSection.tsx');
+  it('no dated availability claim remains in any locale', () => {
+    for (const lang of ['fr', 'en', 'th'] as const) {
+      const info = (translations[lang].landing.contact.info as { k: string; v: string }[]).map((r) => r.v).join(' ');
+      expect(info, lang).not.toMatch(/2026/);
+    }
+  });
+  it('phone and email render as tel: / mailto: links with an aria-label', () => {
+    expect(contactSection).toContain('href="mailto:contact@sevalys.com"');
+    expect(contactSection).toContain('href="tel:+33607184133"');
+    expect(contactSection).toContain('aria-label=');
+  });
+  it('the footer wordmark link has an accessible name', () => {
+    expect(footer).toMatch(/wordmark-link"\s+aria-label=/);
+  });
+});

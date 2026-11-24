@@ -7,7 +7,7 @@ import { use } from 'react';
 import { useReveals } from '@/hooks/useReveals';
 import { useLanguage } from '@/context/LanguageContext';
 import { getServiceBySlug } from '@/data/services';
-import { projects } from '@/data/projects';
+import { caseStudyProjects } from '@/data/projects';
 import { getFeatureIcon } from '@/lib/serviceIcons';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -105,7 +105,7 @@ export default function ServiceSlugPage({
             <h2 className="svc-h2">{p.headings.preuve}</h2>
             {svc.caseStudyProjectIndex !== null && copy.caseQuote !== null ? (
               (() => {
-                const project = projects[svc.caseStudyProjectIndex as number];
+                const project = caseStudyProjects[svc.caseStudyProjectIndex as number];
                 // WR-02 (06-REVIEW.md): services.test.ts guarantees this join is
                 // valid today, but that's a test-time guarantee only — guard
                 // against a future projects.ts edit (entry removed/reordered)

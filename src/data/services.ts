@@ -1,5 +1,5 @@
 // src/data/services.ts
-// Locale-agnostic data spine for the 9 /services/[slug] pages (Phase 6).
+// Locale-agnostic data spine for the 10 /services/[slug] pages (Phase 6).
 //
 // `index` is the join key into t.services.pages.items[index] (fr/en/th,
 // src/lib/translations.ts). `caseStudyProjectIndex` is the join key into
@@ -37,7 +37,7 @@ export const services: Service[] = [
   {
     slug: 'site-vitrine',
     index: 0,
-    caseStudyProjectIndex: 1, // Gecko Cabane
+    caseStudyProjectIndex: 2, // Gecko Cabane
     featureIcons: ['Palette', 'Smartphone', 'Layout', 'Mail', 'MapPin', 'Search', 'Rocket'],
   },
   {
@@ -55,13 +55,13 @@ export const services: Service[] = [
   {
     slug: 'projet-sur-mesure',
     index: 3,
-    caseStudyProjectIndex: 2, // Les Folies Temps Danse
+    caseStudyProjectIndex: 5, // Les Folies Temps Danse
     featureIcons: ['Layout', 'ShoppingCart', 'CalendarCheck', 'Users2', 'Link2', 'RefreshCw', 'Headphones'],
   },
   {
     slug: 'agent-vocal-ia',
     index: 4,
-    caseStudyProjectIndex: 0, // Feuillette
+    caseStudyProjectIndex: 4, // Feuillette
     featureIcons: ['PhoneCall', 'Mic', 'Database', 'Workflow', 'FileText', 'Bot', 'Headphones'],
   },
   {
@@ -87,6 +87,12 @@ export const services: Service[] = [
     index: 8,
     caseStudyProjectIndex: null,
     featureIcons: ['Search', 'Filter', 'FileText', 'MapPin', 'PhoneCall', 'Sliders', 'BarChart3'],
+  },
+  {
+    slug: 'seo-referencement',
+    index: 9,
+    caseStudyProjectIndex: null,
+    featureIcons: ['ClipboardCheck', 'Target', 'FileText', 'MapPin', 'Gauge', 'LineChart', 'BarChart3'],
   },
 ];
 

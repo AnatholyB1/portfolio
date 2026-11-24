@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Lang, Translations, translations } from '@/lib/translations';
+import { isCrawlerUserAgent } from '@/lib/crawler';
 
 interface LanguageContextType {
   lang: Lang;
@@ -27,10 +28,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (stored && (stored === 'fr' || stored === 'en' || stored === 'th')) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe: localStorage is only readable after mount
       setLangState(stored);
-    } else {
+    } else if (!isCrawlerUserAgent(navigator.userAgent)) {
+      // Robots : FR par défaut (pas de bascule selon navigator.language).
       setLangState(detectBrowserLang());
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLang = (newLang: Lang) => {
     setLangState(newLang);

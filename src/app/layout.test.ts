@@ -30,3 +30,30 @@ describe('global JSON-LD Service catalog (SEO-02)', () => {
     expect(layoutSource).not.toContain('JSON.stringify(jsonLd)');
   });
 });
+
+describe('SEO domaine canonique et langue (audit 24/11/2026)', () => {
+  it('html est servi en fr côté serveur', () => {
+    expect(layoutSource).toContain('<html lang="fr"');
+  });
+
+  it('vercel.json redirige anatholy-bricon.com (et www) vers sevalys.com en 301 avec chemin', () => {
+    const cfg = JSON.parse(readFileSync(new URL('../../vercel.json', import.meta.url), 'utf8'));
+    const r = cfg.redirects.find((x: { destination: string }) => x.destination.startsWith('https://sevalys.com'));
+    expect(r.statusCode).toBe(301);
+    expect(r.destination).toBe('https://sevalys.com/:path');
+    const host = new RegExp(`^${r.has[0].value}$`);
+    expect(host.test('anatholy-bricon.com')).toBe(true);
+    expect(host.test('www.anatholy-bricon.com')).toBe(true);
+    expect(host.test('sevalys.com')).toBe(false);
+    expect(host.test('www.sevalys.com')).toBe(false);
+  });
+
+  it('aucune URL du code source ne pointe vers l\'ancien domaine', () => {
+    const sitemap = readFileSync(new URL('./sitemap.ts', import.meta.url), 'utf8');
+    const robots = readFileSync(new URL('./robots.ts', import.meta.url), 'utf8');
+    const manifest = readFileSync(new URL('./manifest.ts', import.meta.url), 'utf8');
+    for (const src of [layoutSource, sitemap, robots, manifest]) {
+      expect(src).not.toContain('anatholy-bricon');
+    }
+  });
+});

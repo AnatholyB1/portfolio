@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { translations } from "@/lib/translations";
+import { OG_IMAGE } from "@/lib/pageSeo";
 import { buildFaqJsonLd, buildJsonLdScript } from "@/lib/serviceJsonLd";
 
 // Metadata + FAQPage JSON-LD for /simulateur (Phase 7, SIMU-08).
@@ -32,6 +33,13 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     siteName: "Sèvalys",
     url: "/simulateur",
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: translations.fr.simulateur.metaTitle,
+    description: translations.fr.simulateur.metaDescription,
+    images: [OG_IMAGE.url],
   },
 };
 

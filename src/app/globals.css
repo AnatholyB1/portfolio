@@ -354,6 +354,8 @@ h1, h2, h3 { text-wrap: balance; }
 .contact-info .row:last-child { border-bottom: 1px solid var(--line); }
 .contact-info .k { font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); }
 .contact-info .v { font-size: 15px; color: var(--ink); }
+.contact-info a.v { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); transition: color .2s, text-decoration-color .2s; }
+.contact-info a.v:hover, .contact-info a.v:focus-visible { color: var(--acid); text-decoration-color: currentColor; }
 .form { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 16px; padding: 8px; background: var(--bg-2); }
 .field { padding: 14px 20px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
 .field:last-of-type { border-bottom: none; }

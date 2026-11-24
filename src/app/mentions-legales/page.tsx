@@ -1,10 +1,14 @@
-import type { Metadata } from 'next';
+import type { Metadata } from 'next'
+import { buildPageSeo } from '@/lib/pageSeo';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'Mentions Légales',
-  description: 'Mentions légales de Sèvalys, agence digitale basée à Tours, France.',
+  ...buildPageSeo({
+    title: 'Mentions légales',
+    description: 'Mentions légales de Sèvalys, agence digitale basée à Tours (éditeur, hébergement, données personnelles, cookies).',
+    path: '/mentions-legales',
+  }),
   robots: { index: true, follow: true },
 };
 

@@ -17,5 +17,6 @@ export const PRIORITY_ORDER: ServiceSlug[] = [
   'branding',
   'meta-ads',
   'google-ads',
+  'seo-referencement',
   'community-management',
 ];

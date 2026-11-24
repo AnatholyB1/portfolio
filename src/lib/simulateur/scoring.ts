@@ -43,7 +43,7 @@ function forEachSelectedOption(
 
 /**
  * SIMU-02 / D-05: sums each selected option's `weights` per service, then
- * ranks all 9 services descending by that sum, breaking ties via
+ * ranks all 10 services descending by that sum, breaking ties via
  * PRIORITY_ORDER (D-07) so the result is fully deterministic. Reads only
  * `option.weights` — never `option.severity` (Pitfall 1).
  */

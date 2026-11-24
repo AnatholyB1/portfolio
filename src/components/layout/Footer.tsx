@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     <>
       {/* Wordmark block — links to /services */}
-      <Link href="/services" className="wordmark wordmark-link">
+      <Link href="/services" className="wordmark wordmark-link" aria-label="Sèvalys, nos services">
         <div className="wrap">
           <div className="wordmark-row">
             <span>Sèvalys</span>

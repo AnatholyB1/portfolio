@@ -25,7 +25,7 @@ Technique et précis, audacieux et énergique. Voix directe, concrète, sans jar
 
 ## Design Principles
 
-1. **Preuve avant promesse.** Réalisations réelles (Feuillette, Gecko Cabane, Les Folies Temps Danse), captures et chiffres exacts passent avant les adjectifs. Pas de page sans élément visuel réel.
+1. **Preuve avant promesse.** Réalisations réelles (Grand Ouest Habitat, Sellerie Duchet, Gecko Cabane, Ghjulianu Codani), captures et chiffres exacts passent avant les adjectifs. Pas de page sans élément visuel réel.
 2. **Une idée par écran, des rythmes différents.** Chaque section a sa propre composition et sa propre densité. La répétition de la même structure est un échec, pas un système.
 3. **La hiérarchie par contraste d'échelle.** Un titre dominant, un corps calme, du mono pour la précision. Les cartes ne servent que quand elles sont la meilleure affordance.
 4. **La couleur s'engage.** Les couleurs clés actuelles sont conservées, mais utilisées par grands aplats et avec une fonction (action, état, repère), jamais en halo décoratif.

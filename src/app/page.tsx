@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import RevealsMount from '@/components/ui/RevealsMount';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -16,6 +17,11 @@ import ContactSection from '@/components/sections/ContactSection';
 // Server component: AvisExcerpt reads the published reviews on the server (no client fetch, no
 // layout shift). The page is regenerated every 5 minutes.
 export const revalidate = 300;
+
+// The root layout no longer sets a canonical (it was inherited by every page); the home page owns "/".
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 export default function Home() {
   return (

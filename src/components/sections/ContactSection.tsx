@@ -58,7 +58,13 @@ export default function ContactSection() {
               {c.info.map((row, i) => (
                 <div className="row" key={i}>
                   <span className="k">{row.k}</span>
-                  <span className="v">{row.v}</span>
+                  {row.v.includes('@') ? (
+                    <a className="v" href="mailto:contact@sevalys.com" aria-label={`${row.k} : ${row.v}`}>{row.v}</a>
+                  ) : /^\+?[\d\s()]+$/.test(row.v) ? (
+                    <a className="v" href="tel:+33607184133" aria-label={`${row.k} : ${row.v}`}>{row.v}</a>
+                  ) : (
+                    <span className="v">{row.v}</span>
+                  )}
                 </div>
               ))}
             </div>

@@ -129,11 +129,11 @@ describe('translations.services.pages — skeleton (SVC-06)', () => {
   });
 });
 
-describe('service pages content — complete set (SVC-01..06, 9-of-9 completeness gate)', () => {
+describe('service pages content — complete set (SVC-01..06, 10-of-10 completeness gate)', () => {
   for (const lang of LANGS) {
-    it(`${lang}: t.services.pages.items.length === services.length === 9`, () => {
+    it(`${lang}: t.services.pages.items.length === services.length === 10`, () => {
       expect(translations[lang].services.pages.items.length).toBe(services.length);
-      expect(translations[lang].services.pages.items.length).toBe(9);
+      expect(translations[lang].services.pages.items.length).toBe(10);
     });
   }
 
@@ -206,7 +206,7 @@ describe('service pages content — complete set (SVC-01..06, 9-of-9 completenes
     }
   });
 
-  it('SVC-02: no-price guard passes over all 9 entries in all 3 locales', () => {
+  it('SVC-02: no-price guard passes over all 10 entries in all 3 locales', () => {
     for (const lang of LANGS) {
       for (const item of translations[lang].services.pages.items) {
         const serialized = JSON.stringify(item);
@@ -215,7 +215,7 @@ describe('service pages content — complete set (SVC-01..06, 9-of-9 completenes
     }
   });
 
-  it('advisory: fr item word counts land in 200-700, warns outside 300-500 (D-02) — full 9-of-9 pass', () => {
+  it('advisory: fr item word counts land in 200-700, warns outside 300-500 (D-02) — full 10-of-10 pass', () => {
     for (const item of translations.fr.services.pages.items) {
       const words = [
         item.h1Lead,

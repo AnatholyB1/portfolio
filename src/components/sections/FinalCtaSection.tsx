@@ -20,9 +20,9 @@ export default function FinalCtaSection() {
           <Link href="/#contact" className="btn btn-primary">
             {ts.cta} <span className="ar">→</span>
           </Link>
-          <Link href="/#contact" className="btn btn-ghost">
+          <a href="mailto:contact@sevalys.com" className="btn btn-ghost" aria-label={`${ts.email} : contact@sevalys.com`}>
             {ts.email}
-          </Link>
+          </a>
         </div>
         <div className="final-note" data-reveal data-reveal-delay="3">{ts.note}</div>
       </div>

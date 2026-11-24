@@ -19,8 +19,8 @@ describe('sitemap (SEO-01)', () => {
     expect(urls()).toContain(`${base}/simulateur`)
   })
 
-  it('keeps the 4 original URLs', () => {
-    for (const p of ['/', '/services', '/demo', '/mentions-legales']) {
+  it('keeps the original indexable URLs', () => {
+    for (const p of ['/', '/services', '/mentions-legales']) {
       expect(urls()).toContain(`${base}${p}`)
     }
   })
@@ -28,11 +28,16 @@ describe('sitemap (SEO-01)', () => {
   it('has unique urls and the expected count', () => {
     const u = urls()
     expect(new Set(u).size).toBe(u.length)
-    expect(u.length).toBe(4 + services.length + 3)
+    expect(u.length).toBe(3 + services.length + 3)
   })
 
   it('does not list the noindex /calculateur-roi field tool', () => {
     expect(urls()).not.toContain(`${base}/calculateur-roi`)
+  })
+
+  it('does not list the noindex /demo pages', () => {
+    expect(urls()).not.toContain(`${base}/demo`)
+    expect(urls()).not.toContain(`${base}/demo/feuillette`)
   })
 
   it('lists /avis and /politique-des-avis', () => {
@@ -69,7 +74,9 @@ describe('robots and noindex headers (D-15)', () => {
   })
 
   it('next.config sends X-Robots-Tag noindex on every private prefix', async () => {
-    const rules = await nextConfig.headers!()
+    const all = await nextConfig.headers!()
+    // La règle globale /:path* ne porte que les en-têtes de sécurité (pas de noindex).
+    const rules = all.filter((r) => r.source !== '/:path*')
     const sources = rules.map((r) => r.source)
     for (const s of [
       '/espace-client/:path*',
@@ -85,6 +92,11 @@ describe('robots and noindex headers (D-15)', () => {
     }
     for (const r of rules) {
       expect(r.headers).toContainEqual({ key: 'X-Robots-Tag', value: 'noindex, nofollow' })
+    }
+    const global = all.find((r) => r.source === '/:path*')!
+    const keys = global.headers.map((h) => h.key)
+    for (const k of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Content-Security-Policy-Report-Only']) {
+      expect(keys).toContain(k)
     }
     for (const p of PRIVATE_PREFIXES) {
       expect(sources.some((s) => s === p || s.startsWith(`${p}/`))).toBe(true)

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { services, getServiceBySlug } from "@/data/services";
 import { translations } from "@/lib/translations";
+import { OG_IMAGE } from "@/lib/pageSeo";
 import { buildFaqJsonLd, buildJsonLdScript } from "@/lib/serviceJsonLd";
 
 // Per-slug metadata + FAQPage JSON-LD for /services/[slug] (Phase 6).
@@ -48,6 +49,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: "fr_FR",
       siteName: "Sèvalys",
       url: `/services/${slug}`,
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: copy.metaTitle,
+      description: copy.metaDescription,
+      images: [OG_IMAGE.url],
     },
   };
 }

@@ -6,7 +6,6 @@ import ClientProviders from "@/components/ui/ClientProviders";
 import ConsentDialog from "@/components/consent/ConsentDialog";
 import SkipLink from "@/components/ui/SkipLink";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
-import Script from "next/script";
 import { buildServiceCatalogJsonLd } from "@/lib/serviceSchema";
 import { buildJsonLdScript } from "@/lib/serviceJsonLd";
 
@@ -38,11 +37,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Sèvalys — Agence digitale à Tours · Sites, lead magnets, outils sur mesure & IA",
+    default: "Sèvalys · Agence digitale à Tours, sites et IA",
     template: "%s · Sèvalys",
   },
   description:
-    "Sèvalys, agence digitale complète à Tours. Sites et lead magnets qui convertissent, outils de gestion sur mesure, intégrations IA (agents vocaux, automatisations), branding et publicité. Devis sous 48h.",
+    "Agence digitale à Tours : sites et lead magnets qui convertissent, outils sur mesure, agents vocaux et automatisations IA, branding et pub. Devis sous 48h.",
   keywords: [
     "Sèvalys",
     "Sevalys",
@@ -66,9 +65,6 @@ export const metadata: Metadata = {
   creator: "Sèvalys",
   publisher: "Sèvalys",
   applicationName: "Sèvalys",
-  alternates: {
-    canonical: "/",
-  },
   robots: {
     index: true,
     follow: true,
@@ -124,7 +120,7 @@ export default function RootLayout({
       "Sèvalys est une agence digitale complète basée à Tours : sites web et lead magnets, outils de gestion sur mesure, intégrations d'intelligence artificielle (agents vocaux, automatisations), branding et publicité.",
     slogan: "Optimisation business par l'IA.",
     email: "contact@sevalys.com",
-    telephone: "+33 6 07 18 41 33",
+    telephone: "+33607184133",
     knowsAbout: [
       "Agent vocal IA",
       "Standard téléphonique automatisé",
@@ -154,7 +150,7 @@ export default function RootLayout({
     url: SITE_URL,
     logo: `${SITE_URL}/icon-192.png`,
     image: `${SITE_URL}/og-image.png`,
-    telephone: "+33 6 07 18 41 33",
+    telephone: "+33607184133",
     email: "contact@sevalys.com",
     serviceType: [
       "Création de site web",
@@ -165,6 +161,7 @@ export default function RootLayout({
       "Branding",
       "Community management",
       "Publicité Meta Ads et Google Ads",
+      "SEO et référencement local",
     ],
     address: {
       "@type": "PostalAddress",
@@ -177,15 +174,19 @@ export default function RootLayout({
       latitude: 47.3941,
       longitude: 0.6848,
     },
-    areaServed: {
-      "@type": "GeoCircle",
-      geoMidpoint: {
-        "@type": "GeoCoordinates",
-        latitude: 47.3941,
-        longitude: 0.6848,
+    areaServed: [
+      { "@type": "City", name: "Tours" },
+      { "@type": "AdministrativeArea", name: "Indre-et-Loire" },
+      {
+        "@type": "GeoCircle",
+        geoMidpoint: {
+          "@type": "GeoCoordinates",
+          latitude: 47.3941,
+          longitude: 0.6848,
+        },
+        geoRadius: "50000",
       },
-      geoRadius: "50000",
-    },
+    ],
     openingHours: "Mo-Fr 09:00-18:00",
     hasOfferCatalog: buildServiceCatalogJsonLd(SITE_URL),
   };
@@ -238,11 +239,9 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`scroll-smooth ${spaceGrotesk.variable} ${manrope.variable} ${jetbrainsMono.variable}`}>
       <head>
-        <Script
-          id="json-ld"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: buildJsonLdScript(jsonLd) }}
-          strategy="beforeInteractive"
         />
       </head>
       <body>

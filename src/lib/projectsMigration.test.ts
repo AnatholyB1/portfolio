@@ -11,7 +11,10 @@ function stripComments(sql: string): string {
     .join('\n');
 }
 
+const OFFER_SEO_FILE = new URL('../../supabase/migrations/20261116000000_sv_projects_offer_seo.sql', import.meta.url);
+
 const sql = stripComments(readFileSync(FILE, 'utf8'));
+const offerSeoSql = stripComments(readFileSync(OFFER_SEO_FILE, 'utf8'));
 
 const FACT_TYPES = [
   'onboarding_completed',
@@ -33,11 +36,19 @@ function closedList(column: string): string[] {
 }
 
 describe('phase 12 migration static checks (sv_projects_engine)', () => {
-  it('offer check list equals the 9 service slugs', () => {
+  it('initial offer check list holds the first 9 service slugs', () => {
     const offers = closedList('offer');
-    const slugs = services.map((s) => s.slug);
+    const slugs = services.map((s) => s.slug).filter((s) => s !== 'seo-referencement');
     expect(offers).toHaveLength(9);
     expect(new Set(offers)).toEqual(new Set(slugs));
+  });
+
+  it('offer check list after the SEO migration equals the 10 service slugs', () => {
+    const m = offerSeoSql.match(/check\s*\(\s*offer\s+in\s*\(([^)]*)\)/i);
+    expect(m).not.toBeNull();
+    const offers = [...(m as RegExpMatchArray)[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+    expect(offers).toHaveLength(10);
+    expect(new Set(offers)).toEqual(new Set(services.map((s) => s.slug)));
   });
 
   it('fact type check list equals the 8 fact types', () => {

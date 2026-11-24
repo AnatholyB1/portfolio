@@ -36,11 +36,18 @@ const PARTNERS = [
     color: '#e11d48',
   },
   {
-    id: 'folies',
-    name: 'Les Folies Temps Danse',
-    url: 'https://lesfoliestempsdanse.com',
+    id: 'goh',
+    name: 'Grand Ouest Habitat',
+    url: 'https://grandouesthabitat.com',
     shape: 'hexagon' as const,
     color: '#d946ef',
+  },
+  {
+    id: 'duchet',
+    name: 'Sellerie Duchet',
+    url: 'https://sellerieduchet.com',
+    shape: 'diamond' as const,
+    color: '#c79a45',
   },
   {
     id: 'ajmg',

@@ -10,6 +10,7 @@ export const OFFER_SLUGS = [
   'community-management',
   'meta-ads',
   'google-ads',
+  'seo-referencement',
 ] as const;
 
 export type OfferSlug = (typeof OFFER_SLUGS)[number];
@@ -24,4 +25,5 @@ export const OFFER_LABELS: Record<OfferSlug, string> = {
   'community-management': 'Community Management',
   'meta-ads': 'Meta Ads',
   'google-ads': 'Google Ads',
+  'seo-referencement': 'SEO & Référencement',
 };

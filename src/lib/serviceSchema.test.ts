@@ -41,7 +41,7 @@ describe('buildServiceCatalogJsonLd', () => {
     expect(catalog['@type']).toBe('OfferCatalog');
     expect(catalog['@id']).toBe(`${BASE}/#catalog`);
     expect(catalog.itemListElement).toHaveLength(services.length);
-    expect(services.length).toBe(9);
+    expect(services.length).toBe(10);
   });
 
   it('emits distinct Service nodes', () => {

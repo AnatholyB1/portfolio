@@ -20,7 +20,7 @@
 // This file must import nothing (no React, no Next, no zod, no DOM) so
 // vitest's node environment and the client Wizard can both load it.
 
-/** The 9 canonical service slugs, locked in Phase 6. Do NOT invent new ones. */
+/** The 10 canonical service slugs, locked in Phase 6. Do NOT invent new ones. */
 export type ServiceSlug =
   | 'site-vitrine'
   | 'rebranding-site-premium'
@@ -30,7 +30,8 @@ export type ServiceSlug =
   | 'maintenance'
   | 'community-management'
   | 'meta-ads'
-  | 'google-ads';
+  | 'google-ads'
+  | 'seo-referencement';
 
 export const ALL_SLUGS: ServiceSlug[] = [
   'site-vitrine',
@@ -42,6 +43,7 @@ export const ALL_SLUGS: ServiceSlug[] = [
   'community-management',
   'meta-ads',
   'google-ads',
+  'seo-referencement',
 ];
 
 export interface QuestionOption {
@@ -191,7 +193,7 @@ export const QUESTIONS: Question[] = [
         value: 'pas-assez-de-demandes',
         icon: 'TrendingDown',
         severity: 75,
-        weights: { 'google-ads': 3, 'meta-ads': 3, 'site-vitrine': 1 },
+        weights: { 'google-ads': 3, 'meta-ads': 3, 'seo-referencement': 2, 'site-vitrine': 1 },
       },
       {
         value: 'image-depassee',
@@ -233,7 +235,7 @@ export const QUESTIONS: Question[] = [
         value: 'etre-trouve',
         icon: 'Target',
         severity: 65,
-        weights: { 'google-ads': 3, 'site-vitrine': 2, 'meta-ads': 1 },
+        weights: { 'google-ads': 3, 'seo-referencement': 3, 'site-vitrine': 2, 'meta-ads': 1 },
       },
       {
         value: 'convertir-plus',

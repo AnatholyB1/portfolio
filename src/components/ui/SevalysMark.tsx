@@ -42,7 +42,7 @@ export default function SevalysMark({ size = '1em', className, title = 'Sèvalys
  */
 export function SevalysWordmark({ className }: { className?: string }) {
   return (
-    <span className={`sv-lock ${className ?? ''}`} aria-label="Sèvalys">
+    <span className={`sv-lock ${className ?? ''}`} role="img" aria-label="Sèvalys">
       <SevalysMark className="sv-lock-mark" title="S" />
       <span className="sv-lock-wm" aria-hidden="true">
         <span className="sv-accent">è</span>val<span className="sv-ys">ys</span>
