@@ -50,10 +50,10 @@ describe('services', () => {
     }
   });
 
-  it('every non-null caseStudyProjectIndex is one of 2, 4, 5 only (D-05)', () => {
+  it('every non-null caseStudyProjectIndex is one of 3, 5, 6 only (D-05)', () => {
     for (const s of services) {
       if (s.caseStudyProjectIndex !== null) {
-        expect([2, 4, 5]).toContain(s.caseStudyProjectIndex);
+        expect([3, 5, 6]).toContain(s.caseStudyProjectIndex);
       }
     }
   });

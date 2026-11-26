@@ -40,6 +40,15 @@ export const projects: Project[] = [
   },
   {
     index: 2,
+    name: 'NEF Nettoyage',
+    year: '2026',
+    href: 'https://nef-nettoyage.fr',
+    image: '/work/nef-nettoyage.webp',
+    imageHeight: 900,
+    host: 'nef-nettoyage.fr',
+  },
+  {
+    index: 3,
     name: 'Gecko Cabane',
     year: '2024',
     href: 'https://geckocabanerestaurant.com',
@@ -48,7 +57,7 @@ export const projects: Project[] = [
     host: 'geckocabanerestaurant.com',
   },
   {
-    index: 3,
+    index: 4,
     name: 'Ghjulianu Codani',
     year: '2025',
     href: 'https://ghjulianu-codani.com',

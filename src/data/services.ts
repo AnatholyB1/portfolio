@@ -37,7 +37,7 @@ export const services: Service[] = [
   {
     slug: 'site-vitrine',
     index: 0,
-    caseStudyProjectIndex: 2, // Gecko Cabane
+    caseStudyProjectIndex: 3, // Gecko Cabane
     featureIcons: ['Palette', 'Smartphone', 'Layout', 'Mail', 'MapPin', 'Search', 'Rocket'],
   },
   {
@@ -55,13 +55,13 @@ export const services: Service[] = [
   {
     slug: 'projet-sur-mesure',
     index: 3,
-    caseStudyProjectIndex: 5, // Les Folies Temps Danse
+    caseStudyProjectIndex: 6, // Les Folies Temps Danse
     featureIcons: ['Layout', 'ShoppingCart', 'CalendarCheck', 'Users2', 'Link2', 'RefreshCw', 'Headphones'],
   },
   {
     slug: 'agent-vocal-ia',
     index: 4,
-    caseStudyProjectIndex: 4, // Feuillette
+    caseStudyProjectIndex: 5, // Feuillette
     featureIcons: ['PhoneCall', 'Mic', 'Database', 'Workflow', 'FileText', 'Bot', 'Headphones'],
   },
   {

@@ -37,14 +37,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Sèvalys · Agence digitale à Tours, sites et IA",
+    default: "Sèvalys · Agence web à Tours, sites et IA",
     template: "%s · Sèvalys",
   },
   description:
-    "Agence digitale à Tours : sites et lead magnets qui convertissent, outils sur mesure, agents vocaux et automatisations IA, branding et pub. Devis sous 48h.",
+    "Agence web à Tours : sites et lead magnets qui convertissent, outils sur mesure, agents vocaux et automatisations IA, branding et pub. Devis sous 48h.",
   keywords: [
     "Sèvalys",
     "Sevalys",
+    "agence web",
     "agence digitale",
     "agence IA",
     "lead magnet",
@@ -58,6 +59,7 @@ export const metadata: Metadata = {
     "optimisation business par l'IA",
     "agence intelligence artificielle Tours",
     "création site web Tours",
+    "agence web Tours",
     "agence digitale Tours",
     "phone agent VAPI",
   ],
@@ -117,7 +119,7 @@ export default function RootLayout({
     logo: `${SITE_URL}/icon-512.png`,
     image: `${SITE_URL}/og-image.png`,
     description:
-      "Sèvalys est une agence digitale complète basée à Tours : sites web et lead magnets, outils de gestion sur mesure, intégrations d'intelligence artificielle (agents vocaux, automatisations), branding et publicité.",
+      "Sèvalys est une agence web et digitale complète basée à Tours : sites web et lead magnets, outils de gestion sur mesure, intégrations d'intelligence artificielle (agents vocaux, automatisations), branding et publicité.",
     slogan: "Optimisation business par l'IA.",
     email: "contact@sevalys.com",
     telephone: "+33607184133",
@@ -146,7 +148,7 @@ export default function RootLayout({
     name: "Sèvalys",
     parentOrganization: { "@id": `${SITE_URL}/#organization` },
     description:
-      "Agence digitale à Tours — sites et lead magnets, outils de gestion sur mesure, intégrations IA (agents vocaux, automatisations), branding et publicité pour PME, commerces, restaurants et services.",
+      "Agence web et digitale à Tours — sites et lead magnets, outils de gestion sur mesure, intégrations IA (agents vocaux, automatisations), branding et publicité pour PME, commerces, restaurants et services.",
     url: SITE_URL,
     logo: `${SITE_URL}/icon-192.png`,
     image: `${SITE_URL}/og-image.png`,

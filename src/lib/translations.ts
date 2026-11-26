@@ -564,7 +564,7 @@ const fr: Translations = {
             note: "TVA non applicable, art. 293 B du CGI. Délai habituel : 2 à 4 semaines. Devis gratuit sous 48 h.",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Combien coûte un site vitrine : le guide des prix", href: "/guides/prix-site-vitrine", description: "Les fourchettes, et les questions à poser avant un devis." },
             { label: "Faire trouver votre site sur Google à Tours", href: "/services/seo-referencement", description: "Aller plus loin que les bases du référencement local." },
@@ -684,7 +684,7 @@ const fr: Translations = {
             { title: "On met en ligne et on surveille", text: "Mise en ligne avec les redirections 301 en place, puis contrôle dans Google Search Console. Une prise en main vous permet de modifier vos textes.", duration: "Mise en ligne, puis suivi" },
           ],
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Créer un site vitrine si vous n'avez pas encore de site", href: "/services/site-vitrine", description: "La page pour partir d'une page blanche." },
             { label: "Protéger et améliorer votre référencement naturel", href: "/services/seo-referencement", description: "L'accompagnement qui prolonge une refonte." },
@@ -1091,7 +1091,7 @@ const fr: Translations = {
             note: "TVA non applicable, art. 293 B du CGI",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Comprendre le SEO local à Tours", href: "/guides/seo-local", description: "Le principe, expliqué simplement." },
             { label: "Créer votre site à Tours", href: "/services/site-vitrine", description: "Pas encore de site ? On commence par là." },
@@ -1337,8 +1337,8 @@ const fr: Translations = {
   },
   landing: {
     hero: {
-      pill: "AGENCE · TOURS, FR",
-      title_l1: "Agence digitale",
+      pill: "AGENCE WEB · TOURS, FR",
+      title_l1: "Agence web",
       title_l2: "à ",
       title_l2_it: "Tours",
       sub: "Des outils qui travaillent pour vos clients. Sites internet, référencement local et agents IA pour les commerces, restaurants, artisans et PME de Tours.",
@@ -1347,9 +1347,9 @@ const fr: Translations = {
     },
     manifeste: {
       num: "01 / 08",
-      title_l1: "Une agence digitale à Tours",
+      title_l1: "Une agence web à Tours",
       title_l2_it: "pour les commerces et les PME.",
-      intro: "Sèvalys, c'est une petite agence de Tours. Des sites internet, du référencement local, des agents IA pour les commerces, restaurants, artisans et PME d'Indre-et-Loire. Au bout du fil, une seule personne : Anatholy Bricon, le fondateur.",
+      intro: "Sèvalys, c'est une petite agence web de Tours, aussi agence digitale par ses services. Des sites internet, du référencement local, des agents IA pour les commerces, restaurants, artisans et PME d'Indre-et-Loire. Au bout du fil, une seule personne : Anatholy Bricon, le fondateur.",
       quote: "« Un site beau, c'est bien. Un site qui rapporte, c'est mieux. »",
       items: [
         { t: "Invisible sur Google", d: "Vos clients cherchent votre métier et trouvent vos concurrents avant vous." },
@@ -1379,12 +1379,13 @@ const fr: Translations = {
     },
     work: {
       num: "03 / 08",
-      title_l1: "Quatre sites réalisés,",
-      title_l2_it: "quatre métiers.",
-      intro: "Quatre sites en ligne, que vous pouvez ouvrir : une entreprise de rénovation à Tours, une sellerie à Chambray-lès-Tours, un restaurant franco-thaï à Krabi et un photographe.",
+      title_l1: "Cinq sites réalisés,",
+      title_l2_it: "cinq métiers.",
+      intro: "Cinq sites en ligne, que vous pouvez ouvrir : une entreprise de rénovation à Tours, une sellerie à Chambray-lès-Tours, une entreprise de nettoyage de locaux à Tours, un restaurant franco-thaï à Krabi et un photographe.",
       items: [
         { name: 'Grand Ouest Habitat', desc: "Rénovation du bâtiment à Tours : photos avant et après, demande de projet en ligne, visite technique puis devis sous 48 h.", tags: ['SITE', 'DEVIS'], year: '2026' },
         { name: 'Sellerie Duchet', desc: "Équipement équestre à Chambray-lès-Tours : rayons, produits en vedette, livraison et paiement en plusieurs fois.", tags: ['BOUTIQUE', 'E-COMMERCE'], year: '2026' },
+        { name: 'NEF Nettoyage', desc: "Nettoyage de locaux à Tours et alentours : prestations pour professionnels et particuliers, équipe, projets réalisés, avant/après et demande de devis gratuit.", tags: ['SITE', 'DEVIS'], year: '2026' },
         { name: 'Gecko Cabane', desc: 'Restaurant franco-thaï à Krabi : carte, horaires et formulaire de réservation, en quatre langues.', tags: ['SITE', 'RESA'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Photographe : portfolio, albums, tarifs et contact.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
@@ -1415,7 +1416,7 @@ const fr: Translations = {
     },
     why: {
       num: "06 / 08",
-      title_l1: "Pourquoi choisir une agence digitale",
+      title_l1: "Pourquoi choisir une agence web",
       title_l2_it: "à taille humaine ?",
       items: [
         { t: "Un interlocuteur", d: "Le fondateur, Anatholy Bricon, répond lui-même et fait le travail : aucun commercial entre vous et lui." },
@@ -1428,7 +1429,7 @@ const fr: Translations = {
       title_l1: "Questions",
       title_l2_it: "fréquentes.",
       items: [
-        { q: "Que fait une agence digitale à Tours comme Sèvalys ?", a: "Sèvalys crée des sites internet, assure le référencement local, gère des campagnes Google Ads et installe des agents vocaux IA pour les commerces et PME de Tours. Vous parlez directement à Anatholy Bricon, le fondateur, du premier échange à la mise en ligne." },
+        { q: "Que fait une agence web à Tours comme Sèvalys ?", a: "Sèvalys, agence web et digitale à Tours, crée des sites internet, assure le référencement local, gère des campagnes Google Ads et installe des agents vocaux IA pour les commerces et PME de Tours. Vous parlez directement à Anatholy Bricon, le fondateur, du premier échange à la mise en ligne." },
         { q: "Quelle différence entre agence web et agence digitale ?", a: "Une agence web réalise le site. Une agence digitale s'occupe aussi d'être trouvé sur Google (référencement, publicité) et des outils du quotidien (agent IA, automatisations)." },
         { q: "Combien coûte un site internet ?", a: "À partir de 500 € : accueil et jusqu'à 2 pages, au forfait à périmètre défini. Devis sous 48 h, sans engagement. TVA non applicable, art. 293 B du CGI." },
         { q: "Combien coûte le référencement (SEO) ?", a: "À partir de 300 €/mois pour 2 pages suivies, +100 €/mois par page supplémentaire, 1 lien par mois compris, engagement de 3 mois minimum. Aucune position n'est garantie : on mesure et on rend compte." },
@@ -1686,7 +1687,7 @@ const en: Translations = {
             note: "VAT not applicable, art. 293 B of the CGI. Usual lead time: 2 to 4 weeks. Free quote within 48 h.",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "How much a Site Vitrine costs: the price guide", href: "/guides/prix-site-vitrine", description: "The ranges, and the questions to ask before a quote." },
             { label: "Get your site found on Google in Tours", href: "/services/seo-referencement", description: "Go further than the local SEO basics." },
@@ -1806,7 +1807,7 @@ const en: Translations = {
             { title: "We launch and keep watch", text: "Launch with the 301 redirects in place, then a check in Google Search Console. A hand-off lets you edit your text yourself.", duration: "Launch, then follow-up" },
           ],
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Build a showcase website if you have no site yet", href: "/services/site-vitrine", description: "The page for starting from a blank page." },
             { label: "Protect and improve your search ranking", href: "/services/seo-referencement", description: "The support that extends a redesign." },
@@ -2213,7 +2214,7 @@ const en: Translations = {
             note: "VAT not applicable, art. 293 B of the French tax code (CGI)",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Understand local SEO in Tours", href: "/guides/seo-local", description: "The principle, explained simply." },
             { label: "Build your website in Tours", href: "/services/site-vitrine", description: "No site yet? Start there." },
@@ -2459,8 +2460,8 @@ const en: Translations = {
   },
   landing: {
     hero: {
-      pill: "AGENCY · TOURS, FR",
-      title_l1: "Digital agency",
+      pill: "WEB AGENCY · TOURS, FR",
+      title_l1: "Web agency",
       title_l2: "in ",
       title_l2_it: "Tours",
       sub: "Tools that work for your customers. Websites, local SEO and AI agents for the shops, restaurants, craftspeople and small businesses of Tours.",
@@ -2469,7 +2470,7 @@ const en: Translations = {
     },
     manifeste: {
       num: "01 / 08",
-      title_l1: "A digital agency in Tours",
+      title_l1: "A web agency in Tours",
       title_l2_it: "for shops and small businesses.",
       intro: "Sèvalys builds websites, handles local SEO and sets up AI agents for the shops, restaurants, craftspeople and small businesses of Tours and Indre-et-Loire. You talk directly to Anatholy Bricon, the founder.",
       quote: "“A beautiful site is fine. A site that earns is better.”",
@@ -2521,7 +2522,7 @@ const en: Translations = {
     },
     why: {
       num: "06 / 08",
-      title_l1: "Why choose a digital agency",
+      title_l1: "Why choose a web agency",
       title_l2_it: "of human size?",
       items: [
         { t: "One contact", d: "You talk directly to Anatholy Bricon, sole trader and founder of Sèvalys." },
@@ -2534,7 +2535,7 @@ const en: Translations = {
       title_l1: "Frequently asked",
       title_l2_it: "questions.",
       items: [
-        { q: "What does a digital agency in Tours like Sèvalys do?", a: "Sèvalys builds websites, handles local SEO, runs Google Ads campaigns and sets up AI voice agents for the shops and small businesses of Tours. You talk directly to Anatholy Bricon, from first contact to launch." },
+        { q: "What does a web agency in Tours like Sèvalys do?", a: "Sèvalys, a web and digital agency in Tours, builds websites, handles local SEO, runs Google Ads campaigns and sets up AI voice agents for the shops and small businesses of Tours. You talk directly to Anatholy Bricon, from first contact to launch." },
         { q: "What is the difference between a web agency and a digital agency?", a: "A web agency builds the site. A digital agency also gets you found on Google (SEO, advertising) and handles everyday tools (AI agent, automations)." },
         { q: "How much does a website cost?", a: "From €500: home page and up to 2 pages, at a fixed price with a defined scope. Quote within 48 h, no commitment. VAT not applicable, art. 293 B of the French tax code (CGI)." },
         { q: "How much does SEO cost?", a: "From €300/month for 2 tracked pages, +€100/month per extra page, 1 link per month included, 3 months minimum. No ranking is guaranteed: we measure and report." },
@@ -2546,12 +2547,13 @@ const en: Translations = {
     },
     work: {
       num: "03 / 08",
-      title_l1: "Four sites delivered,",
-      title_l2_it: "four trades.",
+      title_l1: "Five sites delivered,",
+      title_l2_it: "five trades.",
       intro: "Real sites, live online, that you can visit.",
       items: [
         { name: 'Grand Ouest Habitat', desc: 'General building renovation site — online project request, technical visit, then a quote within 48 h.', tags: ['SITE', 'QUOTE'], year: '2026' },
         { name: 'Sellerie Duchet', desc: 'Online shop for equestrian equipment — catalogue by department, delivery and instalment payment.', tags: ['SHOP', 'E-COMMERCE'], year: '2026' },
+        { name: 'NEF Nettoyage', desc: 'Commercial cleaning company in Tours and surrounding area — services for businesses and individuals, team, completed projects, before/after photos and a free quote request.', tags: ['SITE', 'QUOTE'], year: '2026' },
         { name: 'Gecko Cabane', desc: 'Restaurant site + booking. Custom design, managed hosting.', tags: ['SITE', 'BOOKING'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Professional portfolio — editorial design, careful build.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
@@ -2808,7 +2810,7 @@ const th: Translations = {
             note: "ไม่ใช้ภาษีมูลค่าเพิ่ม (TVA) ตามมาตรา 293 B ของ CGI ระยะเวลาโดยทั่วไป 2 ถึง 4 สัปดาห์ ใบเสนอราคาไม่มีค่าใช้จ่ายภายใน 48 ชั่วโมง",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "Site Vitrine ราคาเท่าไร: คู่มือราคา", href: "/guides/prix-site-vitrine", description: "ช่วงราคา และคำถามที่ควรถามก่อนรับใบเสนอราคา" },
             { label: "ทำให้เว็บไซต์ของคุณถูกพบบน Google ในตูร์", href: "/services/seo-referencement", description: "ก้าวต่อจากพื้นฐาน SEO ท้องถิ่น" },
@@ -2928,7 +2930,7 @@ const th: Translations = {
             { title: "เราเปิดใช้งานและเฝ้าติดตาม", text: "เปิดใช้งานพร้อมรีไดเรกต์ 301 แล้วตรวจใน Google Search Console การฝึกอบรมช่วยให้คุณแก้ไขข้อความเองได้", duration: "เปิดใช้งาน แล้วติดตามผล" },
           ],
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "สร้างเว็บไซต์แนะนำธุรกิจถ้ายังไม่มีเว็บ", href: "/services/site-vitrine", description: "หน้าสำหรับเริ่มจากหน้ากระดาษเปล่า" },
             { label: "ปกป้องและเพิ่มอันดับบนเสิร์ชเอนจินของคุณ", href: "/services/seo-referencement", description: "การสนับสนุนที่ต่อยอดจากการปรับปรุงใหม่" },
@@ -3335,7 +3337,7 @@ const th: Translations = {
             note: "ไม่ต้องเสียภาษีมูลค่าเพิ่ม ตามมาตรา 293 B ของประมวลกฎหมายภาษีฝรั่งเศส (CGI) (TVA non applicable, art. 293 B du CGI)",
           },
           areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
-          proofProjects: [0, 1, 2, 3],
+          proofProjects: [0, 1, 3, 4],
           internalLinks: [
             { label: "ทำความเข้าใจ SEO ท้องถิ่นที่ตูร์", href: "/guides/seo-local", description: "หลักการ อธิบายแบบเข้าใจง่าย" },
             { label: "สร้างเว็บไซต์ของคุณที่ตูร์", href: "/services/site-vitrine", description: "ยังไม่มีเว็บไซต์? เริ่มจากตรงนี้" },
@@ -3581,8 +3583,8 @@ const th: Translations = {
   },
   landing: {
     hero: {
-      pill: "เอเจนซี่ · ตูร์ ฝรั่งเศส",
-      title_l1: "เอเจนซี่ดิจิทัล",
+      pill: "เอเจนซี่เว็บ · ตูร์ ฝรั่งเศส",
+      title_l1: "เอเจนซี่เว็บ",
       title_l2: "ที่ ",
       title_l2_it: "ตูร์",
       sub: "เครื่องมือที่ทำงานเพื่อลูกค้าของคุณ เว็บไซต์ SEO ท้องถิ่น และ AI agents สำหรับร้านค้า ร้านอาหาร ช่างฝีมือ และ SME ในเมืองตูร์",
@@ -3591,7 +3593,7 @@ const th: Translations = {
     },
     manifeste: {
       num: "01 / 08",
-      title_l1: "เอเจนซี่ดิจิทัลที่ตูร์",
+      title_l1: "เอเจนซี่เว็บที่ตูร์",
       title_l2_it: "สำหรับร้านค้าและ SME",
       intro: "Sèvalys สร้างเว็บไซต์ ดูแล SEO ท้องถิ่น และติดตั้ง AI agents ให้ร้านค้า ร้านอาหาร ช่างฝีมือ และ SME ในเมืองตูร์และแคว้นอ็องดร์-เอ-ลัวร์ คุณคุยกับ Anatholy Bricon ผู้ก่อตั้งโดยตรง",
       quote: "« เว็บสวยก็ดี เว็บที่สร้างรายได้ดีกว่า »",
@@ -3643,7 +3645,7 @@ const th: Translations = {
     },
     why: {
       num: "06 / 08",
-      title_l1: "ทำไมต้องเลือกเอเจนซี่ดิจิทัล",
+      title_l1: "ทำไมต้องเลือกเอเจนซี่เว็บ",
       title_l2_it: "ขนาดพอดีตัว?",
       items: [
         { t: "คุยกับคนเดียว", d: "คุณคุยกับ Anatholy Bricon ผู้ประกอบการรายเดียวและผู้ก่อตั้ง Sèvalys โดยตรง" },
@@ -3656,7 +3658,7 @@ const th: Translations = {
       title_l1: "คำถาม",
       title_l2_it: "ที่พบบ่อย",
       items: [
-        { q: "เอเจนซี่ดิจิทัลที่ตูร์อย่าง Sèvalys ทำอะไร?", a: "Sèvalys สร้างเว็บไซต์ ดูแล SEO ท้องถิ่น ทำแคมเปญ Google Ads และติดตั้ง AI voice agent ให้ร้านค้าและ SME ในตูร์ คุณคุยกับ Anatholy Bricon โดยตรง ตั้งแต่ครั้งแรกจนเว็บไซต์เปิดใช้งาน" },
+        { q: "เอเจนซี่เว็บที่ตูร์อย่าง Sèvalys ทำอะไร?", a: "Sèvalys เอเจนซี่เว็บและดิจิทัลในตูร์ สร้างเว็บไซต์ ดูแล SEO ท้องถิ่น ทำแคมเปญ Google Ads และติดตั้ง AI voice agent ให้ร้านค้าและ SME ในตูร์ คุณคุยกับ Anatholy Bricon โดยตรง ตั้งแต่ครั้งแรกจนเว็บไซต์เปิดใช้งาน" },
         { q: "เอเจนซี่เว็บกับเอเจนซี่ดิจิทัลต่างกันอย่างไร?", a: "เอเจนซี่เว็บทำเว็บไซต์ เอเจนซี่ดิจิทัลดูแลให้คุณถูกค้นเจอบน Google (SEO โฆษณา) และเครื่องมือประจำวัน (AI agent ระบบอัตโนมัติ) ด้วย" },
         { q: "เว็บไซต์ราคาเท่าไร?", a: "เริ่มต้น 500 € หน้าแรกและอีกไม่เกิน 2 หน้า ราคาเหมาจ่ายขอบเขตชัดเจน ใบเสนอราคาใน 48 ชม. ไม่มีข้อผูกมัด ไม่มี VAT ตามมาตรา 293 B ของ CGI" },
         { q: "SEO ราคาเท่าไร?", a: "เริ่มต้น 300 €/เดือน สำหรับ 2 หน้า หน้าเพิ่ม +100 €/เดือน รวมลิงก์ 1 รายการต่อเดือน ขั้นต่ำ 3 เดือน ไม่รับประกันอันดับ เราวัดผลและรายงาน" },
@@ -3668,12 +3670,13 @@ const th: Translations = {
     },
     work: {
       num: "03 / 08",
-      title_l1: "สี่เว็บไซต์ที่ส่งมอบ",
-      title_l2_it: "สี่ธุรกิจ",
+      title_l1: "ห้าเว็บไซต์ที่ส่งมอบ",
+      title_l2_it: "ห้าธุรกิจ",
       intro: "เว็บไซต์จริงที่เปิดใช้งานอยู่ คุณเข้าไปดูได้",
       items: [
         { name: 'Grand Ouest Habitat', desc: 'เว็บไซต์ปรับปรุงอาคารทั่วไป — ส่งคำขอโครงการออนไลน์ ตรวจหน้างาน แล้วรับใบเสนอราคาภายใน 48 ชั่วโมง', tags: ['เว็บ', 'ใบเสนอราคา'], year: '2026' },
         { name: 'Sellerie Duchet', desc: 'ร้านค้าออนไลน์อุปกรณ์ขี่ม้า — แค็ตตาล็อกตามหมวด จัดส่ง และผ่อนชำระได้', tags: ['ร้านค้า', 'อีคอมเมิร์ซ'], year: '2026' },
+        { name: 'NEF Nettoyage', desc: 'เว็บไซต์บริษัททำความสะอาดอาคารสถานที่ในเมืองตูร์และพื้นที่ใกล้เคียง — บริการสำหรับธุรกิจและบุคคลทั่วไป ทีมงาน ผลงานที่ผ่านมา ภาพก่อน/หลัง และแบบฟอร์มขอใบเสนอราคาฟรี', tags: ['เว็บ', 'ใบเสนอราคา'], year: '2026' },
         { name: 'Gecko Cabane', desc: 'เว็บร้านอาหาร + จองโต๊ะ ดีไซน์เฉพาะ โฮสติ้งดูแลให้', tags: ['เว็บ', 'จอง'], year: '2024' },
         { name: 'Ghjulianu Codani', desc: 'Portfolio ระดับมืออาชีพ', tags: ['เว็บ', 'บรรณาธิการ'], year: '2025' },
       ],

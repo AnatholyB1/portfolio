@@ -6,7 +6,7 @@ import BrowserShot from '@/components/ui/BrowserShot';
 export default function HeroSection() {
   const { t } = useLanguage();
   const tl = t.landing;
-  const [goh, duchet, gecko] = [projects[0], projects[1], projects[2]];
+  const [goh, duchet, gecko] = [projects[0], projects[1], projects[3]];
 
   return (
     <section className="hero" id="top">

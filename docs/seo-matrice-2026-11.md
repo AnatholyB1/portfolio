@@ -10,7 +10,7 @@ Méthode : skill `seo-client`, mode stratégie. Sources : Google France via Brig
 | Même profil, site existant qui ne rapporte rien | Être trouvé sur Google | Commerciale locale | agence seo tours, référencement site internet tours, référencement naturel tours |
 | Même profil, budget en tête | Savoir combien ça coûte | Commerciale / informationnelle | prix création site internet tours |
 | Même profil, site existant | Refaire un site | Commerciale locale | refonte site internet tours |
-| Dirigeant qui cherche « une agence » | Comparer des prestataires | Commerciale (comparatifs) | agence digitale tours, agence web tours |
+| Dirigeant qui cherche « une agence » | Comparer des prestataires | Commerciale (comparatifs) | agence web tours, agence digitale tours |
 
 ## Ce que Google montre (type de page attendu)
 
@@ -25,7 +25,7 @@ Méthode : skill `seo-client`, mode stratégie. Sources : Google France via Brig
 
 | URL | Type | Mot-clé principal | Secondaires | Poids | Action |
 |---|---|---|---|---|---|
-| `/` | Accueil / marque | agence digitale tours | sevalys, agence web tours, sites et agents IA tours | 40 % | **Optimiser** : H1 avec « agence digitale à Tours », H2 d'action, bloc local, preuves |
+| `/` | Accueil / marque | **agence web tours** (210/mois, difficulté 54, CPC 2,70 €, DataForSEO 26/11/2026) | agence digitale tours (40/mois), sevalys, sites et agents IA tours | 40 % | **Optimiser (fait 26/11)** : title, meta, H1 et pill « agence web à Tours » ; « agence digitale » en secondaire (texte, FAQ, layout) |
 | `/services/site-vitrine` | Page service locale | **création site internet tours** | création site vitrine tours, site internet professionnel tours, site internet artisan/restaurant tours | 20 % | **Réécrire** (le titre vise « site vitrine », la requête dominante est « création site internet ») |
 | `/services/seo-referencement` | Page service locale | **agence seo tours** | référencement site internet tours, référencement naturel tours, seo local tours | 15 % | **Réécrire** |
 | `/services/rebranding-site-premium` | Page service | refonte site internet tours | refonte site vitrine, refaire son site | 10 % | À décider : viser la « refonte » (SERP dédiée) |
@@ -36,7 +36,7 @@ Méthode : skill `seo-client`, mode stratégie. Sources : Google France via Brig
 
 ## Risques de cannibalisation
 
-- `/` (agence digitale) ↔ `/services/site-vitrine` ↔ `/services/rebranding-site-premium` : trois pages sur « site + Tours ». Règle : accueil = marque et offre globale, vitrine = création, rebranding = refonte.
+- `/` (agence web) ↔ `/services/site-vitrine` ↔ `/services/rebranding-site-premium` : trois pages sur « site + Tours ». Règle : accueil = marque et offre globale, vitrine = création, rebranding = refonte.
 - `/services/seo-referencement` ↔ futur guide « SEO local » : le guide répond à la question, la page vend.
 
 ## Constats sur l'existant (comparé au top 10)
@@ -61,6 +61,7 @@ Volumes mensuels moyens ; difficulté sur 100 (quand disponible) ; CPC en €. �
 | agence web tours | 210 | 54 | 2,70 | commerciale |
 | agence seo tours | 170 | n.d. | 6,54 | commerciale |
 | création site internet tours | 90 | 37 | 5,01 | commerciale |
+| agence web tours | 210 | 54 | 2,70 € | commerciale (comparatifs + agences généralistes) |
 | agence digitale tours | 40 | n.d. | n.d. | commerciale |
 | référencement tours | 40 | n.d. | n.d. | informationnelle |
 | référencement naturel tours | 20 | n.d. | n.d. | informationnelle |

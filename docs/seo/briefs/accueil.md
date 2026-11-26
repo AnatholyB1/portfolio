@@ -6,12 +6,12 @@ Date : 26/11/2026. Méthode : skill `seo-client`, contenu.md section 1. Page exi
 
 | Rôle | Mot-clé | Volume/mois (FR) | Difficulté | Remarque |
 |---|---|---|---|---|
-| Principal | agence digitale tours | 40 | n.d. | commerciale |
-| Secondaire | agence web tours | 210 | 54 | le plus gros volume de la page |
+| Principal | agence web tours | 210 | 54 | commerciale |
+| Secondaire | agence digitale tours | 40 | n.d. | commerciale |
 | Marque | Sèvalys / Sevalys | non mesuré | n.d. | à protéger : l'accueil doit sortir en 1er, avec la fiche Google |
 | À ne PAS viser ici | agence seo tours (170), création site internet tours (90), refonte site internet tours (< 10) | | | portés par les pages service (voir section 10) |
 
-Lecture : le marché « agence digitale Tours » est minuscule (40/mois). L'enjeu n'est pas le volume de ce mot-clé seul, mais d'être cité dans la SERP « agence web / digitale + Tours » (210 + 40) et dans l'aperçu IA, qui reprend des agences avec **adresse + note Google**.
+Lecture (maj 26/11) : « agence web tours » pèse 210/mois contre 40 pour « agence digitale tours », qui devient secondaire. Avant, le marché « agence digitale Tours » était vu comme minuscule (40/mois). L'enjeu n'est pas le volume de ce mot-clé seul, mais d'être cité dans la SERP « agence web / digitale + Tours » (210 + 40) et dans l'aperçu IA, qui reprend des agences avec **adresse + note Google**.
 
 ## 2. Intention et type de page attendu par Google
 
@@ -75,10 +75,10 @@ Budget total ~1 050 mots.
 
 | Bloc | Balise | Contenu et intention | Mots |
 |---|---|---|---|
-| Hero | **H1** « Agence digitale à Tours » (grande ligne) | Répond à l'intention dans le titre. Garder les 3 lignes visuelles actuelles. | |
+| Hero | **H1** « Agence web à Tours » (grande ligne) | Répond à l'intention dans le titre. Garder les 3 lignes visuelles actuelles. | |
 | | Sous-titre (p, pas un Hn) | « Des outils qui travaillent pour vos clients. » (promesse actuelle) puis 1 phrase : sites, référencement local et agents IA pour commerces, restaurants, artisans et PME de Tours. | 40 |
 | | CTA | « Lancer le diagnostic » (/simulateur) + « Discutons de votre projet ». Puis les 4 noms de réalisations (déjà là). | 15 |
-| Intro | **H2** « Une agence digitale à Tours pour les commerces et les PME » | 2 premières phrases = la réponse : qui on est, ce qu'on fait, pour qui, où. Remplace « Sites, outils, agents. » (Manifeste), à raccourcir. | 90 |
+| Intro | **H2** « Une agence web à Tours pour les commerces et les PME » | 2 premières phrases = la réponse : qui on est, ce qu'on fait, pour qui, où. Remplace « Sites, outils, agents. » (Manifeste), à raccourcir. | 90 |
 | Offres | **H2** « Nos offres à Tours : site internet, référencement, publicité, IA » | Intention : choisir et voir le prix. 5 cartes. | 220 |
 | | H3 « Site internet professionnel, à partir de 500 € » | Accueil + jusqu'à 2 pages, forfait à périmètre défini. Lien /services/site-vitrine. | 40 |
 | | H3 « Référencement local, à partir de 300 €/mois » | 2 pages suivies, 1 lien/mois inclus, 3 mois minimum, +100 €/mois par page. Aucune promesse de position. Lien /services/seo-referencement. | 50 |
@@ -89,7 +89,7 @@ Budget total ~1 050 mots.
 | Preuves | **H2** « Quatre sites réalisés, quatre métiers » | Intention : se rassurer. Captures existantes, 1 phrase chacune (déjà dans `landing.work`). | 110 |
 | Méthode | **H2** « Comment on travaille » | 4 étapes en 1 ligne chacune (diagnostic, proposition, mise en place, suivi). Réduire le texte actuel. | 70 |
 | Zone | **H2** « Où intervenons-nous ? Tours et Indre-et-Loire » | Voir section 7. | 70 |
-| Pourquoi | **H2** « Pourquoi choisir une agence digitale à taille humaine ? » | 3 puces : un interlocuteur, prix affichés, vous gardez le code et le nom de domaine. | 60 |
+| Pourquoi | **H2** « Pourquoi choisir une agence web à taille humaine ? » | 3 puces : un interlocuteur, prix affichés, vous gardez le code et le nom de domaine. | 60 |
 | Avis | H2 « Avis clients » (AvisExcerpt existant) | Uniquement des avis réels publiés. Lien /avis. Masquer le bloc s'il n'y en a pas. | 40 |
 | FAQ | **H2** « Questions fréquentes » + H3 par question | 6 à 8 questions (section 8). | 230 |
 | Contact | **H2** « Un projet à Tours ? Parlons-en » | Formulaire existant, appel offert, e-mail, téléphone. | 50 |
@@ -114,7 +114,7 @@ Texte proposé (à valider par le client) :
 
 | # | Question | Idée de réponse |
 |---|---|---|
-| 1 | Que fait une agence digitale à Tours comme Sèvalys ? | Site internet, référencement local, publicité Google, agents vocaux IA, pour commerces et PME. Un interlocuteur du début à la fin. |
+| 1 | Que fait une agence web à Tours comme Sèvalys ? | Site internet, référencement local, publicité Google, agents vocaux IA, pour commerces et PME. Un interlocuteur du début à la fin. |
 | 2 | Quelle différence entre agence web et agence digitale ? | L'agence web fait le site. L'agence digitale s'occupe aussi d'être trouvé (référencement, publicité) et des outils (IA, automatisations). |
 | 3 | Combien coûte un site internet ? | À partir de 500 €, forfait à périmètre défini : accueil + jusqu'à 2 pages. TVA non applicable, art. 293 B du CGI. Devis sous 48 h, sans engagement. Lien guide prix. |
 | 4 | Combien coûte le référencement (SEO) ? | À partir de 300 €/mois pour 2 pages, +100 €/mois par page en plus, 1 lien de netlinking par mois compris, engagement 3 mois minimum. Aucune position n'est garantie ; on mesure et on rend compte. |
@@ -127,10 +127,10 @@ Les réponses doivent être visibles dans la page (pas masquées dans un accord�
 
 ## 9. Title, meta, balises
 
-- **Title (58 car.)** : `Agence digitale à Tours : site internet, SEO, IA | Sèvalys`
+- **Title (54 car.)** : `Agence web à Tours : sites, SEO et agents IA | Sèvalys`
   - À poser avec `title: { absolute: "..." }` dans `src/app/page.tsx`, sinon le template `%s · Sèvalys` du layout le double.
-  - Variante verbe d'action (56) : `Agence digitale à Tours : créez votre site, soyez trouvé`. Choix recommandé : la première (le verbe est dans le H1/CTA, le title doit rester lisible dans les annuaires et l'IA).
-- **Meta description (129 car.)** : `Sèvalys, agence digitale à Tours : site internet dès 500 €, SEO dès 300 €/mois, agent vocal IA. Devis sous 48 h, sans engagement.`
+  - Variante verbe d'action (non retenue) : `Agence web à Tours : créez votre site, soyez trouvé`. Choix recommandé : la première (le verbe est dans le H1/CTA, le title doit rester lisible dans les annuaires et l'IA).
+- **Meta description (129 car.)** : `Sèvalys, agence web à Tours : site internet dès 500 €, SEO dès 300 €/mois, agent vocal IA. Devis sous 48 h, sans engagement.`
 - **Canonical** : `/` (déjà en place).
 - Images : alt = nom du projet + type (« Site Grand Ouest Habitat, rénovation du bâtiment »), déjà passés via `BrowserShot`.
 - Corriger le **pill** du hero : « DISPONIBLE EN MAI 2026 » est périmé (nous sommes en novembre 2026). Proposer « AGENCE · TOURS, FR ».
@@ -197,7 +197,7 @@ Entrants (déjà présents ou à vérifier) : logo + « Accueil » du header/foo
 1. **PRODUCT.md dit « Ne jamais afficher de prix »** ; la décision actuelle est d'afficher « à partir de 500 € » et « à partir de 300 €/mois ». Mettre PRODUCT.md à jour pour éviter qu'un futur travail de design retire les prix.
 2. Confirmer l'adresse publique (Saint-Avertin ?) et la liste des communes desservies.
 3. Confirmer la phrase « interlocuteur unique / pas de sous-traitance ».
-4. Valider le H1 en deux niveaux (H1 « Agence digitale à Tours » + promesse en sous-titre). Repli si le design supporte mal : H1 unique « Agence digitale à Tours : des outils qui travaillent pour vos clients. » sur les 3 lignes actuelles.
+4. Valider le H1 en deux niveaux (H1 « Agence web à Tours » + promesse en sous-titre). Repli si le design supporte mal : H1 unique « Agence web à Tours : des outils qui travaillent pour vos clients. » sur les 3 lignes actuelles.
 
 ## Coût DataForSEO
 

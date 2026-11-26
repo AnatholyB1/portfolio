@@ -2,7 +2,7 @@
 import { useLanguage } from '@/context/LanguageContext';
 
 // Introduction de l'accueil : fusionne l'ancien Manifeste, les Problèmes et les Enjeux
-// (même message, un seul bloc) et porte le H2 « agence digitale à Tours ».
+// (même message, un seul bloc) et porte le H2 « agence web à Tours ».
 export default function Manifeste() {
   const { t } = useLanguage();
   const m = t.landing.manifeste;

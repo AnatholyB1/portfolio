@@ -17,7 +17,7 @@ const readIfExists = (relative: string): string => {
 const pageSource = readIfExists('./page.tsx');
 
 // Accueil SEO (brief du 26/11/2026) : Manifeste fusionne l'ancien Manifeste, les Problèmes et les Enjeux ;
-// PhoneAgent devient une carte d'offre ; le défilé de partenaires est retiré (preuves = 4 sites réels).
+// PhoneAgent devient une carte d'offre ; le défilé de partenaires est retiré (preuves = 5 sites réels).
 const SECTION_MARKERS = [
   '<HeroSection',
   '<Manifeste',
@@ -172,7 +172,7 @@ describe('ServicesPreview cards (LANDING-01)', () => {
 });
 
 // ─── Accueil SEO (brief docs/seo/briefs/accueil.md, 26/11/2026) ───
-describe('home SEO (agence digitale à Tours)', () => {
+describe('home SEO (agence web à Tours)', () => {
   const read = (relative: string) => readIfExists(relative);
   const hero = read('../components/sections/HeroSection.tsx');
   const faqSection = read('../components/sections/FaqSection.tsx');
@@ -183,17 +183,18 @@ describe('home SEO (agence digitale à Tours)', () => {
     const title = /const TITLE = '([^']+)'/.exec(pageSource)?.[1] ?? '';
     const description = /const DESCRIPTION =\s*'([^']+)'/.exec(pageSource)?.[1] ?? '';
     expect(pageSource).toContain('title: { absolute: TITLE }');
-    expect(title).toContain('Agence digitale à Tours');
+    expect(title).toContain('Agence web à Tours');
     expect(title.length).toBeLessThanOrEqual(60);
     expect(description.length).toBeGreaterThan(100);
     expect(description.length).toBeLessThanOrEqual(155);
+    expect(description).toContain('agence web à Tours');
     expect(description).toContain('500 €');
     expect(description).toContain('300 €/mois');
   });
 
-  it('H1 reads « Agence digitale à Tours » and the promise stays in the subtitle', () => {
+  it('H1 reads « Agence web à Tours » and the promise stays in the subtitle', () => {
     const { hero: h } = translations.fr.landing;
-    expect(`${h.title_l1} ${h.title_l2}${h.title_l2_it}`).toBe('Agence digitale à Tours');
+    expect(`${h.title_l1} ${h.title_l2}${h.title_l2_it}`).toBe('Agence web à Tours');
     expect(h.sub).toContain('Des outils qui travaillent pour vos clients.');
     expect(h.pill).not.toMatch(/20\d\d|MAI/i);
   });
@@ -223,7 +224,7 @@ describe('home SEO (agence digitale à Tours)', () => {
   });
 
   for (const lang of langs) {
-    it(`${lang}: prices come with the VAT mention, the 4 real projects and the service area (no street address)`, () => {
+    it(`${lang}: prices come with the VAT mention, the 5 real projects and the service area (no street address)`, () => {
       const l = translations[lang].landing;
       expect(l.servicesPreview.vat).toContain('293 B');
       const cards = JSON.stringify(l.servicesPreview.cards);
@@ -233,6 +234,7 @@ describe('home SEO (agence digitale à Tours)', () => {
       expect(l.work.items.map((i) => i.name)).toEqual([
         'Grand Ouest Habitat',
         'Sellerie Duchet',
+        'NEF Nettoyage',
         'Gecko Cabane',
         'Ghjulianu Codani',
       ]);

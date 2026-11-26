@@ -22,9 +22,9 @@ export const revalidate = 300;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sevalys.com';
 
 // `absolute` : sans lui, le template `%s · Sèvalys` du layout doublerait la marque.
-const TITLE = 'Agence digitale à Tours : site internet, SEO, IA | Sèvalys';
+const TITLE = 'Agence web à Tours : sites, SEO et agents IA | Sèvalys';
 const DESCRIPTION =
-  'Sèvalys, agence digitale à Tours : site internet dès 500 €, SEO dès 300 €/mois, agent vocal IA. Devis sous 48 h, sans engagement.';
+  'Sèvalys, agence web à Tours : site internet dès 500 €, SEO dès 300 €/mois, agent vocal IA. Devis sous 48 h, sans engagement.';
 
 // The root layout no longer sets a canonical (it was inherited by every page); the home page owns "/".
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Sèvalys — Agence digitale à Tours · Sites, SEO et IA',
+        alt: 'Sèvalys — Agence web à Tours · Sites, SEO et IA',
       },
     ],
   },
