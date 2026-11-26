@@ -16,6 +16,80 @@ interface ServicePageContentBase {
   enjeux: string[];
   faq: { q: string; a: string }[];
   crossLink: { label: string; slug: string } | null;
+  // ── Blocs optionnels « contenu long » (briefs SEO 2026-11). Un service qui
+  // n'en renseigne aucun s'affiche exactement comme avant. Les champs
+  // indépendants de la langue (price, proofProjects, hrefs) doivent être
+  // identiques en fr/en/th (vérifié par translations.test.ts).
+  /** Paragraphes d'introduction affichés sous le hero (pas de titre). */
+  longIntro?: string[];
+  /** Sections de fond : un H2 chacune, paragraphes, liste et lien optionnels. */
+  sections?: ServicePageSection[];
+  /** Bloc tarifs « à partir de ». Seul bloc autorisé à contenir des prix. */
+  pricing?: ServicePagePricing;
+  /** Processus détaillé, étapes numérotées. */
+  steps?: ServicePageStep[];
+  /** Zone d'intervention : liste de communes / territoires. */
+  areas?: string[];
+  /** Indices dans caseStudyProjects (src/data/projects.ts) à montrer comme preuves. */
+  proofProjects?: number[];
+  /** Liens contextuels (ancre descriptive) vers pages et guides : composant « Guides liés ». */
+  internalLinks?: ServicePageLink[];
+}
+
+export interface ServicePageSection {
+  h2: string;
+  paragraphs: string[];
+  list?: string[];
+  link?: { label: string; href: string };
+}
+
+export interface ServicePageStep {
+  title: string;
+  text: string;
+  /** Durée indicative, ex. « 1 à 2 jours ». */
+  duration: string;
+}
+
+export interface ServicePageLink {
+  /** Ancre descriptive (jamais « cliquez ici »). */
+  label: string;
+  /** Chemin interne absolu, ex. « /guides/cout-site-vitrine ». */
+  href: string;
+  /** Phrase d'accroche facultative sous l'ancre. */
+  description?: string;
+}
+
+export interface ServicePagePricing {
+  /** Libellé avant le montant, ex. « À partir de ». */
+  fromLabel: string;
+  /** Montant en euros (nombre) : source du JSON-LD offers.price. */
+  price: number;
+  /** Précision après le montant, ex. « pour un site vitrine de 5 pages ». */
+  unit: string;
+  includes: string[];
+  notIncluded: string[];
+  /** Options facturées en plus : tableau libellé / montant (texte libre). */
+  extras: { label: string; price: string }[];
+  /** Mention légale affichée telle quelle : « TVA non applicable, art. 293 B du CGI ». */
+  note: string;
+}
+
+/** Libellés des blocs optionnels (communs à tous les services d'une langue). */
+export interface ServicePageExtraLabels {
+  pricingHeading: string;
+  pricingIncludes: string;
+  pricingNotIncluded: string;
+  pricingExtras: string;
+  extrasColLabel: string;
+  extrasColPrice: string;
+  stepsHeading: string;
+  stepDuration: string;
+  areasHeading: string;
+  proofHeading: string;
+  proofVisit: string;
+  guidesHeading: string;
+  breadcrumbHome: string;
+  breadcrumbServices: string;
 }
 
 /**
@@ -29,7 +103,7 @@ interface ServicePageContentBase {
  * already conforms to one of the two shapes below.
  */
 export type SocialProof =
-  | { caseQuote: string; signals: [] }
+  | { caseQuote: string; caseQuoteIsFact?: boolean; signals: [] }
   | { caseQuote: null; signals: { t: string; d: string }[] };
 
 export type ServicePageContent = ServicePageContentBase & SocialProof;
@@ -126,6 +200,7 @@ export interface Translations {
       answerLabel: string;
       caseLabel: string;
       headings: { probleme: string; fonctionnement: string; enjeux: string; preuve: string; faq: string };
+      extra: ServicePageExtraLabels;
       ctaHeading_l1: string;
       ctaHeading_l2_it: string;
       ctaSub: string;
@@ -183,35 +258,17 @@ export interface Translations {
       title_l1: string;
       title_l2: string;
       title_l2_it: string;
-      title_l3: string;
       sub: string;
       cta_primary: string;
       cta_secondary: string;
-      stat_1_n: string; stat_1_l: string; stat_1_d: string;
-      stat_2_n: string; stat_2_l: string; stat_2_d: string;
-      stat_3_n: string; stat_3_l: string; stat_3_d: string;
-      stat_4_n: string; stat_4_l: string; stat_4_d: string;
-      canvas_l: string;
-      canvas_r: string;
     };
     manifeste: {
       num: string;
       title_l1: string;
       title_l2_it: string;
       intro: string;
-      p1: string;
-      p2: string;
       quote: string;
-      p3: string;
-      p4: string;
-    };
-    problems: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      items: { n: string; title: string; desc: string }[];
-      good_news: string;
+      items: { t: string; d: string }[];
       cta: string;
     };
     servicesPreview: {
@@ -219,6 +276,13 @@ export interface Translations {
       title_l1: string;
       title_l2_it: string;
       intro: string;
+      /** Five featured offers, in the order of FEATURED_SLUGS (ServicesPreview.tsx). */
+      cards: { t: string; d: string; link: string }[];
+      others: string;
+      guide_price: string;
+      guide_seo: string;
+      vat: string;
+      all: string;
     };
     work: {
       num: string;
@@ -238,20 +302,25 @@ export interface Translations {
       intro: string;
       steps: { n: string; t: string; d: string }[];
     };
-    enjeux: {
+    zone: {
       num: string;
       title_l1: string;
       title_l2_it: string;
-      intro: string;
-      points: { t: string; d: string }[];
+      text: string;
+      label: string;
+      towns: string[];
     };
-    phone: {
-      badge: string;
+    why: {
+      num: string;
       title_l1: string;
-      title_l2: string;
-      title_l3_it: string;
-      sub: string;
-      cta_roi: string;
+      title_l2_it: string;
+      items: { t: string; d: string }[];
+    };
+    faq: {
+      num: string;
+      title_l1: string;
+      title_l2_it: string;
+      items: { q: string; a: string }[];
     };
     partners: {
       title: string;
@@ -262,6 +331,7 @@ export interface Translations {
       title_l1: string;
       title_l2_it: string;
       sub: string;
+      updated: string;
       info: { k: string; v: string }[];
       form: {
         name_l: string;
@@ -355,81 +425,289 @@ const fr: Translations = {
       ctaSub: "Deux minutes de diagnostic et vous saurez. Sinon, écrivez-nous directement.",
       ctaPrimary: "Faire mon diagnostic →",
       ctaSecondary: "Nous contacter",
+      extra: {
+        pricingHeading: "Combien ça coûte",
+        pricingIncludes: "Ce qui est inclus",
+        pricingNotIncluded: "Ce qui n'est pas inclus",
+        pricingExtras: "Options en supplément",
+        extrasColLabel: "Option",
+        extrasColPrice: "Montant",
+        stepsHeading: "Comment se déroule le projet",
+        stepDuration: "Durée indicative",
+        areasHeading: "Où nous intervenons",
+        proofHeading: "Réalisations à consulter",
+        proofVisit: "Voir le site",
+        guidesHeading: "Guides liés",
+        breadcrumbHome: "Accueil",
+        breadcrumbServices: "Services",
+      },
       items: [
         {
           name: "Site Vitrine",
-          tagline: "L'ESSENTIEL POUR ÊTRE VISIBLE",
-          h1Lead: "Site vitrine à Tours ·",
-          h1Benefit: "pour exister en ligne",
-          sub: "Une présence claire et professionnelle, pensée pour qu'un client vous trouve dès sa première recherche.",
-          metaTitle: "Site vitrine à Tours · exister en ligne",
-          metaDescription: "Un site vitrine sur mesure à Tours pour être visible, crédible et joignable en ligne. Design responsive, SEO local, mise en ligne rapide, sans engagement.",
-          directAnswer: "Un site vitrine est une présence en ligne simple et professionnelle : quelques pages qui présentent votre activité, vos services et vos coordonnées. Il permet à un client de vous trouver, de comprendre ce que vous proposez et de vous contacter en quelques secondes, depuis un mobile comme un ordinateur.",
+          tagline: "UN SITE QUI VOUS FAIT TROUVER ET APPELER",
+          h1Lead: "Créez votre site internet à Tours,",
+          h1Benefit: "simple et clair",
+          sub: "Un site internet professionnel pour les artisans, restaurants et commerces de Tours. Vous savez ce que vous payez et qui s'en occupe.",
+          metaTitle: "Création site internet à Tours dès 500 €",
+          metaDescription: "Site internet pour artisans, restaurants et commerces de Tours. Dès 500 € (TVA non applicable, art. 293 B du CGI). Parlez-nous de votre projet.",
+          directAnswer: "Un site vitrine présente votre activité en quelques pages : qui vous êtes, ce que vous faites, où vous trouver, comment vous joindre. Chez Sèvalys, il démarre à 500 € pour l'accueil et jusqu'à 2 pages, avec un délai de 2 à 4 semaines.",
+          longIntro: [
+            "Sèvalys est une agence digitale de Tours. Nous créons des sites internet pour les artisans, les restaurateurs et les commerçants de Tours et d'Indre-et-Loire. Votre site démarre à 500 €, pour l'accueil et jusqu'à 2 pages.",
+            "Un site internet professionnel sert à trois choses : vous faire trouver sur Google, rassurer quelqu'un qui hésite, et lui donner un moyen simple de vous contacter. Une seule personne vous répond, du premier appel à la mise en ligne. Le devis est gratuit et arrive sous 48 h, sans engagement.",
+          ],
           problems: [
-            { n: "A", title: "Invisible sur Google", desc: "Sans site, vos clients potentiels tapent votre activité et trouvent vos concurrents en premier. Vous perdez des contacts avant même le premier échange." },
-            { n: "B", title: "Un site vieillissant ou illisible sur mobile", desc: "Une page qui date ou qui s'affiche mal sur smartphone renvoie une image peu sérieuse, même si votre service est excellent." },
-            { n: "C", title: "Un site qui ne génère aucun contact", desc: "Le site existe mais personne ne remplit le formulaire ni n'appelle : il ne travaille pas pour vous, il attend." },
+            { n: "A", title: "On ne vous trouve pas sur Google", desc: "Un client tape votre métier et le nom de Tours. S'il ne voit pas votre site internet, il appelle quelqu'un d'autre. Vous perdez le contact avant d'avoir parlé." },
+            { n: "B", title: "Le site date ou s'affiche mal sur mobile", desc: "Beaucoup de clients regardent d'abord depuis leur téléphone. Un site difficile à lire leur donne une mauvaise image de votre travail." },
+            { n: "C", title: "Le site existe, mais personne n'appelle", desc: "Pas de numéro visible, pas de formulaire, pas d'itinéraire. Le visiteur ne sait pas quoi faire et repart." },
           ],
           features: [
-            "Design sur mesure, à votre image",
-            "Responsive mobile et tablette",
-            "Présentation claire de vos services",
+            "Design sur mesure, à l'image de votre activité",
+            "Affichage soigné sur mobile, tablette et ordinateur",
+            "Accueil et jusqu'à 2 pages, claires et courtes",
             "Formulaire de contact intégré",
-            "Intégration Google Maps",
-            "SEO local de base",
-            "Mise en ligne incluse",
+            "Carte Google Maps pour vous situer",
+            "Bases du référencement local : titres, balises, fiche Google à relier",
+            "Mise en ligne du site par nos soins",
           ],
           enjeux: [
-            "Un site vitrine bien fait change ce qui se passe avant même le premier appel : un client hésitant trouve vos horaires, vos services et un moyen de vous contacter en quelques secondes, sans devoir chercher ailleurs.",
-            "Résultat : plus de crédibilité dès le premier regard, et des demandes de contact qui arrivent sans que vous ayez à les provoquer.",
+            "Un site internet clair change ce qui se passe avant le premier appel. Le client voit vos horaires, vos réalisations et votre zone d'intervention. Il sait si vous êtes la bonne personne avant de décrocher le téléphone.",
+            "Vous gagnez du temps sur les questions de base, et vous recevez des demandes plus sérieuses. Le site travaille pendant que vous êtes sur un chantier, en cuisine ou derrière le comptoir.",
           ],
-          caseQuote: "Depuis notre nouveau site, les clients nous trouvent facilement et réservent une table sans avoir à nous appeler pendant le service.",
+          caseQuote: "Le site de Gecko Cabane, restaurant franco-thaï à Krabi, est disponible en quatre langues (français, anglais, allemand, suédois) et propose un formulaire de réservation en ligne, avec la carte et les horaires d'ouverture.",
+          caseQuoteIsFact: true,
           signals: [],
+          sections: [
+            {
+              h2: "Un site internet pour artisans à Tours",
+              paragraphs: [
+                "Un artisan attend trois choses de son site : être trouvé, montrer son travail, être appelé. Le reste est secondaire.",
+                "Grand Ouest Habitat, une entreprise de rénovation du bâtiment basée à Tours, en donne un bon exemple. Son site affiche le numéro de téléphone, la zone d'intervention, les métiers, des photos de chantiers avant et après, et les avis Google reçus. Voici ce qu'un artisan doit montrer sur son site.",
+              ],
+              list: [
+                "Son métier, en une phrase claire",
+                "Ses réalisations, avec de vraies photos",
+                "Sa zone d'intervention : Tours, Indre-et-Loire",
+                "Un numéro de téléphone visible sur mobile",
+                "Un formulaire pour décrire son chantier",
+              ],
+            },
+            {
+              h2: "Un site internet pour restaurants",
+              paragraphs: [
+                "Un client doit trouver quatre réponses en dix secondes : ce qu'on mange, quand c'est ouvert, comment réserver, comment venir.",
+                "Le site de Gecko Cabane, restaurant franco-thaï à Krabi, en Thaïlande, présente la cuisine, les horaires, un bouton Réserver et un contact, en plusieurs langues. Pour ne plus décrocher en plein service, un agent vocal peut répondre aux appels à votre place.",
+              ],
+              link: { label: "Répondre au téléphone pendant le service", href: "/services/agent-vocal-ia" },
+            },
+            {
+              h2: "Commerçants et indépendants : des sites déjà en ligne",
+              paragraphs: [
+                "Sellerie Duchet, équipement équestre à Chambray-lès-Tours, montre ses rayons, ses produits en vedette et une présentation de la gérante. Ce site propose aussi la vente en ligne : une boutique est un projet plus large qu'un site vitrine, chiffré à part.",
+                "Ghjulianu Codani, photographe, présente son portfolio, ses albums, ses tarifs et un moyen de le contacter. Dans les deux cas, le site est construit autour de ce que le visiteur cherche.",
+              ],
+              link: { label: "Une boutique en ligne : le projet sur mesure", href: "/services/projet-sur-mesure" },
+            },
+            {
+              h2: "Pourquoi un site professionnel plutôt qu'une page sur les réseaux",
+              paragraphs: [
+                "Une page sur les réseaux sociaux dépanne. Un site internet à vous fait mieux, pour trois raisons.",
+                "D'abord, il se trouve sur Google par une recherche, sans compte ni connexion. Ensuite, il rassure : une adresse à votre nom, des pages claires, un numéro de téléphone. Enfin, vous contrôlez le contenu et sa présentation, sans dépendre d'une plateforme qui change ses règles.",
+              ],
+              link: { label: "Combien coûte un site vitrine : le guide", href: "/guides/prix-site-vitrine" },
+            },
+            {
+              h2: "Comment votre site sera trouvé sur Google à Tours",
+              paragraphs: [
+                "Nous préparons le site pour la recherche locale : titres clairs, balises soignées, nom de la ville là où c'est utile, et liaison avec votre fiche Google Business Profile.",
+                "Aucune position n'est promise. Google décide, et vos concurrents travaillent aussi. Mais ces bases évitent de repartir de zéro si vous décidez d'aller plus loin avec le référencement (SEO).",
+              ],
+              link: { label: "Faire trouver votre site sur Google à Tours", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "Votre interlocuteur à Tours",
+              paragraphs: [
+                "Anatholy Bricon, entrepreneur individuel, décroche le téléphone, chiffre votre projet et le met en ligne. C'est le même interlocuteur de l'échange initial à la mise en ligne.",
+                "Sèvalys intervient à Tours, Saint-Avertin et dans l'agglomération, partout en Indre-et-Loire. L'échange se fait par téléphone, en visio ou en personne. Vous pouvez aussi lire ce que disent nos clients.",
+              ],
+              link: { label: "Lire les avis de nos clients", href: "/avis" },
+            },
+          ],
+          steps: [
+            { title: "Échange et devis", text: "Vous décrivez votre activité et ce que le site doit vous apporter. Le devis, gratuit, arrive sous 48 h.", duration: "1 à 2 jours" },
+            { title: "Contenu et maquette", text: "Nous organisons les pages, vous nous envoyez textes et photos, puis nous dessinons la maquette de l'accueil.", duration: "1 à 2 semaines" },
+            { title: "Validation et retouches", text: "Vous regardez la maquette puis le site, et vous donnez vos remarques. Nous les intégrons.", duration: "3 à 7 jours" },
+            { title: "Mise en ligne", text: "Nous publions le site sur votre hébergement, avec votre nom de domaine, et nous testons le formulaire de contact.", duration: "1 à 3 jours" },
+          ],
+          pricing: {
+            fromLabel: "À partir de",
+            price: 500,
+            unit: "pour un site vitrine : accueil + jusqu'à 2 pages",
+            includes: [
+              "Design sur mesure, à l'image de votre activité",
+              "Affichage adapté au mobile, à la tablette et à l'ordinateur",
+              "Formulaire de contact",
+              "Carte Google Maps intégrée",
+              "Bases du référencement local : titres, balises, fiche Google à relier",
+              "Mise en ligne du site",
+            ],
+            notIncluded: [
+              "Nom de domaine et hébergement, à votre charge",
+              "Rédaction des textes et photos, si vous ne les fournissez pas",
+              "Maintenance du site, proposée en option",
+            ],
+            extras: [
+              { label: "Page supplémentaire", price: "Sur devis" },
+              { label: "Maintenance du site", price: "Sur devis" },
+              { label: "Rédaction des textes", price: "Sur devis" },
+              { label: "Boutique en ligne (projet sur mesure)", price: "Sur devis" },
+            ],
+            note: "TVA non applicable, art. 293 B du CGI. Délai habituel : 2 à 4 semaines. Devis gratuit sous 48 h.",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Combien coûte un site vitrine : le guide des prix", href: "/guides/prix-site-vitrine", description: "Les fourchettes, et les questions à poser avant un devis." },
+            { label: "Faire trouver votre site sur Google à Tours", href: "/services/seo-referencement", description: "Aller plus loin que les bases du référencement local." },
+            { label: "Refaire un site existant : la refonte", href: "/services/rebranding-site-premium", description: "Pour un site qui date ou ne vous ressemble plus." },
+            { label: "Estimer votre projet en 2 minutes", href: "/simulateur", description: "Quelques questions, puis un conseil sur l'offre adaptée." },
+            { label: "Guide : faire trouver son site à Tours", href: "/guides/seo-local", description: "Les gestes simples du référencement local." },
+          ],
           faq: [
-            { q: "Combien de temps pour être en ligne ?", a: "Comptez en général quelques semaines entre le premier échange et la mise en ligne, selon le contenu à préparer. Un devis détaillé arrive sous 48h, sans engagement de votre part." },
-            { q: "Est-ce que je peux modifier le contenu moi-même ?", a: "Oui, vous gardez la main sur les textes et les images courantes. Pour des changements plus importants, on reste disponibles pour vous accompagner rapidement." },
-            { q: "Le référencement local est-il inclus ?", a: "Un socle de référencement local est intégré dès la mise en ligne : structure claire, informations de contact et présence Google Maps pour être trouvé près de chez vous." },
-            { q: "Et si je n'ai pas encore de textes ou de photos ?", a: "Pas de problème : on vous guide pour structurer le contenu, et on peut vous orienter vers des solutions simples pour les visuels, sans devis surprise." },
+            { q: "Combien coûte la création d'un site internet à Tours ?", a: "Un site Sèvalys démarre à 500 €, pour l'accueil et jusqu'à 2 pages. TVA non applicable, art. 293 B du CGI. Le prix monte avec le nombre de pages, la rédaction des textes ou les photos à prévoir. Les tarifs du marché varient beaucoup d'un prestataire à l'autre : notre guide « Prix d'un site vitrine » compare les fourchettes relevées en novembre 2026, avec leurs sources." },
+            { q: "Que comprend le forfait à partir de 500 € ?", a: "L'accueil et jusqu'à 2 pages, un design sur mesure, l'affichage mobile, un formulaire de contact, une carte Google Maps, les bases du référencement local et la mise en ligne. Ne sont pas compris : le nom de domaine, l'hébergement, la rédaction des textes et les photos si vous ne les fournissez pas, et la maintenance." },
+            { q: "Peut-on créer un site internet gratuitement ?", a: "Oui, avec un outil de création en ligne. Mais l'adresse n'est pas à vous, les options sont limitées et personne ne vous accompagne. Pour un projet occasionnel, cela peut suffire. Pour recevoir des appels de clients, un site professionnel sert mieux." },
+            { q: "Qui crée mon site, et comment s'appelle ce métier ?", a: "Un webdesigner ou un développeur web. Chez Sèvalys, vous travaillez avec Anatholy Bricon, qui suit votre projet de l'échange initial jusqu'à la mise en ligne." },
+            { q: "Mon site sera-t-il visible sur Google à Tours ?", a: "Il est préparé pour : titres clairs, pages bien nommées, liaison avec votre fiche Google. Aucune position n'est promise, car personne ne peut la maîtriser. Pour aller plus loin, une offre de référencement SEO existe : voir la page SEO et référencement." },
+            { q: "Faut-il déjà avoir les textes et les photos ?", a: "Ce n'est pas obligatoire, mais cela va plus vite. Si vous les avez, vous nous les envoyez. Sinon, nous vous aidons à structurer le contenu. La rédaction des textes se fait en option, sur devis." },
+            { q: "Je travaille à Tours, dois-je venir vous voir ?", a: "Non. L'échange se fait par téléphone ou en visio. Un rendez-vous en personne est possible dans l'agglomération de Tours si vous préférez." },
+            { q: "Je suis restaurateur ou artisan : mon site sera-t-il différent ?", a: "Oui. Pour un restaurant : la carte, les horaires, la réservation. Pour un artisan : les réalisations, la zone d'intervention et un moyen de décrire le chantier. Le plan du site suit votre métier." },
           ],
           crossLink: null,
         },
         {
-          name: "Rebranding + Site Premium",
-          tagline: "TRANSFORMEZ VOTRE IMAGE",
-          h1Lead: "Rebranding + site premium à Tours ·",
-          h1Benefit: "image et site, d'un bloc",
-          sub: "Modernisez votre identité et votre site en une seule démarche cohérente, plutôt qu'en deux projets déconnectés.",
-          metaTitle: "Rebranding + site premium à Tours",
-          metaDescription: "Rebranding avec site premium à Tours : identité modernisée et nouveau site cohérent, en une seule démarche. Sans engagement, devis sous 48h.",
-          directAnswer: "Un rebranding avec site premium modernise votre identité — logo, palette, typographies — et reconstruit votre site pour qu'il porte cette nouvelle image, en une seule démarche cohérente. Branding s'arrête à votre identité ; Rebranding + Site Premium inclut la refonte du site, la mise en ligne et la prise en main.",
+          name: "Refonte de site internet",
+          tagline: "REFAIRE VOTRE SITE, GARDER L'ESSENTIEL",
+          h1Lead: "Refonte de site internet à Tours :",
+          h1Benefit: "refaites votre site sans perdre ce qui marche",
+          sub: "Votre site existe déjà, mais il date, il est lent ou personne ne vous contacte ? Sèvalys le refait en gardant ce qui vous amène déjà des visites.",
+          metaTitle: "Refonte site internet à Tours · sans tout perdre",
+          metaDescription: "Refaire votre site à Tours sans repartir de zéro : audit, nouveau design, redirections 301 et suivi Google. Devis gratuit sous 48h, sans engagement.",
+          directAnswer: "Une refonte de site internet consiste à refaire un site qui existe déjà : son design, l'organisation des pages, les textes et la technique. À Tours, Sèvalys commence par un audit de votre site actuel, garde les pages qui vous amènent des visites, redirige les anciennes adresses et vérifie dans Google Search Console après la mise en ligne. Le devis est établi après l'audit : gratuit, sous 48h.",
+          longIntro: [
+            "Votre site date de quelques années. Sur un téléphone, il met du temps à s'ouvrir. Un horaire a changé, et vous n'osez plus y toucher de peur de tout casser. Une refonte, c'est le refaire sans repartir de zéro : nouveau design, pages réorganisées, textes revus, technique remise à neuf. Le nom de domaine, lui, reste le vôtre.",
+            "À Tours, Anatholy Bricon commence par ouvrir votre site comme le ferait un client. Quelles pages reçoivent encore des visites ? Quelles photos de chantier, quels avis Google valent la peine d'être mis en avant ? Ensuite seulement vient le devis, gratuit, sous 48h. Un doute sur le point de départ ? Un diagnostic en ligne de deux minutes vous oriente.",
+          ],
           problems: [
-            { n: "A", title: "Une image qui ne reflète plus votre activité", desc: "Votre entreprise a évolué mais votre logo et vos couleurs datent d'une autre époque, et ça se voit au premier coup d'œil." },
-            { n: "B", title: "Un site et une identité qui se contredisent", desc: "Le site ne ressemble plus à votre image de marque actuelle, ce qui brouille le message dès la première visite." },
-            { n: "C", title: "Une crédibilité en retrait face à la concurrence", desc: "Des concurrents mieux présentés captent l'attention en premier, même quand votre offre est meilleure." },
+            { n: "A", title: "Un site lent, ou illisible sur mobile", desc: "Vos visiteurs viennent surtout depuis un téléphone. Si la page met du temps à s'ouvrir ou si les textes sont trop petits, beaucoup repartent avant d'avoir lu une ligne." },
+            { n: "B", title: "Personne ne vous contacte depuis le site", desc: "Le site est en ligne, mais le formulaire reste vide et le téléphone ne sonne pas. Il montre votre activité sans jamais inviter à passer à l'action." },
+            { n: "C", title: "Un site qui ne vous ressemble plus, et que vous ne savez plus modifier", desc: "Votre activité a évolué, pas votre site. Changer un horaire ou une photo demande de l'aide, et l'ensemble ne correspond plus à votre image actuelle." },
           ],
           features: [
-            "Audit de votre image actuelle",
-            "Modernisation du logo",
-            "Nouvelle palette de couleurs",
-            "Typographies professionnelles",
-            "Mini charte graphique",
-            "Nouveau site cohérent avec votre identité",
+            "Audit de votre site actuel",
+            "Inventaire des pages qui amènent des visites",
+            "Nouveau design lisible sur mobile",
+            "Nom de domaine et adresses e-mail conservés",
+            "Redirection 301 de chaque ancienne adresse",
+            "Mise en ligne et suivi dans Google Search Console",
             "Formation à la prise en main",
           ],
           enjeux: [
-            "Une image et un site alignés redonnent de la cohérence à chaque point de contact : réseaux sociaux, devanture, documents commerciaux et site web racontent enfin la même histoire.",
-            "Vos clients reconnaissent votre marque partout, et votre crédibilité ne dépend plus d'un seul support qui aurait vieilli plus vite que les autres.",
+            "Un site refait avec méthode garde ce qui fonctionne déjà. Les visiteurs qui vous trouvent aujourd'hui retrouvent demain les mêmes pages, mieux présentées, au lieu d'arriver sur une erreur.",
+            "Le changement se voit sur des choses simples : un site qui s'affiche vite sur un téléphone, des pages faciles à parcourir, un formulaire ou un numéro que l'on trouve sans chercher. Aucune position sur Google n'est promise : le risque de perte est réduit, puis suivi.",
+          ],
+          sections: [
+            {
+              h2: "Refonte ou simple mise à jour : ce qu'il vous faut vraiment",
+              paragraphs: [
+                "Tout site n'a pas besoin d'être refait. Si la base est saine, une mise à jour suffit : un texte à corriger, une photo à changer, un horaire à ajuster. C'est plus rapide et plus économique.",
+                "La refonte devient utile quand la base elle-même pose problème : site trop ancien, trop lent, impossible à lire sur mobile, ou si limité que chaque changement coûte plus qu'un nouveau départ. On reconstruit alors un site existant, avec son histoire et ses pages.",
+                "Pendant l'audit, nous vous disons honnêtement dans quel cas vous êtes. Si une simple mise à jour règle votre problème, nous vous le disons.",
+              ],
+              list: [
+                "Mise à jour : le site tient la route, on corrige quelques éléments.",
+                "Refonte : le site existe, mais sa base ne suffit plus. On le refait en gardant ce qui marche.",
+                "Nouveau site : rien n'est encore en ligne, on part d'une page blanche.",
+              ],
+              link: { label: "Pas encore de site ? Voir la création d'un site vitrine →", href: "/services/site-vitrine" },
+            },
+            {
+              h2: "Ce que nous gardons, ce que nous changeons",
+              paragraphs: [
+                "Refaire un site ne veut pas dire tout jeter. Nous partons de ce que vous avez et nous gardons tout ce qui vous sert encore. Vous validez chaque choix avant la mise en ligne.",
+              ],
+              list: [
+                "Votre nom de domaine et vos adresses e-mail : ils restent les vôtres, rien ne change pour vos correspondants.",
+                "Vos textes et vos photos qui servent encore : ils sont repris, remis au propre ou remplacés quand ils ne sont plus justes.",
+                "Vos pages qui amènent déjà des visites : elles sont repérées avant de toucher à quoi que ce soit, puis conservées ou redirigées.",
+                "Ce qui est remplacé : le design, l'organisation des pages, la vitesse d'affichage et le formulaire de contact.",
+              ],
+            },
+            {
+              h2: "Comment on protège votre place sur Google",
+              paragraphs: [
+                "C'est la première crainte, et elle est légitime. Un site refait sans précaution peut perdre ses visiteurs : les anciennes adresses disparaissent, les moteurs de recherche ne retrouvent plus leurs repères et vos pages repartent de zéro.",
+                "Voici ce que nous faisons pour limiter ce risque. D'abord, un audit qui repère les pages de votre site actuel recevant déjà des visites. Ensuite, la conservation de ces pages ou de leur contenu utile. Chaque ancienne adresse est redirigée vers sa nouvelle page par une redirection 301, qui indique à Google que la page a simplement déménagé. Après la mise en ligne, nous contrôlons dans Google Search Console que les pages sont bien prises en compte et que rien ne renvoie d'erreur.",
+                "Soyons clairs : aucune position n'est garantie, ni avant ni après une refonte. Le risque de perte est réduit et suivi, il n'est pas supprimé.",
+              ],
+              link: { label: "Protéger et améliorer votre référencement naturel →", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "Combien coûte une refonte de site à Tours ?",
+              paragraphs: [
+                "Cela dépend de l'état de votre site actuel, du nombre de pages à reprendre et de ce que vous voulez changer. C'est pourquoi une refonte est chiffrée sur devis, après un audit de votre site actuel. Le devis est gratuit, il arrive sous 48h et il ne vous engage à rien.",
+                "Un site de quelques pages ne se refait pas comme un site de quarante. Le devis indique ce qui est compris, ce qui est en option et ce qui reste à votre charge, sans ligne cachée. Sèvalys est en franchise de TVA : TVA non applicable, art. 293 B du CGI.",
+                "Pour situer les ordres de grandeur du marché avant de nous écrire, notre guide détaille ce qui fait varier le coût d'un site vitrine.",
+              ],
+              link: { label: "Faire mon diagnostic en 2 minutes →", href: "/simulateur" },
+            },
+            {
+              h2: "Et si vous voulez aussi changer d'image ?",
+              paragraphs: [
+                "Il arrive qu'un site daté s'accompagne d'une image datée. Dans ce cas, le logo, les couleurs et les polices peuvent être retravaillés en même temps que le site, pour que le nouveau site porte une identité cohérente dès le premier jour.",
+                "C'est un bloc optionnel : il se décide pendant l'audit et n'est jamais imposé. Le détail de la charte graphique se trouve sur la page Branding.",
+              ],
+              link: { label: "Juste besoin de votre identité ? Découvrez Branding →", href: "/services/branding" },
+            },
+            {
+              h2: "Qui s'occupe de votre site",
+              paragraphs: [
+                "Une seule personne vous répond : Anatholy Bricon, entrepreneur individuel à Tours. C'est lui qui regarde votre site actuel, qui le refait et qui reste joignable après la mise en ligne.",
+                "Pas de relais commercial ni de demande qui se perd : vous parlez à la personne qui fait le travail. Il intervient à Tours et dans les communes voisines.",
+              ],
+            },
+          ],
+          steps: [
+            { title: "On regarde votre site actuel", text: "Audit : ce qui amène des visites, ce qui est lent, ce qui gêne sur mobile, ce qu'on peut garder. Vous recevez un devis gratuit sous 48h.", duration: "Devis sous 48h" },
+            { title: "On décide ensemble de ce qui change", text: "Nous listons les pages à garder, à regrouper ou à retirer, et ce qui est repris tel quel. Rien n'est lancé sans votre accord.", duration: "Un échange, selon vos disponibilités" },
+            { title: "On maquette et vous validez", text: "Vous voyez le nouveau design avant qu'il soit construit, et vous demandez les ajustements que vous souhaitez.", duration: "Selon vos retours" },
+            { title: "On construit et on teste", text: "Nous construisons les pages, reprenons les contenus, puis testons l'affichage sur mobile, la vitesse et le formulaire de contact.", duration: "Quelques semaines selon la taille du site" },
+            { title: "On met en ligne et on surveille", text: "Mise en ligne avec les redirections 301 en place, puis contrôle dans Google Search Console. Une prise en main vous permet de modifier vos textes.", duration: "Mise en ligne, puis suivi" },
+          ],
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Créer un site vitrine si vous n'avez pas encore de site", href: "/services/site-vitrine", description: "La page pour partir d'une page blanche." },
+            { label: "Protéger et améliorer votre référencement naturel", href: "/services/seo-referencement", description: "L'accompagnement qui prolonge une refonte." },
+            { label: "Retravailler seulement votre identité visuelle", href: "/services/branding", description: "Logo, couleurs et charte, sans toucher au site." },
+            { label: "Garder votre site à jour après la mise en ligne", href: "/services/maintenance", description: "Un suivi une fois le nouveau site publié." },
+            { label: "Combien coûte un site vitrine : repères et critères", href: "/guides/prix-site-vitrine", description: "Ce qui fait varier le devis." },
+            { label: "Faire mon diagnostic en 2 minutes", href: "/simulateur", description: "Un questionnaire court pour savoir par où commencer." },
           ],
           caseQuote: null,
           signals: [
-            { t: "Méthodologie validée", d: "Chaque étape — audit, identité, site — est validée avec vous avant de passer à la suivante, sans surprise de dernière minute." },
-            { t: "Sans engagement", d: "Vous restez libre à chaque étape du projet ; rien n'est figé avant votre accord explicite sur la direction prise." },
-            { t: "Réactivité", d: "Une question, un ajustement ? Réponse sous 48h, du premier échange jusqu'à la mise en ligne du nouveau site." },
+            { t: "Audit d'abord", d: "Nous regardons votre site actuel avant de proposer quoi que ce soit : ce qui rapporte, ce qui gêne, ce que l'on peut garder." },
+            { t: "Un seul interlocuteur", d: "Anatholy Bricon, à Tours, vous répond du premier échange jusqu'à la mise en ligne, sans intermédiaire." },
+            { t: "Sans engagement", d: "Le devis est gratuit, sous 48h. Rien n'est lancé avant votre accord explicite." },
           ],
           faq: [
-            { q: "Combien de temps dure un rebranding avec site premium ?", a: "Comptez plusieurs semaines entre l'audit initial et la mise en ligne, le temps de valider ensemble chaque étape de l'identité puis du site." },
-            { q: "Est-ce que je garde mon nom de domaine et mes contenus existants ?", a: "Oui, votre nom de domaine reste le vôtre. Les contenus existants sont repris, adaptés ou remplacés selon ce qui sert la nouvelle identité." },
-            { q: "Et si je veux seulement retravailler mon logo, sans refaire le site ?", a: "Dans ce cas, l'offre Branding correspond mieux à votre besoin : elle couvre l'identité seule, sans toucher au site existant." },
+            { q: "Pourquoi faire une refonte de site internet ?", a: "Quatre raisons reviennent : le site est lent ou illisible sur mobile, il ne ramène aucun contact, il ne ressemble plus à votre activité, ou vous ne savez plus le modifier. Si rien de cela ne vous concerne, une simple mise à jour suffit, et nous vous le dirons après l'audit." },
+            { q: "Combien coûte une refonte de site à Tours ?", a: "Une refonte est chiffrée sur devis, après un audit de votre site actuel : le montant dépend du nombre de pages à reprendre et de ce que vous voulez changer. Le devis est gratuit, il arrive sous 48h et ne vous engage à rien. TVA non applicable, art. 293 B du CGI." },
+            { q: "Vais-je perdre mon référencement Google ?", a: "Le risque existe si les anciennes adresses ne sont pas redirigées. Nous repérons les pages qui reçoivent déjà des visites, nous les conservons ou les redirigeons une à une par des redirections 301, puis nous contrôlons dans Google Search Console après la mise en ligne. Aucune position n'est garantie." },
+            { q: "Comment mettre à jour un site internet ?", a: "Un site se met à jour par petites touches tant que sa base est saine : textes, photos, horaires. Quand la base est trop ancienne, trop lente ou trop limitée, la refonte devient plus raisonnable que de rafistoler sans cesse." },
+            { q: "Combien de temps dure une refonte ?", a: "Comptez quelques semaines pour un petit site. L'essentiel du délai dépend de la rapidité avec laquelle vous validez les maquettes et envoyez vos contenus. Le calendrier précis figure dans le devis, une fois votre site audité." },
+            { q: "Est-ce que je garde mon nom de domaine et mes textes ?", a: "Oui, votre nom de domaine reste le vôtre, comme vos adresses e-mail. Les textes et les photos utiles sont repris, adaptés ou remplacés selon ce qui sert le nouveau site." },
+            { q: "Pourrai-je modifier mon site moi-même ensuite ?", a: "Oui pour les textes et les images courantes : une prise en main est prévue à la livraison. Pour le reste, nous restons disponibles, et le suivi dans la durée peut passer par notre offre de maintenance." },
+            { q: "Je n'ai pas de site : est-ce la bonne page ?", a: "Non. La refonte concerne un site qui existe déjà. Si vous partez de zéro, la page Site vitrine correspond mieux à votre besoin." },
           ],
           crossLink: { label: "Juste besoin de votre identité ? Découvrez Branding →", slug: "branding" },
         },
@@ -471,7 +749,7 @@ const fr: Translations = {
             { q: "Faut-il refaire mon site après un rebranding d'identité ?", a: "Non, la nouvelle identité s'applique à votre site existant. Si vous souhaitez aussi un nouveau site, l'offre Rebranding + Site Premium couvre les deux à la fois." },
             { q: "Combien d'allers-retours sont prévus ?", a: "Le nombre d'allers-retours est défini ensemble avant de démarrer, pour affiner chaque élément de l'identité sans dépasser un cadre clair." },
           ],
-          crossLink: { label: "Besoin d'un site aussi ? Découvrez Rebranding + Site Premium →", slug: "rebranding-site-premium" },
+          crossLink: { label: "Besoin de refaire aussi votre site ? Découvrez la refonte →", slug: "rebranding-site-premium" },
         },
         {
           name: "Projet Sur Mesure",
@@ -709,40 +987,132 @@ const fr: Translations = {
           name: "SEO & Référencement",
           tagline: "ÊTRE TROUVÉ SUR GOOGLE",
           h1Lead: "Agence SEO à Tours ·",
-          h1Benefit: "un référencement qui s'installe",
-          sub: "Rendre votre site et votre fiche Google visibles auprès des clients de Tours qui vous cherchent, sans acheter chaque clic.",
-          metaTitle: "Agence SEO Tours · référencement de site",
-          metaDescription: "Agence SEO à Tours : référencement de site internet, fiche Google Business Profile, optimisation des pages et suivi Search Console. Sans engagement.",
-          directAnswer: "Le référencement naturel (SEO) consiste à rendre votre site clair et pertinent pour Google sur les recherches de vos clients, à Tours et aux alentours. Il combine l'optimisation de vos pages, la fiche Google Business Profile et un suivi dans la Search Console. Les effets s'installent sur plusieurs mois et aucune position n'est garantie : personne ne contrôle l'algorithme de Google.",
+          h1Benefit: "soyez trouvé par vos clients sur Google",
+          sub: "Vos clients de Tours cherchent votre métier sur Google. On travaille votre site et votre fiche pour qu'ils tombent sur vous.",
+          metaTitle: "Agence SEO Tours : faites-vous trouver, dès 300 €",
+          metaDescription: "Agence SEO à Tours pour artisans, commerçants et restaurants. 2 pages travaillées, 1 lien par mois, suivi Search Console à votre nom. Dès 300 €/mois.",
+          directAnswer: "Une agence SEO à Tours travaille votre référencement naturel pour que les clients qui cherchent votre métier tombent sur vous. Chez Sèvalys, c'est dès 300 € par mois, sans promesse de position : personne ne contrôle l'algorithme de Google.",
+          longIntro: [
+            "Sèvalys est une agence SEO à Tours pour les artisans, les commerçants et les restaurants. On retravaille vos deux pages les plus importantes, votre fiche Google et on obtient un lien de qualité chaque mois.",
+            "Vous gardez la main : la Search Console est créée à votre nom. Les résultats demandent plusieurs mois, et on vous l'explique franchement plus bas.",
+          ],
           problems: [
-            { n: "A", title: "Un site absent des résultats", desc: "Vos clients cherchent exactement ce que vous proposez, mais les pages qui apparaissent en premier sont celles de concurrents mieux structurés." },
-            { n: "B", title: "Une fiche Google incomplète", desc: "Horaires approximatifs, catégories mal choisies, aucune photo récente : la fiche Google Business Profile existe mais ne rassure pas et ne convertit pas." },
-            { n: "C", title: "Aucun suivi de ce qui fonctionne", desc: "Sans Search Console ni suivi des requêtes, impossible de savoir si le site progresse ou sur quelles recherches il est réellement vu." },
+            { n: "A", title: "Votre site n'apparaît pas", desc: "Vos clients tapent « plombier Tours » ou « restaurant Tours ». Les premières places vont à des concurrents mieux structurés." },
+            { n: "B", title: "Votre fiche Google est incomplète", desc: "Catégories mal choisies, horaires flous, photos anciennes : la fiche existe, mais elle ne rassure pas." },
+            { n: "C", title: "Vous ne savez pas ce qui marche", desc: "Sans Search Console, impossible de voir si le site progresse ni sur quelles recherches il apparaît." },
           ],
           features: [
             "Audit de départ du site et de la fiche Google",
-            "Choix des requêtes locales à viser",
-            "Optimisation des titres, textes et balises",
-            "Mise à jour de la fiche Google Business Profile",
-            "Vitesse, mobile et données structurées",
-            "Suivi dans la Search Console",
-            "Point régulier sur les résultats",
+            "Choix des recherches locales à viser",
+            "Titres, textes et balises de 2 pages retravaillés",
+            "Fiche Google Business Profile mise à jour",
+            "Vitesse, mobile et indexation vérifiés",
+            "Suivi Search Console à votre nom",
+            "Rapport mensuel de ce qui bouge",
           ],
           enjeux: [
-            "Le référencement naturel travaille dans la durée : une fois en place, une page bien construite continue d'être trouvée sans coût par clic, là où une annonce s'arrête dès que le budget s'arrête.",
-            "Il s'appuie sur des actions vérifiables (pages, fiche, suivi) plutôt que sur une promesse de position : vous voyez ce qui est fait, ce qui progresse et ce qui reste à travailler.",
+            "Une page bien construite continue d'être trouvée sans payer chaque clic. Une annonce, elle, s'arrête avec le budget.",
+            "On clique surtout sur les premiers résultats, et la fiche Google compte autant que le site. Les deux se travaillent ensemble.",
+          ],
+          sections: [
+            {
+              h2: "Ce qu'on fait pour votre référencement naturel",
+              paragraphs: ["Quatre chantiers, sans jargon."],
+              list: [
+                "Vos 2 pages principales : titres, textes et structure écrits pour les recherches de vos clients.",
+                "Votre fiche Google Business Profile : catégories, horaires, photos et réponses aux avis.",
+                "La technique, en clair : un site rapide, lisible sur mobile et bien lu par Google.",
+                "Un lien de qualité par mois : un autre site sérieux parle de vous, et Google le remarque.",
+              ],
+            },
+            {
+              h2: "SEO local : être trouvé près de chez vous",
+              paragraphs: [
+                "Le SEO local, c'est apparaître quand on cherche « métier + ville ». On vise ces recherches autour de Tours, pas un classement national.",
+                "Pour comprendre le principe avant de vous lancer, lisez notre guide.",
+              ],
+              link: { label: "Comprendre le SEO local à Tours", href: "/guides/seo-local" },
+            },
+            {
+              h2: "Pour qui : restaurants, artisans, commerçants",
+              paragraphs: [
+                "Un restaurant a besoin d'une fiche Google soignée, d'un menu lisible et d'un lien de réservation. Un artisan, de pages claires par métier et par zone, avec des photos de chantiers. Un commerçant, d'horaires justes et de pages pour ses produits phares.",
+                "Ce n'est pas adapté à une boutique en ligne de 500 produits, ni à un marché national très disputé.",
+              ],
+            },
+            {
+              h2: "Comment on mesure ce qui se passe",
+              paragraphs: [
+                "La Search Console est créée à votre nom. Vous voyez vous-même les affichages, les clics et la position moyenne sur vos recherches. On y ajoute les appels reçus depuis votre fiche Google. Si vous partez, vous gardez tous les accès.",
+                "Chaque mois, un rapport court : ce qui a bougé, ce qui a été fait, ce qui vient ensuite.",
+              ],
+            },
+            {
+              h2: "Ce qu'on ne promet pas",
+              paragraphs: [
+                "Aucune position n'est garantie, et méfiez-vous de qui la promet. Les premiers signes se voient souvent après 3 à 6 mois, parfois plus. Tout dépend de la concurrence locale : un plombier à Tours n'est pas dans la situation d'un fleuriste de village.",
+                "Ce que nous nous engageons à faire : le travail décrit ici et un suivi que vous pouvez vérifier vous-même.",
+              ],
+            },
+            {
+              h2: "SEO ou Google Ads : par quoi commencer ?",
+              paragraphs: ["Les annonces amènent des clients vite, mais s'arrêtent avec le budget. Le référencement naturel est plus lent et dure. Si votre site existe déjà, commencez par le SEO. Si le besoin est urgent, lancez des annonces en attendant."],
+              list: [
+                "SEO : plus lent, dure dans le temps, aucun coût par clic.",
+                "Google Ads : rapide, s'arrête avec le budget, chaque clic est payé.",
+              ],
+              link: { label: "Lancer des annonces Google en attendant", href: "/services/google-ads" },
+            },
+            {
+              h2: "Engagement de 3 mois minimum",
+              paragraphs: ["Trois mois, c'est le temps de voir les premiers signes. Ensuite, l'offre se reconduit chaque mois et vous arrêtez avec un mois de préavis. Vos pages et vos accès restent à vous."],
+            },
+          ],
+          pricing: {
+            fromLabel: "À partir de",
+            price: 300,
+            unit: "par mois, pour 2 pages suivies",
+            includes: [
+              "Audit de départ du site et de la fiche Google",
+              "Optimisation de 2 pages (titres, textes, balises)",
+              "Mise à jour de la fiche Google Business Profile",
+              "1 lien de qualité par mois",
+              "Suivi Search Console à votre nom",
+              "Rapport mensuel",
+            ],
+            notIncluded: [
+              "Refonte du site",
+              "Publicité Google Ads",
+              "Rédaction d'articles de blog",
+            ],
+            extras: [
+              { label: "Page supplémentaire suivie (3 pages = 400 € par mois)", price: "+ 100 € par mois" },
+            ],
+            note: "TVA non applicable, art. 293 B du CGI",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Comprendre le SEO local à Tours", href: "/guides/seo-local", description: "Le principe, expliqué simplement." },
+            { label: "Créer votre site à Tours", href: "/services/site-vitrine", description: "Pas encore de site ? On commence par là." },
+            { label: "Lancer des annonces Google en attendant", href: "/services/google-ads", description: "Des clients vite, le temps que le SEO s'installe." },
+            { label: "Faire le diagnostic de votre visibilité", href: "/simulateur", description: "Quelques questions pour savoir par où commencer." },
           ],
           caseQuote: null,
           signals: [
-            { t: "Aucune promesse de position", d: "Nous décrivons les actions menées et les résultats observés, sans garantir une place précise dans Google, qui reste hors de notre contrôle." },
-            { t: "Accès et comptes à votre nom", d: "La fiche Google Business Profile et la Search Console restent rattachées à votre compte : vous gardez la main à tout moment." },
-            { t: "Sans engagement de durée", d: "Vous arrêtez quand vous le souhaitez, sans justification à fournir ni pénalité de sortie à prévoir." },
+            { t: "Aucune promesse de position", d: "On décrit le travail fait et ce qui est mesuré. La place dans Google reste hors de notre contrôle." },
+            { t: "Comptes à votre nom", d: "La Search Console et la fiche Google restent rattachées à votre compte, même si vous partez." },
+            { t: "3 mois minimum, puis mois par mois", d: "Le temps de voir les premiers signes. Ensuite, vous arrêtez avec un mois de préavis." },
           ],
           faq: [
-            { q: "En combien de temps voit-on des résultats ?", a: "Les premiers effets se mesurent généralement après quelques mois, selon la concurrence sur vos requêtes et l'état de départ du site. Le référencement naturel est un travail de fond, pas un résultat immédiat." },
-            { q: "Pouvez-vous garantir la première place sur Google ?", a: "Non, et méfiez-vous de qui le promet : les résultats dépendent d'un algorithme que nous ne contrôlons pas. Nous nous engageons sur les actions menées et un suivi transparent, pas sur une position." },
-            { q: "SEO ou Google Ads : faut-il choisir ?", a: "Les deux se complètent : les annonces apportent de la visibilité immédiate, le référencement naturel s'installe durablement sur les mêmes requêtes. Un diagnostic gratuit permet de dire par où commencer pour votre activité." },
-            { q: "Que faites-vous sur ma fiche Google Business Profile ?", a: "Nous vérifions les informations, les catégories, les horaires et les photos, puis nous la tenons à jour et suivons les avis. La fiche reste rattachée à votre compte, vous en gardez l'accès." },
+            { q: "Combien coûte une agence SEO à Tours ?", a: "Chez Sèvalys, dès 300 € par mois pour 2 pages suivies. Chaque page en plus coûte 100 € par mois : 3 pages font 400 €. Un lien de qualité par mois est compris, avec 3 mois minimum. TVA non applicable, art. 293 B du CGI." },
+            { q: "Quand voit-on les premiers résultats du SEO local ?", a: "Les premiers signes se mesurent souvent après 3 à 6 mois, selon la concurrence et l'état du site. Aucune position n'est garantie. C'est pour cela que l'engagement est de 3 mois : le temps de voir si ça bouge." },
+            { q: "Promettez-vous une position sur Google ?", a: "Non, et méfiez-vous de qui le fait. Les résultats dépendent d'un algorithme que personne ne contrôle. Nous nous engageons sur le travail réalisé et sur un suivi que vous vérifiez vous-même." },
+            { q: "Comment saurai-je que ça marche ?", a: "La Search Console est créée à votre nom : vous voyez les clics, les affichages et la position moyenne. Vous recevez aussi un rapport chaque mois. Si vous partez, vous gardez l'accès." },
+            { q: "SEO ou Google Ads : lequel choisir ?", a: "Les annonces donnent des clients vite, mais s'arrêtent avec le budget. Le SEO s'installe sur la durée. Souvent, on commence par le SEO si vous avez un site, et par Google Ads si le besoin est urgent." },
+            { q: "Que faites-vous sur ma fiche Google Business Profile ?", a: "On vérifie les informations, les catégories, les horaires et les photos, puis on la met à jour chaque mois et on suit les avis. La fiche reste à votre nom : vous en gardez l'accès." },
+            { q: "Faut-il déjà avoir un site ?", a: "Oui, ou en faire un : il faut au moins une page qui parle de votre activité. Sinon, on commence par un site vitrine, puis on travaille le référencement." },
+            { q: "Y a-t-il un engagement ?", a: "3 mois minimum, puis reconduction chaque mois. Vous arrêtez avec un mois de préavis. Vos pages et vos accès restent à vous." },
           ],
           crossLink: null,
         },
@@ -967,62 +1337,56 @@ const fr: Translations = {
   },
   landing: {
     hero: {
-      pill: 'AGENCE · TOURS, FR · DISPONIBLE EN MAI 2026',
-      title_l1: 'Des outils',
-      title_l2: 'qui ',
-      title_l2_it: 'travaillent',
-      title_l3: 'pour vos clients.',
-      sub: "On conçoit des sites, des outils de gestion et des agents IA pour les commerces, restaurants et services. Pas du sur-mesure inutile : ce qui vous fait gagner du temps, des appels et des ventes.",
-      cta_primary: 'Lancer le diagnostic',
-      cta_secondary: 'Discutons de votre projet',
-      stat_1_n: '06', stat_1_l: 'Partenaires actifs', stat_1_d: 'Restaurants, écoles, indépendants',
-      stat_2_n: '24h', stat_2_l: 'Première réponse', stat_2_d: 'Audit téléphonique offert',
-      stat_3_n: '100%', stat_3_l: 'Code possédé', stat_3_d: 'Vous gardez tout, dès le jour 1',
-      stat_4_n: '1.5x', stat_4_l: 'Ratio appels traités', stat_4_d: 'Avec un phone agent en place',
-      canvas_l: 'MODEL · BA-01 · ATELIER',
-      canvas_r: 'ROTATION · 0.4 RPM',
+      pill: "AGENCE · TOURS, FR",
+      title_l1: "Agence digitale",
+      title_l2: "à ",
+      title_l2_it: "Tours",
+      sub: "Des outils qui travaillent pour vos clients. Sites internet, référencement local et agents IA pour les commerces, restaurants, artisans et PME de Tours.",
+      cta_primary: "Lancer le diagnostic",
+      cta_secondary: "Discutons de votre projet",
     },
     manifeste: {
-      num: '01 / 07',
-      title_l1: 'Sites, outils,',
-      title_l2_it: 'agents.',
-      intro: "Trois choses qu'on fait — pour une seule chose qu'on vise.",
-      p1: "Vous êtes patron de pizzeria, gérante de salon, dirigeant d'école de danse. Vous voulez un outil qui marche, pas un projet tech.",
-      p2: "On vient avec une seule promesse : on construit ce que vos clients vont vraiment utiliser. Le reste, on l'enlève.",
+      num: "01 / 08",
+      title_l1: "Une agence digitale à Tours",
+      title_l2_it: "pour les commerces et les PME.",
+      intro: "Sèvalys, c'est une petite agence de Tours. Des sites internet, du référencement local, des agents IA pour les commerces, restaurants, artisans et PME d'Indre-et-Loire. Au bout du fil, une seule personne : Anatholy Bricon, le fondateur.",
       quote: "« Un site beau, c'est bien. Un site qui rapporte, c'est mieux. »",
-      p3: "Aujourd'hui, on construit surtout des agents IA — phone agents qui répondent à vos clients, assistants qui prennent les commandes, automatisations qui font le boulot pendant que vous vivez.",
-      p4: "Demain, on construira ce dont vous aurez besoin. Le métier reste le même : faire des outils utiles.",
-    },
-    problems: {
-      num: '02 / 07',
-      title_l1: 'Ce qui vous',
-      title_l2_it: 'fait perdre des clients.',
-      intro: "Quatre situations qui reviennent chez presque toutes les PME qu'on rencontre.",
       items: [
-        { n: '01', title: 'Invisible en ligne', desc: "Un client tape votre activité sur Google et tombe sur vos concurrents avant même de vous trouver. Chaque jour sans présence claire, c'est du monde qui part ailleurs." },
-        { n: '02', title: 'Personne ne répond au téléphone', desc: "Un appel manqué pendant le rush, c'est une commande ou une réservation qui part chez le concurrent d'à côté. Ça arrive plus souvent qu'on ne le pense." },
-        { n: '03', title: 'Une image dépassée', desc: 'Logo, site, réseaux : quand tout date d\'une autre époque, un nouveau client hésite avant même le premier échange.' },
-        { n: '04', title: 'Pas le temps de gérer les réseaux', desc: "Entre le quotidien et les clients sur place, les réseaux sociaux passent en dernier — alors que c'est souvent là que les nouveaux clients regardent en premier." },
+        { t: "Invisible sur Google", d: "Vos clients cherchent votre métier et trouvent vos concurrents avant vous." },
+        { t: "Appels manqués", d: "Un appel sans réponse pendant le rush, c'est une commande qui part ailleurs." },
+        { t: "Image dépassée", d: "Un site ou un logo d'une autre époque fait hésiter les nouveaux clients." },
+        { t: "Réseaux délaissés", d: "Sans temps pour les réseaux, l'audience se construit chez vos concurrents." },
       ],
-      good_news: "La bonne nouvelle : chacun de ces problèmes a une solution simple, sans devoir tout changer d'un coup.",
-      cta: 'Tester le diagnostic',
+      cta: "Faire le diagnostic gratuit",
     },
     servicesPreview: {
-      num: '03 / 07',
-      title_l1: 'Dix façons',
-      title_l2_it: 'de vous aider.',
-      intro: 'Chaque service a sa page dédiée : le problème qu\'il résout, comment on procède, et ce que ça change pour vous.',
+      num: "02 / 08",
+      title_l1: "Nos offres à Tours :",
+      title_l2_it: "site internet, référencement, publicité, IA.",
+      intro: "Des offres à périmètre défini, avec le prix affiché. Chacune a sa page détaillée.",
+      cards: [
+        { t: "Site internet professionnel, à partir de 500 €", d: "Accueil et jusqu'à 2 pages, au forfait. Devis sous 48 h, sans engagement.", link: "Site internet professionnel à Tours" },
+        { t: "Référencement local, à partir de 300 €/mois", d: "2 pages suivies, 1 lien par mois inclus, 3 mois minimum, +100 €/mois par page. Aucune position garantie.", link: "Référencement local" },
+        { t: "Refonte de site et nouvelle image", d: "Une identité visuelle et un site refaits à neuf pour une image à jour.", link: "Refonte de site" },
+        { t: "Publicité Google Ads", d: "Des annonces visibles quand vos clients vous cherchent, avec un budget que vous pilotez.", link: "Campagnes Google Ads" },
+        { t: "Agent vocal IA pour ne plus rater d'appels", d: "Un agent qui décroche, prend les rendez-vous et vous prévient.", link: "Agent vocal IA" },
+      ],
+      others: "Aussi :",
+      guide_price: "Combien coûte un site internet ?",
+      guide_seo: "Le SEO local à Tours expliqué",
+      vat: "Prix en euros, TVA non applicable, art. 293 B du CGI.",
+      all: "Voir tous les services",
     },
     work: {
-      num: '06 / 07',
-      title_l1: 'Quelques',
-      title_l2_it: 'réalisations.',
-      intro: 'Quatre sites, quatre métiers, une même méthode : on règle un vrai problème métier.',
+      num: "03 / 08",
+      title_l1: "Quatre sites réalisés,",
+      title_l2_it: "quatre métiers.",
+      intro: "Quatre sites en ligne, que vous pouvez ouvrir : une entreprise de rénovation à Tours, une sellerie à Chambray-lès-Tours, un restaurant franco-thaï à Krabi et un photographe.",
       items: [
-        { name: 'Grand Ouest Habitat', desc: "Site de rénovation générale du bâtiment — demande de projet en ligne, visite technique puis devis sous 48 h.", tags: ['SITE', 'DEVIS'], year: '2026' },
-        { name: 'Sellerie Duchet', desc: "Boutique en ligne d'équipement équestre — catalogue par rayons, livraison et paiement en plusieurs fois.", tags: ['BOUTIQUE', 'E-COMMERCE'], year: '2026' },
-        { name: 'Gecko Cabane', desc: 'Site vitrine + réservation pour restaurant. Charte sur-mesure, hébergement managé.', tags: ['SITE', 'RESA'], year: '2024' },
-        { name: 'Ghjulianu Codani', desc: 'Portfolio professionnel — design éditorial, intégration soignée.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
+        { name: 'Grand Ouest Habitat', desc: "Rénovation du bâtiment à Tours : photos avant et après, demande de projet en ligne, visite technique puis devis sous 48 h.", tags: ['SITE', 'DEVIS'], year: '2026' },
+        { name: 'Sellerie Duchet', desc: "Équipement équestre à Chambray-lès-Tours : rayons, produits en vedette, livraison et paiement en plusieurs fois.", tags: ['BOUTIQUE', 'E-COMMERCE'], year: '2026' },
+        { name: 'Gecko Cabane', desc: 'Restaurant franco-thaï à Krabi : carte, horaires et formulaire de réservation, en quatre langues.', tags: ['SITE', 'RESA'], year: '2024' },
+        { name: 'Ghjulianu Codani', desc: 'Photographe : portfolio, albums, tarifs et contact.', tags: ['SITE', 'EDITORIAL'], year: '2025' },
       ],
       bridge_eyebrow: 'PROCHAINE ÉTAPE',
       bridge_title_l1: 'Quel service',
@@ -1030,39 +1394,52 @@ const fr: Translations = {
       bridge_body: "Deux minutes de diagnostic pour savoir exactement ce qu'il vous faut.",
     },
     method: {
-      num: '04 / 07',
-      title_l1: 'Comment',
-      title_l2_it: 'on travaille.',
-      intro: "Un déroulé simple, du premier échange au suivi dans la durée.",
+      num: "04 / 08",
+      title_l1: "Comment",
+      title_l2_it: "on travaille.",
+      intro: "Quatre étapes, du premier échange au suivi.",
       steps: [
-        { n: '01', t: 'Diagnostic', d: 'On fait le point sur votre activité et ce qui vous freine aujourd\'hui, en quelques questions ciblées.' },
-        { n: '02', t: 'Proposition sur mesure', d: 'Vous recevez une recommandation claire des services adaptés à votre situation, sans jargon.' },
-        { n: '03', t: 'Déploiement', d: "On met en place la solution retenue, à votre rythme, avec des points d'étape réguliers." },
-        { n: '04', t: 'Suivi & support', d: 'On reste disponibles après la mise en ligne pour ajuster et répondre à vos questions.' },
+        { n: '01', t: "Diagnostic", d: "Quelques questions sur votre activité et ce qui vous freine." },
+        { n: '02', t: "Proposition", d: "Une recommandation claire et un devis sous 48 h." },
+        { n: '03', t: "Mise en place", d: "Le projet est réalisé avec des points d'étape réguliers." },
+        { n: '04', t: "Suivi", d: "On reste disponible après la mise en ligne." },
       ],
     },
-    enjeux: {
-      num: '05 / 07',
-      title_l1: 'Ce qui est',
-      title_l2_it: 'en jeu.',
-      intro: 'Ne rien faire a aussi un effet — juste moins visible au quotidien.',
-      points: [
-        { t: 'Vos concurrents captent la recherche locale', d: 'Pendant que vous hésitez, ceux qui ont déjà une présence claire raflent les recherches Google de vos futurs clients.' },
-        { t: 'Les appels manqués s\'accumulent', d: "Un appel manqué isolé ne semble rien. Multiplié sur l'année, c'est un volume de commandes qui a filé ailleurs." },
-        { t: 'Votre image perd en crédibilité', d: "Une identité qui ne bouge pas pendant que le marché évolue finit par sembler dépassée, même si le service reste excellent." },
-        { t: 'Les réseaux sociaux vous échappent', d: "Sans présence régulière, l'audience qui s'y forme se construit ailleurs, chez ceux qui prennent le temps d'y être." },
+    zone: {
+      num: "05 / 08",
+      title_l1: "Où intervenons-nous ?",
+      title_l2_it: "Tours et Indre-et-Loire.",
+      text: "Sèvalys est basée à Tours. Les clients sont des commerces, des restaurants, des artisans et des entreprises de Tours et d'Indre-et-Loire : on se retrouve sur place, ou on s'appelle, comme vous préférez. Le diagnostic et le suivi marchent aussi à distance, partout en France.",
+      label: "Communes :",
+      towns: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours"],
+    },
+    why: {
+      num: "06 / 08",
+      title_l1: "Pourquoi choisir une agence digitale",
+      title_l2_it: "à taille humaine ?",
+      items: [
+        { t: "Un interlocuteur", d: "Le fondateur, Anatholy Bricon, répond lui-même et fait le travail : aucun commercial entre vous et lui." },
+        { t: "Des prix affichés", d: "Site dès 500 €, référencement dès 300 €/mois : vous savez où vous allez." },
+        { t: "Vous gardez tout", d: "Le code et le nom de domaine sont à vous dès le premier jour." },
       ],
     },
-    phone: {
-      badge: 'LIVE · PHONE AGENT',
-      title_l1: 'Vos clients',
-      title_l2: 'appellent,',
-      title_l3_it: 'on répond.',
-      sub: "Un agent vocal IA, branché à votre CRM ou votre cahier de commandes. Il répond, comprend, confirme — pendant que vous travaillez.",
-      cta_roi: "Découvrir l'agent vocal IA",
+    faq: {
+      num: "07 / 08",
+      title_l1: "Questions",
+      title_l2_it: "fréquentes.",
+      items: [
+        { q: "Que fait une agence digitale à Tours comme Sèvalys ?", a: "Sèvalys crée des sites internet, assure le référencement local, gère des campagnes Google Ads et installe des agents vocaux IA pour les commerces et PME de Tours. Vous parlez directement à Anatholy Bricon, le fondateur, du premier échange à la mise en ligne." },
+        { q: "Quelle différence entre agence web et agence digitale ?", a: "Une agence web réalise le site. Une agence digitale s'occupe aussi d'être trouvé sur Google (référencement, publicité) et des outils du quotidien (agent IA, automatisations)." },
+        { q: "Combien coûte un site internet ?", a: "À partir de 500 € : accueil et jusqu'à 2 pages, au forfait à périmètre défini. Devis sous 48 h, sans engagement. TVA non applicable, art. 293 B du CGI." },
+        { q: "Combien coûte le référencement (SEO) ?", a: "À partir de 300 €/mois pour 2 pages suivies, +100 €/mois par page supplémentaire, 1 lien par mois compris, engagement de 3 mois minimum. Aucune position n'est garantie : on mesure et on rend compte." },
+        { q: "Intervenez-vous seulement à Tours ?", a: "Sèvalys est basée à Tours et intervient en Indre-et-Loire, sur place ou en visio, ainsi qu'à distance partout en France." },
+        { q: "En combien de temps mon site est-il en ligne ?", a: "En général en quelques semaines, selon le temps nécessaire pour préparer les textes et les photos." },
+        { q: "Est-ce que je garde mon site et mon nom de domaine ?", a: "Oui. Le code et le nom de domaine vous appartiennent dès le premier jour." },
+        { q: "Avec qui vais-je travailler ?", a: "Avec Anatholy Bricon, entrepreneur individuel. Il fait le devis, le travail et le suivi lui-même." },
+      ],
     },
     partners: {
-      title: 'ILS NOUS FONT CONFIANCE — DEPUIS 2023',
+      title: 'ILS NOUS FONT CONFIANCE',
       items: [
         { name: 'Selenium Studio', role: 'STUDIO ASSOCIÉ', color: '#C4F542' },
         { name: 'Gecko Cabane', role: 'RESTAURANT', color: '#E07856' },
@@ -1074,10 +1451,11 @@ const fr: Translations = {
       ],
     },
     contact: {
-      num: '07 / 07',
-      title_l1: 'Un projet ?',
-      title_l2_it: 'Parlons-en.',
-      sub: "On répond sous 24h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes et ce qui aurait du sens.",
+      num: "08 / 08",
+      title_l1: "Un projet à Tours ?",
+      title_l2_it: "Parlons-en.",
+      sub: "Réponse sous 24 h ouvrées. Premier appel offert, sans engagement, pour comprendre où vous en êtes.",
+      updated: "Mis à jour en novembre 2026.",
       info: [
         { k: 'Email', v: 'contact@sevalys.com' },
         { k: 'Téléphone', v: '+33 (0)6 07 18 41 33' },
@@ -1169,81 +1547,289 @@ const en: Translations = {
       ctaSub: "Two minutes of diagnostic and you'll know. Otherwise, write to us directly.",
       ctaPrimary: "Run my diagnostic →",
       ctaSecondary: "Contact us",
+      extra: {
+        pricingHeading: "What it costs",
+        pricingIncludes: "What is included",
+        pricingNotIncluded: "What is not included",
+        pricingExtras: "Optional extras",
+        extrasColLabel: "Option",
+        extrasColPrice: "Amount",
+        stepsHeading: "How the project runs",
+        stepDuration: "Typical duration",
+        areasHeading: "Where we work",
+        proofHeading: "Work you can visit",
+        proofVisit: "Visit the site",
+        guidesHeading: "Related guides",
+        breadcrumbHome: "Home",
+        breadcrumbServices: "Services",
+      },
       items: [
         {
           name: "Site Vitrine",
-          tagline: "THE ESSENTIALS TO BE VISIBLE",
-          h1Lead: "Site Vitrine in Tours ·",
-          h1Benefit: "to exist online",
-          sub: "A clear, professional online presence, built so a customer finds you on their very first search.",
-          metaTitle: "Site Vitrine in Tours · to exist online | Sèvalys",
-          metaDescription: "A custom Site Vitrine in Tours to be visible, credible and reachable online. Responsive design, local SEO, fast launch, no commitment.",
-          directAnswer: "A Site Vitrine is a simple, professional online presence: a few pages that present your business, your services and your contact details. It lets a customer find you, understand what you offer and reach out in seconds, from a phone or a computer.",
+          tagline: "A SITE THAT GETS YOU FOUND AND CALLED",
+          h1Lead: "Create your website in Tours,",
+          h1Benefit: "simple and clear",
+          sub: "A professional website for tradespeople, restaurants and shops in Tours. You know what you pay and who looks after it.",
+          metaTitle: "Website creation in Tours from €500 | Sèvalys",
+          metaDescription: "Website for tradespeople, restaurants and shops in Tours. From €500 (VAT not applicable, art. 293 B CGI). Tell us about your project.",
+          directAnswer: "A Site Vitrine presents your business in a few pages: who you are, what you do, where to find you, how to reach you. At Sèvalys it starts at €500 for the home page and up to 2 pages, with a 2 to 4 week lead time.",
+          longIntro: [
+            "Sèvalys is a digital agency in Tours. We build websites for tradespeople, restaurant owners and shopkeepers in Tours and Indre-et-Loire. Your site starts at €500, for the home page and up to 2 pages.",
+            "A professional website does three things: it gets you found on Google, it reassures someone who hesitates, and it gives them a simple way to contact you. You speak directly to Anatholy Bricon, from the first call to launch. The quote is free, arrives within 48 h, and commits you to nothing.",
+          ],
           problems: [
-            { n: "A", title: "Invisible on Google", desc: "Without a site, potential customers search for your business and find your competitors first. You lose contacts before the first conversation even happens." },
-            { n: "B", title: "An outdated or non-mobile site", desc: "An ageing page, or one that displays poorly on a smartphone, projects an unprofessional image — even if your service is excellent." },
-            { n: "C", title: "A site that generates zero contact", desc: "The site exists but nobody fills the form or calls: it is not working for you, it is just sitting there." },
+            { n: "A", title: "Nobody finds you on Google", desc: "A customer types your trade and Tours. If they do not see your site, they call someone else. You lose the contact before you have spoken." },
+            { n: "B", title: "The site is dated or poor on mobile", desc: "Many customers look on their phone first. A site that is hard to read gives them a poor impression of your work." },
+            { n: "C", title: "The site exists, but nobody calls", desc: "No visible phone number, no form, no directions. The visitor does not know what to do and leaves." },
           ],
           features: [
-            "Custom design, built around you",
-            "Responsive on mobile and tablet",
-            "Clear presentation of your services",
+            "Custom design that fits your business",
+            "Clean display on mobile, tablet and computer",
+            "Home page and up to 2 pages, clear and short",
             "Built-in contact form",
-            "Google Maps integration",
-            "Basic local SEO",
-            "Deployment included",
+            "Google Maps so people can find you",
+            "Local SEO basics: titles, tags, Google listing to link",
+            "Launch handled by us",
           ],
           enjeux: [
-            "A well-built Site Vitrine changes what happens before the first call: a hesitant customer finds your hours, your services and a way to reach you in seconds, without looking elsewhere.",
-            "Result: more credibility from the very first glance, and contact requests that arrive without you having to chase them.",
+            "A clear site changes what happens before the first call. The customer sees your hours, your work and your service area. They know whether you are the right person before they pick up the phone.",
+            "You save time on basic questions and get more serious enquiries. The site works while you are on a job, in the kitchen or behind the counter.",
           ],
-          caseQuote: "Since our new site went live, customers find us easily and book a table without needing to call during service.",
+          caseQuote: "The Gecko Cabane website, a French-Thai restaurant in Krabi, is available in four languages (French, English, German, Swedish) and offers an online booking form, with the menu and opening hours.",
+          caseQuoteIsFact: true,
           signals: [],
+          sections: [
+            {
+              h2: "A website for tradespeople in Tours",
+              paragraphs: [
+                "A tradesperson wants three things from a site: to be found, to show their work, to get called. The rest is secondary.",
+                "Grand Ouest Habitat, a building renovation company based in Tours, is a good example. Its site shows the phone number, the area it covers, its trades, before and after photos of jobs, and the Google reviews it has received. Here is what a tradesperson should show on a site.",
+              ],
+              list: [
+                "Their trade, in one clear sentence",
+                "Their work, with real photos",
+                "Their service area: Tours, Indre-et-Loire",
+                "A phone number visible on mobile",
+                "A form to describe the job",
+              ],
+            },
+            {
+              h2: "A website for restaurants",
+              paragraphs: [
+                "A customer must find four answers in ten seconds: what is on the menu, when you are open, how to book, how to get there.",
+                "The Gecko Cabane site, a French-Thai restaurant in Krabi, Thailand, shows the cuisine, the hours, a Book button and a contact, in several languages. To stop picking up the phone mid-service, a voice agent can answer calls for you.",
+              ],
+              link: { label: "Answer the phone during service", href: "/services/agent-vocal-ia" },
+            },
+            {
+              h2: "Shops and independents: sites already online",
+              paragraphs: [
+                "Sellerie Duchet, equestrian equipment in Chambray-lès-Tours, shows its departments, featured products and an introduction to its owner. That site also sells online: a shop is a larger project than a Site Vitrine, quoted separately.",
+                "Ghjulianu Codani, a photographer, presents his portfolio, albums, rates and a way to contact him. In both cases, the site is built around what the visitor is looking for.",
+              ],
+              link: { label: "An online shop: the custom project", href: "/services/projet-sur-mesure" },
+            },
+            {
+              h2: "Why a professional site rather than a social media page",
+              paragraphs: [
+                "A social media page will do in a pinch. A site of your own does better, for three reasons.",
+                "First, it can be found on Google with no account or login. Second, it reassures: an address in your name, clear pages, a phone number. Third, you control the content and how it looks, without relying on a platform that changes its rules.",
+              ],
+              link: { label: "How much a Site Vitrine costs: the guide", href: "/guides/prix-site-vitrine" },
+            },
+            {
+              h2: "How your site gets found on Google in Tours",
+              paragraphs: [
+                "We prepare the site for local search: clear titles, careful tags, the town name where it helps, and a link to your Google Business Profile listing.",
+                "No ranking is promised. Google decides, and your competitors work too. But these basics save you starting from scratch if you later go further with SEO.",
+              ],
+              link: { label: "Get your site found on Google in Tours", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "Your contact in Tours",
+              paragraphs: [
+                "You speak directly to Anatholy Bricon, a sole trader. He follows your project from the first conversation to launch.",
+                "Sèvalys works in Tours, Saint-Avertin and the surrounding area, across Indre-et-Loire. We talk by phone, video call or in person. You can also read what our customers say.",
+              ],
+              link: { label: "Read our customers' reviews", href: "/avis" },
+            },
+          ],
+          steps: [
+            { title: "Conversation and quote", text: "You describe your business and what the site should do for you. The free quote arrives within 48 h.", duration: "1 to 2 days" },
+            { title: "Content and mock-up", text: "We organise the pages, you send text and photos, then we design the home page mock-up.", duration: "1 to 2 weeks" },
+            { title: "Review and tweaks", text: "You look at the mock-up and then the site, and give your feedback. We apply it.", duration: "3 to 7 days" },
+            { title: "Launch", text: "We publish the site on your hosting, with your domain name, and we test the contact form.", duration: "1 to 3 days" },
+          ],
+          pricing: {
+            fromLabel: "From",
+            price: 500,
+            unit: "for a Site Vitrine: home page + up to 2 pages",
+            includes: [
+              "Custom design that fits your business",
+              "Layout adapted to mobile, tablet and computer",
+              "Contact form",
+              "Built-in Google Maps",
+              "Local SEO basics: titles, tags, Google listing to link",
+              "Site launch",
+            ],
+            notIncluded: [
+              "Domain name and hosting, paid by you",
+              "Writing the text and photos, if you do not provide them",
+              "Site maintenance, available as an option",
+            ],
+            extras: [
+              { label: "Extra page", price: "On quote" },
+              { label: "Site maintenance", price: "On quote" },
+              { label: "Writing the text", price: "On quote" },
+              { label: "Online shop (custom project)", price: "On quote" },
+            ],
+            note: "VAT not applicable, art. 293 B of the CGI. Usual lead time: 2 to 4 weeks. Free quote within 48 h.",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "How much a Site Vitrine costs: the price guide", href: "/guides/prix-site-vitrine", description: "The ranges, and the questions to ask before a quote." },
+            { label: "Get your site found on Google in Tours", href: "/services/seo-referencement", description: "Go further than the local SEO basics." },
+            { label: "Redo an existing site: the redesign", href: "/services/rebranding-site-premium", description: "For a site that is dated or no longer looks like you." },
+            { label: "Estimate your project in 2 minutes", href: "/simulateur", description: "A few questions, then advice on the right offer." },
+            { label: "Guide: getting your site found in Tours", href: "/guides/seo-local", description: "The simple steps of local SEO." },
+          ],
           faq: [
-            { q: "How long until the site is live?", a: "Expect a few weeks between the first conversation and launch, depending on the content to prepare. A detailed quote arrives within 48h, with no commitment on your part." },
-            { q: "Can I edit the content myself?", a: "Yes, you keep control of everyday text and images. For bigger changes, we stay available to help quickly." },
-            { q: "Is local SEO included?", a: "A local SEO foundation is built in from launch: clear structure, contact details and a Google Maps presence so nearby customers find you." },
-            { q: "What if I don't have text or photos yet?", a: "No problem: we guide you through structuring the content, and can point you to simple solutions for visuals, with no surprise costs." },
+            { q: "How much does a website cost in Tours?", a: "A Sèvalys site starts at €500, for the home page and up to 2 pages. VAT not applicable, art. 293 B of the CGI. The price rises with the number of pages, copywriting or photos to arrange. Providers in Tours range from about €700 to €3,000 (survey of November 2026): the price guide explains the gap." },
+            { q: "What does the package from €500 include?", a: "The home page and up to 2 pages, a custom design, mobile display, a contact form, a Google Maps map, local SEO basics and launch. Not included: the domain name, hosting, writing the text and photos if you do not provide them, and maintenance." },
+            { q: "Can you build a website for free?", a: "Yes, with an online builder. But the address is not yours, options are limited and nobody guides you. For an occasional project it may be enough. To receive calls from customers, a professional site works better." },
+            { q: "Who builds my site, and what is the job called?", a: "A web designer or web developer. At Sèvalys you work with Anatholy Bricon, who follows your project from the first conversation to launch." },
+            { q: "Will my site be visible on Google in Tours?", a: "It is prepared for it: clear titles, well-named pages, a link to your Google listing. No ranking is promised, because nobody controls it. To go further, an SEO offer exists: see the SEO page." },
+            { q: "Do I need to have the text and photos already?", a: "It is not required, but it is faster. If you have them, send them over. If not, we help you structure the content. Writing the text is an option, on quote." },
+            { q: "I work in Tours, do I have to come and see you?", a: "No. We talk by phone or video call. An in-person meeting is possible around Tours if you prefer." },
+            { q: "I am a restaurant owner or tradesperson: will my site be different?", a: "Yes. For a restaurant: the menu, hours, booking. For a tradesperson: the work, the service area and a way to describe the job. The site layout follows your trade." },
           ],
           crossLink: null,
         },
         {
-          name: "Rebranding + Site Premium",
-          tagline: "TRANSFORM YOUR IMAGE",
-          h1Lead: "Rebranding + Premium Site in Tours ·",
-          h1Benefit: "image and site, as one",
-          sub: "Modernise your identity and your website in a single coherent process, rather than two disconnected projects.",
-          metaTitle: "Rebranding + Premium Site in Tours · image and site, as one | Sèvalys",
-          metaDescription: "Rebranding with a premium site in Tours: a modernised identity and a coherent new website, in one process. No commitment, quote within 48h.",
-          directAnswer: "A rebranding with a premium site modernises your identity — logo, palette, typography — and rebuilds your website to carry that new image, in one coherent process. Branding stops at your identity; Rebranding + Premium Site includes the site rebuild, launch and hand-off.",
+          name: "Website redesign",
+          tagline: "REDO YOUR SITE, KEEP WHAT MATTERS",
+          h1Lead: "Website redesign in Tours:",
+          h1Benefit: "redo your site without losing what works",
+          sub: "Your site already exists, but it looks dated, loads slowly or brings no enquiries? Sèvalys rebuilds it and keeps what already brings you visitors.",
+          metaTitle: "Website redesign in Tours · keep what works | Sèvalys",
+          metaDescription: "Redo your site in Tours without starting over: audit, new design, 301 redirects and Google follow-up. Free quote within 48h, no commitment.",
+          directAnswer: "A website redesign means rebuilding a site that already exists: its design, page structure, text and technology. In Tours, Sèvalys starts with an audit of your current site, keeps the pages that bring visitors, redirects old addresses and checks Google Search Console after launch. The quote comes after the audit: free, within 48h.",
+          longIntro: [
+            "A redesign means rebuilding a site that already exists. The design changes, pages are reorganised, the text is reviewed and the technology is renewed. Your domain name stays yours.",
+            "Anatholy Bricon, in Tours, redoes websites while keeping what already brings visitors. The amount is set by quote, after an audit of your current site — free quote within 48h. Not sure where to begin? A two-minute online diagnostic points you the right way.",
+          ],
           problems: [
-            { n: "A", title: "An image that no longer reflects your business", desc: "Your business has evolved but your logo and colours are stuck in another era — and it shows at first glance." },
-            { n: "B", title: "A site and an identity that contradict each other", desc: "The site no longer matches your current brand image, which blurs the message from the first visit." },
-            { n: "C", title: "Credibility lost to better-presented competitors", desc: "Competitors with a stronger presentation grab attention first, even when your offer is better." },
+            { n: "A", title: "A slow site, or one that is unreadable on mobile", desc: "Most visitors arrive from a phone. If the page is slow to open or the text is too small, many leave before reading a single line." },
+            { n: "B", title: "Nobody contacts you through the site", desc: "The site is online, but the form stays empty and the phone does not ring. It shows your business without ever inviting action." },
+            { n: "C", title: "A site that no longer looks like you, and that you can no longer edit", desc: "Your business has moved on, your site has not. Changing an opening time or a photo needs help, and the whole thing no longer matches your image." },
           ],
           features: [
-            "Audit of your current image",
-            "Logo modernisation",
-            "New colour palette",
-            "Professional typography",
-            "Mini brand guidelines",
-            "New site aligned with your identity",
+            "Audit of your current site",
+            "Inventory of the pages that bring visitors",
+            "New design that reads well on mobile",
+            "Domain name and e-mail addresses kept",
+            "301 redirect for every old address",
+            "Launch and follow-up in Google Search Console",
             "Hand-off training included",
           ],
           enjeux: [
-            "An aligned image and website bring consistency to every touchpoint: social media, storefront, business documents and website finally tell the same story.",
-            "Customers recognise your brand everywhere, and your credibility no longer depends on a single outdated touchpoint.",
+            "A site redone with method keeps what already works. Visitors who find you today find the same pages tomorrow, better presented, instead of landing on an error.",
+            "The change shows in simple things: a site that opens fast on a phone, pages that are easy to browse, a form or a number you find without searching. No Google position is promised: the risk of loss is reduced, then monitored.",
+          ],
+          sections: [
+            {
+              h2: "Redesign or simple update: what you really need",
+              paragraphs: [
+                "Not every site needs to be rebuilt. If the foundation is sound, an update is enough: a text to fix, a photo to swap, an opening time to adjust. It is faster and cheaper.",
+                "A redesign becomes useful when the foundation itself is the problem: a site that is too old, too slow, unreadable on mobile, or so limited that each change costs more than a fresh start. We then rebuild an existing site, with its history and its pages.",
+                "During the audit, we tell you honestly which case you are in. If a simple update solves your problem, we say so.",
+              ],
+              list: [
+                "Update: the site holds up, a few elements are corrected.",
+                "Redesign: the site exists, but its foundation is no longer enough. We rebuild it and keep what works.",
+                "New site: nothing is online yet, we start from a blank page.",
+              ],
+              link: { label: "No site yet? See the showcase website page →", href: "/services/site-vitrine" },
+            },
+            {
+              h2: "What we keep, what we change",
+              paragraphs: [
+                "Redoing a site does not mean throwing everything away. We start from what you have and keep whatever still serves you. You approve every choice before launch.",
+              ],
+              list: [
+                "Your domain name and e-mail addresses: they stay yours, nothing changes for your contacts.",
+                "Your text and photos that still work: they are reused, tidied up or replaced when they are no longer accurate.",
+                "Your pages that already bring visitors: they are identified before anything is touched, then kept or redirected.",
+                "What is replaced: the design, the page structure, the loading speed and the contact form.",
+              ],
+            },
+            {
+              h2: "How we protect your place on Google",
+              paragraphs: [
+                "This is the first worry, and it is a fair one. A site redone without care can lose its visitors: old addresses disappear, search engines lose their bearings and your pages start from zero.",
+                "Here is what we do to limit that risk. First, an audit that identifies the pages of your current site already receiving visits. Then we keep those pages or their useful content. Each old address is redirected to its new page with a 301 redirect, which tells Google the page has simply moved. After launch, we check in Google Search Console that pages are picked up and that nothing returns an error.",
+                "To be clear: no position is guaranteed, before or after a redesign. The risk of loss is reduced and monitored, not removed.",
+              ],
+              link: { label: "Protect and improve your search ranking →", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "How much does a website redesign in Tours cost?",
+              paragraphs: [
+                "It depends on the state of your current site, the number of pages to carry over and what you want to change. That is why a redesign is quoted after an audit of your current site. The quote is free, arrives within 48h and commits you to nothing.",
+                "A site of a few pages is not redone like a site of forty. The quote states what is included, what is optional and what stays with you, with no hidden line. Sèvalys is VAT-exempt: VAT not applicable, art. 293 B of the French tax code.",
+                "To get a sense of market ranges before writing to us, our guide explains what makes the cost of a showcase website vary.",
+              ],
+              link: { label: "Run my diagnostic in 2 minutes →", href: "/simulateur" },
+            },
+            {
+              h2: "What if you also want a new look?",
+              paragraphs: [
+                "A dated site sometimes comes with a dated image. In that case, the logo, colours and fonts can be reworked together with the site, so the new site carries a coherent identity from day one.",
+                "This is optional: it is decided during the audit and never imposed. The detail of the brand guidelines is on the Branding page.",
+              ],
+              link: { label: "Just need your identity? Discover Branding →", href: "/services/branding" },
+            },
+            {
+              h2: "Who looks after your site",
+              paragraphs: [
+                "One person answers you: Anatholy Bricon, sole trader in Tours. He reviews your current site, redoes it and stays reachable after launch.",
+                "No sales relay and no request that gets lost: you speak to the person doing the work. He works in Tours and the surrounding towns.",
+              ],
+            },
+          ],
+          steps: [
+            { title: "We look at your current site", text: "Audit: what brings visitors, what is slow, what gets in the way on mobile, what can be kept. You receive a free quote within 48h.", duration: "Quote within 48h" },
+            { title: "We decide together what changes", text: "We list the pages to keep, merge or remove, and what is carried over as it is. Nothing starts without your agreement.", duration: "One conversation, at your convenience" },
+            { title: "We mock up and you approve", text: "You see the new design before it is built, and ask for the adjustments you want.", duration: "Depends on your feedback" },
+            { title: "We build and test", text: "We build the pages, carry over the content, then test display on mobile, speed and the contact form.", duration: "A few weeks depending on site size" },
+            { title: "We launch and keep watch", text: "Launch with the 301 redirects in place, then a check in Google Search Console. A hand-off lets you edit your text yourself.", duration: "Launch, then follow-up" },
+          ],
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Build a showcase website if you have no site yet", href: "/services/site-vitrine", description: "The page for starting from a blank page." },
+            { label: "Protect and improve your search ranking", href: "/services/seo-referencement", description: "The support that extends a redesign." },
+            { label: "Rework only your visual identity", href: "/services/branding", description: "Logo, colours and guidelines, without touching the site." },
+            { label: "Keep your site up to date after launch", href: "/services/maintenance", description: "Follow-up once the new site is published." },
+            { label: "What a showcase website costs: ranges and criteria", href: "/guides/prix-site-vitrine", description: "What makes the quote vary." },
+            { label: "Run my diagnostic in 2 minutes", href: "/simulateur", description: "A short questionnaire to see where to start." },
           ],
           caseQuote: null,
           signals: [
-            { t: "Validated methodology", d: "Every stage — audit, identity, site — is validated with you before moving to the next, with no last-minute surprises." },
-            { t: "No commitment", d: "You stay free at every stage of the project; nothing is locked in before you explicitly approve the direction." },
-            { t: "Responsive", d: "A question, an adjustment? Response within 48h, from the first conversation through to the new site going live." },
+            { t: "Audit first", d: "We look at your current site before proposing anything: what pays off, what gets in the way, what can be kept." },
+            { t: "One point of contact", d: "Anatholy Bricon, in Tours, answers you from the first conversation to launch, with no intermediary." },
+            { t: "No commitment", d: "The quote is free, within 48h. Nothing starts before your explicit agreement." },
           ],
           faq: [
-            { q: "How long does a rebranding with premium site take?", a: "Expect several weeks between the initial audit and launch, allowing time to validate each stage of the identity and then the site together." },
-            { q: "Do I keep my domain name and existing content?", a: "Yes, your domain name stays yours. Existing content is reused, adapted or replaced depending on what serves the new identity." },
-            { q: "What if I only want to rework my logo, without redoing the site?", a: "In that case, the Branding offer fits better: it covers identity alone, without touching your existing site." },
+            { q: "Why redo a website?", a: "Four reasons come up: the site is slow or unreadable on mobile, it brings no enquiries, it no longer looks like your business, or you can no longer edit it. If none applies, a simple update is enough, and we will tell you after the audit." },
+            { q: "How much does a website redesign in Tours cost?", a: "A redesign is quoted after an audit of your current site: the amount depends on the number of pages to carry over and what you want to change. The quote is free, arrives within 48h and commits you to nothing. VAT not applicable, art. 293 B of the French tax code." },
+            { q: "Will I lose my Google ranking?", a: "The risk exists if old addresses are not redirected. We identify the pages already receiving visits, keep them or redirect them one by one with 301 redirects, then check in Google Search Console after launch. No position is guaranteed." },
+            { q: "How do I update a website?", a: "A site can be updated in small steps as long as its foundation is sound: text, photos, opening times. When the foundation is too old, too slow or too limited, a redesign becomes more reasonable than endless patching." },
+            { q: "How long does a redesign take?", a: "Expect a few weeks for a small site. Most of the time depends on how quickly you approve the mock-ups and send your content. The precise schedule is in the quote, once your site has been audited." },
+            { q: "Do I keep my domain name and my text?", a: "Yes, your domain name stays yours, as do your e-mail addresses. Useful text and photos are reused, adapted or replaced depending on what serves the new site." },
+            { q: "Will I be able to edit my site myself afterwards?", a: "Yes for everyday text and images: a hand-off is included at delivery. For the rest, we remain available, and long-term follow-up can go through our maintenance offer." },
+            { q: "I have no site: is this the right page?", a: "No. A redesign is for a site that already exists. If you are starting from zero, the Showcase website page fits your need better." },
           ],
           crossLink: { label: "Just need your identity refreshed? Discover Branding →", slug: "branding" },
         },
@@ -1285,7 +1871,7 @@ const en: Translations = {
             { q: "Do I need to redo my site after a rebranding of identity?", a: "No, the new identity applies to your existing site. If you also want a new site, the Rebranding + Premium Site offer covers both at once." },
             { q: "How many feedback rounds are planned?", a: "The number of feedback rounds is agreed together before starting, to refine each element of the identity within a clear framework." },
           ],
-          crossLink: { label: "Need a site too? Discover Rebranding + Premium Site →", slug: "rebranding-site-premium" },
+          crossLink: { label: "Need your site redone too? Discover the redesign →", slug: "rebranding-site-premium" },
         },
         {
           name: "Projet Sur Mesure",
@@ -1523,40 +2109,132 @@ const en: Translations = {
           name: "SEO & Search Visibility",
           tagline: "GET FOUND ON GOOGLE",
           h1Lead: "SEO agency in Tours ·",
-          h1Benefit: "visibility that builds over time",
-          sub: "Make your website and Google profile visible to the customers in Tours who are searching for you, without paying for every click.",
-          metaTitle: "SEO agency in Tours · website ranking | Sèvalys",
-          metaDescription: "SEO agency in Tours: website optimisation, Google Business Profile, on-page work and Search Console tracking. No fixed-term commitment.",
-          directAnswer: "Organic search optimisation (SEO) makes your website clear and relevant to Google for the searches your customers make, in Tours and nearby. It combines on-page optimisation, your Google Business Profile and Search Console tracking. Effects build over several months and no position is guaranteed: nobody controls Google's algorithm.",
+          h1Benefit: "get found by your customers on Google",
+          sub: "Your customers in Tours search for your trade on Google. We work on your site and profile so they find you.",
+          metaTitle: "SEO agency in Tours: get found, from €300/month",
+          metaDescription: "SEO agency in Tours for tradespeople, shops and restaurants. 2 pages optimised, 1 link a month, Search Console in your name. From €300/month.",
+          directAnswer: "An SEO agency in Tours works on your organic search so that customers looking for your trade find you. At Sèvalys it starts at €300 a month, with no promised ranking: nobody controls Google's algorithm.",
+          longIntro: [
+            "Sèvalys is the SEO agency in Tours for tradespeople, shops and restaurants. We rework your two most important pages and your Google profile, and earn one quality link every month.",
+            "You stay in control: Search Console is created in your name. Results take several months, and we explain that plainly below.",
+          ],
           problems: [
-            { n: "A", title: "A site missing from the results", desc: "Your customers search for exactly what you offer, but the pages that show up first belong to better-structured competitors." },
-            { n: "B", title: "An incomplete Google profile", desc: "Approximate opening hours, poorly chosen categories, no recent photos: the Google Business Profile exists but neither reassures nor converts." },
-            { n: "C", title: "No tracking of what works", desc: "Without Search Console or query tracking, there's no way to tell whether the site is progressing or which searches it actually appears on." },
+            { n: "A", title: "Your site doesn't show up", desc: "Your customers type \"plumber Tours\" or \"restaurant Tours\". The top spots go to better-structured competitors." },
+            { n: "B", title: "Your Google profile is incomplete", desc: "Poorly chosen categories, vague opening hours, old photos: the profile exists but doesn't reassure." },
+            { n: "C", title: "You don't know what works", desc: "Without Search Console, there's no way to see whether the site is progressing or which searches it appears on." },
           ],
           features: [
             "Starting audit of the site and Google profile",
-            "Choice of local search terms to target",
-            "Optimisation of titles, copy and tags",
-            "Google Business Profile update",
-            "Speed, mobile and structured data",
-            "Search Console tracking",
-            "Regular review of results",
+            "Choice of local searches to target",
+            "Titles, copy and tags reworked on 2 pages",
+            "Google Business Profile kept up to date",
+            "Speed, mobile and indexing checked",
+            "Search Console tracking in your name",
+            "Monthly report on what moves",
           ],
           enjeux: [
-            "SEO works over the long term: once in place, a well-built page keeps being found with no cost per click, whereas an ad stops the moment the budget does.",
-            "It relies on verifiable actions (pages, profile, tracking) rather than a promised position: you see what's done, what's progressing and what's left to work on.",
+            "A well-built page keeps being found without paying for each click. An ad stops when the budget does.",
+            "People mostly click the top results, and the Google profile matters as much as the site. The two are worked on together.",
+          ],
+          sections: [
+            {
+              h2: "What we do for your organic search",
+              paragraphs: ["Four workstreams, no jargon."],
+              list: [
+                "Your 2 main pages: titles, copy and structure written for your customers' searches.",
+                "Your Google Business Profile: categories, opening hours, photos and replies to reviews.",
+                "The technical side, plainly: a fast site, readable on mobile and well read by Google.",
+                "One quality link a month: another serious site mentions you, and Google notices.",
+              ],
+            },
+            {
+              h2: "Local SEO: be found near you",
+              paragraphs: [
+                "Local SEO means showing up when people search \"trade + town\". We target those searches around Tours, not a national ranking.",
+                "To understand the principle before you start, read our guide.",
+              ],
+              link: { label: "Understand local SEO in Tours", href: "/guides/seo-local" },
+            },
+            {
+              h2: "Who it's for: restaurants, tradespeople, shops",
+              paragraphs: [
+                "A restaurant needs a polished Google profile, a readable menu and a booking link. A tradesperson needs clear pages by trade and area, with photos of jobs. A shop needs accurate opening hours and pages for its star products.",
+                "It isn't suited to an online store with 500 products, or to a fiercely contested national market.",
+              ],
+            },
+            {
+              h2: "How we measure what happens",
+              paragraphs: [
+                "Search Console is created in your name. You see impressions, clicks and average position on your searches yourself. We add the calls received from your Google profile. If you leave, you keep every access.",
+                "Each month, a short report: what moved, what was done, what comes next.",
+              ],
+            },
+            {
+              h2: "What we don't promise",
+              paragraphs: [
+                "No position is guaranteed, and beware of anyone who promises one. First signs often appear after 3 to 6 months, sometimes longer. It all depends on local competition: a plumber in Tours isn't in the same position as a village florist.",
+                "What we do guarantee: the work described here and tracking you can check yourself.",
+              ],
+            },
+            {
+              h2: "SEO or Google Ads: where to start?",
+              paragraphs: ["Ads bring customers fast, but stop with the budget. Organic search is slower and lasts. If you already have a site, start with SEO. If the need is urgent, run ads in the meantime."],
+              list: [
+                "SEO: slower, lasts over time, no cost per click.",
+                "Google Ads: fast, stops with the budget, every click is paid.",
+              ],
+              link: { label: "Run Google ads in the meantime", href: "/services/google-ads" },
+            },
+            {
+              h2: "3-month minimum commitment",
+              paragraphs: ["Three months is the time to see the first signs. After that the offer renews monthly and you stop with one month's notice. Your pages and your accesses stay yours."],
+            },
+          ],
+          pricing: {
+            fromLabel: "From",
+            price: 300,
+            unit: "per month, for 2 tracked pages",
+            includes: [
+              "Starting audit of the site and Google profile",
+              "Optimisation of 2 pages (titles, copy, tags)",
+              "Google Business Profile update",
+              "1 quality link per month",
+              "Search Console tracking in your name",
+              "Monthly report",
+            ],
+            notIncluded: [
+              "Website redesign",
+              "Google Ads advertising",
+              "Blog article writing",
+            ],
+            extras: [
+              { label: "Extra tracked page (3 pages = €400 a month)", price: "+ €100 per month" },
+            ],
+            note: "VAT not applicable, art. 293 B of the French tax code (CGI)",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Understand local SEO in Tours", href: "/guides/seo-local", description: "The principle, explained simply." },
+            { label: "Build your website in Tours", href: "/services/site-vitrine", description: "No site yet? Start there." },
+            { label: "Run Google ads in the meantime", href: "/services/google-ads", description: "Customers fast, while SEO settles in." },
+            { label: "Run the visibility diagnostic", href: "/simulateur", description: "A few questions to know where to start." },
           ],
           caseQuote: null,
           signals: [
-            { t: "No promised ranking", d: "We describe the actions carried out and the results observed, without guaranteeing a specific place on Google, which is outside our control." },
-            { t: "Accounts in your name", d: "The Google Business Profile and Search Console stay tied to your own account: you keep control at all times." },
-            { t: "No fixed-term commitment", d: "You can stop whenever you want, with no justification to give and no exit penalty to worry about." },
+            { t: "No promised ranking", d: "We describe the work done and what is measured. Your place on Google is outside our control." },
+            { t: "Accounts in your name", d: "Search Console and the Google profile stay tied to your account, even if you leave." },
+            { t: "3-month minimum, then month to month", d: "Time to see the first signs. After that, you stop with one month's notice." },
           ],
           faq: [
-            { q: "How long before results show?", a: "First effects are usually measurable after a few months, depending on competition for your search terms and the site's starting point. SEO is groundwork, not an instant result." },
-            { q: "Can you guarantee first place on Google?", a: "No, and be wary of anyone who does: results depend on an algorithm we don't control. We commit to the work carried out and transparent tracking, not to a position." },
-            { q: "SEO or Google Ads: do I have to choose?", a: "The two complement each other: ads bring immediate visibility while SEO settles in durably on the same search terms. A free diagnostic tells you where to start for your business." },
-            { q: "What do you do on my Google Business Profile?", a: "We check the details, categories, opening hours and photos, then keep it up to date and follow the reviews. The profile stays tied to your account and you keep access." },
+            { q: "How much does an SEO agency in Tours cost?", a: "At Sèvalys, from €300 a month for 2 tracked pages. Each extra page is €100 a month: 3 pages make €400. One quality link a month is included, with a 3-month minimum. VAT not applicable, art. 293 B of the CGI." },
+            { q: "How long before results show?", a: "First signs are often measurable after 3 to 6 months, depending on competition and the state of the site. No position is guaranteed. That is why the commitment is 3 months: time to see whether things move." },
+            { q: "Can you guarantee first place on Google?", a: "No, and be wary of anyone who does. Results depend on an algorithm nobody controls. We guarantee the work done and tracking you can check yourself." },
+            { q: "How will I know it's working?", a: "Search Console is created in your name: you see clicks, impressions and average position. You also get a report every month. If you leave, you keep access." },
+            { q: "SEO or Google Ads: which one?", a: "Ads bring customers fast but stop with the budget. SEO builds over time. We often start with SEO if you have a site, and with Google Ads if the need is urgent." },
+            { q: "What do you do on my Google Business Profile?", a: "We check the details, categories, opening hours and photos, then update it every month and follow the reviews. The profile stays in your name: you keep access." },
+            { q: "Do I need a site already?", a: "Yes, or have one built: you need at least one page about your business. Otherwise we start with a showcase site, then work on search." },
+            { q: "Is there a commitment?", a: "3 months minimum, then monthly renewal. You stop with one month's notice. Your pages and accesses stay yours." },
           ],
           crossLink: null,
         },
@@ -1781,81 +2459,96 @@ const en: Translations = {
   },
   landing: {
     hero: {
-      pill: 'AGENCY · TOURS, FR · AVAILABLE FROM MAY 2026',
-      title_l1: 'Tools',
-      title_l2: 'that ',
-      title_l2_it: 'work',
-      title_l3: 'for your customers.',
-      sub: 'We design websites, internal tools and AI agents for restaurants, shops and local services. No useless custom work — just what saves you time, calls and sales.',
-      cta_primary: 'Start the diagnostic',
+      pill: "AGENCY · TOURS, FR",
+      title_l1: "Digital agency",
+      title_l2: "in ",
+      title_l2_it: "Tours",
+      sub: "Tools that work for your customers. Websites, local SEO and AI agents for the shops, restaurants, craftspeople and small businesses of Tours.",
+      cta_primary: "Start the diagnostic",
       cta_secondary: "Let's discuss your project",
-      stat_1_n: '06', stat_1_l: 'Active partners', stat_1_d: 'Restaurants, schools, makers',
-      stat_2_n: '24h', stat_2_l: 'First reply', stat_2_d: 'Free phone audit',
-      stat_3_n: '100%', stat_3_l: 'You own the code', stat_3_d: 'From day one',
-      stat_4_n: '1.5x', stat_4_l: 'Calls handled ratio', stat_4_d: 'With a phone agent live',
-      canvas_l: 'MODEL · BA-01 · STUDIO',
-      canvas_r: 'ROTATION · 0.4 RPM',
     },
     manifeste: {
-      num: '01 / 07',
-      title_l1: 'Sites, tools,',
-      title_l2_it: 'agents.',
-      intro: 'Three things we make — for a single thing we aim at.',
-      p1: 'You run a pizzeria, a salon, a dance school. You want a tool that works, not a tech project.',
-      p2: 'One promise: we build what your customers will actually use. The rest is removed.',
-      quote: '\u201cA beautiful site is fine. A site that earns is better.\u201d',
-      p3: "Today, we mostly build AI agents — phone agents that answer your customers, assistants that take orders, automations that work while you live.",
-      p4: "Tomorrow, we'll build what you'll need. The craft stays the same: useful tools.",
-    },
-    problems: {
-      num: '02 / 07',
-      title_l1: 'What makes you',
-      title_l2_it: 'lose customers.',
-      intro: 'Four situations that come up with almost every small business we meet.',
+      num: "01 / 08",
+      title_l1: "A digital agency in Tours",
+      title_l2_it: "for shops and small businesses.",
+      intro: "Sèvalys builds websites, handles local SEO and sets up AI agents for the shops, restaurants, craftspeople and small businesses of Tours and Indre-et-Loire. You talk directly to Anatholy Bricon, the founder.",
+      quote: "“A beautiful site is fine. A site that earns is better.”",
       items: [
-        { n: '01', title: 'Invisible online', desc: "A customer searches for your business on Google and finds your competitors before they find you. Every day without a clear presence, people go elsewhere." },
-        { n: '02', title: 'Nobody answers the phone', desc: "A missed call during the rush is an order or a booking that goes to the shop next door. It happens more often than you'd think." },
-        { n: '03', title: 'A dated image', desc: "Logo, site, social pages: when everything looks like another era, a new customer hesitates before the first exchange." },
-        { n: '04', title: "No time to run social media", desc: "Between the day-to-day and customers on site, social media comes last — even though that's often where new customers look first." },
+        { t: "Invisible on Google", d: "Your customers search for your trade and find your competitors first." },
+        { t: "Missed calls", d: "A call unanswered during the rush is an order that goes elsewhere." },
+        { t: "Dated image", d: "A site or logo from another era makes new customers hesitate." },
+        { t: "Neglected social media", d: "With no time for social media, the audience builds up with your competitors." },
       ],
-      good_news: 'The good news: each of these problems has a simple fix, without changing everything at once.',
-      cta: 'Take the diagnostic',
+      cta: "Take the free diagnostic",
     },
     servicesPreview: {
-      num: '03 / 07',
-      title_l1: 'Ten ways',
-      title_l2_it: 'to help you.',
-      intro: 'Each service has its own dedicated page: the problem it solves, how it works, and what it changes for you.',
+      num: "02 / 08",
+      title_l1: "Our services in Tours:",
+      title_l2_it: "website, SEO, advertising, AI.",
+      intro: "Fixed-scope offers with the price shown. Each one has its own detailed page.",
+      cards: [
+        { t: "Professional website, from €500", d: "Home page and up to 2 pages, fixed price. Quote within 48 h, no commitment.", link: "Professional website in Tours" },
+        { t: "Local SEO, from €300/month", d: "2 pages tracked, 1 link a month included, 3 months minimum, +€100/month per extra page. No ranking guaranteed.", link: "Local SEO" },
+        { t: "Website redesign and new image", d: "A new visual identity and a rebuilt site for an up-to-date image.", link: "Website redesign" },
+        { t: "Google Ads advertising", d: "Ads shown when your customers search for you, with a budget you control.", link: "Google Ads campaigns" },
+        { t: "AI voice agent so you never miss a call", d: "An agent that picks up, books appointments and notifies you.", link: "AI voice agent" },
+      ],
+      others: "Also:",
+      guide_price: "How much does a website cost?",
+      guide_seo: "Local SEO in Tours explained",
+      vat: "Prices in euros, VAT not applicable, art. 293 B of the French tax code (CGI).",
+      all: "See all services",
     },
     method: {
-      num: '04 / 07',
-      title_l1: 'How',
-      title_l2_it: 'we work.',
-      intro: 'A simple process, from first contact to ongoing support.',
+      num: "04 / 08",
+      title_l1: "How",
+      title_l2_it: "we work.",
+      intro: "Four steps, from first contact to follow-up.",
       steps: [
-        { n: '01', t: 'Diagnostic', d: "We review your business and what's holding you back today, with a few targeted questions." },
-        { n: '02', t: 'Tailored proposal', d: 'You get a clear recommendation of the services suited to your situation, no jargon.' },
-        { n: '03', t: 'Deployment', d: 'We set up the chosen solution at your pace, with regular check-ins.' },
-        { n: '04', t: 'Support & follow-up', d: "We stay available after launch to adjust things and answer your questions." },
+        { n: '01', t: "Diagnostic", d: "A few questions about your business and what holds you back." },
+        { n: '02', t: "Proposal", d: "A clear recommendation and a quote within 48 h." },
+        { n: '03', t: "Delivery", d: "The project is built with regular check-ins." },
+        { n: '04', t: "Follow-up", d: "We stay available after launch." },
       ],
     },
-    enjeux: {
-      num: '05 / 07',
-      title_l1: "What's",
-      title_l2_it: 'at stake.',
-      intro: "Doing nothing has an effect too — just a less visible one, day to day.",
-      points: [
-        { t: 'Your competitors capture local search', d: 'While you hesitate, those who already have a clear presence take the Google searches from your future customers.' },
-        { t: 'Missed calls add up', d: 'A single missed call seems like nothing. Over a year, it adds up to a real volume of orders lost elsewhere.' },
-        { t: 'Your brand loses credibility', d: 'An identity that stays still while the market moves ends up looking dated, even when the service is still excellent.' },
-        { t: 'Social media slips away', d: 'Without a regular presence, the audience forming there builds up elsewhere, with those who take the time to show up.' },
+    zone: {
+      num: "05 / 08",
+      title_l1: "Where do we work?",
+      title_l2_it: "Tours and Indre-et-Loire.",
+      text: "Sèvalys is based in Tours. We work with the shops, restaurants, craftspeople and companies of Tours and Indre-et-Loire, in person or remotely. The diagnostic and follow-up are also done remotely anywhere in France.",
+      label: "Towns:",
+      towns: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours"],
+    },
+    why: {
+      num: "06 / 08",
+      title_l1: "Why choose a digital agency",
+      title_l2_it: "of human size?",
+      items: [
+        { t: "One contact", d: "You talk directly to Anatholy Bricon, sole trader and founder of Sèvalys." },
+        { t: "Prices shown", d: "Website from €500, SEO from €300/month: you know where you are going." },
+        { t: "You keep everything", d: "The code and the domain name are yours from day one." },
+      ],
+    },
+    faq: {
+      num: "07 / 08",
+      title_l1: "Frequently asked",
+      title_l2_it: "questions.",
+      items: [
+        { q: "What does a digital agency in Tours like Sèvalys do?", a: "Sèvalys builds websites, handles local SEO, runs Google Ads campaigns and sets up AI voice agents for the shops and small businesses of Tours. You talk directly to Anatholy Bricon, from first contact to launch." },
+        { q: "What is the difference between a web agency and a digital agency?", a: "A web agency builds the site. A digital agency also gets you found on Google (SEO, advertising) and handles everyday tools (AI agent, automations)." },
+        { q: "How much does a website cost?", a: "From €500: home page and up to 2 pages, at a fixed price with a defined scope. Quote within 48 h, no commitment. VAT not applicable, art. 293 B of the French tax code (CGI)." },
+        { q: "How much does SEO cost?", a: "From €300/month for 2 tracked pages, +€100/month per extra page, 1 link per month included, 3 months minimum. No ranking is guaranteed: we measure and report." },
+        { q: "Do you only work in Tours?", a: "Sèvalys is based in Tours and works across Indre-et-Loire, in person or by video call, and remotely anywhere in France." },
+        { q: "How long until my site is live?", a: "Usually a few weeks, depending on the time needed to prepare texts and photos." },
+        { q: "Do I keep my site and domain name?", a: "Yes. The code and the domain name belong to you from day one." },
+        { q: "Who will I work with?", a: "With Anatholy Bricon, sole trader and founder of Sèvalys: you speak to him directly, from quote to follow-up." },
       ],
     },
     work: {
-      num: '06 / 07',
-      title_l1: 'Selected',
-      title_l2_it: 'work.',
-      intro: 'Four sites, four trades, one method: solve a real business problem.',
+      num: "03 / 08",
+      title_l1: "Four sites delivered,",
+      title_l2_it: "four trades.",
+      intro: "Real sites, live online, that you can visit.",
       items: [
         { name: 'Grand Ouest Habitat', desc: 'General building renovation site — online project request, technical visit, then a quote within 48 h.', tags: ['SITE', 'QUOTE'], year: '2026' },
         { name: 'Sellerie Duchet', desc: 'Online shop for equestrian equipment — catalogue by department, delivery and instalment payment.', tags: ['SHOP', 'E-COMMERCE'], year: '2026' },
@@ -1866,14 +2559,6 @@ const en: Translations = {
       bridge_title_l1: 'Which service',
       bridge_title_it: 'fits you?',
       bridge_body: 'A two-minute diagnostic to find out exactly what you need.',
-    },
-    phone: {
-      badge: 'LIVE · PHONE AGENT',
-      title_l1: 'Your customers',
-      title_l2: 'call,',
-      title_l3_it: 'we answer.',
-      sub: 'An AI voice agent, wired into your CRM or order book. It answers, understands, confirms — while you work.',
-      cta_roi: 'Discover the AI voice agent',
     },
     partners: {
       title: 'TRUSTED BY — SINCE 2023',
@@ -1888,10 +2573,11 @@ const en: Translations = {
       ],
     },
     contact: {
-      num: '07 / 07',
-      title_l1: 'Got a project?',
+      num: "08 / 08",
+      title_l1: "A project in Tours?",
       title_l2_it: "Let's talk.",
-      sub: 'Reply within 24 business hours. First call free, no strings, to understand where you stand and what would make sense.',
+      sub: "Reply within 24 business hours. First call free, no commitment, to understand where you stand.",
+      updated: "Updated in November 2026.",
       info: [
         { k: 'Email', v: 'contact@sevalys.com' },
         { k: 'Phone', v: '+33 (0)6 07 18 41 33' },
@@ -1983,81 +2669,289 @@ const th: Translations = {
       ctaSub: "แบบประเมินสองนาทีแล้วคุณจะรู้ หรือติดต่อเราได้โดยตรง",
       ctaPrimary: "เริ่มแบบประเมิน →",
       ctaSecondary: "ติดต่อเรา",
+      extra: {
+        pricingHeading: "ค่าใช้จ่าย",
+        pricingIncludes: "สิ่งที่รวมอยู่ด้วย",
+        pricingNotIncluded: "สิ่งที่ไม่รวม",
+        pricingExtras: "ตัวเลือกเสริม",
+        extrasColLabel: "ตัวเลือก",
+        extrasColPrice: "ราคา",
+        stepsHeading: "โปรเจกต์ดำเนินไปอย่างไร",
+        stepDuration: "ระยะเวลาโดยประมาณ",
+        areasHeading: "พื้นที่ให้บริการ",
+        proofHeading: "ผลงานที่เข้าชมได้",
+        proofVisit: "ดูเว็บไซต์",
+        guidesHeading: "คู่มือที่เกี่ยวข้อง",
+        breadcrumbHome: "หน้าแรก",
+        breadcrumbServices: "บริการ",
+      },
       items: [
         {
           name: "Site Vitrine",
-          tagline: "สิ่งจำเป็นเพื่อการมองเห็น",
-          h1Lead: "Site Vitrine ที่ตูร์ ·",
-          h1Benefit: "เพื่อมีตัวตนออนไลน์",
-          sub: "การปรากฏตัวออนไลน์ที่ชัดเจนและเป็นมืออาชีพ ให้ลูกค้าพบคุณได้ตั้งแต่การค้นหาครั้งแรก",
-          metaTitle: "Site Vitrine ที่ตูร์ · เพื่อมีตัวตนออนไลน์ | Sèvalys",
-          metaDescription: "เว็บไซต์ Site Vitrine ที่ออกแบบเฉพาะสำหรับธุรกิจของคุณในตูร์ ให้มองเห็นได้ น่าเชื่อถือ และติดต่อได้ง่าย ดีไซน์รองรับทุกอุปกรณ์ SEO ท้องถิ่น เปิดใช้งานรวดเร็ว ไม่มีข้อผูกมัด",
-          directAnswer: "Site Vitrine คือการปรากฏตัวออนไลน์ที่เรียบง่ายและเป็นมืออาชีพ ประกอบด้วยไม่กี่หน้าที่นำเสนอธุรกิจ บริการ และข้อมูลติดต่อของคุณ ช่วยให้ลูกค้าค้นพบคุณ เข้าใจสิ่งที่คุณนำเสนอ และติดต่อคุณได้ภายในไม่กี่วินาที ทั้งจากมือถือและคอมพิวเตอร์",
+          tagline: "เว็บไซต์ที่ทำให้ลูกค้าพบคุณและโทรหาคุณ",
+          h1Lead: "สร้างเว็บไซต์ของคุณที่ตูร์",
+          h1Benefit: "เรียบง่ายและชัดเจน",
+          sub: "เว็บไซต์มืออาชีพสำหรับช่าง ร้านอาหาร และร้านค้าในตูร์ คุณรู้ว่าจ่ายเท่าไรและใครดูแลงานให้",
+          metaTitle: "สร้างเว็บไซต์ที่ตูร์ เริ่ม 500 € | Sèvalys",
+          metaDescription: "เว็บไซต์สำหรับช่าง ร้านอาหาร และร้านค้าในตูร์ เริ่มต้น 500 € (ไม่คิด TVA ตามมาตรา 293 B ของ CGI) เล่าโปรเจกต์ของคุณให้เราฟัง",
+          directAnswer: "Site Vitrine คือเว็บไซต์ไม่กี่หน้าที่แนะนำธุรกิจของคุณ ว่าคุณคือใคร ทำอะไร หาคุณได้ที่ไหน และติดต่อได้อย่างไร ที่ Sèvalys เริ่มต้น 500 € สำหรับหน้าแรกและอีกไม่เกิน 2 หน้า ใช้เวลา 2 ถึง 4 สัปดาห์",
+          longIntro: [
+            "Sèvalys เป็นเอเจนซี่ดิจิทัลในตูร์ เราสร้างเว็บไซต์ให้ช่าง เจ้าของร้านอาหาร และพ่อค้าแม่ค้าในตูร์และ Indre-et-Loire เว็บไซต์ของคุณเริ่มต้น 500 € สำหรับหน้าแรกและอีกไม่เกิน 2 หน้า",
+            "เว็บไซต์มืออาชีพทำหน้าที่สามอย่าง คือให้คนพบคุณบน Google ทำให้คนที่ลังเลมั่นใจ และมีช่องทางติดต่อที่ง่าย คุณคุยกับ Anatholy Bricon โดยตรงตั้งแต่โทรครั้งแรกจนถึงวันเปิดเว็บไซต์ ใบเสนอราคาไม่มีค่าใช้จ่าย ส่งภายใน 48 ชั่วโมง และไม่มีข้อผูกมัด",
+          ],
           problems: [
-            { n: "A", title: "มองไม่เห็นบน Google", desc: "หากไม่มีเว็บไซต์ ลูกค้าที่มีศักยภาพจะค้นหาแล้วเจอคู่แข่งของคุณก่อน คุณสูญเสียโอกาสติดต่อก่อนที่จะได้พูดคุยกันด้วยซ้ำ" },
-            { n: "B", title: "เว็บไซต์เก่าหรือไม่รองรับมือถือ", desc: "หน้าเว็บที่ล้าสมัยหรือแสดงผลไม่ดีบนสมาร์ทโฟน สร้างภาพลักษณ์ที่ไม่เป็นมืออาชีพ แม้บริการของคุณจะดีเยี่ยม" },
-            { n: "C", title: "เว็บไซต์ที่ไม่สร้างการติดต่อใดๆ", desc: "เว็บไซต์มีอยู่แต่ไม่มีใครกรอกแบบฟอร์มหรือโทรมา มันไม่ได้ทำงานให้คุณ มันแค่นอนอยู่เฉยๆ" },
+            { n: "A", title: "ไม่มีใครพบคุณบน Google", desc: "ลูกค้าพิมพ์อาชีพของคุณกับคำว่าตูร์ หากไม่เห็นเว็บไซต์ของคุณ เขาจะโทรหาคนอื่น คุณเสียโอกาสก่อนจะได้คุยกัน" },
+            { n: "B", title: "เว็บไซต์เก่าหรือดูยากบนมือถือ", desc: "ลูกค้าจำนวนมากเปิดดูจากโทรศัพท์ก่อน เว็บไซต์ที่อ่านยากทำให้ภาพลักษณ์งานของคุณแย่ลง" },
+            { n: "C", title: "มีเว็บไซต์ แต่ไม่มีใครโทรมา", desc: "ไม่มีเบอร์โทรที่เห็นชัด ไม่มีแบบฟอร์ม ไม่มีแผนที่ ผู้เข้าชมไม่รู้ว่าต้องทำอะไรต่อและจากไป" },
           ],
           features: [
-            "ดีไซน์เฉพาะตัว ตรงกับภาพลักษณ์ของคุณ",
-            "รองรับมือถือและแท็บเล็ต",
-            "นำเสนอบริการของคุณอย่างชัดเจน",
+            "ดีไซน์เฉพาะตัว ตรงกับธุรกิจของคุณ",
+            "แสดงผลสวยงามบนมือถือ แท็บเล็ต และคอมพิวเตอร์",
+            "หน้าแรกและอีกไม่เกิน 2 หน้า ชัดเจนและกระชับ",
             "แบบฟอร์มติดต่อในตัว",
-            "ผสาน Google Maps",
-            "SEO ท้องถิ่นพื้นฐาน",
-            "รวมการเปิดใช้งาน",
+            "แผนที่ Google Maps บอกที่ตั้ง",
+            "พื้นฐาน SEO ท้องถิ่น: ชื่อหน้า แท็ก และการเชื่อมกับข้อมูลธุรกิจบน Google",
+            "เราเปิดใช้งานเว็บไซต์ให้",
           ],
           enjeux: [
-            "Site Vitrine ที่ทำมาอย่างดีเปลี่ยนสิ่งที่เกิดขึ้นก่อนการโทรครั้งแรก ลูกค้าที่ลังเลจะพบเวลาทำการ บริการ และวิธีติดต่อคุณได้ภายในไม่กี่วินาที โดยไม่ต้องมองหาที่อื่น",
-            "ผลลัพธ์คือความน่าเชื่อถือที่มากขึ้นตั้งแต่แรกเห็น และคำขอติดต่อที่เข้ามาเองโดยไม่ต้องเรียกร้อง",
+            "เว็บไซต์ที่ชัดเจนเปลี่ยนสิ่งที่เกิดขึ้นก่อนการโทรครั้งแรก ลูกค้าเห็นเวลาทำการ ผลงาน และพื้นที่ให้บริการของคุณ เขารู้ว่าคุณใช่คนที่ต้องการหรือไม่ ก่อนจะยกโทรศัพท์",
+            "คุณประหยัดเวลากับคำถามพื้นฐาน และได้รับคำขอที่จริงจังขึ้น เว็บไซต์ทำงานแทนคุณขณะที่คุณอยู่หน้างาน ในครัว หรือหลังเคาน์เตอร์",
           ],
-          caseQuote: "ตั้งแต่มีเว็บไซต์ใหม่ ลูกค้าหาเราเจอง่ายขึ้นมากและจองโต๊ะได้โดยไม่ต้องโทรมาระหว่างเวลาให้บริการ",
+          caseQuote: "เว็บไซต์ของ Gecko Cabane ร้านอาหารฝรั่งเศส-ไทยในกระบี่ มี 4 ภาษา (ฝรั่งเศส อังกฤษ เยอรมัน สวีเดน) พร้อมแบบฟอร์มจองโต๊ะออนไลน์ เมนู และเวลาเปิดให้บริการ",
+          caseQuoteIsFact: true,
           signals: [],
+          sections: [
+            {
+              h2: "เว็บไซต์สำหรับช่างในตูร์",
+              paragraphs: [
+                "ช่างต้องการสามอย่างจากเว็บไซต์ คือให้คนพบ แสดงผลงาน และได้รับสายโทรศัพท์ ที่เหลือเป็นเรื่องรอง",
+                "Grand Ouest Habitat บริษัทปรับปรุงอาคารในตูร์ เป็นตัวอย่างที่ดี เว็บไซต์แสดงเบอร์โทร พื้นที่ให้บริการ งานที่รับ รูปหน้างานก่อนและหลัง และรีวิว Google ที่ได้รับ นี่คือสิ่งที่ช่างควรแสดงบนเว็บไซต์",
+              ],
+              list: [
+                "อาชีพของคุณ ในประโยคเดียวที่ชัดเจน",
+                "ผลงาน พร้อมรูปถ่ายจริง",
+                "พื้นที่ให้บริการ: ตูร์ และ Indre-et-Loire",
+                "เบอร์โทรที่เห็นชัดบนมือถือ",
+                "แบบฟอร์มให้อธิบายงานที่ต้องการ",
+              ],
+            },
+            {
+              h2: "เว็บไซต์สำหรับร้านอาหาร",
+              paragraphs: [
+                "ลูกค้าต้องได้คำตอบสี่ข้อภายในสิบวินาที คือมีอะไรให้กิน เปิดเมื่อไร จองอย่างไร และไปอย่างไร",
+                "เว็บไซต์ Gecko Cabane ร้านอาหารฝรั่งเศส-ไทยในกระบี่ ประเทศไทย แสดงอาหาร เวลาเปิด ปุ่มจอง และช่องทางติดต่อ ในหลายภาษา หากไม่อยากรับสายระหว่างให้บริการ ผู้ช่วยเสียงสามารถรับสายแทนคุณได้",
+              ],
+              link: { label: "รับสายโทรศัพท์ระหว่างให้บริการ", href: "/services/agent-vocal-ia" },
+            },
+            {
+              h2: "ร้านค้าและผู้ประกอบการอิสระ: เว็บไซต์ที่เปิดใช้งานแล้ว",
+              paragraphs: [
+                "Sellerie Duchet อุปกรณ์ขี่ม้าใน Chambray-lès-Tours แสดงหมวดสินค้า สินค้าแนะนำ และการแนะนำเจ้าของร้าน เว็บไซต์นี้ขายของออนไลน์ด้วย ร้านค้าออนไลน์เป็นโปรเจกต์ที่ใหญ่กว่า Site Vitrine และเสนอราคาแยก",
+                "Ghjulianu Codani ช่างภาพ แสดงพอร์ตโฟลิโอ อัลบั้ม ราคา และช่องทางติดต่อ ทั้งสองกรณี เว็บไซต์สร้างจากสิ่งที่ผู้เข้าชมต้องการค้นหา",
+              ],
+              link: { label: "ร้านค้าออนไลน์: โปรเจกต์ตามสั่ง", href: "/services/projet-sur-mesure" },
+            },
+            {
+              h2: "ทำไมต้องมีเว็บไซต์มืออาชีพ แทนเพจโซเชียลมีเดีย",
+              paragraphs: [
+                "เพจโซเชียลพอแก้ขัดได้ แต่เว็บไซต์ของคุณเองดีกว่าด้วยเหตุผลสามข้อ",
+                "หนึ่ง ค้นเจอบน Google โดยไม่ต้องมีบัญชีหรือล็อกอิน สอง สร้างความมั่นใจ มีที่อยู่เว็บเป็นชื่อคุณ หน้าที่ชัดเจน และเบอร์โทร สาม คุณควบคุมเนื้อหาและการแสดงผลเอง โดยไม่ต้องพึ่งแพลตฟอร์มที่เปลี่ยนกฎได้เสมอ",
+              ],
+              link: { label: "Site Vitrine ราคาเท่าไร: คู่มือ", href: "/guides/prix-site-vitrine" },
+            },
+            {
+              h2: "เว็บไซต์ของคุณจะถูกพบบน Google ในตูร์อย่างไร",
+              paragraphs: [
+                "เราเตรียมเว็บไซต์สำหรับการค้นหาในพื้นที่ ชื่อหน้าชัดเจน แท็กเรียบร้อย ใส่ชื่อเมืองในจุดที่เหมาะสม และเชื่อมกับข้อมูลธุรกิจของคุณบน Google Business Profile",
+                "เราไม่สัญญาอันดับใดๆ Google เป็นผู้ตัดสิน และคู่แข่งก็ทำงานเช่นกัน แต่พื้นฐานเหล่านี้ช่วยให้คุณไม่ต้องเริ่มใหม่ หากต่อยอดด้วย SEO ภายหลัง",
+              ],
+              link: { label: "ทำให้เว็บไซต์ของคุณถูกพบบน Google ในตูร์", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "ผู้ติดต่อของคุณในตูร์",
+              paragraphs: [
+                "คุณคุยกับ Anatholy Bricon โดยตรง เขาเป็นผู้ประกอบการรายบุคคล ดูแลโปรเจกต์ของคุณตั้งแต่การคุยครั้งแรกจนถึงเปิดใช้งาน",
+                "Sèvalys ให้บริการในตูร์ Saint-Avertin และพื้นที่โดยรอบทั่ว Indre-et-Loire เราคุยกันทางโทรศัพท์ วิดีโอคอล หรือพบกันตัวต่อตัว คุณอ่านสิ่งที่ลูกค้าของเราพูดถึงได้ด้วย",
+              ],
+              link: { label: "อ่านรีวิวจากลูกค้าของเรา", href: "/avis" },
+            },
+          ],
+          steps: [
+            { title: "พูดคุยและเสนอราคา", text: "คุณเล่าเรื่องธุรกิจและสิ่งที่ต้องการจากเว็บไซต์ ใบเสนอราคาไม่มีค่าใช้จ่าย ส่งภายใน 48 ชั่วโมง", duration: "1 ถึง 2 วัน" },
+            { title: "เนื้อหาและแบบร่าง", text: "เราจัดโครงสร้างหน้า คุณส่งข้อความและรูปภาพ จากนั้นเราออกแบบหน้าแรก", duration: "1 ถึง 2 สัปดาห์" },
+            { title: "ตรวจสอบและแก้ไข", text: "คุณดูแบบร่างและเว็บไซต์ แล้วให้ข้อเสนอแนะ เราปรับตามนั้น", duration: "3 ถึง 7 วัน" },
+            { title: "เปิดใช้งาน", text: "เราเผยแพร่เว็บไซต์บนโฮสติ้งของคุณ พร้อมชื่อโดเมนของคุณ และทดสอบแบบฟอร์มติดต่อ", duration: "1 ถึง 3 วัน" },
+          ],
+          pricing: {
+            fromLabel: "เริ่มต้น",
+            price: 500,
+            unit: "สำหรับ Site Vitrine: หน้าแรก + อีกไม่เกิน 2 หน้า",
+            includes: [
+              "ดีไซน์เฉพาะตัว ตรงกับธุรกิจของคุณ",
+              "แสดงผลเหมาะกับมือถือ แท็บเล็ต และคอมพิวเตอร์",
+              "แบบฟอร์มติดต่อ",
+              "แผนที่ Google Maps ในตัว",
+              "พื้นฐาน SEO ท้องถิ่น: ชื่อหน้า แท็ก และการเชื่อมกับข้อมูลธุรกิจบน Google",
+              "การเปิดใช้งานเว็บไซต์",
+            ],
+            notIncluded: [
+              "ชื่อโดเมนและโฮสติ้ง คุณเป็นผู้จ่ายเอง",
+              "การเขียนข้อความและรูปภาพ หากคุณไม่ได้เตรียมมา",
+              "การดูแลรักษาเว็บไซต์ มีให้เป็นตัวเลือก",
+            ],
+            extras: [
+              { label: "หน้าเพิ่มเติม", price: "ตามใบเสนอราคา" },
+              { label: "การดูแลรักษาเว็บไซต์", price: "ตามใบเสนอราคา" },
+              { label: "การเขียนข้อความ", price: "ตามใบเสนอราคา" },
+              { label: "ร้านค้าออนไลน์ (โปรเจกต์ตามสั่ง)", price: "ตามใบเสนอราคา" },
+            ],
+            note: "ไม่ใช้ภาษีมูลค่าเพิ่ม (TVA) ตามมาตรา 293 B ของ CGI ระยะเวลาโดยทั่วไป 2 ถึง 4 สัปดาห์ ใบเสนอราคาไม่มีค่าใช้จ่ายภายใน 48 ชั่วโมง",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "Site Vitrine ราคาเท่าไร: คู่มือราคา", href: "/guides/prix-site-vitrine", description: "ช่วงราคา และคำถามที่ควรถามก่อนรับใบเสนอราคา" },
+            { label: "ทำให้เว็บไซต์ของคุณถูกพบบน Google ในตูร์", href: "/services/seo-referencement", description: "ก้าวต่อจากพื้นฐาน SEO ท้องถิ่น" },
+            { label: "ปรับปรุงเว็บไซต์เดิม: การรีดีไซน์", href: "/services/rebranding-site-premium", description: "สำหรับเว็บไซต์ที่เก่าหรือไม่เหมือนคุณอีกต่อไป" },
+            { label: "ประเมินโปรเจกต์ของคุณใน 2 นาที", href: "/simulateur", description: "ตอบไม่กี่คำถาม แล้วรับคำแนะนำบริการที่เหมาะ" },
+            { label: "คู่มือ: ทำให้เว็บไซต์ถูกพบในตูร์", href: "/guides/seo-local", description: "ขั้นตอนง่ายๆ ของ SEO ท้องถิ่น" },
+          ],
           faq: [
-            { q: "ใช้เวลานานแค่ไหนกว่าจะออนไลน์ได้?", a: "โดยทั่วไปจะใช้เวลาไม่กี่สัปดาห์ระหว่างการพูดคุยครั้งแรกจนถึงการเปิดใช้งาน ขึ้นอยู่กับเนื้อหาที่ต้องเตรียม ใบเสนอราคาโดยละเอียดจะส่งภายใน 48 ชั่วโมง โดยไม่มีข้อผูกมัดใดๆ" },
-            { q: "ฉันสามารถแก้ไขเนื้อหาเองได้ไหม?", a: "ได้ คุณสามารถจัดการข้อความและรูปภาพทั่วไปได้เอง สำหรับการเปลี่ยนแปลงที่ใหญ่กว่านั้น เราพร้อมช่วยเหลืออย่างรวดเร็ว" },
-            { q: "รวม SEO ท้องถิ่นด้วยหรือไม่?", a: "พื้นฐาน SEO ท้องถิ่นถูกรวมไว้ตั้งแต่การเปิดใช้งาน โครงสร้างที่ชัดเจน ข้อมูลติดต่อ และการปรากฏบน Google Maps ช่วยให้คนใกล้เคียงพบคุณได้" },
-            { q: "ถ้าฉันยังไม่มีข้อความหรือรูปภาพล่ะ?", a: "ไม่มีปัญหา เราจะช่วยจัดโครงสร้างเนื้อหาให้ และสามารถแนะนำทางเลือกง่ายๆ สำหรับภาพ โดยไม่มีค่าใช้จ่ายที่ไม่คาดคิด" },
+            { q: "การสร้างเว็บไซต์ในตูร์ราคาเท่าไร?", a: "เว็บไซต์ของ Sèvalys เริ่มต้น 500 € สำหรับหน้าแรกและอีกไม่เกิน 2 หน้า ไม่คิด TVA ตามมาตรา 293 B ของ CGI ราคาเพิ่มขึ้นตามจำนวนหน้า การเขียนข้อความ หรือรูปภาพที่ต้องจัดหา ผู้ให้บริการในตูร์ราคาอยู่ราว 700 ถึง 3,000 € (สำรวจเดือนพฤศจิกายน 2026) คู่มือราคาอธิบายความต่างนี้" },
+            { q: "แพ็กเกจเริ่มต้น 500 € รวมอะไรบ้าง?", a: "หน้าแรกและอีกไม่เกิน 2 หน้า ดีไซน์เฉพาะตัว การแสดงผลบนมือถือ แบบฟอร์มติดต่อ แผนที่ Google Maps พื้นฐาน SEO ท้องถิ่น และการเปิดใช้งาน ไม่รวม: ชื่อโดเมน โฮสติ้ง การเขียนข้อความและรูปภาพหากคุณไม่ได้เตรียมมา และการดูแลรักษา" },
+            { q: "สร้างเว็บไซต์ฟรีได้ไหม?", a: "ได้ ด้วยเครื่องมือสร้างเว็บออนไลน์ แต่ที่อยู่เว็บไม่ใช่ของคุณ ตัวเลือกมีจำกัด และไม่มีใครช่วยแนะนำ สำหรับงานเล็กๆ อาจพอ แต่หากต้องการให้ลูกค้าโทรมา เว็บไซต์มืออาชีพได้ผลกว่า" },
+            { q: "ใครสร้างเว็บไซต์ให้ฉัน และอาชีพนี้เรียกว่าอะไร?", a: "เว็บดีไซเนอร์หรือนักพัฒนาเว็บ ที่ Sèvalys คุณทำงานกับ Anatholy Bricon ซึ่งดูแลโปรเจกต์ของคุณตั้งแต่การคุยครั้งแรกจนถึงเปิดใช้งาน" },
+            { q: "เว็บไซต์ของฉันจะเห็นบน Google ในตูร์ไหม?", a: "เราเตรียมไว้ให้ ชื่อหน้าชัดเจน ตั้งชื่อหน้าดี เชื่อมกับข้อมูลธุรกิจบน Google แต่ไม่สัญญาอันดับใดๆ เพราะไม่มีใครควบคุมได้ หากต้องการต่อยอด มีบริการ SEO ดูได้ที่หน้า SEO" },
+            { q: "ต้องมีข้อความและรูปภาพพร้อมแล้วหรือไม่?", a: "ไม่จำเป็น แต่จะเร็วกว่า หากมีแล้วส่งมาได้เลย หากไม่มี เราช่วยจัดโครงสร้างเนื้อหา การเขียนข้อความเป็นตัวเลือก ตามใบเสนอราคา" },
+            { q: "ฉันทำงานในตูร์ ต้องมาพบคุณไหม?", a: "ไม่ต้อง เราคุยกันทางโทรศัพท์หรือวิดีโอคอล หากต้องการพบตัวต่อตัว ทำได้ในเขตตูร์และพื้นที่โดยรอบ" },
+            { q: "ฉันเป็นเจ้าของร้านอาหารหรือช่าง เว็บไซต์จะต่างกันไหม?", a: "ต่าง ร้านอาหาร: เมนู เวลาเปิด การจอง ช่าง: ผลงาน พื้นที่ให้บริการ และช่องทางอธิบายงาน โครงสร้างเว็บไซต์ตามอาชีพของคุณ" },
           ],
           crossLink: null,
         },
         {
-          name: "Rebranding + Site Premium",
-          tagline: "เปลี่ยนภาพลักษณ์ของคุณ",
-          h1Lead: "Rebranding + Site Premium ที่ตูร์ ·",
-          h1Benefit: "ภาพลักษณ์และเว็บไซต์ ในคราวเดียว",
-          sub: "ปรับปรุงอัตลักษณ์และเว็บไซต์ของคุณในกระบวนการเดียวที่สอดคล้องกัน แทนที่จะเป็นสองโปรเจกต์ที่แยกจากกัน",
-          metaTitle: "Rebranding + Site Premium ที่ตูร์ · ภาพลักษณ์และเว็บไซต์ ในคราวเดียว | Sèvalys",
-          metaDescription: "Rebranding พร้อม Site Premium ที่ตูร์ ปรับปรุงอัตลักษณ์และสร้างเว็บไซต์ใหม่ในกระบวนการเดียว ไม่มีข้อผูกมัด ใบเสนอราคาภายใน 48 ชั่วโมง",
-          directAnswer: "Rebranding พร้อม Site Premium คือการปรับปรุงอัตลักษณ์ของคุณ — โลโก้ ชุดสี ฟอนต์ — และสร้างเว็บไซต์ใหม่ให้สอดคล้องกับภาพลักษณ์นั้น ในกระบวนการเดียว Branding หยุดอยู่ที่อัตลักษณ์ของคุณ ส่วน Rebranding + Site Premium รวมการปรับปรุงเว็บไซต์ การเปิดใช้งาน และการฝึกอบรมการใช้งาน",
+          name: "ปรับปรุงเว็บไซต์ใหม่ (Refonte)",
+          tagline: "ทำเว็บไซต์ใหม่ รักษาสิ่งสำคัญไว้",
+          h1Lead: "ปรับปรุงเว็บไซต์ใหม่ที่ตูร์ :",
+          h1Benefit: "ทำเว็บไซต์ใหม่โดยไม่สูญเสียสิ่งที่ได้ผลอยู่แล้ว",
+          sub: "เว็บไซต์มีอยู่แล้ว แต่ดูเก่า โหลดช้า หรือไม่มีใครติดต่อเข้ามา? Sèvalys ทำใหม่โดยรักษาสิ่งที่พาผู้เข้าชมมาให้คุณอยู่แล้ว",
+          metaTitle: "ปรับปรุงเว็บไซต์ที่ตูร์ · รักษาสิ่งที่ได้ผล | Sèvalys",
+          metaDescription: "ทำเว็บไซต์ใหม่ที่ตูร์โดยไม่ต้องเริ่มจากศูนย์ ตรวจสอบเว็บเดิม ดีไซน์ใหม่ รีไดเรกต์ 301 และติดตามบน Google ใบเสนอราคาฟรีภายใน 48 ชั่วโมง",
+          directAnswer: "การปรับปรุงเว็บไซต์ใหม่ (refonte) คือการทำเว็บไซต์ที่มีอยู่แล้วขึ้นใหม่ ทั้งดีไซน์ โครงสร้างหน้า เนื้อหา และเทคนิค ที่ตูร์ Sèvalys เริ่มจากการตรวจสอบเว็บไซต์ปัจจุบัน รักษาหน้าที่พาผู้เข้าชมมา รีไดเรกต์ที่อยู่เดิม และตรวจใน Google Search Console หลังเปิดใช้งาน ใบเสนอราคาออกหลังการตรวจสอบ ฟรี ภายใน 48 ชั่วโมง",
+          longIntro: [
+            "การปรับปรุงเว็บไซต์ใหม่คือการทำเว็บไซต์ที่มีอยู่แล้วขึ้นใหม่ ดีไซน์เปลี่ยน หน้าต่างๆ ถูกจัดใหม่ เนื้อหาถูกทบทวน และเทคนิคถูกปรับให้ทันสมัย ส่วนโดเมนเนมยังเป็นของคุณเหมือนเดิม",
+            "Anatholy Bricon ที่ตูร์ ทำเว็บไซต์ใหม่โดยรักษาสิ่งที่พาผู้เข้าชมมาอยู่แล้ว ค่าบริการกำหนดตามใบเสนอราคาหลังตรวจสอบเว็บไซต์ปัจจุบัน — ใบเสนอราคาฟรีภายใน 48 ชั่วโมง ไม่แน่ใจว่าจะเริ่มตรงไหน? แบบประเมินออนไลน์สองนาทีช่วยชี้ทางได้",
+          ],
           problems: [
-            { n: "A", title: "ภาพลักษณ์ที่ไม่สะท้อนธุรกิจของคุณอีกต่อไป", desc: "ธุรกิจของคุณพัฒนาไปแล้ว แต่โลโก้และสีของคุณยังคงเป็นแบบเดิม เห็นได้ชัดตั้งแต่แรกมอง" },
-            { n: "B", title: "เว็บไซต์และอัตลักษณ์ที่ขัดแย้งกัน", desc: "เว็บไซต์ไม่ตรงกับภาพลักษณ์แบรนด์ปัจจุบันของคุณ ทำให้ข้อความสับสนตั้งแต่การเข้าชมครั้งแรก" },
-            { n: "C", title: "ความน่าเชื่อถือที่ลดลงเมื่อเทียบกับคู่แข่ง", desc: "คู่แข่งที่มีการนำเสนอที่ดีกว่าดึงดูดความสนใจก่อน แม้ว่าข้อเสนอของคุณจะดีกว่าก็ตาม" },
+            { n: "A", title: "เว็บไซต์ช้า หรืออ่านไม่ออกบนมือถือ", desc: "ผู้เข้าชมส่วนใหญ่มาจากโทรศัพท์ ถ้าหน้าเว็บเปิดช้าหรือตัวอักษรเล็กเกินไป หลายคนจะจากไปก่อนอ่านสักบรรทัด" },
+            { n: "B", title: "ไม่มีใครติดต่อผ่านเว็บไซต์", desc: "เว็บไซต์ออนไลน์อยู่ แต่แบบฟอร์มว่างเปล่าและโทรศัพท์ไม่ดัง เว็บแสดงธุรกิจของคุณโดยไม่เคยชวนให้ลงมือทำอะไร" },
+            { n: "C", title: "เว็บไซต์ที่ไม่เหมือนคุณอีกแล้ว และคุณแก้ไขเองไม่ได้", desc: "ธุรกิจของคุณเปลี่ยนไป แต่เว็บไซต์ไม่ได้เปลี่ยน การเปลี่ยนเวลาเปิดหรือรูปภาพต้องขอความช่วยเหลือ และภาพรวมไม่ตรงกับภาพลักษณ์ปัจจุบันของคุณ" },
           ],
           features: [
-            "ตรวจสอบภาพลักษณ์ปัจจุบันของคุณ",
-            "ปรับปรุงโลโก้",
-            "ชุดสีใหม่",
-            "ฟอนต์มืออาชีพ",
-            "แนวทางแบรนด์แบบย่อ",
-            "เว็บไซต์ใหม่ที่สอดคล้องกับอัตลักษณ์",
+            "ตรวจสอบเว็บไซต์ปัจจุบันของคุณ",
+            "สำรวจหน้าที่พาผู้เข้าชมมา",
+            "ดีไซน์ใหม่ที่อ่านง่ายบนมือถือ",
+            "รักษาโดเมนเนมและอีเมลเดิมไว้",
+            "รีไดเรกต์ 301 ทุกที่อยู่เดิม",
+            "เปิดใช้งานและติดตามใน Google Search Console",
             "การฝึกอบรมการใช้งาน",
           ],
           enjeux: [
-            "ภาพลักษณ์และเว็บไซต์ที่สอดคล้องกันสร้างความต่อเนื่องในทุกจุดสัมผัส ทั้งโซเชียลมีเดีย หน้าร้าน เอกสารทางธุรกิจ และเว็บไซต์ที่บอกเล่าเรื่องราวเดียวกันในที่สุด",
-            "ลูกค้าของคุณจะจดจำแบรนด์ได้ทุกที่ และความน่าเชื่อถือของคุณจะไม่ขึ้นอยู่กับจุดสัมผัสเดียวที่ล้าสมัยไปแล้ว",
+            "เว็บไซต์ที่ทำใหม่อย่างเป็นระบบจะรักษาสิ่งที่ได้ผลอยู่แล้ว ผู้เข้าชมที่พบคุณวันนี้จะพบหน้าเดิมในวันพรุ่งนี้ ในรูปแบบที่ดีขึ้น แทนที่จะเจอหน้าผิดพลาด",
+            "ความเปลี่ยนแปลงเห็นได้จากเรื่องง่ายๆ เว็บเปิดเร็วบนโทรศัพท์ หน้าเว็บเลื่อนดูง่าย แบบฟอร์มหรือเบอร์โทรที่หาเจอโดยไม่ต้องค้นหา เราไม่สัญญาอันดับบน Google ความเสี่ยงที่จะสูญเสียถูกลดลงและติดตามผล",
+          ],
+          sections: [
+            {
+              h2: "ปรับปรุงใหม่ หรืออัปเดตธรรมดา: คุณต้องการอะไรจริงๆ",
+              paragraphs: [
+                "ไม่ใช่ทุกเว็บไซต์ที่ต้องทำใหม่ ถ้าพื้นฐานดี การอัปเดตก็พอ เช่น แก้ข้อความ เปลี่ยนรูป ปรับเวลาเปิด ทำได้เร็วกว่าและประหยัดกว่า",
+                "การปรับปรุงใหม่มีประโยชน์เมื่อพื้นฐานเองเป็นปัญหา เว็บเก่าเกินไป ช้าเกินไป อ่านไม่ได้บนมือถือ หรือจำกัดจนทุกการแก้ไขแพงกว่าการเริ่มใหม่ เราจึงสร้างเว็บที่มีอยู่ขึ้นใหม่ พร้อมประวัติและหน้าต่างๆ ของมัน",
+                "ระหว่างการตรวจสอบ เราบอกตรงๆ ว่าคุณอยู่ในกรณีไหน ถ้าอัปเดตธรรมดาแก้ปัญหาได้ เราก็จะบอก",
+              ],
+              list: [
+                "อัปเดต: เว็บยังใช้ได้ แก้ไขบางจุด",
+                "ปรับปรุงใหม่: เว็บมีอยู่แต่พื้นฐานไม่พอแล้ว ทำใหม่โดยรักษาสิ่งที่ได้ผล",
+                "เว็บใหม่: ยังไม่มีอะไรออนไลน์ เริ่มจากหน้ากระดาษเปล่า",
+              ],
+              link: { label: "ยังไม่มีเว็บไซต์? ดูหน้าเว็บไซต์แนะนำธุรกิจ →", href: "/services/site-vitrine" },
+            },
+            {
+              h2: "สิ่งที่เรารักษาไว้ สิ่งที่เราเปลี่ยน",
+              paragraphs: [
+                "การทำเว็บใหม่ไม่ได้แปลว่าทิ้งทุกอย่าง เราเริ่มจากสิ่งที่คุณมีและรักษาทุกอย่างที่ยังเป็นประโยชน์ คุณอนุมัติทุกการตัดสินใจก่อนเปิดใช้งาน",
+              ],
+              list: [
+                "โดเมนเนมและอีเมลของคุณ: ยังเป็นของคุณ ผู้ติดต่อไม่ต้องเปลี่ยนอะไร",
+                "ข้อความและรูปที่ยังใช้ได้: นำกลับมาใช้ จัดให้เรียบร้อย หรือแทนที่เมื่อไม่ถูกต้องแล้ว",
+                "หน้าที่พาผู้เข้าชมมาอยู่แล้ว: ถูกระบุก่อนแตะต้องอะไร แล้วรักษาไว้หรือรีไดเรกต์",
+                "สิ่งที่ถูกแทนที่: ดีไซน์ โครงสร้างหน้า ความเร็วในการเปิด และแบบฟอร์มติดต่อ",
+              ],
+            },
+            {
+              h2: "เราปกป้องตำแหน่งของคุณบน Google อย่างไร",
+              paragraphs: [
+                "นี่คือความกังวลแรก และเป็นความกังวลที่สมเหตุสมผล เว็บที่ทำใหม่โดยไม่ระวังอาจเสียผู้เข้าชม ที่อยู่เดิมหายไป เสิร์ชเอนจินหาหลักไม่เจอ และหน้าของคุณเริ่มจากศูนย์",
+                "นี่คือสิ่งที่เราทำเพื่อลดความเสี่ยง อย่างแรก การตรวจสอบที่ระบุหน้าของเว็บปัจจุบันที่มีผู้เข้าชมอยู่แล้ว จากนั้นรักษาหน้าเหล่านั้นหรือเนื้อหาที่เป็นประโยชน์ ทุกที่อยู่เดิมถูกรีไดเรกต์ไปหน้าใหม่ด้วยรีไดเรกต์ 301 ซึ่งบอก Google ว่าหน้าเพียงย้ายที่ หลังเปิดใช้งาน เราตรวจใน Google Search Console ว่าหน้าถูกรับรู้และไม่มีข้อผิดพลาด",
+                "ขอพูดให้ชัด ไม่มีอันดับใดการันตี ทั้งก่อนและหลังการปรับปรุง ความเสี่ยงที่จะสูญเสียถูกลดลงและติดตามผล แต่ไม่ได้หมดไป",
+              ],
+              link: { label: "ปกป้องและเพิ่มอันดับบนเสิร์ชเอนจินของคุณ →", href: "/services/seo-referencement" },
+            },
+            {
+              h2: "การปรับปรุงเว็บไซต์ที่ตูร์ใช้งบเท่าไร?",
+              paragraphs: [
+                "ขึ้นอยู่กับสภาพเว็บไซต์ปัจจุบัน จำนวนหน้าที่ต้องย้ายมา และสิ่งที่คุณอยากเปลี่ยน ดังนั้นการปรับปรุงใหม่จึงประเมินตามใบเสนอราคา หลังตรวจสอบเว็บไซต์ปัจจุบัน ใบเสนอราคาฟรี ส่งภายใน 48 ชั่วโมง และไม่มีข้อผูกมัด",
+                "เว็บไม่กี่หน้ากับเว็บสี่สิบหน้าทำใหม่ไม่เหมือนกัน ใบเสนอราคาระบุสิ่งที่รวม สิ่งที่เป็นตัวเลือก และสิ่งที่คุณรับผิดชอบเอง โดยไม่มีรายการแอบแฝง Sèvalys ได้รับการยกเว้น VAT: ไม่ใช้ VAT ตามมาตรา 293 B ของประมวลกฎหมายภาษีฝรั่งเศส",
+                "หากอยากเห็นช่วงราคาตลาดก่อนติดต่อเรา คู่มือของเราอธิบายสิ่งที่ทำให้ต้นทุนเว็บไซต์แนะนำธุรกิจแตกต่างกัน",
+              ],
+              link: { label: "เริ่มแบบประเมิน 2 นาที →", href: "/simulateur" },
+            },
+            {
+              h2: "แล้วถ้าคุณอยากเปลี่ยนภาพลักษณ์ด้วย?",
+              paragraphs: [
+                "บางครั้งเว็บที่ดูเก่ามาพร้อมภาพลักษณ์ที่ดูเก่า ในกรณีนั้นโลโก้ สี และฟอนต์ปรับไปพร้อมกับเว็บได้ เพื่อให้เว็บใหม่มีอัตลักษณ์ที่สอดคล้องตั้งแต่วันแรก",
+                "ส่วนนี้เป็นตัวเลือก ตัดสินใจระหว่างการตรวจสอบและไม่บังคับ รายละเอียดแนวทางแบรนด์อยู่ที่หน้า Branding",
+              ],
+              link: { label: "ต้องการแค่อัตลักษณ์ใช่ไหม? ดูบริการ Branding →", href: "/services/branding" },
+            },
+            {
+              h2: "ใครดูแลเว็บไซต์ของคุณ",
+              paragraphs: [
+                "มีคนเดียวที่ตอบคุณ: Anatholy Bricon ผู้ประกอบการรายเดียวที่ตูร์ เขาตรวจเว็บไซต์ปัจจุบัน ทำใหม่ และติดต่อได้หลังเปิดใช้งาน",
+                "ไม่มีตัวกลางฝ่ายขายและคำขอไม่หลงหาย คุณคุยกับคนที่ทำงานจริง เขาให้บริการที่ตูร์และเมืองใกล้เคียง",
+              ],
+            },
+          ],
+          steps: [
+            { title: "เราดูเว็บไซต์ปัจจุบันของคุณ", text: "ตรวจสอบ: อะไรพาผู้เข้าชมมา อะไรช้า อะไรเป็นอุปสรรคบนมือถือ อะไรเก็บไว้ได้ คุณได้รับใบเสนอราคาฟรีภายใน 48 ชั่วโมง", duration: "ใบเสนอราคาภายใน 48 ชั่วโมง" },
+            { title: "เราตัดสินใจร่วมกันว่าจะเปลี่ยนอะไร", text: "เราทำรายการหน้าที่เก็บไว้ รวม หรือเอาออก และสิ่งที่นำมาใช้ตามเดิม ไม่มีอะไรเริ่มโดยไม่ได้รับความเห็นชอบ", duration: "พูดคุยหนึ่งครั้ง ตามความสะดวกของคุณ" },
+            { title: "เราทำต้นแบบและคุณอนุมัติ", text: "คุณเห็นดีไซน์ใหม่ก่อนสร้างจริง และขอปรับแก้ตามต้องการ", duration: "ขึ้นอยู่กับความเห็นของคุณ" },
+            { title: "เราสร้างและทดสอบ", text: "เราสร้างหน้า นำเนื้อหามาใส่ แล้วทดสอบการแสดงผลบนมือถือ ความเร็ว และแบบฟอร์มติดต่อ", duration: "ไม่กี่สัปดาห์ ตามขนาดของเว็บ" },
+            { title: "เราเปิดใช้งานและเฝ้าติดตาม", text: "เปิดใช้งานพร้อมรีไดเรกต์ 301 แล้วตรวจใน Google Search Console การฝึกอบรมช่วยให้คุณแก้ไขข้อความเองได้", duration: "เปิดใช้งาน แล้วติดตามผล" },
+          ],
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "สร้างเว็บไซต์แนะนำธุรกิจถ้ายังไม่มีเว็บ", href: "/services/site-vitrine", description: "หน้าสำหรับเริ่มจากหน้ากระดาษเปล่า" },
+            { label: "ปกป้องและเพิ่มอันดับบนเสิร์ชเอนจินของคุณ", href: "/services/seo-referencement", description: "การสนับสนุนที่ต่อยอดจากการปรับปรุงใหม่" },
+            { label: "ปรับเฉพาะอัตลักษณ์ภาพของคุณ", href: "/services/branding", description: "โลโก้ สี และแนวทางแบรนด์ โดยไม่แตะต้องเว็บ" },
+            { label: "ดูแลเว็บไซต์ให้ทันสมัยหลังเปิดใช้งาน", href: "/services/maintenance", description: "การติดตามผลหลังเว็บใหม่เผยแพร่" },
+            { label: "เว็บไซต์แนะนำธุรกิจใช้งบเท่าไร: ช่วงและเกณฑ์", href: "/guides/prix-site-vitrine", description: "สิ่งที่ทำให้ใบเสนอราคาแตกต่างกัน" },
+            { label: "เริ่มแบบประเมิน 2 นาที", href: "/simulateur", description: "แบบสอบถามสั้นๆ เพื่อดูว่าจะเริ่มตรงไหน" },
           ],
           caseQuote: null,
           signals: [
-            { t: "วิธีการที่ผ่านการตรวจสอบ", d: "ทุกขั้นตอน — การตรวจสอบ อัตลักษณ์ เว็บไซต์ — ได้รับการยืนยันร่วมกับคุณก่อนไปขั้นต่อไป ไม่มีเรื่องเซอร์ไพรส์ในนาทีสุดท้าย" },
-            { t: "ไม่มีข้อผูกมัด", d: "คุณมีอิสระในทุกขั้นตอนของโปรเจกต์ ไม่มีอะไรถูกกำหนดตายตัวก่อนที่คุณจะเห็นชอบทิศทางที่เลือก" },
-            { t: "ตอบสนองรวดเร็ว", d: "มีคำถามหรือต้องการปรับแก้? ตอบกลับภายใน 48 ชั่วโมง ตั้งแต่การพูดคุยครั้งแรกจนถึงเว็บไซต์ใหม่เปิดใช้งาน" },
+            { t: "ตรวจสอบก่อน", d: "เราดูเว็บไซต์ปัจจุบันของคุณก่อนเสนออะไร: อะไรให้ผล อะไรเป็นอุปสรรค อะไรเก็บไว้ได้" },
+            { t: "ผู้ติดต่อคนเดียว", d: "Anatholy Bricon ที่ตูร์ ตอบคุณตั้งแต่การพูดคุยครั้งแรกจนถึงเปิดใช้งาน โดยไม่มีตัวกลาง" },
+            { t: "ไม่มีข้อผูกมัด", d: "ใบเสนอราคาฟรี ภายใน 48 ชั่วโมง ไม่มีอะไรเริ่มก่อนที่คุณจะเห็นชอบอย่างชัดเจน" },
           ],
           faq: [
-            { q: "Rebranding พร้อม Site Premium ใช้เวลานานแค่ไหน?", a: "โดยทั่วไปใช้เวลาหลายสัปดาห์ระหว่างการตรวจสอบเบื้องต้นจนถึงการเปิดใช้งาน เพื่อยืนยันแต่ละขั้นตอนของอัตลักษณ์แล้วจึงเว็บไซต์ร่วมกัน" },
-            { q: "ฉันจะยังคงโดเมนเนมและเนื้อหาเดิมไว้ได้ไหม?", a: "ได้ โดเมนเนมของคุณยังคงเป็นของคุณ เนื้อหาเดิมจะถูกนำมาใช้ซ้ำ ปรับปรุง หรือแทนที่ตามความเหมาะสมกับอัตลักษณ์ใหม่" },
-            { q: "ถ้าฉันต้องการแค่ปรับโลโก้ โดยไม่ทำเว็บไซต์ใหม่ล่ะ?", a: "ในกรณีนั้น บริการ Branding จะเหมาะกับความต้องการของคุณมากกว่า ครอบคลุมเฉพาะอัตลักษณ์ โดยไม่แตะต้องเว็บไซต์เดิม" },
+            { q: "ทำไมต้องปรับปรุงเว็บไซต์ใหม่?", a: "มีสี่เหตุผลที่พบบ่อย เว็บช้าหรืออ่านไม่ออกบนมือถือ ไม่มีใครติดต่อเข้ามา ไม่เหมือนธุรกิจของคุณอีกแล้ว หรือคุณแก้ไขเองไม่ได้ ถ้าไม่เข้าข่ายข้อใดเลย การอัปเดตธรรมดาก็พอ และเราจะบอกหลังการตรวจสอบ" },
+            { q: "การปรับปรุงเว็บไซต์ที่ตูร์ใช้งบเท่าไร?", a: "ประเมินตามใบเสนอราคาหลังตรวจสอบเว็บไซต์ปัจจุบัน จำนวนเงินขึ้นอยู่กับจำนวนหน้าที่ต้องย้ายและสิ่งที่คุณอยากเปลี่ยน ใบเสนอราคาฟรี ส่งภายใน 48 ชั่วโมง และไม่มีข้อผูกมัด ไม่ใช้ VAT ตามมาตรา 293 B ของประมวลกฎหมายภาษีฝรั่งเศส" },
+            { q: "ฉันจะเสียอันดับบน Google ไหม?", a: "ความเสี่ยงมีอยู่ถ้าที่อยู่เดิมไม่ถูกรีไดเรกต์ เราระบุหน้าที่มีผู้เข้าชมอยู่แล้ว รักษาไว้หรือรีไดเรกต์ทีละหน้าด้วยรีไดเรกต์ 301 แล้วตรวจใน Google Search Console หลังเปิดใช้งาน ไม่มีอันดับใดการันตี" },
+            { q: "จะอัปเดตเว็บไซต์ได้อย่างไร?", a: "เว็บอัปเดตทีละเล็กทีละน้อยได้ตราบที่พื้นฐานดี เช่น ข้อความ รูป เวลาเปิด เมื่อพื้นฐานเก่าไป ช้าไป หรือจำกัดเกินไป การปรับปรุงใหม่สมเหตุสมผลกว่าการปะแก้ไปเรื่อยๆ" },
+            { q: "การปรับปรุงเว็บไซต์ใช้เวลานานแค่ไหน?", a: "สำหรับเว็บเล็ก คาดว่าไม่กี่สัปดาห์ เวลาส่วนใหญ่ขึ้นอยู่กับความเร็วที่คุณอนุมัติต้นแบบและส่งเนื้อหา ตารางเวลาที่แน่ชัดอยู่ในใบเสนอราคา หลังตรวจสอบเว็บของคุณแล้ว" },
+            { q: "ฉันจะยังคงโดเมนเนมและข้อความไว้ได้ไหม?", a: "ได้ โดเมนเนมยังเป็นของคุณ เช่นเดียวกับอีเมล ข้อความและรูปที่ยังมีประโยชน์จะถูกนำมาใช้ซ้ำ ปรับ หรือแทนที่ตามสิ่งที่เหมาะกับเว็บใหม่" },
+            { q: "หลังจากนั้นฉันแก้ไขเว็บเองได้ไหม?", a: "ได้ สำหรับข้อความและรูปทั่วไป มีการฝึกอบรมการใช้งานเมื่อส่งมอบ ส่วนเรื่องอื่นเรายังพร้อมช่วย และการติดตามระยะยาวใช้บริการ maintenance ของเราได้" },
+            { q: "ฉันยังไม่มีเว็บไซต์ หน้านี้ใช่ไหม?", a: "ไม่ใช่ การปรับปรุงใหม่ใช้กับเว็บไซต์ที่มีอยู่แล้ว ถ้าคุณเริ่มจากศูนย์ หน้าเว็บไซต์แนะนำธุรกิจ (Site Vitrine) เหมาะกับคุณมากกว่า" },
           ],
           crossLink: { label: "ต้องการแค่อัตลักษณ์ของคุณใช่ไหม? ดูบริการ Branding →", slug: "branding" },
         },
@@ -2099,7 +2993,7 @@ const th: Translations = {
             { q: "ต้องทำเว็บไซต์ใหม่หลังจาก rebranding อัตลักษณ์ไหม?", a: "ไม่ต้อง อัตลักษณ์ใหม่จะนำไปใช้กับเว็บไซต์เดิมของคุณ หากต้องการเว็บไซต์ใหม่ด้วย บริการ Rebranding + Site Premium ครอบคลุมทั้งสองอย่าง" },
             { q: "มีรอบการแก้ไขกี่รอบ?", a: "จำนวนรอบการแก้ไขจะถูกกำหนดร่วมกันก่อนเริ่มงาน เพื่อปรับแต่งแต่ละองค์ประกอบของอัตลักษณ์ภายในกรอบที่ชัดเจน" },
           ],
-          crossLink: { label: "ต้องการเว็บไซต์ด้วยใช่ไหม? ดู Rebranding + Site Premium →", slug: "rebranding-site-premium" },
+          crossLink: { label: "ต้องการปรับปรุงเว็บไซต์ใหม่ด้วยใช่ไหม? ดูบริการปรับปรุงเว็บไซต์ →", slug: "rebranding-site-premium" },
         },
         {
           name: "Projet Sur Mesure",
@@ -2337,40 +3231,132 @@ const th: Translations = {
           name: "SEO และการค้นหา",
           tagline: "ให้คนพบคุณบน GOOGLE",
           h1Lead: "เอเจนซี่ SEO ที่ตูร์ ·",
-          h1Benefit: "การมองเห็นที่สะสมไปเรื่อยๆ",
-          sub: "ทำให้เว็บไซต์และโปรไฟล์ Google ของคุณปรากฏต่อลูกค้าในตูร์ที่กำลังค้นหาคุณ โดยไม่ต้องจ่ายค่าคลิกทุกครั้ง",
-          metaTitle: "เอเจนซี่ SEO ที่ตูร์ · อันดับเว็บไซต์ | Sèvalys",
-          metaDescription: "เอเจนซี่ SEO ที่ตูร์: ปรับแต่งเว็บไซต์ Google Business Profile ปรับหน้าเว็บ และติดตามผลด้วย Search Console ไม่มีข้อผูกมัดระยะเวลา",
-          directAnswer: "SEO คือการทำให้เว็บไซต์ของคุณชัดเจนและตรงกับสิ่งที่ลูกค้าค้นหาบน Google ในตูร์และพื้นที่ใกล้เคียง โดยรวมการปรับแต่งหน้าเว็บ โปรไฟล์ Google Business Profile และการติดตามผลใน Search Console ผลลัพธ์ค่อยๆ สะสมในหลายเดือน และไม่มีการรับประกันอันดับ เพราะไม่มีใครควบคุมอัลกอริทึมของ Google ได้",
+          h1Benefit: "ให้ลูกค้าพบคุณบน Google",
+          sub: "ลูกค้าในตูร์ค้นหาธุรกิจแบบของคุณบน Google เราปรับเว็บไซต์และโปรไฟล์ของคุณให้พวกเขาพบคุณ",
+          metaTitle: "เอเจนซี่ SEO ที่ตูร์ เริ่มที่ 300 € ต่อเดือน",
+          metaDescription: "เอเจนซี่ SEO ที่ตูร์สำหรับช่างฝีมือ ร้านค้า และร้านอาหาร ปรับ 2 หน้า ลิงก์ 1 เส้นต่อเดือน Search Console ในชื่อคุณ เริ่มที่ 300 € ต่อเดือน",
+          directAnswer: "เอเจนซี่ SEO ที่ตูร์ดูแลการค้นหาแบบธรรมชาติของคุณ เพื่อให้ลูกค้าที่ค้นหาธุรกิจแบบของคุณพบคุณ ที่ Sèvalys เริ่มที่ 300 € ต่อเดือน โดยไม่สัญญาเรื่องอันดับ เพราะไม่มีใครควบคุมอัลกอริทึมของ Google ได้",
+          longIntro: [
+            "Sèvalys คือเอเจนซี่ SEO ที่ตูร์สำหรับช่างฝีมือ ร้านค้า และร้านอาหาร เราปรับสองหน้าที่สำคัญที่สุดของคุณ โปรไฟล์ Google และหาลิงก์คุณภาพให้ทุกเดือน",
+            "คุณคุมได้เอง เพราะ Search Console สร้างในชื่อของคุณ ผลลัพธ์ใช้เวลาหลายเดือน และเราอธิบายตรงๆ ด้านล่าง",
+          ],
           problems: [
-            { n: "A", title: "เว็บไซต์ไม่ปรากฏในผลค้นหา", desc: "ลูกค้าค้นหาสิ่งที่คุณมีพอดี แต่หน้าที่ขึ้นมาก่อนเป็นของคู่แข่งที่จัดโครงสร้างได้ดีกว่า" },
-            { n: "B", title: "โปรไฟล์ Google ไม่สมบูรณ์", desc: "เวลาทำการไม่ชัดเจน เลือกหมวดหมู่ไม่เหมาะสม ไม่มีรูปล่าสุด โปรไฟล์มีอยู่แต่ไม่สร้างความมั่นใจและไม่ช่วยแปลงเป็นลูกค้า" },
-            { n: "C", title: "ไม่มีการติดตามว่าอะไรได้ผล", desc: "หากไม่มี Search Console หรือการติดตามคำค้นหา จะไม่รู้ว่าเว็บไซต์ดีขึ้นหรือไม่ และปรากฏบนคำค้นหาใดจริงๆ" },
+            { n: "A", title: "เว็บไซต์ของคุณไม่ปรากฏ", desc: "ลูกค้าพิมพ์ \"ช่างประปา Tours\" หรือ \"ร้านอาหาร Tours\" อันดับต้นๆ ตกเป็นของคู่แข่งที่จัดโครงสร้างได้ดีกว่า" },
+            { n: "B", title: "โปรไฟล์ Google ของคุณไม่สมบูรณ์", desc: "หมวดหมู่ไม่เหมาะ เวลาทำการไม่ชัด รูปเก่า โปรไฟล์มีอยู่แต่ไม่สร้างความมั่นใจ" },
+            { n: "C", title: "คุณไม่รู้ว่าอะไรได้ผล", desc: "หากไม่มี Search Console จะไม่รู้ว่าเว็บไซต์ดีขึ้นหรือไม่ และปรากฏบนคำค้นหาใด" },
           ],
           features: [
             "ตรวจสอบเริ่มต้นของเว็บไซต์และโปรไฟล์ Google",
             "เลือกคำค้นหาท้องถิ่นที่จะเจาะ",
-            "ปรับหัวข้อ เนื้อหา และแท็กของหน้าเว็บ",
+            "ปรับหัวข้อ เนื้อหา และแท็กของ 2 หน้า",
             "อัปเดตโปรไฟล์ Google Business Profile",
-            "ความเร็ว มือถือ และข้อมูลโครงสร้าง",
-            "ติดตามผลใน Search Console",
-            "สรุปผลเป็นระยะ",
+            "ตรวจความเร็ว มือถือ และการจัดทำดัชนี",
+            "ติดตามผลด้วย Search Console ในชื่อคุณ",
+            "รายงานรายเดือนว่าอะไรเปลี่ยนไป",
           ],
           enjeux: [
-            "SEO ทำงานในระยะยาว เมื่อวางระบบแล้ว หน้าเว็บที่สร้างมาดียังคงถูกค้นพบโดยไม่มีค่าใช้จ่ายต่อคลิก ต่างจากโฆษณาที่หยุดทันทีเมื่องบหมด",
-            "SEO อาศัยการดำเนินการที่ตรวจสอบได้ (หน้าเว็บ โปรไฟล์ การติดตามผล) แทนคำสัญญาเรื่องอันดับ คุณเห็นว่าทำอะไรไปแล้ว อะไรกำลังดีขึ้น และอะไรยังต้องทำต่อ",
+            "หน้าเว็บที่สร้างมาดียังคงถูกค้นพบโดยไม่ต้องจ่ายทุกคลิก ส่วนโฆษณาหยุดทันทีเมื่องบหมด",
+            "คนส่วนใหญ่คลิกผลลัพธ์อันดับต้นๆ และโปรไฟล์ Google สำคัญพอๆ กับเว็บไซต์ ทั้งสองอย่างต้องทำไปด้วยกัน",
+          ],
+          sections: [
+            {
+              h2: "สิ่งที่เราทำเพื่อการค้นหาแบบธรรมชาติของคุณ",
+              paragraphs: ["สี่งานหลัก อธิบายแบบไม่ใช้ศัพท์เทคนิค"],
+              list: [
+                "2 หน้าหลักของคุณ: หัวข้อ เนื้อหา และโครงสร้างที่เขียนให้ตรงกับคำค้นของลูกค้า",
+                "โปรไฟล์ Google Business Profile: หมวดหมู่ เวลาทำการ รูปภาพ และการตอบรีวิว",
+                "ด้านเทคนิคแบบเข้าใจง่าย: เว็บเร็ว อ่านง่ายบนมือถือ และ Google อ่านได้ดี",
+                "ลิงก์คุณภาพ 1 เส้นต่อเดือน: เว็บไซต์น่าเชื่อถืออื่นพูดถึงคุณ และ Google สังเกตเห็น",
+              ],
+            },
+            {
+              h2: "SEO ท้องถิ่น: ให้คนใกล้คุณพบคุณ",
+              paragraphs: [
+                "SEO ท้องถิ่นคือการปรากฏเมื่อมีคนค้นหา \"อาชีพ + เมือง\" เราเจาะการค้นหาเหล่านี้รอบตูร์ ไม่ใช่อันดับระดับประเทศ",
+                "หากอยากเข้าใจหลักการก่อนเริ่ม อ่านคู่มือของเรา",
+              ],
+              link: { label: "ทำความเข้าใจ SEO ท้องถิ่นที่ตูร์", href: "/guides/seo-local" },
+            },
+            {
+              h2: "เหมาะกับใคร: ร้านอาหาร ช่างฝีมือ ร้านค้า",
+              paragraphs: [
+                "ร้านอาหารต้องมีโปรไฟล์ Google ที่ดูแลดี เมนูอ่านง่าย และลิงก์จอง ช่างฝีมือต้องมีหน้าชัดเจนแยกตามงานและพื้นที่ พร้อมรูปงานจริง ร้านค้าต้องมีเวลาทำการที่ถูกต้องและหน้าสินค้าเด่น",
+                "ไม่เหมาะกับร้านค้าออนไลน์ 500 รายการ หรือตลาดระดับประเทศที่แข่งขันสูงมาก",
+              ],
+            },
+            {
+              h2: "เราวัดผลอย่างไร",
+              paragraphs: [
+                "Search Console สร้างในชื่อของคุณ คุณเห็นจำนวนการแสดงผล คลิก และตำแหน่งเฉลี่ยบนคำค้นของคุณเอง เรายังเพิ่มสายโทรเข้าจากโปรไฟล์ Google หากคุณเลิกใช้บริการ คุณยังคงมีสิทธิ์เข้าถึงทั้งหมด",
+                "ทุกเดือนมีรายงานสั้นๆ: อะไรเปลี่ยนไป ทำอะไรไปแล้ว และขั้นต่อไปคืออะไร",
+              ],
+            },
+            {
+              h2: "สิ่งที่เราไม่สัญญา",
+              paragraphs: [
+                "ไม่มีการรับประกันอันดับ และควรระวังผู้ที่สัญญา สัญญาณแรกมักปรากฏหลัง 3 ถึง 6 เดือน บางครั้งนานกว่านั้น ขึ้นอยู่กับคู่แข่งในพื้นที่ ช่างประปาที่ตูร์ไม่ได้อยู่ในสถานการณ์เดียวกับร้านดอกไม้ในหมู่บ้าน",
+                "สิ่งที่เรารับประกัน: งานที่อธิบายไว้ที่นี่ และการติดตามผลที่คุณตรวจสอบได้เอง",
+              ],
+            },
+            {
+              h2: "SEO หรือ Google Ads: เริ่มจากอะไรดี?",
+              paragraphs: ["โฆษณาพาลูกค้ามาเร็วแต่หยุดเมื่องบหมด การค้นหาแบบธรรมชาติช้ากว่าแต่อยู่ได้นาน หากมีเว็บไซต์แล้วให้เริ่มที่ SEO หากด่วนให้ลงโฆษณาไปก่อน"],
+              list: [
+                "SEO: ช้ากว่า อยู่ได้นาน ไม่มีค่าใช้จ่ายต่อคลิก",
+                "Google Ads: เร็ว หยุดเมื่องบหมด ทุกคลิกต้องจ่าย",
+              ],
+              link: { label: "ลงโฆษณา Google ไปก่อน", href: "/services/google-ads" },
+            },
+            {
+              h2: "ผูกมัดขั้นต่ำ 3 เดือน",
+              paragraphs: ["สามเดือนคือเวลาที่พอเห็นสัญญาณแรก หลังจากนั้นข้อเสนอต่ออายุทุกเดือน และคุณหยุดได้โดยแจ้งล่วงหน้าหนึ่งเดือน หน้าเว็บและสิทธิ์เข้าถึงยังเป็นของคุณ"],
+            },
+          ],
+          pricing: {
+            fromLabel: "เริ่มที่",
+            price: 300,
+            unit: "ต่อเดือน สำหรับ 2 หน้าที่ติดตามผล",
+            includes: [
+              "ตรวจสอบเริ่มต้นของเว็บไซต์และโปรไฟล์ Google",
+              "ปรับ 2 หน้า (หัวข้อ เนื้อหา แท็ก)",
+              "อัปเดตโปรไฟล์ Google Business Profile",
+              "ลิงก์คุณภาพ 1 เส้นต่อเดือน",
+              "ติดตามผลด้วย Search Console ในชื่อคุณ",
+              "รายงานรายเดือน",
+            ],
+            notIncluded: [
+              "การปรับโฉมเว็บไซต์",
+              "โฆษณา Google Ads",
+              "การเขียนบทความบล็อก",
+            ],
+            extras: [
+              { label: "หน้าที่ติดตามเพิ่ม (3 หน้า = 400 € ต่อเดือน)", price: "+ 100 € ต่อเดือน" },
+            ],
+            note: "ไม่ต้องเสียภาษีมูลค่าเพิ่ม ตามมาตรา 293 B ของประมวลกฎหมายภาษีฝรั่งเศส (CGI) (TVA non applicable, art. 293 B du CGI)",
+          },
+          areas: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours", "Indre-et-Loire"],
+          proofProjects: [0, 1, 2, 3],
+          internalLinks: [
+            { label: "ทำความเข้าใจ SEO ท้องถิ่นที่ตูร์", href: "/guides/seo-local", description: "หลักการ อธิบายแบบเข้าใจง่าย" },
+            { label: "สร้างเว็บไซต์ของคุณที่ตูร์", href: "/services/site-vitrine", description: "ยังไม่มีเว็บไซต์? เริ่มจากตรงนี้" },
+            { label: "ลงโฆษณา Google ไปก่อน", href: "/services/google-ads", description: "ได้ลูกค้าเร็ว ระหว่างที่ SEO ค่อยๆ ติด" },
+            { label: "ทำแบบประเมินการมองเห็นของคุณ", href: "/simulateur", description: "ไม่กี่คำถามเพื่อรู้ว่าควรเริ่มจากจุดไหน" },
           ],
           caseQuote: null,
           signals: [
-            { t: "ไม่สัญญาเรื่องอันดับ", d: "เราอธิบายสิ่งที่ลงมือทำและผลที่สังเกตได้ โดยไม่รับประกันตำแหน่งใดบน Google ซึ่งอยู่นอกเหนือการควบคุมของเรา" },
-            { t: "บัญชีอยู่ในชื่อของคุณ", d: "โปรไฟล์ Google Business Profile และ Search Console ผูกกับบัญชีของคุณเอง คุณควบคุมได้ตลอดเวลา" },
-            { t: "ไม่มีข้อผูกมัดระยะเวลา", d: "คุณหยุดได้ทุกเมื่อ ไม่ต้องให้เหตุผล และไม่มีค่าปรับเมื่อยกเลิก" },
+            { t: "ไม่สัญญาเรื่องอันดับ", d: "เราอธิบายงานที่ทำและสิ่งที่วัดได้ ตำแหน่งบน Google อยู่นอกเหนือการควบคุมของเรา" },
+            { t: "บัญชีอยู่ในชื่อของคุณ", d: "Search Console และโปรไฟล์ Google ผูกกับบัญชีของคุณ แม้คุณจะเลิกใช้บริการ" },
+            { t: "ขั้นต่ำ 3 เดือน จากนั้นรายเดือน", d: "เวลาที่พอเห็นสัญญาณแรก หลังจากนั้นคุณหยุดได้โดยแจ้งล่วงหน้าหนึ่งเดือน" },
           ],
           faq: [
-            { q: "ใช้เวลานานแค่ไหนกว่าจะเห็นผล?", a: "ผลแรกมักวัดได้หลังจากผ่านไปไม่กี่เดือน ขึ้นอยู่กับการแข่งขันบนคำค้นหาของคุณและสภาพเว็บไซต์ตอนเริ่มต้น SEO เป็นงานพื้นฐานระยะยาว ไม่ใช่ผลลัพธ์ทันที" },
-            { q: "รับประกันอันดับหนึ่งบน Google ได้ไหม?", a: "ไม่ได้ และควรระวังผู้ที่รับประกัน เพราะผลลัพธ์ขึ้นอยู่กับอัลกอริทึมที่เราควบคุมไม่ได้ เรารับผิดชอบต่อสิ่งที่ลงมือทำและการติดตามผลที่โปร่งใส ไม่ใช่ตำแหน่ง" },
-            { q: "SEO หรือ Google Ads ต้องเลือกอย่างใดอย่างหนึ่งไหม?", a: "ทั้งสองอย่างเสริมกัน โฆษณาให้การมองเห็นทันที ส่วน SEO ค่อยๆ ติดอันดับอย่างยั่งยืนบนคำค้นหาเดียวกัน แบบประเมินฟรีช่วยบอกได้ว่าควรเริ่มจากจุดไหนสำหรับธุรกิจของคุณ" },
-            { q: "คุณทำอะไรกับโปรไฟล์ Google Business Profile ของฉัน?", a: "เราตรวจสอบข้อมูล หมวดหมู่ เวลาทำการ และรูปภาพ จากนั้นดูแลให้เป็นปัจจุบันและติดตามรีวิว โปรไฟล์ยังคงผูกกับบัญชีของคุณและคุณมีสิทธิ์เข้าถึงเสมอ" },
+            { q: "เอเจนซี่ SEO ที่ตูร์ราคาเท่าไร?", a: "ที่ Sèvalys เริ่มที่ 300 € ต่อเดือน สำหรับ 2 หน้าที่ติดตามผล หน้าเพิ่มหน้าละ 100 € ต่อเดือน 3 หน้าเท่ากับ 400 € รวมลิงก์คุณภาพ 1 เส้นต่อเดือน ผูกมัดขั้นต่ำ 3 เดือน ไม่ต้องเสียภาษีมูลค่าเพิ่ม ตามมาตรา 293 B ของ CGI" },
+            { q: "ใช้เวลานานแค่ไหนกว่าจะเห็นผล?", a: "สัญญาณแรกมักวัดได้หลัง 3 ถึง 6 เดือน ขึ้นอยู่กับการแข่งขันและสภาพเว็บไซต์ ไม่มีการรับประกันอันดับ ข้อผูกมัด 3 เดือนจึงเป็นเวลาพอที่จะดูว่ามีความเคลื่อนไหวหรือไม่" },
+            { q: "รับประกันอันดับหนึ่งบน Google ได้ไหม?", a: "ไม่ได้ และควรระวังผู้ที่รับประกัน ผลลัพธ์ขึ้นอยู่กับอัลกอริทึมที่ไม่มีใครควบคุมได้ เรารับประกันงานที่ทำและการติดตามผลที่คุณตรวจสอบได้เอง" },
+            { q: "ฉันจะรู้ได้อย่างไรว่าได้ผล?", a: "Search Console สร้างในชื่อของคุณ คุณเห็นคลิก การแสดงผล และตำแหน่งเฉลี่ย และได้รับรายงานทุกเดือน หากเลิกใช้บริการ คุณยังเข้าถึงได้" },
+            { q: "SEO หรือ Google Ads: เลือกอะไรดี?", a: "โฆษณาพาลูกค้ามาเร็วแต่หยุดเมื่องบหมด SEO ค่อยๆ สะสมในระยะยาว มักเริ่มที่ SEO หากมีเว็บไซต์แล้ว และเริ่มที่ Google Ads หากเร่งด่วน" },
+            { q: "คุณทำอะไรกับโปรไฟล์ Google Business Profile ของฉัน?", a: "เราตรวจสอบข้อมูล หมวดหมู่ เวลาทำการ และรูปภาพ จากนั้นอัปเดตทุกเดือนและติดตามรีวิว โปรไฟล์ยังอยู่ในชื่อของคุณและคุณมีสิทธิ์เข้าถึงเสมอ" },
+            { q: "ต้องมีเว็บไซต์อยู่แล้วหรือไม่?", a: "ใช่ หรือสร้างขึ้นมา อย่างน้อยต้องมีหนึ่งหน้าที่พูดถึงธุรกิจของคุณ หากไม่มี เราเริ่มจากเว็บไซต์แนะนำธุรกิจก่อน แล้วจึงทำเรื่องการค้นหา" },
+            { q: "มีข้อผูกมัดหรือไม่?", a: "ขั้นต่ำ 3 เดือน จากนั้นต่ออายุรายเดือน คุณหยุดได้โดยแจ้งล่วงหน้าหนึ่งเดือน หน้าเว็บและสิทธิ์เข้าถึงยังเป็นของคุณ" },
           ],
           crossLink: null,
         },
@@ -2595,81 +3581,96 @@ const th: Translations = {
   },
   landing: {
     hero: {
-      pill: 'เอเจนซี่ · ตูร์ ฝรั่งเศส · พร้อมตั้งแต่พ.ค. 2026',
-      title_l1: 'เครื่องมือ',
-      title_l2: 'ที่ ',
-      title_l2_it: 'ทำงาน',
-      title_l3: 'เพื่อลูกค้าของคุณ',
-      sub: 'เราออกแบบเว็บไซต์ เครื่องมือจัดการ และ AI agents สำหรับร้านอาหาร ร้านค้า และบริการท้องถิ่น ไม่มีของฟุ่มเฟือย — มีแต่สิ่งที่ช่วยประหยัดเวลา รับสายและเพิ่มยอดขาย',
-      cta_primary: 'เริ่มวินิจฉัย',
-      cta_secondary: 'คุยเรื่องโปรเจกต์',
-      stat_1_n: '06', stat_1_l: 'พาร์ทเนอร์ปัจจุบัน', stat_1_d: 'ร้านอาหาร โรงเรียน อิสระ',
-      stat_2_n: '24ชม', stat_2_l: 'ตอบกลับแรก', stat_2_d: 'ปรึกษาฟรี',
-      stat_3_n: '100%', stat_3_l: 'เป็นเจ้าของโค้ด', stat_3_d: 'ตั้งแต่วันแรก',
-      stat_4_n: '1.5x', stat_4_l: 'อัตรารับสาย', stat_4_d: 'เมื่อมี phone agent',
-      canvas_l: 'โมเดล · BA-01',
-      canvas_r: 'หมุน · 0.4 RPM',
+      pill: "เอเจนซี่ · ตูร์ ฝรั่งเศส",
+      title_l1: "เอเจนซี่ดิจิทัล",
+      title_l2: "ที่ ",
+      title_l2_it: "ตูร์",
+      sub: "เครื่องมือที่ทำงานเพื่อลูกค้าของคุณ เว็บไซต์ SEO ท้องถิ่น และ AI agents สำหรับร้านค้า ร้านอาหาร ช่างฝีมือ และ SME ในเมืองตูร์",
+      cta_primary: "เริ่มวินิจฉัย",
+      cta_secondary: "คุยเรื่องโปรเจกต์",
     },
     manifeste: {
-      num: '01 / 07',
-      title_l1: 'เว็บไซต์ เครื่องมือ',
-      title_l2_it: 'AI agents',
-      intro: 'สามอย่างที่เราทำ — เพื่อเป้าหมายเดียว',
-      p1: 'คุณเป็นเจ้าของพิซเซเรีย ผู้จัดการร้านเสริมสวย ผู้บริหารโรงเรียนสอนเต้น คุณต้องการเครื่องมือที่ใช้ได้จริง',
-      p2: 'เราสัญญาแค่อย่างเดียว: สร้างสิ่งที่ลูกค้าของคุณจะใช้จริง ส่วนอื่นๆเราตัดทิ้ง',
-      quote: '« เว็บสวยก็ดี เว็บที่สร้างรายได้ดีกว่า »',
-      p3: 'ตอนนี้เราสร้าง AI agents เป็นหลัก — phone agents ที่รับสายลูกค้า ผู้ช่วยรับออเดอร์ ระบบอัตโนมัติที่ทำงานแทนคุณ',
-      p4: 'พรุ่งนี้เราจะสร้างสิ่งที่คุณต้องการ ฝีมือยังเหมือนเดิม: เครื่องมือที่มีประโยชน์',
-    },
-    problems: {
-      num: '02 / 07',
-      title_l1: 'สิ่งที่ทำให้คุณ',
-      title_l2_it: 'เสียลูกค้า',
-      intro: 'สี่สถานการณ์ที่ธุรกิจ SME เกือบทุกรายที่เราพบเจอต้องเผชิญ',
+      num: "01 / 08",
+      title_l1: "เอเจนซี่ดิจิทัลที่ตูร์",
+      title_l2_it: "สำหรับร้านค้าและ SME",
+      intro: "Sèvalys สร้างเว็บไซต์ ดูแล SEO ท้องถิ่น และติดตั้ง AI agents ให้ร้านค้า ร้านอาหาร ช่างฝีมือ และ SME ในเมืองตูร์และแคว้นอ็องดร์-เอ-ลัวร์ คุณคุยกับ Anatholy Bricon ผู้ก่อตั้งโดยตรง",
+      quote: "« เว็บสวยก็ดี เว็บที่สร้างรายได้ดีกว่า »",
       items: [
-        { n: '01', title: 'มองไม่เห็นบนออนไลน์', desc: 'ลูกค้าค้นหาธุรกิจของคุณบน Google แล้วเจอคู่แข่งก่อนเจอคุณ ทุกวันที่ไม่มีตัวตนออนไลน์ที่ชัดเจน ลูกค้าก็เลือกที่อื่น' },
-        { n: '02', title: 'ไม่มีใครรับโทรศัพท์', desc: 'สายที่พลาดไปช่วงเร่งด่วน คือออเดอร์หรือการจองที่หลุดไปหาร้านข้างๆ เกิดขึ้นบ่อยกว่าที่คิด' },
-        { n: '03', title: 'ภาพลักษณ์ล้าสมัย', desc: 'โลโก้ เว็บไซต์ โซเชียล เมื่อทุกอย่างดูเหมือนยุคก่อน ลูกค้าใหม่ก็ลังเลตั้งแต่ยังไม่ได้คุยกัน' },
-        { n: '04', title: 'ไม่มีเวลาดูแลโซเชียลมีเดีย', desc: 'ระหว่างงานประจำวันกับลูกค้าที่ร้าน โซเชียลมีเดียมักถูกทิ้งไว้ทีหลัง ทั้งที่นั่นคือจุดแรกที่ลูกค้าใหม่มักมองหา' },
+        { t: "มองไม่เห็นบน Google", d: "ลูกค้าค้นหาธุรกิจของคุณแล้วเจอคู่แข่งก่อน" },
+        { t: "สายที่พลาดไป", d: "สายที่ไม่มีคนรับช่วงเร่งด่วน คือออเดอร์ที่หลุดไปที่อื่น" },
+        { t: "ภาพลักษณ์ล้าสมัย", d: "เว็บไซต์หรือโลโก้ยุคเก่าทำให้ลูกค้าใหม่ลังเล" },
+        { t: "โซเชียลถูกทิ้งไว้", d: "ไม่มีเวลาดูแลโซเชียล ผู้ติดตามจึงไปอยู่กับคู่แข่ง" },
       ],
-      good_news: 'ข่าวดีคือ ปัญหาแต่ละอย่างมีทางแก้ที่ไม่ซับซ้อน โดยไม่ต้องเปลี่ยนทุกอย่างพร้อมกัน',
-      cta: 'ทดสอบวินิจฉัย',
+      cta: "ทำแบบวินิจฉัยฟรี",
     },
     servicesPreview: {
-      num: '03 / 07',
-      title_l1: 'สิบวิธี',
-      title_l2_it: 'ที่ช่วยคุณได้',
-      intro: 'แต่ละบริการมีหน้าเพจของตัวเอง: ปัญหาที่แก้ วิธีการทำงาน และสิ่งที่เปลี่ยนไปสำหรับคุณ',
+      num: "02 / 08",
+      title_l1: "บริการของเราที่ตูร์:",
+      title_l2_it: "เว็บไซต์ SEO โฆษณา AI",
+      intro: "ข้อเสนอที่ขอบเขตชัดเจน แสดงราคาไว้ แต่ละบริการมีหน้ารายละเอียดของตัวเอง",
+      cards: [
+        { t: "เว็บไซต์มืออาชีพ เริ่มต้น 500 €", d: "หน้าแรกและอีกไม่เกิน 2 หน้า ราคาเหมาจ่าย ใบเสนอราคาใน 48 ชม. ไม่มีข้อผูกมัด", link: "เว็บไซต์มืออาชีพที่ตูร์" },
+        { t: "SEO ท้องถิ่น เริ่มต้น 300 €/เดือน", d: "ติดตาม 2 หน้า รวมลิงก์ 1 รายการต่อเดือน ขั้นต่ำ 3 เดือน หน้าเพิ่ม +100 €/เดือน ไม่รับประกันอันดับ", link: "SEO ท้องถิ่น" },
+        { t: "ปรับโฉมเว็บไซต์และภาพลักษณ์ใหม่", d: "อัตลักษณ์ภาพและเว็บไซต์ที่ทำใหม่ทั้งหมดเพื่อภาพลักษณ์ที่ทันสมัย", link: "ปรับโฉมเว็บไซต์" },
+        { t: "โฆษณา Google Ads", d: "โฆษณาที่แสดงเมื่อลูกค้าค้นหาคุณ ด้วยงบที่คุณควบคุมได้", link: "แคมเปญ Google Ads" },
+        { t: "AI voice agent ไม่พลาดทุกสาย", d: "เอเจนต์ที่รับสาย จองนัด และแจ้งคุณ", link: "AI voice agent" },
+      ],
+      others: "และ:",
+      guide_price: "เว็บไซต์ราคาเท่าไร?",
+      guide_seo: "อธิบาย SEO ท้องถิ่นที่ตูร์",
+      vat: "ราคาเป็นยูโร ไม่มี VAT ตามมาตรา 293 B ของประมวลกฎหมายภาษีฝรั่งเศส (CGI)",
+      all: "ดูบริการทั้งหมด",
     },
     method: {
-      num: '04 / 07',
-      title_l1: 'วิธีการ',
-      title_l2_it: 'ทำงานของเรา',
-      intro: 'ขั้นตอนง่ายๆ ตั้งแต่การพูดคุยครั้งแรกจนถึงการดูแลต่อเนื่อง',
+      num: "04 / 08",
+      title_l1: "วิธีการ",
+      title_l2_it: "ทำงานของเรา",
+      intro: "สี่ขั้นตอน ตั้งแต่พูดคุยครั้งแรกจนถึงการดูแลต่อ",
       steps: [
-        { n: '01', t: 'วินิจฉัย', d: 'เราตรวจสอบธุรกิจของคุณและสิ่งที่เป็นอุปสรรคอยู่ตอนนี้ ด้วยคำถามที่ตรงจุด' },
-        { n: '02', t: 'ข้อเสนอเฉพาะคุณ', d: 'คุณจะได้รับคำแนะนำที่ชัดเจนของบริการที่เหมาะกับสถานการณ์คุณ ไม่มีศัพท์เทคนิค' },
-        { n: '03', t: 'ดำเนินการ', d: 'เราติดตั้งโซลูชันที่เลือกไว้ตามจังหวะของคุณ พร้อมติดตามผลอย่างสม่ำเสมอ' },
-        { n: '04', t: 'ดูแลและสนับสนุน', d: 'เราพร้อมให้ความช่วยเหลือหลังเปิดใช้งาน เพื่อปรับแต่งและตอบคำถามของคุณ' },
+        { n: '01', t: "วินิจฉัย", d: "คำถามไม่กี่ข้อเกี่ยวกับธุรกิจและสิ่งที่เป็นอุปสรรค" },
+        { n: '02', t: "ข้อเสนอ", d: "คำแนะนำที่ชัดเจนและใบเสนอราคาใน 48 ชม." },
+        { n: '03', t: "ดำเนินการ", d: "ทำโปรเจกต์พร้อมรายงานความคืบหน้าสม่ำเสมอ" },
+        { n: '04', t: "ดูแลต่อ", d: "เราพร้อมช่วยหลังเปิดใช้งาน" },
       ],
     },
-    enjeux: {
-      num: '05 / 07',
-      title_l1: 'สิ่งที่',
-      title_l2_it: 'เสี่ยงอยู่',
-      intro: 'การไม่ทำอะไรเลยก็ส่งผลเช่นกัน เพียงแต่มองไม่เห็นชัดในแต่ละวัน',
-      points: [
-        { t: 'คู่แข่งของคุณครองพื้นที่การค้นหาในท้องถิ่น', d: 'ขณะที่คุณลังเล คนที่มีตัวตนออนไลน์ชัดเจนอยู่แล้วก็ดึงการค้นหาบน Google จากลูกค้าในอนาคตของคุณไป' },
-        { t: 'สายที่พลาดสะสมมากขึ้นเรื่อยๆ', d: 'สายที่พลาดครั้งเดียวดูเหมือนไม่มีอะไร แต่รวมกันตลอดทั้งปี กลายเป็นออเดอร์จำนวนมากที่หลุดไปที่อื่น' },
-        { t: 'ความน่าเชื่อถือของแบรนด์ลดลง', d: 'อัตลักษณ์ที่ไม่เปลี่ยนแปลงในขณะที่ตลาดเปลี่ยนไป จะดูล้าสมัยในที่สุด แม้บริการจะยังดีอยู่ก็ตาม' },
-        { t: 'โซเชียลมีเดียหลุดมือไป', d: 'หากไม่มีความสม่ำเสมอ กลุ่มผู้ชมที่ก่อตัวขึ้นจะไปอยู่ที่อื่น กับคนที่ใช้เวลาปรากฏตัวอยู่เสมอ' },
+    zone: {
+      num: "05 / 08",
+      title_l1: "เราให้บริการที่ไหน?",
+      title_l2_it: "ตูร์และอ็องดร์-เอ-ลัวร์",
+      text: "Sèvalys ตั้งอยู่ที่ตูร์ เราทำงานกับร้านค้า ร้านอาหาร ช่างฝีมือ และบริษัทในตูร์และอ็องดร์-เอ-ลัวร์ ทั้งนัดพบหน้าและออนไลน์ การวินิจฉัยและการดูแลต่อทำทางไกลได้ทั่วฝรั่งเศส",
+      label: "เมือง:",
+      towns: ["Tours", "Saint-Avertin", "Joué-lès-Tours", "Saint-Cyr-sur-Loire", "La Riche", "Chambray-lès-Tours"],
+    },
+    why: {
+      num: "06 / 08",
+      title_l1: "ทำไมต้องเลือกเอเจนซี่ดิจิทัล",
+      title_l2_it: "ขนาดพอดีตัว?",
+      items: [
+        { t: "คุยกับคนเดียว", d: "คุณคุยกับ Anatholy Bricon ผู้ประกอบการรายเดียวและผู้ก่อตั้ง Sèvalys โดยตรง" },
+        { t: "ราคาชัดเจน", d: "เว็บไซต์เริ่มต้น 500 € SEO เริ่มต้น 300 €/เดือน คุณรู้ล่วงหน้า" },
+        { t: "คุณเป็นเจ้าของทุกอย่าง", d: "โค้ดและชื่อโดเมนเป็นของคุณตั้งแต่วันแรก" },
+      ],
+    },
+    faq: {
+      num: "07 / 08",
+      title_l1: "คำถาม",
+      title_l2_it: "ที่พบบ่อย",
+      items: [
+        { q: "เอเจนซี่ดิจิทัลที่ตูร์อย่าง Sèvalys ทำอะไร?", a: "Sèvalys สร้างเว็บไซต์ ดูแล SEO ท้องถิ่น ทำแคมเปญ Google Ads และติดตั้ง AI voice agent ให้ร้านค้าและ SME ในตูร์ คุณคุยกับ Anatholy Bricon โดยตรง ตั้งแต่ครั้งแรกจนเว็บไซต์เปิดใช้งาน" },
+        { q: "เอเจนซี่เว็บกับเอเจนซี่ดิจิทัลต่างกันอย่างไร?", a: "เอเจนซี่เว็บทำเว็บไซต์ เอเจนซี่ดิจิทัลดูแลให้คุณถูกค้นเจอบน Google (SEO โฆษณา) และเครื่องมือประจำวัน (AI agent ระบบอัตโนมัติ) ด้วย" },
+        { q: "เว็บไซต์ราคาเท่าไร?", a: "เริ่มต้น 500 € หน้าแรกและอีกไม่เกิน 2 หน้า ราคาเหมาจ่ายขอบเขตชัดเจน ใบเสนอราคาใน 48 ชม. ไม่มีข้อผูกมัด ไม่มี VAT ตามมาตรา 293 B ของ CGI" },
+        { q: "SEO ราคาเท่าไร?", a: "เริ่มต้น 300 €/เดือน สำหรับ 2 หน้า หน้าเพิ่ม +100 €/เดือน รวมลิงก์ 1 รายการต่อเดือน ขั้นต่ำ 3 เดือน ไม่รับประกันอันดับ เราวัดผลและรายงาน" },
+        { q: "ให้บริการเฉพาะที่ตูร์ใช่ไหม?", a: "Sèvalys ตั้งอยู่ที่ตูร์ ให้บริการทั่วอ็องดร์-เอ-ลัวร์ ทั้งนัดพบหน้าและวิดีโอคอล และทางไกลได้ทั่วฝรั่งเศส" },
+        { q: "เว็บไซต์ใช้เวลานานเท่าไรกว่าจะออนไลน์?", a: "โดยทั่วไปไม่กี่สัปดาห์ ขึ้นอยู่กับเวลาที่ใช้เตรียมข้อความและรูปภาพ" },
+        { q: "ฉันยังเป็นเจ้าของเว็บไซต์และชื่อโดเมนใช่ไหม?", a: "ใช่ โค้ดและชื่อโดเมนเป็นของคุณตั้งแต่วันแรก" },
+        { q: "ฉันจะทำงานกับใคร?", a: "กับ Anatholy Bricon ผู้ประกอบการรายเดียวและผู้ก่อตั้ง Sèvalys คุณคุยกับเขาโดยตรง ตั้งแต่ใบเสนอราคาจนถึงการดูแลต่อ" },
       ],
     },
     work: {
-      num: '06 / 07',
-      title_l1: 'ผลงาน',
-      title_l2_it: 'ที่คัดสรร',
-      intro: 'พาร์ทเนอร์ 6 ราย 6 อาชีพ วิธีเดียวกัน: แก้ปัญหาทางธุรกิจจริง',
+      num: "03 / 08",
+      title_l1: "สี่เว็บไซต์ที่ส่งมอบ",
+      title_l2_it: "สี่ธุรกิจ",
+      intro: "เว็บไซต์จริงที่เปิดใช้งานอยู่ คุณเข้าไปดูได้",
       items: [
         { name: 'Grand Ouest Habitat', desc: 'เว็บไซต์ปรับปรุงอาคารทั่วไป — ส่งคำขอโครงการออนไลน์ ตรวจหน้างาน แล้วรับใบเสนอราคาภายใน 48 ชั่วโมง', tags: ['เว็บ', 'ใบเสนอราคา'], year: '2026' },
         { name: 'Sellerie Duchet', desc: 'ร้านค้าออนไลน์อุปกรณ์ขี่ม้า — แค็ตตาล็อกตามหมวด จัดส่ง และผ่อนชำระได้', tags: ['ร้านค้า', 'อีคอมเมิร์ซ'], year: '2026' },
@@ -2680,14 +3681,6 @@ const th: Translations = {
       bridge_title_l1: 'บริการไหน',
       bridge_title_it: 'เหมาะกับคุณ?',
       bridge_body: 'วินิจฉัยสองนาทีเพื่อรู้แน่ชัดว่าคุณต้องการอะไร',
-    },
-    phone: {
-      badge: 'LIVE · PHONE AGENT',
-      title_l1: 'ลูกค้าโทรเข้ามา',
-      title_l2: 'เรา',
-      title_l3_it: 'รับสาย',
-      sub: 'AI voice agent ที่เชื่อมกับ CRM หรือสมุดออเดอร์ของคุณ มันรับสาย เข้าใจ ยืนยัน — ขณะที่คุณทำงาน',
-      cta_roi: 'ค้นพบ AI voice agent',
     },
     partners: {
       title: 'ลูกค้าที่ไว้วางใจ — ตั้งแต่ 2023',
@@ -2702,10 +3695,11 @@ const th: Translations = {
       ],
     },
     contact: {
-      num: '07 / 07',
-      title_l1: 'มีโปรเจกต์?',
-      title_l2_it: 'คุยกัน',
-      sub: 'ตอบใน 24 ชม ทำการ ปรึกษาครั้งแรกฟรี ไม่มีพันธะ เพื่อเข้าใจว่าคุณอยู่ตรงไหนและอะไรเหมาะกับคุณ',
+      num: "08 / 08",
+      title_l1: "มีโปรเจกต์ที่ตูร์?",
+      title_l2_it: "มาคุยกัน",
+      sub: "ตอบภายใน 24 ชั่วโมงทำการ โทรครั้งแรกฟรี ไม่มีข้อผูกมัด เพื่อทำความเข้าใจสถานการณ์ของคุณ",
+      updated: "อัปเดตเมื่อพฤศจิกายน 2026",
       info: [
         { k: 'อีเมล', v: 'contact@sevalys.com' },
         { k: 'โทรศัพท์', v: '+33 (0)6 07 18 41 33' },

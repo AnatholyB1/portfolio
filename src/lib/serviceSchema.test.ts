@@ -81,7 +81,7 @@ describe('buildServiceCatalogJsonLd', () => {
   });
 });
 
-describe('D-01: /services/[slug] layout stays Service-free', () => {
+describe('D-01: /services/[slug] layout delegates Service JSON-LD to builders (no inline Service literal, no catalog)', () => {
   const file = path.join(
     path.dirname(fileURLToPath(import.meta.url)),
     '..',
@@ -100,5 +100,7 @@ describe('D-01: /services/[slug] layout stays Service-free', () => {
     expect(source).not.toMatch(/['"]Service['"]/);
     expect(source).not.toContain('buildServiceCatalogJsonLd');
     expect(source).toContain('buildFaqJsonLd');
+    expect(source).toContain('buildServiceJsonLd');
+    expect(source).toContain('buildBreadcrumbJsonLd');
   });
 });

@@ -750,6 +750,53 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 .svc-crosslink { display: inline-block; margin-top: 24px; font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--acid); text-decoration: none; }
 .svc-crosslink:hover { color: var(--ink); }
 
+/* Contenu long optionnel : intro, sections, étapes, tarifs, zones, preuves, guides liés.
+   Aucun fondu ni décalage : contenu visible dès le premier rendu (LCP). */
+.svc-intro { padding: 72px 0; }
+.svc-long { min-width: 0; }
+.svc-long .svc-body + .svc-body, .svc-long .svc-body + .svc-list, .svc-long .svc-list + .svc-body { margin-top: 20px; }
+.svc-list { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 10px; max-width: 62ch; }
+.svc-list li { position: relative; padding-left: 22px; font-size: 17px; line-height: 1.55; color: var(--ink-dim); }
+.svc-list li::before { content: ''; position: absolute; left: 0; top: 0.7em; width: 8px; height: 2px; background: var(--acid); }
+.svc-list-no li::before { background: var(--warm, #E07856); }
+
+.svc-steps { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+.svc-step { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); }
+.svc-step-n { font-family: var(--font-mono), monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--acid); padding-top: 6px; }
+.svc-step h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(20px, 2vw, 26px); line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 10px; }
+.svc-step p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-dim); max-width: 62ch; }
+.svc-step .svc-step-d { margin-top: 10px; font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink-faint); }
+
+.svc-price { margin: 0 0 40px; font-size: 18px; color: var(--ink-dim); }
+.svc-price strong { display: block; font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(44px, 6vw, 84px); line-height: 1; letter-spacing: -0.04em; color: var(--acid); margin: 8px 0; }
+.svc-price-from { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-faint); }
+.svc-incl { display: grid; gap: 32px; }
+@media (min-width: 900px) { .svc-incl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.svc-incl h3, .svc-proofs h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); margin: 0; }
+.svc-table-wrap { margin-top: 40px; overflow-x: auto; }
+.svc-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.5; }
+.svc-table caption { text-align: left; font-family: var(--font-display), serif; font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); padding-bottom: 14px; }
+.svc-table th, .svc-table td { text-align: left; padding: 14px 16px 14px 0; border-top: 1px solid var(--line); color: var(--ink-dim); vertical-align: top; }
+.svc-table thead th { font-family: var(--font-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; font-weight: 400; color: var(--ink-faint); }
+.svc-table tbody th { font-weight: 400; color: var(--ink); }
+.svc-table td { white-space: nowrap; }
+.svc-note { margin: 32px 0 0; font-family: var(--font-mono), monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); }
+
+.svc-areas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.svc-areas li { border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 15px; color: var(--ink-dim); }
+
+.svc-proofs, .svc-guides { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+.svc-proofs li, .svc-guides li { padding: 24px 0; border-top: 1px solid var(--line); }
+.svc-proofs h3 span { font-family: var(--font-mono), monospace; font-size: 12px; color: var(--ink-faint); margin-left: 8px; }
+.svc-proof-host { margin: 6px 0 0; font-family: var(--font-mono), monospace; font-size: 12px; color: var(--ink-faint); }
+.svc-guide-link { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(20px, 2vw, 26px); line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--acid); padding: 10px 0; display: inline-block; min-height: 44px; }
+.svc-guide-link:hover { color: var(--acid); }
+.svc-guides p { margin: 8px 0 0; font-size: 16px; line-height: 1.55; color: var(--ink-dim); max-width: 62ch; }
+@media (max-width: 900px) {
+  .svc-intro { padding: 48px 0; }
+  .svc-step { grid-template-columns: 40px minmax(0, 1fr); gap: 16px; }
+}
+
 /* Appel à l'action : grand aplat acid */
 .svc-cta { padding: 120px 0; background: var(--acid); color: #0A0B0C; border-top: 0; }
 .svc-cta .svc-h2 { font-size: clamp(40px, 6vw, 92px); margin-bottom: 24px; max-width: 16ch; }
@@ -1044,4 +1091,66 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--line); }
 }
 @media (prefers-reduced-motion: reduce) {
   .mcta, .nav-burger span { transition: none; }
+}
+
+/* ─── Accueil SEO : offres, zone, pourquoi, FAQ (nov. 2026) ───────── */
+.mband-cols p { max-width: 46ch; }
+.mband-item { margin: 0 0 32px; }
+.mband-item:last-child { margin-bottom: 0; }
+.mband-item h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(22px, 2.4vw, 30px); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 8px; }
+.mband-item p { margin: 0; color: rgba(10,11,12,0.78); }
+.mband-cta { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; margin-top: 56px; padding: 14px 26px; border-radius: 100px; background: #0A0B0C; color: var(--acid); font-weight: 600; text-decoration: none; transition: transform .25s; }
+.mband-cta:hover, .mband-cta:focus-visible { transform: translateX(4px); }
+.mband-cta:focus-visible { outline: 2px solid #0A0B0C; outline-offset: 3px; }
+
+.offers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.offer { display: flex; flex-direction: column; gap: 14px; padding: 32px 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
+.offer h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(22px, 2vw, 28px); line-height: 1.1; letter-spacing: -0.025em; margin: 0; }
+.offer p { margin: 0; color: var(--ink-dim); font-size: 15px; line-height: 1.6; }
+.offer-link, .offer-guide { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; }
+.offer-link { margin-top: auto; color: var(--acid); font-weight: 500; }
+.offer-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.offer-guide { margin-top: -10px; color: var(--ink-dim); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+.offer-guide:hover { color: var(--ink); }
+.offers-more { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin: 40px 0 0; color: var(--ink-dim); }
+.offers-more a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); text-underline-offset: 3px; }
+.offers-more a:hover { color: var(--acid); }
+.offers-more-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+.offers-all { margin-left: auto; font-weight: 500; }
+.offers-vat { margin: 16px 0 0; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-faint); }
+
+.zone-towns { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 32px; border-top: 1px solid var(--line); }
+.zone-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+.zone-towns ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.zone-towns li { padding: 8px 16px; border: 1px solid var(--line-strong); border-radius: 100px; color: var(--ink); font-size: 15px; }
+
+.why-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.why-list li { border-top: 2px solid var(--acid); padding-top: 24px; }
+.why-list h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 26px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 12px; }
+.why-list p { margin: 0; color: var(--ink-dim); font-size: 16px; line-height: 1.6; max-width: 40ch; }
+
+.faq-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 64px; border-top: 1px solid var(--line); }
+.faq-item { padding: 28px 0; border-bottom: 1px solid var(--line); }
+.faq-item h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 10px; }
+.faq-item p { margin: 0; color: var(--ink-dim); font-size: 16px; line-height: 1.6; }
+
+.contact-updated { margin: 24px 0 0; font-size: 11px; letter-spacing: 0.1em; color: var(--ink-faint); }
+
+@media (max-width: 1100px) {
+  .offers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .why-list { gap: 28px; }
+}
+@media (max-width: 900px) {
+  .faq-list { grid-template-columns: minmax(0, 1fr); }
+  .why-list { grid-template-columns: minmax(0, 1fr); }
+  .offers-all { margin-left: 0; }
+  .mband-cta { margin-top: 40px; }
+}
+@media (max-width: 640px) {
+  .offers { grid-template-columns: minmax(0, 1fr); }
+  .offer { padding: 24px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mband-cta { transition: none; }
+  .mband-cta:hover, .mband-cta:focus-visible { transform: none; }
 }

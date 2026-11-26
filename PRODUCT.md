@@ -10,7 +10,7 @@ Patrons de PME locales autour de Tours (restaurants, commerces, écoles, artisan
 
 ## Product Purpose
 
-Sèvalys est une agence web et IA à Tours (sites, branding, community management, Meta Ads, Google Ads, agent vocal IA, maintenance, projets sur mesure, 9 offres). Le site présente l'agence, chaque offre sur sa propre page, et qualifie les prospects via un simulateur de diagnostic. Aucun prix n'est jamais affiché. Le succès : un visiteur sur deux comprend l'offre sans lire, et les prospects qualifiés arrivent par le simulateur ou le contact direct.
+Sèvalys est une agence web et IA à Tours (sites, branding, community management, Meta Ads, Google Ads, agent vocal IA, maintenance, projets sur mesure, 9 offres). Le site présente l'agence, chaque offre sur sa propre page, et qualifie les prospects via un simulateur de diagnostic. Les prix sont affichés « à partir de » (voir la décision tarifaire en fin de document). Le succès : un visiteur sur deux comprend l'offre sans lire, et les prospects qualifiés arrivent par le simulateur ou le contact direct.
 
 ## Brand Personality
 
@@ -29,7 +29,7 @@ Technique et précis, audacieux et énergique. Voix directe, concrète, sans jar
 2. **Une idée par écran, des rythmes différents.** Chaque section a sa propre composition et sa propre densité. La répétition de la même structure est un échec, pas un système.
 3. **La hiérarchie par contraste d'échelle.** Un titre dominant, un corps calme, du mono pour la précision. Les cartes ne servent que quand elles sont la meilleure affordance.
 4. **La couleur s'engage.** Les couleurs clés actuelles sont conservées, mais utilisées par grands aplats et avec une fonction (action, état, repère), jamais en halo décoratif.
-5. **Chaque page mène à une action.** Simulateur ou contact direct, jamais un prix, jamais une impasse.
+5. **Chaque page mène à une action.** Simulateur ou contact direct, jamais d'impasse.
 
 ## Accessibility & Inclusion
 
@@ -39,4 +39,5 @@ WCAG AA (contraste, focus visible, navigation clavier complète). Toutes les ani
 
 - Conserver la palette actuelle : acid `#C4F542`, fond `#0A0B0C`, encre `#ECEAE3`, warm `#E07856`, ligne `#1F1F1F`.
 - Conserver les polices : Bricolage Grotesque (display), Manrope (corps), JetBrains Mono (mono).
-- Ne jamais afficher de prix. Ne pas toucher à `/demo/feuillette`.
+- Prix : décision 2026-11, la règle « ne jamais afficher de prix » est retirée. Les prix sont affichés « à partir de » (jamais un prix ferme ni un comparateur), uniquement dans le bloc tarifs d'une page `/services/[slug]` (donnée `pricing`, avec offre JSON-LD cohérente avec le prix visible). Mention obligatoire : « TVA non applicable, art. 293 B du CGI ». Aucune promesse de position ni de résultat (pas de « première page Google », pas de garantie de classement ou de volume de leads). Les prix restent absents de l'accueil, du simulateur et des métadonnées (title/meta), sauf décision ultérieure.
+- Ne pas toucher à `/demo/feuillette`.

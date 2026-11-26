@@ -200,40 +200,9 @@ export default function RootLayout({
     publisher: { "@id": `${SITE_URL}/#organization` },
   };
 
-  const faq = {
-    "@type": "FAQPage",
-    "@id": `${SITE_URL}/#faq`,
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Qu'est-ce que Sèvalys ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Sèvalys est une agence IA basée à Tours (France). Elle conçoit des agents vocaux téléphoniques qui répondent aux clients 24/7, des automatisations métier et des sites web. Son positionnement : l'optimisation business par l'intelligence artificielle.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Qu'est-ce qu'un agent vocal IA téléphonique Sèvalys ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "C'est un standard téléphonique automatisé par IA : il décroche, comprend la demande en français naturel, prend une commande ou un rendez-vous, met à jour votre CRM et vous notifie — sans appel manqué, jour et nuit.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Où se trouve Sèvalys et qui accompagne-t-elle ?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Sèvalys est basée à Tours en Indre-et-Loire et intervient à distance partout en France, pour les PME, commerces, restaurants, écoles et services locaux. Devis sous 48h, sans engagement.",
-        },
-      },
-    ],
-  };
-
   const jsonLd = {
     "@context": "https://schema.org",
-    "@graph": [org, professionalService, website, faq],
+    "@graph": [org, professionalService, website],
   };
 
   return (

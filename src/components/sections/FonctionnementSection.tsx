@@ -51,7 +51,7 @@ export default function FonctionnementSection() {
         <div className="sec-head" data-reveal>
           <span className="sec-num">{ts.num}</span>
           <h2 className="sec-title">
-            {ts.title_l1}
+            {ts.title_l1}{' '}
             <br />
             <em className="it">{ts.title_l2_it}</em>
           </h2>

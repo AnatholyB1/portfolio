@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/data/services";
+import { guides } from "@/data/guides";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sevalys.com";
 
@@ -11,10 +12,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly",
     priority: 0.8,
   }));
+  const guideEntries: MetadataRoute.Sitemap = guides.map((g) => ({
+    url: `${SITE_URL}/guides/${g.slug}`,
+    lastModified: new Date(g.dateModified),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
   return [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "monthly", priority: 1 },
     { url: `${SITE_URL}/services`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     ...serviceEntries,
+    { url: `${SITE_URL}/guides`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    ...guideEntries,
     { url: `${SITE_URL}/simulateur`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/mentions-legales`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/avis`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },

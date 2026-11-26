@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
-import { OG_IMAGE } from "@/lib/pageSeo";
+import { buildPageSeo } from "@/lib/pageSeo";
+
+const TITLE = "Nos 10 services · sites, SEO, pub et agents IA";
+const DESCRIPTION = "10 services pour PME à Tours : sites, marque, agent vocal IA, maintenance, SEO, community management et publicité Meta et Google Ads.";
 
 export const metadata: Metadata = {
-  title: "Nos 10 services · sites, marque, SEO, pub et agents IA",
-  description: "10 services pour PME à Tours : sites, marque, agent vocal IA, maintenance, SEO, community management et publicité Meta et Google Ads.",
+  // title, description, canonical (/services), openGraph et twitter : helper partagé.
+  ...buildPageSeo({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/services",
+    socialTitle: "Nos 10 services · Sèvalys",
+  }),
   keywords: [
     "agent vocal IA",
     "agent téléphonique IA",
@@ -48,24 +56,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  openGraph: {
-    title: "Nos 10 services · Sèvalys",
-    description: "Sites, identité, publicité et agents IA pour PME à Tours.",
-    type: "website",
-    locale: "fr_FR",
-    siteName: "Sèvalys",
-    url: "/services",
-    images: [OG_IMAGE],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: [OG_IMAGE.url],
-    title: "Nos 10 services · Sèvalys",
-    description: "Sites, identité, publicité et agents IA pour PME à Tours.",
-  },
-  alternates: {
-    canonical: "/services",
   },
   category: "technology",
 };

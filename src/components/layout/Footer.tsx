@@ -33,6 +33,7 @@ export default function Footer() {
             <Link href="/#manifeste">Manifeste</Link>
             <Link href="/#work">Work</Link>
             <Link href="/services">Services</Link>
+            <Link href="/guides">Guides</Link>
             <Link href="/#contact">Contact</Link>
             <a href="/mentions-legales">{f.legal}</a>
             <Link href="/avis">{f.reviews}</Link>

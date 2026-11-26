@@ -44,7 +44,7 @@ export const services: Service[] = [
     slug: 'rebranding-site-premium',
     index: 1,
     caseStudyProjectIndex: null,
-    featureIcons: ['Eye', 'PenTool', 'Palette', 'FileText', 'BookOpen', 'Layout', 'Headphones'],
+    featureIcons: ['Eye', 'ClipboardCheck', 'Smartphone', 'Globe', 'Route', 'Search', 'BookOpen'],
   },
   {
     slug: 'branding',

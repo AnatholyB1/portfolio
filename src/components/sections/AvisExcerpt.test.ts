@@ -28,20 +28,15 @@ const html = (n: number) =>
   renderToStaticMarkup(createElement(AvisExcerptView, { reviews: Array.from({ length: n }, (_, i) => mk(i)) }))
 
 describe('AvisExcerpt', () => {
-  it('renders a visible, error-free empty state instead of vanishing', () => {
-    const h = html(0)
-    expect(h).toContain('Ce que disent nos clients')
-    expect(h).toContain('Les avis arrivent après la livraison des projets')
-    expect(h).toContain('href="/avis"')
-    expect(h).not.toContain('<article')
-    expect(h.toLowerCase()).not.toContain('erreur')
+  it('renders nothing when no review is published (no empty placeholder on the home)', () => {
+    expect(html(0)).toBe('')
   })
 
   it('renders the section with links for 1-3 reviews', () => {
     const h = html(2)
     expect(h).toContain('// AVIS VÉRIFIÉS')
-    expect(h).toContain('Ce que disent nos clients')
-    expect(h).toContain('Voir tous les avis')
+    expect(h).toContain('Avis clients')
+    expect(h).toContain('Lire les avis clients')
     expect(h).toContain('href="/avis"')
     expect(h).toContain('href="/politique-des-avis"')
     expect(h.split('<article').length - 1).toBe(2)
@@ -77,10 +72,11 @@ describe('AvisExcerpt', () => {
     for (const w of ['€', 'prix', 'tarif']) expect(src).not.toContain(w)
   })
 
-  it('is inserted between Partners and ContactSection on the home page', () => {
-    const p = pageSrc.indexOf('<Partners')
+  it('is inserted between WhySection and the FAQ, before ContactSection, on the home page', () => {
+    const p = pageSrc.indexOf('<WhySection')
     const a = pageSrc.indexOf('<AvisExcerpt')
-    const c = pageSrc.indexOf('<ContactSection')
+    const c = pageSrc.indexOf('<FaqSection')
+    expect(pageSrc.indexOf('<ContactSection')).toBeGreaterThan(c)
     expect(p).toBeGreaterThan(-1)
     expect(a).toBeGreaterThan(p)
     expect(c).toBeGreaterThan(a)

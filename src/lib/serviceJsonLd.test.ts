@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildFaqJsonLd, buildJsonLdScript } from './serviceJsonLd';
+import {
+  buildBreadcrumbJsonLd,
+  buildFaqJsonLd,
+  buildJsonLdScript,
+  buildServiceJsonLd,
+} from './serviceJsonLd';
 
 describe('buildFaqJsonLd', () => {
   it('returns a well-formed FAQPage object for a single FAQ item', () => {
@@ -51,5 +56,41 @@ describe('buildJsonLdScript', () => {
     const obj = { a: '<script>alert(1)</script>', nested: { b: [1, 2, '<x>'] } };
     const script = buildJsonLdScript(obj);
     expect(JSON.parse(script)).toEqual(obj);
+  });
+});
+
+describe('buildServiceJsonLd', () => {
+  const base = { name: 'Site Vitrine', description: 'D' };
+
+  it('emits no offers when the page has no pricing block', () => {
+    const node = buildServiceJsonLd(base, 'site-vitrine', 'https://x.test');
+    expect(node).not.toHaveProperty('offers');
+    expect(node['@id']).toBe('https://x.test/services/site-vitrine#service');
+    expect(node.areaServed).toEqual({ '@type': 'Country', name: 'FR' });
+  });
+
+  it('emits offers { price, priceCurrency EUR } only when pricing exists', () => {
+    const node = buildServiceJsonLd(
+      { ...base, pricing: { price: 1200 }, areas: ['Tours', 'Joué-lès-Tours'] },
+      'site-vitrine',
+      'https://x.test'
+    ) as unknown as { offers: { price: string; priceCurrency: string }; areaServed: { name: string }[] };
+    expect(node.offers.price).toBe('1200');
+    expect(node.offers.priceCurrency).toBe('EUR');
+    expect(node.areaServed.map((a) => a.name)).toEqual(['Tours', 'Joué-lès-Tours']);
+  });
+});
+
+describe('buildBreadcrumbJsonLd', () => {
+  it('numbers items from 1 with absolute urls', () => {
+    const node = buildBreadcrumbJsonLd(
+      [
+        { name: 'Accueil', path: '/' },
+        { name: 'Services', path: '/services' },
+      ],
+      'https://x.test'
+    );
+    expect(node.itemListElement.map((e) => e.position)).toEqual([1, 2]);
+    expect(node.itemListElement[1].item).toBe('https://x.test/services');
   });
 });

@@ -1,13 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { translations } from './translations';
+import { translations, type ServicePageContent } from './translations';
 import { services, getServiceBySlug } from '@/data/services';
+import { caseStudyProjects } from '@/data/projects';
 import { QUESTIONS } from '@/lib/simulateur/questions';
 
 const LANGS = ['fr', 'en', 'th'] as const;
 
+/** Un item est « étendu » dès qu'il utilise un bloc de contenu long (FAQ jusqu'à 8). */
+function isExtended(item: ServicePageContent): boolean {
+  return Boolean(item.longIntro?.length || item.sections?.length || item.steps?.length);
+}
+
 // SVC-02 no-price guard — must never match anywhere in t.services.pages,
 // for any locale, at any stage of the phase (covers items[] automatically
 // as later plans append entries).
+// Décision 2026-11 : les adresses de liens (`href`) sont ignorées (ex. /guides/prix-site-vitrine).
+const withoutHrefs = (_k: string, v: unknown) => (_k === 'href' ? undefined : v);
 const PRICE_PATTERN = /€|฿|\bprix\b|\btarifs?\b|\beuros?\b|\bprice\b|\bpricing\b|à partir de/i;
 
 // SIMU-06 guard — deliberately stricter than SVC-02's PRICE_PATTERN because
@@ -98,13 +106,18 @@ describe('translations.services.pages — skeleton (SVC-06)', () => {
 
   it('SVC-02: no pricing language appears anywhere in services.pages, for any locale', () => {
     for (const lang of LANGS) {
-      const serialized = JSON.stringify(translations[lang].services.pages);
-      expect(serialized).not.toMatch(PRICE_PATTERN);
+      // Décision 2026-11 : les libellés `extra` et les items qui portent un bloc
+      // `pricing` (prix « à partir de », TVA non applicable art. 293 B) sont exemptés.
+      const { extra: _extra, items, ...rest } = translations[lang].services.pages;
+      void _extra;
+      const guarded = { ...rest, items: items.filter((it) => !it.pricing) };
+      expect(JSON.stringify(guarded, withoutHrefs)).not.toMatch(PRICE_PATTERN);
     }
   });
 
   it('advisory: fr item word counts are reported and stay within the hard bounds 200-700 (D-02 target 300-500)', () => {
     for (const item of translations.fr.services.pages.items) {
+      if (isExtended(item)) continue; // contenu long : voir le bloc « contenu long » en fin de fichier
       const words = [
         item.h1Lead,
         item.h1Benefit,
@@ -170,7 +183,7 @@ describe('service pages content — complete set (SVC-01..06, 10-of-10 completen
         expect(item.enjeux.length, `${lang} ${item.name} enjeux`).toBeGreaterThanOrEqual(1);
         expect(item.enjeux.length, `${lang} ${item.name} enjeux`).toBeLessThanOrEqual(2);
         expect(item.faq.length, `${lang} ${item.name} faq`).toBeGreaterThanOrEqual(3);
-        expect(item.faq.length, `${lang} ${item.name} faq`).toBeLessThanOrEqual(4);
+        expect(item.faq.length, `${lang} ${item.name} faq`).toBeLessThanOrEqual(isExtended(item) ? 8 : 4);
         for (const faqEntry of item.faq) {
           expect(faqEntry.q.trim().length).toBeGreaterThan(0);
           expect(faqEntry.a.trim().length).toBeGreaterThan(0);
@@ -209,7 +222,8 @@ describe('service pages content — complete set (SVC-01..06, 10-of-10 completen
   it('SVC-02: no-price guard passes over all 10 entries in all 3 locales', () => {
     for (const lang of LANGS) {
       for (const item of translations[lang].services.pages.items) {
-        const serialized = JSON.stringify(item);
+        if (item.pricing) continue; // pages avec bloc tarifs : prix « à partir de » autorisés (décision 2026-11)
+        const serialized = JSON.stringify(item, withoutHrefs);
         expect(serialized).not.toMatch(PRICE_PATTERN);
       }
     }
@@ -217,6 +231,7 @@ describe('service pages content — complete set (SVC-01..06, 10-of-10 completen
 
   it('advisory: fr item word counts land in 200-700, warns outside 300-500 (D-02) — full 10-of-10 pass', () => {
     for (const item of translations.fr.services.pages.items) {
+      if (isExtended(item)) continue;
       const words = [
         item.h1Lead,
         item.h1Benefit,
@@ -353,170 +368,56 @@ describe('translations.simulateur (SIMU-05, SIMU-06, SIMU-08)', () => {
   });
 });
 
-describe('translations.landing + translations.services — Phase 8 pricing policy (PRIX-01)', () => {
-  // The four new landing keys below (problems, servicesPreview, method, enjeux)
-  // and the work.bridge_* fields do not exist on the Translations interface
-  // yet — plans 03/05 add them. A direct `translations[lang].landing.problems`
-  // access would fail `tsc` today even though Vitest would transpile it
-  // (repo runs eslint-config-next/typescript, so `any` is also off the table).
-  // This local structural type + `landingOf` cast lets every assertion below
-  // compile now and keep compiling once the real fields land.
-  type Phase8Landing = {
-    problems: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      items: { n: string; title: string; desc: string }[];
-      good_news: string;
-      cta: string;
-    };
-    servicesPreview: { num: string; title_l1: string; title_l2_it: string; intro: string };
-    method: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      steps: { n: string; t: string; d: string }[];
-    };
-    enjeux: {
-      num: string;
-      title_l1: string;
-      title_l2_it: string;
-      intro: string;
-      points: { t: string; d: string }[];
-    };
-    work: { num: string; bridge_title_l1: string; bridge_title_it: string; bridge_body: string };
-    manifeste: { num: string };
-    contact: { num: string };
-    phone: Record<string, unknown>;
-  };
-
-  const landingOf = (lang: (typeof LANGS)[number]) =>
-    translations[lang].landing as unknown as Partial<Phase8Landing>;
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing contains no pricing language (PRIX-01, forward regression guard — green today, must stay green)`, () => {
-      const serialized = JSON.stringify(translations[lang].landing);
-      expect(serialized).not.toMatch(PRICE_PATTERN);
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.services contains no pricing language (PRIX-01, RED until plan 03 removes hero/offers/maintenance)`, () => {
-      const serialized = JSON.stringify(translations[lang].services);
-      expect(serialized).not.toMatch(PRICE_PATTERN);
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing.problems exists with the full Phase 8 shape, 3-4 items (RED until plan 03)`, () => {
-      const problems = landingOf(lang).problems;
-      expect(problems, `${lang}: t.landing.problems`).toBeDefined();
-      expect(problems?.num?.length ?? 0, `${lang}: problems.num`).toBeGreaterThan(0);
-      expect(problems?.title_l1?.length ?? 0, `${lang}: problems.title_l1`).toBeGreaterThan(0);
-      expect(problems?.title_l2_it?.length ?? 0, `${lang}: problems.title_l2_it`).toBeGreaterThan(0);
-      expect(problems?.intro?.length ?? 0, `${lang}: problems.intro`).toBeGreaterThan(0);
-      expect(problems?.good_news?.length ?? 0, `${lang}: problems.good_news`).toBeGreaterThan(0);
-      expect(problems?.cta?.length ?? 0, `${lang}: problems.cta`).toBeGreaterThan(0);
-      const items = problems?.items ?? [];
-      expect(items.length, `${lang}: problems.items.length`).toBeGreaterThanOrEqual(3);
-      expect(items.length, `${lang}: problems.items.length`).toBeLessThanOrEqual(4);
-      for (const [i, item] of items.entries()) {
-        expect(item.n?.length ?? 0, `${lang}: problems.items[${i}].n`).toBeGreaterThan(0);
-        expect(item.title?.length ?? 0, `${lang}: problems.items[${i}].title`).toBeGreaterThan(0);
-        expect(item.desc?.length ?? 0, `${lang}: problems.items[${i}].desc`).toBeGreaterThan(0);
-      }
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing.servicesPreview exists with num/title_l1/title_l2_it/intro (RED until plan 03)`, () => {
-      const sp = landingOf(lang).servicesPreview;
-      expect(sp, `${lang}: t.landing.servicesPreview`).toBeDefined();
-      expect(sp?.num?.length ?? 0, `${lang}: servicesPreview.num`).toBeGreaterThan(0);
-      expect(sp?.title_l1?.length ?? 0, `${lang}: servicesPreview.title_l1`).toBeGreaterThan(0);
-      expect(sp?.title_l2_it?.length ?? 0, `${lang}: servicesPreview.title_l2_it`).toBeGreaterThan(0);
-      expect(sp?.intro?.length ?? 0, `${lang}: servicesPreview.intro`).toBeGreaterThan(0);
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing.method exists with 3-4 steps (RED until plan 03)`, () => {
-      const method = landingOf(lang).method;
-      expect(method, `${lang}: t.landing.method`).toBeDefined();
-      const steps = method?.steps ?? [];
-      expect(steps.length, `${lang}: method.steps.length`).toBeGreaterThanOrEqual(3);
-      expect(steps.length, `${lang}: method.steps.length`).toBeLessThanOrEqual(4);
-      for (const [i, step] of steps.entries()) {
-        expect(step.n?.length ?? 0, `${lang}: method.steps[${i}].n`).toBeGreaterThan(0);
-        expect(step.t?.length ?? 0, `${lang}: method.steps[${i}].t`).toBeGreaterThan(0);
-        expect(step.d?.length ?? 0, `${lang}: method.steps[${i}].d`).toBeGreaterThan(0);
-      }
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing.enjeux exists with 3-4 points (RED until plan 03)`, () => {
-      const enjeux = landingOf(lang).enjeux;
-      expect(enjeux, `${lang}: t.landing.enjeux`).toBeDefined();
-      const points = enjeux?.points ?? [];
-      expect(points.length, `${lang}: enjeux.points.length`).toBeGreaterThanOrEqual(3);
-      expect(points.length, `${lang}: enjeux.points.length`).toBeLessThanOrEqual(4);
-      for (const [i, point] of points.entries()) {
-        expect(point.t?.length ?? 0, `${lang}: enjeux.points[${i}].t`).toBeGreaterThan(0);
-        expect(point.d?.length ?? 0, `${lang}: enjeux.points[${i}].d`).toBeGreaterThan(0);
-      }
-    });
-  }
-
-  for (const lang of LANGS) {
-    it(`${lang}: t.landing.work gains bridge_title_l1/bridge_title_it/bridge_body (RED until plan 03)`, () => {
-      const work = landingOf(lang).work;
-      expect(work?.bridge_title_l1?.length ?? 0, `${lang}: work.bridge_title_l1`).toBeGreaterThan(0);
-      expect(work?.bridge_title_it?.length ?? 0, `${lang}: work.bridge_title_it`).toBeGreaterThan(0);
-      expect(work?.bridge_body?.length ?? 0, `${lang}: work.bridge_body`).toBeGreaterThan(0);
-    });
-  }
-
-  it('locale parity: problems.items.length, method.steps.length and enjeux.points.length are identical across fr/en/th (RED until plan 03)', () => {
-    const problemsLengths = LANGS.map((lang) => landingOf(lang).problems?.items?.length ?? -1);
-    const methodLengths = LANGS.map((lang) => landingOf(lang).method?.steps?.length ?? -1);
-    const enjeuxLengths = LANGS.map((lang) => landingOf(lang).enjeux?.points?.length ?? -1);
-    expect(new Set(problemsLengths).size, 'problems.items.length parity').toBe(1);
-    expect(new Set(methodLengths).size, 'method.steps.length parity').toBe(1);
-    expect(new Set(enjeuxLengths).size, 'enjeux.points.length parity').toBe(1);
+describe('translations.landing — accueil SEO (prix affichés, sections fusionnées)', () => {
+  it('prices on the home always come with the VAT mention (art. 293 B), in every locale', () => {
+    for (const lang of LANGS) {
+      const landing = translations[lang].landing;
+      expect(JSON.stringify(landing), `${lang}: landing prices`).toMatch(/€/);
+      expect(landing.servicesPreview.vat, `${lang}: servicesPreview.vat`).toContain('293 B');
+    }
   });
 
   for (const lang of LANGS) {
-    it(`${lang}: t.landing.phone no longer declares the removed teaser keys (RED until plan 05)`, () => {
-      const phoneKeys = Object.keys(
-        translations[lang].landing.phone as unknown as Record<string, unknown>
-      );
-      const removed = ['num', 'features', 'cta_demo', 'cta_more', 'flow_label', 'flow_rec', 'flow_steps'];
-      for (const key of removed) {
-        expect(phoneKeys, `${lang}: t.landing.phone should not declare "${key}"`).not.toContain(key);
-      }
-    });
-
-    it(`${lang}: t.landing.phone still declares the surviving teaser keys, non-empty`, () => {
-      const phone = translations[lang].landing.phone as unknown as Record<string, unknown>;
-      for (const key of ['badge', 'title_l1', 'title_l2', 'title_l3_it', 'sub', 'cta_roi']) {
-        const value = phone[key];
-        expect(typeof value === 'string' && value.length > 0, `${lang}: t.landing.phone.${key}`).toBe(true);
-      }
+    it(`${lang}: manifeste merges problems and stakes in 3-4 short items; method has 3-4 steps`, () => {
+      const { manifeste, method } = translations[lang].landing;
+      expect(manifeste.items.length, `${lang}: manifeste.items`).toBeGreaterThanOrEqual(3);
+      expect(manifeste.items.length, `${lang}: manifeste.items`).toBeLessThanOrEqual(4);
+      expect(method.steps.length, `${lang}: method.steps`).toBeGreaterThanOrEqual(3);
+      expect(method.steps.length, `${lang}: method.steps`).toBeLessThanOrEqual(4);
     });
   }
 
-  it('section counter integrity: manifeste/problems/servicesPreview/method/enjeux/work/contact are 01/07..07/07 in order, in every locale (RED until plans 03/05)', () => {
+  it('locale parity: items, cards, towns, why and faq counts are identical across fr/en/th', () => {
+    const counts = (pick: (l: (typeof translations)['fr']['landing']) => number) =>
+      new Set(LANGS.map((lang) => pick(translations[lang].landing))).size;
+    expect(counts((l) => l.manifeste.items.length), 'manifeste.items').toBe(1);
+    expect(counts((l) => l.method.steps.length), 'method.steps').toBe(1);
+    expect(counts((l) => l.servicesPreview.cards.length), 'servicesPreview.cards').toBe(1);
+    expect(counts((l) => l.zone.towns.length), 'zone.towns').toBe(1);
+    expect(counts((l) => l.why.items.length), 'why.items').toBe(1);
+    expect(counts((l) => l.faq.items.length), 'faq.items').toBe(1);
+  });
+
+  it('FAQ: 6 to 8 questions, each with a question mark and a non-empty answer (fr)', () => {
+    const { items } = translations.fr.landing.faq;
+    expect(items.length).toBeGreaterThanOrEqual(6);
+    expect(items.length).toBeLessThanOrEqual(8);
+    for (const item of items) {
+      expect(item.q.trim().endsWith('?'), item.q).toBe(true);
+      expect(item.a.trim().length, item.q).toBeGreaterThan(0);
+    }
+  });
+
+  it('section counter integrity: manifeste/servicesPreview/work/method/zone/why/faq/contact are 01/08..08/08 in order, in every locale', () => {
     const expectedPairs: [string, string][] = [
-      ['manifeste', '01 / 07'],
-      ['problems', '02 / 07'],
-      ['servicesPreview', '03 / 07'],
-      ['method', '04 / 07'],
-      ['enjeux', '05 / 07'],
-      ['work', '06 / 07'],
-      ['contact', '07 / 07'],
+      ['manifeste', '01 / 08'],
+      ['servicesPreview', '02 / 08'],
+      ['work', '03 / 08'],
+      ['method', '04 / 08'],
+      ['zone', '05 / 08'],
+      ['why', '06 / 08'],
+      ['faq', '07 / 08'],
+      ['contact', '08 / 08'],
     ];
     for (const lang of LANGS) {
       const landingRecord = translations[lang].landing as unknown as Record<
@@ -524,9 +425,18 @@ describe('translations.landing + translations.services — Phase 8 pricing polic
         { num?: string } | undefined
       >;
       for (const [key, expectedNum] of expectedPairs) {
-        const actualNum = landingRecord[key]?.num;
-        expect(actualNum, `${lang}: t.landing.${key}.num`).toBe(expectedNum);
+        expect(landingRecord[key]?.num, `${lang}: t.landing.${key}.num`).toBe(expectedNum);
       }
+    }
+  });
+
+  it('removed blocks stay removed (problems, enjeux, phone) and the hero has no dated pill', () => {
+    for (const lang of LANGS) {
+      const landing = translations[lang].landing as unknown as Record<string, unknown>;
+      for (const key of ['problems', 'enjeux', 'phone']) {
+        expect(Object.keys(landing), `${lang}: t.landing.${key}`).not.toContain(key);
+      }
+      expect(translations[lang].landing.hero.pill, lang).not.toMatch(/20\d\d/);
     }
   });
 
@@ -538,4 +448,83 @@ describe('translations.landing + translations.services — Phase 8 pricing polic
       }
     });
   }
+});
+
+describe('service pages — blocs optionnels « contenu long »', () => {
+  const frItems = translations.fr.services.pages.items;
+
+  it('fr/en/th declare the same extra labels, all non-empty', () => {
+    const keys = Object.keys(translations.fr.services.pages.extra).sort();
+    for (const lang of LANGS) {
+      const extra = translations[lang].services.pages.extra;
+      expect(Object.keys(extra).sort()).toEqual(keys);
+      for (const v of Object.values(extra)) expect(v.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it('optional blocks exist in all locales with the same shape and locale-invariant fields', () => {
+    for (const svc of services) {
+      const fr = translations.fr.services.pages.items[svc.index];
+      for (const lang of ['en', 'th'] as const) {
+        const it = translations[lang].services.pages.items[svc.index];
+        const tag = `${lang} ${svc.slug}`;
+        for (const key of ['longIntro', 'sections', 'pricing', 'steps', 'areas', 'proofProjects', 'internalLinks'] as const) {
+          expect(Boolean(it[key]), `${tag} ${key} presence`).toBe(Boolean(fr[key]));
+        }
+        expect(it.sections?.length, tag).toBe(fr.sections?.length);
+        expect(it.steps?.length, tag).toBe(fr.steps?.length);
+        expect(it.longIntro?.length, tag).toBe(fr.longIntro?.length);
+        expect(it.pricing?.price, tag).toBe(fr.pricing?.price);
+        expect(it.pricing?.includes.length, tag).toBe(fr.pricing?.includes.length);
+        expect(it.pricing?.extras.length, tag).toBe(fr.pricing?.extras.length);
+        expect(it.proofProjects, tag).toEqual(fr.proofProjects);
+        expect(it.areas, tag).toEqual(fr.areas);
+        expect(it.internalLinks?.map((l) => l.href), tag).toEqual(fr.internalLinks?.map((l) => l.href));
+        expect(it.sections?.map((s) => s.link?.href), tag).toEqual(fr.sections?.map((s) => s.link?.href));
+      }
+    }
+  });
+
+  it('pricing: positive price, mandatory VAT note (art. 293 B), non-empty lists', () => {
+    for (const lang of LANGS) {
+      for (const it of translations[lang].services.pages.items) {
+        if (!it.pricing) continue;
+        expect(it.pricing.price, `${lang} ${it.name}`).toBeGreaterThan(0);
+        expect(it.pricing.note, `${lang} ${it.name}`).toContain('293 B');
+        expect(it.pricing.includes.length, `${lang} ${it.name}`).toBeGreaterThan(0);
+        expect(it.pricing.fromLabel.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('proofProjects are valid caseStudyProjects indexes; internal links are internal absolute paths', () => {
+    for (const lang of LANGS) {
+      for (const it of translations[lang].services.pages.items) {
+        for (const i of it.proofProjects ?? []) {
+          expect(caseStudyProjects[i], `${lang} ${it.name} proof ${i}`).toBeDefined();
+        }
+        for (const l of it.internalLinks ?? []) {
+          expect(l.href, `${lang} ${it.name}`).toMatch(/^\/[a-z0-9\-/]*$/);
+          expect(l.label.trim().length).toBeGreaterThan(0);
+        }
+        for (const s of it.sections ?? []) expect(s.paragraphs.length).toBeGreaterThan(0);
+        for (const st of it.steps ?? []) expect(st.duration.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('SEO: fr title (with brand suffix) <= 60 and meta description <= 155 chars', () => {
+    for (const it of frItems) {
+      expect(`${it.metaTitle} · Sèvalys`.length, it.name).toBeLessThanOrEqual(60);
+      expect(it.metaDescription.length, it.name).toBeLessThanOrEqual(155);
+    }
+  });
+
+  it('extended fr items: 7-8 FAQ entries', () => {
+    for (const it of frItems) {
+      if (!isExtended(it)) continue;
+      expect(it.faq.length, it.name).toBeGreaterThanOrEqual(7);
+      expect(it.faq.length, it.name).toBeLessThanOrEqual(8);
+    }
+  });
 });

@@ -19,11 +19,10 @@ export default function HeroSection() {
         <div className="hero-stage">
           <div className="hero-copy">
             <h1 className="hero-title split">
-              <span className="line"><span>{tl.hero.title_l1}</span></span>
+              <span className="line"><span>{tl.hero.title_l1}</span></span>{' '}
               <span className="line">
                 <span>{tl.hero.title_l2}<em className="it acid">{tl.hero.title_l2_it}</em></span>
               </span>
-              <span className="line"><span>{tl.hero.title_l3}</span></span>
             </h1>
             {/* LCP mobile : pas de data-reveal (opacity:0 initial) sur le sous-titre, visible dès le premier rendu. */}
             <p className="hero-sub">{tl.hero.sub}</p>

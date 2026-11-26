@@ -3,6 +3,7 @@ import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { services } from '@/data/services';
+import { guides } from '@/data/guides';
 import { translations } from '@/lib/translations';
 import sitemap from './sitemap';
 
@@ -64,12 +65,15 @@ type RouteTable = Map<string, Set<string>>;
 function buildRouteTable(): RouteTable {
   const table: RouteTable = new Map();
   const slugs = services.map((s) => s.slug);
+  const guideSlugs = guides.map((g) => g.slug);
   for (const page of walk(APP, (n) => n === 'page.tsx', ['api'])) {
     const dir = relative(APP, join(page, '..'));
     const segments = dir.split(sep).filter((seg) => seg && !/^\(.*\)$/.test(seg));
     const ids = collectIds(page);
+    // /guides/[slug] a ses propres slugs (data/guides.ts), distincts de ceux des services.
+    const slugSet = segments[0] === 'guides' ? guideSlugs : slugs;
     const variants = segments.some((seg) => seg === '[slug]')
-      ? slugs.map((slug) => segments.map((seg) => (seg === '[slug]' ? slug : seg)))
+      ? slugSet.map((slug) => segments.map((seg) => (seg === '[slug]' ? slug : seg)))
       : [segments];
     for (const v of variants) table.set('/' + v.join('/'), ids);
   }
@@ -173,7 +177,8 @@ function routeForFile(file: string): string {
   if (rel.startsWith('..')) return '/';
   const segments = rel.split(sep).slice(0, -1).filter((seg) => seg && !/^\(.*\)$/.test(seg));
   if (segments.length === 0) return '/';
-  const route = '/' + segments.map((seg) => (seg === '[slug]' ? services[0].slug : seg)).join('/');
+  const slugFor = segments[0] === 'guides' ? guides[0].slug : services[0].slug;
+  const route = '/' + segments.map((seg) => (seg === '[slug]' ? slugFor : seg)).join('/');
   return route;
 }
 

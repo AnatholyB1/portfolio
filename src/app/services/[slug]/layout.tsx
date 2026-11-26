@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { services, getServiceBySlug } from "@/data/services";
 import { translations } from "@/lib/translations";
-import { OG_IMAGE } from "@/lib/pageSeo";
-import { buildFaqJsonLd, buildJsonLdScript } from "@/lib/serviceJsonLd";
+import { buildPageSeo } from "@/lib/pageSeo";
+import {
+  buildBreadcrumbJsonLd,
+  buildFaqJsonLd,
+  buildJsonLdScript,
+  buildServiceJsonLd,
+} from "@/lib/serviceJsonLd";
 
 // Per-slug metadata + FAQPage JSON-LD for /services/[slug] (Phase 6).
 // This is a Server Component: generateMetadata and generateStaticParams are
@@ -38,25 +43,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const copy = translations.fr.services.pages.items[svc.index];
 
   return {
-    title: copy.metaTitle,
-    description: copy.metaDescription,
-    alternates: { canonical: `/services/${slug}` },
+    ...buildPageSeo({
+      title: copy.metaTitle,
+      description: copy.metaDescription,
+      path: `/services/${slug}`,
+    }),
     robots: { index: true, follow: true },
-    openGraph: {
-      title: copy.metaTitle,
-      description: copy.metaDescription,
-      type: "website",
-      locale: "fr_FR",
-      siteName: "Sèvalys",
-      url: `/services/${slug}`,
-      images: [OG_IMAGE],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: copy.metaTitle,
-      description: copy.metaDescription,
-      images: [OG_IMAGE.url],
-    },
   };
 }
 
@@ -66,14 +58,40 @@ export default async function ServiceSlugLayout({ params, children }: Props) {
   if (!svc) notFound();
   const copy = translations.fr.services.pages.items[svc.index];
 
-  const jsonLd = buildFaqJsonLd(copy.faq, `${SITE_URL}/services/${slug}`);
+  const pageUrl = `${SITE_URL}/services/${slug}`;
+  const labels = translations.fr.services.pages.extra;
+  // FAQPage = exactement la FAQ visible (même source `copy.faq`).
+  const jsonLd = [
+    buildServiceJsonLd(
+      {
+        name: copy.name,
+        description: copy.metaDescription,
+        areas: copy.areas,
+        pricing: copy.pricing ? { price: copy.pricing.price } : null,
+      },
+      slug,
+      SITE_URL
+    ),
+    buildFaqJsonLd(copy.faq, pageUrl),
+    buildBreadcrumbJsonLd(
+      [
+        { name: labels.breadcrumbHome, path: "/" },
+        { name: labels.breadcrumbServices, path: "/services" },
+        { name: copy.name, path: `/services/${slug}` },
+      ],
+      SITE_URL
+    ),
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: buildJsonLdScript(jsonLd) }}
-      />
+      {jsonLd.map((node, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: buildJsonLdScript(node) }}
+        />
+      ))}
       {children}
     </>
   );

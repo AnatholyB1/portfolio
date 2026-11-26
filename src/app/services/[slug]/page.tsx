@@ -12,6 +12,15 @@ import { getFeatureIcon } from '@/lib/serviceIcons';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BrowserShot from '@/components/ui/BrowserShot';
+import RelatedGuides from '@/components/services/RelatedGuides';
+import {
+  LongIntro,
+  LongSections,
+  StepsBlock,
+  PricingBlock,
+  AreasBlock,
+  ProofProjectsBlock,
+} from '@/components/services/ServiceLongBlocks';
 
 export default function ServiceSlugPage({
   params,
@@ -20,11 +29,14 @@ export default function ServiceSlugPage({
 }) {
   const { slug } = use(params);
   useReveals();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const p = t.services.pages;
   const svc = getServiceBySlug(slug);
   if (!svc) return null; // layout.tsx already called notFound() for real 404s
   const copy = p.items[svc.index];
+  const proofProjects = (copy.proofProjects ?? [])
+    .map((i) => caseStudyProjects[i])
+    .filter((pr): pr is (typeof caseStudyProjects)[number] => pr !== undefined);
 
   return (
     <>
@@ -52,6 +64,8 @@ export default function ServiceSlugPage({
             </div>
           </div>
         </section>
+
+        <LongIntro paragraphs={copy.longIntro} />
 
         <section className="svc-sec">
           <div className="wrap">
@@ -100,6 +114,10 @@ export default function ServiceSlugPage({
           </div>
         </section>
 
+        <LongSections sections={copy.sections} />
+        <StepsBlock steps={copy.steps} labels={p.extra} />
+        <PricingBlock pricing={copy.pricing} labels={p.extra} locale={lang} />
+
         <section className="svc-sec">
           <div className="wrap">
             <h2 className="svc-h2">{p.headings.preuve}</h2>
@@ -122,7 +140,9 @@ export default function ServiceSlugPage({
                       sizes="(max-width: 900px) 100vw, 640px"
                     />
                     <div>
-                      <p className="svc-case-q">« {copy.caseQuote} »</p>
+                      <p className="svc-case-q">
+                        {copy.caseQuoteIsFact ? copy.caseQuote : `« ${copy.caseQuote} »`}
+                      </p>
                       <div className="svc-case-src">
                         {project.href !== null ? (
                           <a href={project.href}>{p.caseLabel} — {project.name}, {project.year}</a>
@@ -146,6 +166,10 @@ export default function ServiceSlugPage({
             )}
           </div>
         </section>
+
+        <ProofProjectsBlock projects={proofProjects} labels={p.extra} />
+        <AreasBlock areas={copy.areas} labels={p.extra} />
+        <RelatedGuides heading={p.extra.guidesHeading} links={copy.internalLinks} />
 
         {copy.crossLink !== null && (
           <div className="wrap">

@@ -51,7 +51,7 @@ export default function ContactSection() {
           <div>
             <div className="num" style={{ marginBottom: 16 }}>{c.num}</div>
             <h2 className="contact-title">
-              {c.title_l1}<br /><em className="it">{c.title_l2_it}</em>
+              {c.title_l1}{' '}<br /><em className="it">{c.title_l2_it}</em>
             </h2>
             <p className="sec-intro" data-reveal>{c.sub}</p>
             <div className="contact-info" data-reveal data-reveal-delay="1">
@@ -68,6 +68,7 @@ export default function ContactSection() {
                 </div>
               ))}
             </div>
+            <p className="contact-updated mono" data-reveal data-reveal-delay="1">{c.updated}</p>
           </div>
 
           {/* Right: form */}

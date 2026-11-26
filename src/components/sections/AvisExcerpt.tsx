@@ -20,6 +20,8 @@ const linkClass =
 
 export function AvisExcerptView({ reviews }: { reviews: ExcerptReview[] }) {
   const shown = reviews.slice(0, 3);
+  // Pas d'avis publié : le bloc disparaît de l'accueil (le pied de page garde le lien vers /avis).
+  if (shown.length === 0) return null;
   return (
     <section className="avis-excerpt border-t border-[var(--line)]" id="avis" aria-labelledby="avis-excerpt-title">
       <div className="wrap">
@@ -27,27 +29,20 @@ export function AvisExcerptView({ reviews }: { reviews: ExcerptReview[] }) {
           {'// AVIS VÉRIFIÉS'}
         </p>
         <h2 id="avis-excerpt-title" className="mb-6 text-2xl font-medium text-[var(--ink)]">
-          Ce que disent nos clients
+          Avis clients
         </h2>
-        {shown.length === 0 ? (
-          <p className="max-w-[60ch] leading-relaxed text-[var(--ink-dim)]">
-            Les avis arrivent après la livraison des projets, par un lien personnel envoyé à chaque
-            client. Ils sont publiés tels qu&apos;écrits, sans filtrage de la note ni du ton.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 min-[1100px]:grid-cols-3">
-            {shown.map((r) => (
-              <ReviewCard
-                key={r.id}
-                variant="compact"
-                review={{ ...r, title: null, experienceDate: null }}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 min-[1100px]:grid-cols-3">
+          {shown.map((r) => (
+            <ReviewCard
+              key={r.id}
+              variant="compact"
+              review={{ ...r, title: null, experienceDate: null }}
+            />
+          ))}
+        </div>
         <div className="mt-8 flex flex-wrap items-center gap-x-6 text-sm">
           <Link href="/avis" className={`${linkClass} text-[var(--ink)]`}>
-            {shown.length === 0 ? 'Voir la page des avis' : 'Voir tous les avis'}
+            Lire les avis clients
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
           <Link href="/politique-des-avis" className={`${linkClass} text-[var(--ink-dim)]`}>

@@ -36,3 +36,66 @@ export function buildFaqJsonLd(faq: FaqItem[], pageUrl: string) {
 export function buildJsonLdScript(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
+
+export interface ServiceJsonLdInput {
+  name: string;
+  description: string;
+  /** Communes d'intervention ; absent => areaServed pays FR. */
+  areas?: string[];
+  /** Présent uniquement si la page affiche un bloc tarifs. */
+  pricing?: { price: number; fromLabel?: string } | null;
+}
+
+/**
+ * Builds the page-level schema.org Service node. `offers` is emitted ONLY when
+ * the page shows a visible `pricing` block (price shown = price declared).
+ * Shares the `#service` @id with the global OfferCatalog entry so both nodes
+ * describe the same entity.
+ */
+export function buildServiceJsonLd(
+  input: ServiceJsonLdInput,
+  slug: string,
+  siteUrl: string
+) {
+  const url = `${siteUrl}/services/${slug}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${url}#service`,
+    name: input.name,
+    description: input.description,
+    url,
+    provider: { '@id': `${siteUrl}/#organization` },
+    areaServed:
+      input.areas && input.areas.length > 0
+        ? input.areas.map((name) => ({ '@type': 'City', name }))
+        : { '@type': 'Country', name: 'FR' },
+    ...(input.pricing
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: String(input.pricing.price),
+            priceCurrency: 'EUR',
+            url,
+          },
+        }
+      : {}),
+  };
+}
+
+/** BreadcrumbList Accueil > Services > page. */
+export function buildBreadcrumbJsonLd(
+  items: { name: string; path: string }[],
+  siteUrl: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: `${siteUrl}${it.path}`,
+    })),
+  };
+}

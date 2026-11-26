@@ -18,7 +18,7 @@ export default function Realisations() {
           <div>
             <span className="sec-num">{w.num}</span>
             <h2 className="sec-title">
-              {w.title_l1}<br /><em className="it">{w.title_l2_it}</em>
+              {w.title_l1}{' '}<br /><em className="it">{w.title_l2_it}</em>
             </h2>
           </div>
           <p className="sec-intro">{w.intro}</p>

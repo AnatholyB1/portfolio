@@ -4,6 +4,7 @@ import robots from './robots'
 import nextConfig from '../../next.config'
 import { PRIVATE_PREFIXES, PRIVATE_SUBPATH_PREFIXES } from '@/lib/privateRoutes'
 import { services } from '@/data/services'
+import { guides } from '@/data/guides'
 
 const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sevalys.com'
 const urls = () => sitemap().map((e) => e.url)
@@ -28,7 +29,12 @@ describe('sitemap (SEO-01)', () => {
   it('has unique urls and the expected count', () => {
     const u = urls()
     expect(new Set(u).size).toBe(u.length)
-    expect(u.length).toBe(3 + services.length + 3)
+    expect(u.length).toBe(3 + services.length + 3 + 1 + guides.length)
+  })
+
+  it('lists /guides and every guide', () => {
+    expect(urls()).toContain(`${base}/guides`)
+    for (const g of guides) expect(urls()).toContain(`${base}/guides/${g.slug}`)
   })
 
   it('does not list the noindex /calculateur-roi field tool', () => {
