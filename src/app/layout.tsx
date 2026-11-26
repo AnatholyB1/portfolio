@@ -189,7 +189,7 @@ export default function RootLayout({
         geoRadius: "50000",
       },
     ],
-    openingHours: "Mo-Fr 09:00-18:00",
+    openingHours: "Mo-Su 09:00-20:00",
     hasOfferCatalog: buildServiceCatalogJsonLd(SITE_URL),
   };
 
